@@ -1,11 +1,6 @@
 [build]
   publish = "."
-  command = "npm run build"
-
-[[redirects]]
-  from = "/aurea/*"
-  to = "/aurea.html"
-  status = 200
+  command = "echo 'No build command needed for static files.'"
 
 [[redirects]]
   from = "/*"
