@@ -4,7 +4,7 @@
 
 [[redirects]]
   from = "/bot"
-  to = "/bot-og.html"
+  to = "/bot.html"
   status = 200
 
 [[redirects]]
