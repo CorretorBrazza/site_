@@ -1,6 +1,11 @@
 [build]
   publish = "."
-  command = "echo 'Static site deployment'"
+  command = "npm run build"
+
+[[redirects]]
+  from = "/aurea/*"
+  to = "/aurea.html"
+  status = 200
 
 [[redirects]]
   from = "/*"
