@@ -3,6 +3,12 @@
   command = "echo 'No build command needed for static files.'"
 
 [[redirects]]
+  from = "/bot"
+  to = "/bot.html"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
