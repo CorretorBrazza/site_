@@ -4,9 +4,8 @@
 
 [[redirects]]
   from = "/bot"
-  to = "/bot.html"
-  status = 301
-  force = true
+  to = "/bot-og.html"
+  status = 200
 
 [[redirects]]
   from = "/*"
