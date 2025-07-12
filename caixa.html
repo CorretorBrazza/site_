@@ -4,9 +4,32 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bot Financiamento</title>
+    
+    <!-- Título que aparece na aba do navegador -->
+    <title>Caixa Financiamento</title>
+
+    <!-- ===== METATAGS PARA COMPARTILHAMENTO (OPEN GRAPH) ===== -->
+    
+    <!-- Título que aparecerá na pré-visualização do link -->
+    <meta property="og:title" content="Caixa Financiamento" />
+    
+    <!-- Descrição que aparecerá abaixo do título -->
+    <meta property="og:description" content="Simule seu financiamento de forma rápida e fácil com nosso assistente virtual." />
+    
+    <!-- URL COMPLETA da imagem no seu repositório do GitHub. -->
+    <meta property="og:image" content="https://corretorbrazza.github.io/site_/images/caixa_logo.png" />
+    
+    <!-- URL COMPLETA da sua página no GitHub Pages. -->
+    <meta property="og:url" content="https://corretorbrazza.github.io/site_/caixa.html" />
+
+    <!-- Outras tags úteis (opcionais) -->
+    <meta property="og:type" content="website" />
+    
+    <!-- ========================================================= -->
+
   </head>
   <body>
+    <!-- O nome do bot no título da página já foi alterado. O conteúdo do bot em si é definido pelo script. -->
     <div id="app">
       <typebot-standard style="width: 100%; height: 600px;"></typebot-standard>
     </div>
@@ -20,5 +43,19 @@
       document.body.append(typebotInitScript);
     </script>
   </body>
-</html>
+</html>```
 
+---
+
+### Explicação das URLs utilizadas:
+
+*   **`og:image`**: A URL `https://corretorbrazza.github.io/site_/images/caixa_logo.png` é o caminho absoluto para sua imagem.
+    *   `https://corretorbrazza.github.io` é o seu domínio base no GitHub Pages.
+    *   `/site_/` é o nome do seu repositório.
+    *   `images/caixa_logo.png` é a pasta e o arquivo de imagem dentro do repositório.
+
+*   **`og:url`**: Da mesma forma, `https://corretorbrazza.github.io/site_/caixa.html` é o endereço completo onde sua página estará acessível na internet.
+
+Usar essas URLs completas é a prática recomendada e garante que plataformas como WhatsApp, Facebook e outras encontrem seus arquivos corretamente.
+
+Depois de salvar e enviar (fazer o "commit" e "push") essa alteração para o seu repositório no GitHub, aguarde alguns minutos para o GitHub Pages atualizar e sua página estará pronta para ser compartilhada com a pré-visualização personalizada
