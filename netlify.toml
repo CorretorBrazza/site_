@@ -4,8 +4,9 @@
 
 [[redirects]]
   from = "/bot"
-  to = "/bot.html"
-  status = 200
+  to = "/caixa.html"
+  status = 301
+  force = true
 
 [[redirects]]
   from = "/*"

@@ -10,7 +10,15 @@
     <div id="app">
       <typebot-standard style="width: 100%; height: 600px;"></typebot-standard>
     </div>
-    <script type="module" src="/main.js"></script>
+    <script type="module">
+      const typebotInitScript = document.createElement("script");
+      typebotInitScript.type = "module";
+      typebotInitScript.innerHTML = `import Typebot from 'https://cdn.jsdelivr.net/npm/@typebot.io/js@0/dist/web.js'
+        
+      Typebot.initStandard({ typebot: "bot-financiamento-fzzobn9" });
+      `;
+      document.body.append(typebotInitScript);
+    </script>
   </body>
 </html>
 
