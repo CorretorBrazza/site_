@@ -1,14 +1,609 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Aurea Sky - Empreendimento Exclusivo em Taboão da Serra</title>
-    <script type="module" crossorigin src="/assets/index-B1W_18um.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CYBVs1YX.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aurea Sky Taboão - Apartamentos de Alto Padrão</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Aurea Sky Taboão - Apartamentos de 2 e 3 dormitórios com área de lazer completa, piscina, academia e localização privilegiada em Taboão da Serra.">
+    <meta name="keywords" content="apartamento, Taboão da Serra, Aurea Sky, imóvel, financiamento, CAIXA, 2 dormitórios, 3 dormitórios">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Aurea Sky Taboão - Apartamentos de Alto Padrão">
+    <meta property="og:description" content="Apartamentos de 2 e 3 dormitórios com área de lazer completa, piscina, academia e localização privilegiada em Taboão da Serra.">
+    <meta property="og:image" content="https://imoveistaboao.com.br/images/imagem_2.jpg">
+    <meta property="og:url" content="https://imoveistaboao.com.br/aurea.html">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Aurea Sky Taboão - Apartamentos de Alto Padrão">
+    <meta name="twitter:description" content="Apartamentos de 2 e 3 dormitórios com área de lazer completa, piscina, academia e localização privilegiada em Taboão da Serra.">
+    <meta name="twitter:image" content="https://imoveistaboao.com.br/images/imagem_2.jpg">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header / Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('images/imagem_1.jpg') center/cover;
+            opacity: 0.3;
+            z-index: 1;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .logo {
+            max-width: 300px;
+            height: auto;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        /* Destaques Section */
+        .destaques {
+            padding: 80px 0;
+            background: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            color: #1e3c72;
+        }
+        
+        .destaques-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .destaque-item {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .destaque-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .destaque-item h3 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        /* Plantas Section */
+        .plantas {
+            padding: 80px 0;
+            background: #f8f9fa;
+        }
+        
+        .plantas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .planta-item {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .planta-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .planta-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+        
+        .planta-info {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .planta-info h4 {
+            color: #1e3c72;
+            margin-bottom: 10px;
+        }
+        
+        /* Galeria Section */
+        .galeria {
+            padding: 80px 0;
+            background: white;
+        }
+        
+        .galeria-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        .galeria-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .galeria-item:hover {
+            transform: scale(1.05);
+        }
+        
+        .galeria-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+        
+        /* Action Buttons Section */
+        .action-buttons {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            text-align: center;
+        }
+        
+        .action-buttons h2 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+        }
+        
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .action-btn {
+            display: block;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .action-btn img {
+            width: 100%;
+            max-width: 350px;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        /* Formulário Section */
+        .formulario {
+            padding: 80px 0;
+            background: #f8f9fa;
+        }
+        
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .form-container h3 {
+            color: #1e3c72;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .form-container label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .form-container input[type="text"],
+        .form-container input[type="tel"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-container input[type="text"]:focus,
+        .form-container input[type="tel"]:focus {
+            outline: none;
+            border-color: #1e3c72;
+        }
+        
+        .radio-group {
+            margin-bottom: 20px;
+        }
+        
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: normal;
+            cursor: pointer;
+        }
+        
+        .radio-group input[type="radio"] {
+            margin-right: 10px;
+        }
+        
+        .form-container button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .form-container button:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* Footer */
+        .footer {
+            background: #333;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+        
+        .footer p {
+            margin-bottom: 10px;
+        }
+        
+        /* Modal para imagens */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+        }
+        
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+            max-height: 80%;
+            object-fit: contain;
+        }
+        
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: #bbb;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 0 15px;
+            }
+            
+            .destaques-grid,
+            .plantas-grid,
+            .galeria-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .buttons-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <img src="images/imagem_2.jpg" alt="Aurea Sky Taboão" class="logo">
+                <h1>Viva o Alto Padrão em Taboão da Serra</h1>
+                <p>Sua Nova Vida Começa Aqui: Aurea Sky Taboão</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Destaques Section -->
+    <section class="destaques">
+        <div class="container">
+            <h2 class="section-title">Destaques e Diferenciais</h2>
+            <div class="destaques-grid">
+                <div class="destaque-item">
+                    <h3>Localização Privilegiada</h3>
+                    <p>Localizado em Taboão da Serra, com fácil acesso a transporte público, comércio e serviços essenciais.</p>
+                </div>
+                <div class="destaque-item">
+                    <h3>Apartamentos de 2 e 3 Dormitórios</h3>
+                    <p>Plantas inteligentes e funcionais, com metragens otimizadas para o máximo conforto da sua família.</p>
+                </div>
+                <div class="destaque-item">
+                    <h3>Área de Lazer Completa</h3>
+                    <p>Piscina, academia, salão de festas, playground e muito mais para seu lazer e bem-estar.</p>
+                </div>
+                <div class="destaque-item">
+                    <h3>Arquitetura Moderna</h3>
+                    <p>Design contemporâneo com acabamentos de qualidade e conceitos sustentáveis.</p>
+                </div>
+                <div class="destaque-item">
+                    <h3>Segurança 24h</h3>
+                    <p>Portaria 24 horas, sistema de monitoramento e controle de acesso para sua tranquilidade.</p>
+                </div>
+                <div class="destaque-item">
+                    <h3>Financiamento Facilitado</h3>
+                    <p>Condições especiais de financiamento com a Caixa Econômica Federal e outros bancos.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Plantas Section -->
+    <section class="plantas">
+        <div class="container">
+            <h2 class="section-title">Plantas dos Apartamentos</h2>
+            <div class="plantas-grid">
+                <div class="planta-item">
+                    <img src="images/imagem_3.jpg" alt="Planta 2 Dormitórios" onclick="openModal(this.src)">
+                    <div class="planta-info">
+                        <h4>2 Dormitórios</h4>
+                        <p>Apartamento funcional com 2 dormitórios, sala, cozinha, banheiro e área de serviço.</p>
+                    </div>
+                </div>
+                <div class="planta-item">
+                    <img src="images/imagem_4.jpg" alt="Planta 2 Dormitórios - Opção 2" onclick="openModal(this.src)">
+                    <div class="planta-info">
+                        <h4>2 Dormitórios - Opção 2</h4>
+                        <p>Layout alternativo com distribuição otimizada dos ambientes.</p>
+                    </div>
+                </div>
+                <div class="planta-item">
+                    <img src="images/imagem_5.jpg" alt="Planta 3 Dormitórios" onclick="openModal(this.src)">
+                    <div class="planta-info">
+                        <h4>3 Dormitórios</h4>
+                        <p>Apartamento amplo com 3 dormitórios, sendo 1 suíte, sala, cozinha e área de serviço.</p>
+                    </div>
+                </div>
+                <div class="planta-item">
+                    <img src="images/imagem_6.jpg" alt="Planta 3 Dormitórios - Opção 2" onclick="openModal(this.src)">
+                    <div class="planta-info">
+                        <h4>3 Dormitórios - Opção 2</h4>
+                        <p>Layout diferenciado com ambientes integrados e varanda gourmet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Galeria Section -->
+    <section class="galeria">
+        <div class="container">
+            <h2 class="section-title">Galeria de Imagens</h2>
+            <div class="galeria-grid">
+                <div class="galeria-item">
+                    <img src="images/imagem_1.jpg" alt="Vista Externa do Empreendimento" onclick="openModal(this.src)">
+                </div>
+                <div class="galeria-item">
+                    <img src="images/imagem_7.jpg" alt="Área de Lazer" onclick="openModal(this.src)">
+                </div>
+                <div class="galeria-item">
+                    <img src="images/imagem_8.jpg" alt="Piscina" onclick="openModal(this.src)">
+                </div>
+                <div class="galeria-item">
+                    <img src="images/imagem_9.jpg" alt="Academia" onclick="openModal(this.src)">
+                </div>
+                <div class="galeria-item">
+                    <img src="images/imagem_10.jpg" alt="Vista Externa com Paisagismo" onclick="openModal(this.src)">
+                </div>
+                <div class="galeria-item">
+                    <img src="images/imagem_11.jpg" alt="Interior Decorado - Sala" onclick="openModal(this.src)">
+                </div>
+                <div class="galeria-item">
+                    <img src="images/imagem_12.jpg" alt="Interior Decorado - Dormitório" onclick="openModal(this.src)">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Action Buttons Section -->
+    <section class="action-buttons">
+        <div class="container">
+            <h2>Entre em Contato Agora!</h2>
+            <div class="buttons-grid">
+                <a href="https://wa.me/5511970988512" class="action-btn" target="_blank">
+                    <img src="images/corretor_on_line_fixo.jpg" alt="Fale com o Corretor Online">
+                </a>
+                <a href="https://imoveistaboao.com.br/caixa" class="action-btn">
+                    <img src="images/caixa_fixo.jpg" alt="Simule seu Financiamento CAIXA">
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Formulário Section -->
+    <section class="formulario">
+        <div class="container">
+            <div class="form-container">
+                <form name="agendamento-contato" netlify>
+                    <h3>Prefere Agendar o Contato?</h3>
+
+                    <p>
+                        <label for="nome">Nome:</label>
+                        <input type="text" name="nome" id="nome" required>
+                    </p>
+
+                    <p>
+                        <label for="whatsapp">WhatsApp:</label>
+                        <input type="tel" name="whatsapp" id="whatsapp" placeholder="(XX) XXXXX-XXXX" required>
+                    </p>
+
+                    <p>
+                        <label>Horário:</label>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="horario" value="manha" required> Manhã
+                            </label>
+                            <label>
+                                <input type="radio" name="horario" value="tarde"> Tarde
+                            </label>
+                            <label>
+                                <input type="radio" name="horario" value="apos-18h"> Após 18 horas
+                            </label>
+                        </div>
+                    </p>
+
+                    <p>
+                        <button type="submit">Enviar Agendamento</button>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Aurea Sky Taboão. Todos os direitos reservados.</p>
+            <p>WhatsApp: (11) 97098-8512</p>
+            <p>Desenvolvido por Imóveis Taboão</p>
+        </div>
+    </footer>
+
+    <!-- Modal para imagens -->
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <script>
+        function openModal(src) {
+            document.getElementById('imageModal').style.display = 'block';
+            document.getElementById('modalImage').src = src;
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        // Fechar modal clicando fora da imagem
+        window.onclick = function(event) {
+            const modal = document.getElementById('imageModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Fechar modal com tecla ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
 </html>
+
