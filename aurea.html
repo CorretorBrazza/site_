@@ -30,7 +30,7 @@
         }
         
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             color: #333;
             background-color: #f8f9fa;
@@ -42,11 +42,51 @@
             padding: 0 20px;
         }
         
-        /* Header / Hero Section */
+        /* Header */
+        .header {
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c5aa0;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #2c5aa0;
+        }
+        
+        /* Hero Section */
         .hero {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #2c5aa0 0%, #1e3c72 100%);
             color: white;
-            padding: 60px 0;
+            padding: 80px 0;
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -60,7 +100,7 @@
             right: 0;
             bottom: 0;
             background: url('images/imagem_1.jpg') center/cover;
-            opacity: 0.3;
+            opacity: 0.2;
             z-index: 1;
         }
         
@@ -69,83 +109,151 @@
             z-index: 2;
         }
         
-        .logo {
-            max-width: 300px;
+        .hero-logo {
+            max-width: 400px;
             height: auto;
             margin-bottom: 30px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
         }
         
         .hero h1 {
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin-bottom: 20px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            font-weight: 300;
         }
         
-        .hero p {
-            font-size: 1.3rem;
+        .hero .subtitle {
+            font-size: 1.4rem;
             margin-bottom: 30px;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            font-weight: 300;
         }
         
-        /* Destaques Section */
-        .destaques {
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 5px 20px rgba(255,107,53,0.3);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255,107,53,0.4);
+        }
+        
+        /* Empreendimento Info */
+        .empreendimento-info {
             padding: 80px 0;
             background: white;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        
+        .info-content h2 {
+            font-size: 2.5rem;
+            color: #2c5aa0;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+        
+        .info-content p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .info-image {
+            text-align: center;
+        }
+        
+        .info-image img {
+            max-width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        /* Características */
+        .caracteristicas {
+            padding: 80px 0;
+            background: #f8f9fa;
         }
         
         .section-title {
             text-align: center;
             font-size: 2.5rem;
-            margin-bottom: 50px;
-            color: #1e3c72;
+            margin-bottom: 60px;
+            color: #2c5aa0;
+            font-weight: 300;
         }
         
-        .destaques-grid {
+        .caracteristicas-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 60px;
+            gap: 40px;
         }
         
-        .destaque-item {
-            background: #f8f9fa;
-            padding: 30px;
+        .caracteristica-item {
+            background: white;
+            padding: 40px 30px;
             border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
             text-align: center;
             transition: transform 0.3s ease;
         }
         
-        .destaque-item:hover {
-            transform: translateY(-5px);
+        .caracteristica-item:hover {
+            transform: translateY(-10px);
         }
         
-        .destaque-item h3 {
-            color: #1e3c72;
+        .caracteristica-icon {
+            font-size: 3rem;
+            color: #ff6b35;
+            margin-bottom: 20px;
+        }
+        
+        .caracteristica-item h3 {
+            color: #2c5aa0;
             margin-bottom: 15px;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
         }
         
-        /* Plantas Section */
+        .caracteristica-item p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        /* Plantas */
         .plantas {
             padding: 80px 0;
-            background: #f8f9fa;
+            background: white;
         }
         
         .plantas-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 30px;
             margin-top: 40px;
         }
         
         .planta-item {
-            background: white;
+            background: #f8f9fa;
             border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
             transition: transform 0.3s ease;
         }
         
@@ -155,169 +263,120 @@
         
         .planta-item img {
             width: 100%;
-            height: 200px;
-            object-fit: cover;
-            cursor: pointer;
-        }
-        
-        .planta-info {
-            padding: 20px;
-            text-align: center;
-        }
-        
-        .planta-info h4 {
-            color: #1e3c72;
-            margin-bottom: 10px;
-        }
-        
-        /* Galeria Section */
-        .galeria {
-            padding: 80px 0;
-            background: white;
-        }
-        
-        .galeria-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 40px;
-        }
-        
-        .galeria-item {
-            position: relative;
-            overflow: hidden;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-        
-        .galeria-item:hover {
-            transform: scale(1.05);
-        }
-        
-        .galeria-item img {
-            width: 100%;
             height: 250px;
             object-fit: cover;
             cursor: pointer;
         }
         
-        /* Action Buttons Section */
-        .action-buttons {
-            padding: 80px 0;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        .planta-info {
+            padding: 25px;
             text-align: center;
         }
         
-        .action-buttons h2 {
-            color: white;
-            font-size: 2.5rem;
-            margin-bottom: 50px;
+        .planta-info h4 {
+            color: #2c5aa0;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
         }
         
-        .buttons-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            max-width: 800px;
-            margin: 0 auto;
+        .planta-info p {
+            color: #666;
+            font-size: 0.95rem;
         }
         
-        .action-btn {
-            display: block;
-            text-decoration: none;
-            transition: transform 0.3s ease;
-        }
-        
-        .action-btn:hover {
-            transform: scale(1.05);
-        }
-        
-        .action-btn img {
-            width: 100%;
-            max-width: 350px;
-            height: auto;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        
-        /* Formulário Section */
-        .formulario {
+        /* Localização */
+        .localizacao {
             padding: 80px 0;
             background: #f8f9fa;
         }
         
-        .form-container {
-            max-width: 600px;
+        .localizacao-content {
+            text-align: center;
+            max-width: 800px;
             margin: 0 auto;
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         
-        .form-container h3 {
-            color: #1e3c72;
-            font-size: 2rem;
+        .localizacao h2 {
+            font-size: 2.5rem;
+            color: #2c5aa0;
             margin-bottom: 30px;
+            font-weight: 300;
+        }
+        
+        .localizacao p {
+            font-size: 1.1rem;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+        
+        .endereco {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            display: inline-block;
+        }
+        
+        .endereco h3 {
+            color: #2c5aa0;
+            margin-bottom: 15px;
+        }
+        
+        .endereco p {
+            color: #333;
+            font-weight: 500;
+            margin: 0;
+        }
+        
+        /* Contato */
+        .contato {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #2c5aa0 0%, #1e3c72 100%);
+            color: white;
             text-align: center;
         }
         
-        .form-container label {
-            display: block;
-            margin-bottom: 5px;
-            color: #333;
-            font-weight: bold;
+        .contato h2 {
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            font-weight: 300;
         }
         
-        .form-container input[type="text"],
-        .form-container input[type="tel"] {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            margin-bottom: 20px;
-            transition: border-color 0.3s ease;
-        }
-        
-        .form-container input[type="text"]:focus,
-        .form-container input[type="tel"]:focus {
-            outline: none;
-            border-color: #1e3c72;
-        }
-        
-        .radio-group {
-            margin-bottom: 20px;
-        }
-        
-        .radio-group label {
+        .contato-buttons {
             display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            font-weight: normal;
-            cursor: pointer;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
         }
         
-        .radio-group input[type="radio"] {
-            margin-right: 10px;
-        }
-        
-        .form-container button {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        .contato-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
             color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
+            padding: 20px 40px;
+            border-radius: 50px;
+            text-decoration: none;
             font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.3s ease;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            border: 2px solid rgba(255,255,255,0.3);
         }
         
-        .form-container button:hover {
-            transform: translateY(-2px);
+        .contato-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.5);
+            transform: translateY(-3px);
+        }
+        
+        .contato-btn.whatsapp {
+            background: #25d366;
+            border-color: #25d366;
+        }
+        
+        .contato-btn.whatsapp:hover {
+            background: #128c7e;
+            border-color: #128c7e;
         }
         
         /* Footer */
@@ -332,7 +391,7 @@
             margin-bottom: 10px;
         }
         
-        /* Modal para imagens */
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -351,6 +410,7 @@
             max-width: 700px;
             max-height: 80%;
             object-fit: contain;
+            margin-top: 5%;
         }
         
         .close {
@@ -369,81 +429,131 @@
         
         /* Responsive */
         @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2rem;
+            .nav-links {
+                display: none;
             }
             
-            .hero p {
-                font-size: 1.1rem;
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .caracteristicas-grid,
+            .plantas-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .contato-buttons {
+                flex-direction: column;
+                align-items: center;
             }
             
             .section-title {
                 font-size: 2rem;
             }
             
-            .container {
-                padding: 0 15px;
-            }
-            
-            .destaques-grid,
-            .plantas-grid,
-            .galeria-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .buttons-grid {
-                grid-template-columns: 1fr;
+            .info-content h2,
+            .localizacao h2,
+            .contato h2 {
+                font-size: 2rem;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="#" class="logo">Aurea Sky</a>
+                <ul class="nav-links">
+                    <li><a href="#empreendimento">O Empreendimento</a></li>
+                    <li><a href="#plantas">Plantas</a></li>
+                    <li><a href="#localizacao">Localização</a></li>
+                    <li><a href="#contato">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
             <div class="hero-content">
-                <img src="images/imagem_2.jpg" alt="Aurea Sky Taboão" class="logo">
-                <h1>Viva o Alto Padrão em Taboão da Serra</h1>
-                <p>Sua Nova Vida Começa Aqui: Aurea Sky Taboão</p>
+                <img src="images/imagem_2.jpg" alt="Aurea Sky Taboão" class="hero-logo">
+                <h1>Aurea Sky Taboão</h1>
+                <p class="subtitle">Viva o Alto Padrão em Taboão da Serra</p>
+                <a href="#contato" class="cta-button">Saiba Mais</a>
             </div>
         </div>
     </section>
 
-    <!-- Destaques Section -->
-    <section class="destaques">
+    <!-- Empreendimento Info -->
+    <section class="empreendimento-info" id="empreendimento">
         <div class="container">
-            <h2 class="section-title">Destaques e Diferenciais</h2>
-            <div class="destaques-grid">
-                <div class="destaque-item">
-                    <h3>Localização Privilegiada</h3>
-                    <p>Localizado em Taboão da Serra, com fácil acesso a transporte público, comércio e serviços essenciais.</p>
+            <div class="info-grid">
+                <div class="info-content">
+                    <h2>Um Novo Conceito de Morar</h2>
+                    <p>O Aurea Sky Taboão representa o que há de mais moderno em arquitetura residencial. Com apartamentos de 2 e 3 dormitórios, o empreendimento oferece o equilíbrio perfeito entre sofisticação e funcionalidade.</p>
+                    <p>Localizado em uma das regiões mais valorizadas de Taboão da Serra, o Aurea Sky proporciona qualidade de vida incomparável, com fácil acesso a transporte público, comércio e serviços.</p>
+                    <p>Cada detalhe foi pensado para oferecer máximo conforto e bem-estar para você e sua família.</p>
                 </div>
-                <div class="destaque-item">
-                    <h3>Apartamentos de 2 e 3 Dormitórios</h3>
-                    <p>Plantas inteligentes e funcionais, com metragens otimizadas para o máximo conforto da sua família.</p>
-                </div>
-                <div class="destaque-item">
-                    <h3>Área de Lazer Completa</h3>
-                    <p>Piscina, academia, salão de festas, playground e muito mais para seu lazer e bem-estar.</p>
-                </div>
-                <div class="destaque-item">
-                    <h3>Arquitetura Moderna</h3>
-                    <p>Design contemporâneo com acabamentos de qualidade e conceitos sustentáveis.</p>
-                </div>
-                <div class="destaque-item">
-                    <h3>Segurança 24h</h3>
-                    <p>Portaria 24 horas, sistema de monitoramento e controle de acesso para sua tranquilidade.</p>
-                </div>
-                <div class="destaque-item">
-                    <h3>Financiamento Facilitado</h3>
-                    <p>Condições especiais de financiamento com a Caixa Econômica Federal e outros bancos.</p>
+                <div class="info-image">
+                    <img src="images/imagem_1.jpg" alt="Fachada do Aurea Sky">
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Plantas Section -->
-    <section class="plantas">
+    <!-- Características -->
+    <section class="caracteristicas">
+        <div class="container">
+            <h2 class="section-title">Características do Empreendimento</h2>
+            <div class="caracteristicas-grid">
+                <div class="caracteristica-item">
+                    <div class="caracteristica-icon">🏢</div>
+                    <h3>Arquitetura Moderna</h3>
+                    <p>Design contemporâneo com linhas clean e acabamentos de primeira qualidade.</p>
+                </div>
+                <div class="caracteristica-item">
+                    <div class="caracteristica-icon">🏊‍♂️</div>
+                    <h3>Área de Lazer Completa</h3>
+                    <p>Piscina, academia, salão de festas, playground e espaços de convivência.</p>
+                </div>
+                <div class="caracteristica-item">
+                    <div class="caracteristica-icon">🔒</div>
+                    <h3>Segurança 24h</h3>
+                    <p>Portaria 24 horas, sistema de monitoramento e controle de acesso.</p>
+                </div>
+                <div class="caracteristica-item">
+                    <div class="caracteristica-icon">🚗</div>
+                    <h3>Garagem Coberta</h3>
+                    <p>Vagas de garagem cobertas com sistema de segurança integrado.</p>
+                </div>
+                <div class="caracteristica-item">
+                    <div class="caracteristica-icon">🌱</div>
+                    <h3>Sustentabilidade</h3>
+                    <p>Projeto sustentável com aproveitamento de recursos naturais.</p>
+                </div>
+                <div class="caracteristica-item">
+                    <div class="caracteristica-icon">📍</div>
+                    <h3>Localização Privilegiada</h3>
+                    <p>Próximo a transporte público, escolas, hospitais e centros comerciais.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Plantas -->
+    <section class="plantas" id="plantas">
         <div class="container">
             <h2 class="section-title">Plantas dos Apartamentos</h2>
             <div class="plantas-grid">
@@ -451,115 +561,65 @@
                     <img src="images/imagem_3.jpg" alt="Planta 2 Dormitórios" onclick="openModal(this.src)">
                     <div class="planta-info">
                         <h4>2 Dormitórios</h4>
-                        <p>Apartamento funcional com 2 dormitórios, sala, cozinha, banheiro e área de serviço.</p>
+                        <p>Apartamento funcional com 2 dormitórios, sala integrada, cozinha americana e área de serviço.</p>
                     </div>
                 </div>
                 <div class="planta-item">
                     <img src="images/imagem_4.jpg" alt="Planta 2 Dormitórios - Opção 2" onclick="openModal(this.src)">
                     <div class="planta-info">
                         <h4>2 Dormitórios - Opção 2</h4>
-                        <p>Layout alternativo com distribuição otimizada dos ambientes.</p>
+                        <p>Layout alternativo com distribuição otimizada e varanda gourmet.</p>
                     </div>
                 </div>
                 <div class="planta-item">
                     <img src="images/imagem_5.jpg" alt="Planta 3 Dormitórios" onclick="openModal(this.src)">
                     <div class="planta-info">
                         <h4>3 Dormitórios</h4>
-                        <p>Apartamento amplo com 3 dormitórios, sendo 1 suíte, sala, cozinha e área de serviço.</p>
+                        <p>Apartamento amplo com 3 dormitórios, sendo 1 suíte, sala de estar e jantar.</p>
                     </div>
                 </div>
                 <div class="planta-item">
                     <img src="images/imagem_6.jpg" alt="Planta 3 Dormitórios - Opção 2" onclick="openModal(this.src)">
                     <div class="planta-info">
                         <h4>3 Dormitórios - Opção 2</h4>
-                        <p>Layout diferenciado com ambientes integrados e varanda gourmet.</p>
+                        <p>Layout diferenciado com ambientes integrados e terraço privativo.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Galeria Section -->
-    <section class="galeria">
+    <!-- Localização -->
+    <section class="localizacao" id="localizacao">
         <div class="container">
-            <h2 class="section-title">Galeria de Imagens</h2>
-            <div class="galeria-grid">
-                <div class="galeria-item">
-                    <img src="images/imagem_1.jpg" alt="Vista Externa do Empreendimento" onclick="openModal(this.src)">
-                </div>
-                <div class="galeria-item">
-                    <img src="images/imagem_7.jpg" alt="Área de Lazer" onclick="openModal(this.src)">
-                </div>
-                <div class="galeria-item">
-                    <img src="images/imagem_8.jpg" alt="Piscina" onclick="openModal(this.src)">
-                </div>
-                <div class="galeria-item">
-                    <img src="images/imagem_9.jpg" alt="Academia" onclick="openModal(this.src)">
-                </div>
-                <div class="galeria-item">
-                    <img src="images/imagem_10.jpg" alt="Vista Externa com Paisagismo" onclick="openModal(this.src)">
-                </div>
-                <div class="galeria-item">
-                    <img src="images/imagem_11.jpg" alt="Interior Decorado - Sala" onclick="openModal(this.src)">
-                </div>
-                <div class="galeria-item">
-                    <img src="images/imagem_12.jpg" alt="Interior Decorado - Dormitório" onclick="openModal(this.src)">
+            <div class="localizacao-content">
+                <h2>Localização Estratégica</h2>
+                <p>O Aurea Sky Taboão está localizado em uma das regiões mais valorizadas de Taboão da Serra, com fácil acesso a São Paulo e principais vias de transporte. A localização oferece conveniência e qualidade de vida, próximo a escolas, hospitais, shopping centers e áreas de lazer.</p>
+                
+                <div class="endereco">
+                    <h3>Endereço</h3>
+                    <p>Rua Principal, 123<br>
+                    Taboão da Serra - SP<br>
+                    CEP: 06760-000</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Action Buttons Section -->
-    <section class="action-buttons">
+    <!-- Contato -->
+    <section class="contato" id="contato">
         <div class="container">
-            <h2>Entre em Contato Agora!</h2>
-            <div class="buttons-grid">
-                <a href="https://wa.me/5511970988512" class="action-btn" target="_blank">
-                    <img src="images/corretor_on_line_fixo.jpg" alt="Fale com o Corretor Online">
+            <h2>Entre em Contato</h2>
+            <div class="contato-buttons">
+                <a href="https://wa.me/5511970988512" class="contato-btn whatsapp" target="_blank">
+                    📱 WhatsApp
                 </a>
-                <a href="https://imoveistaboao.com.br/caixa" class="action-btn">
-                    <img src="images/caixa_fixo.jpg" alt="Simule seu Financiamento CAIXA">
+                <a href="https://imoveistaboao.com.br/caixa" class="contato-btn">
+                    🏦 Simular Financiamento
                 </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Formulário Section -->
-    <section class="formulario">
-        <div class="container">
-            <div class="form-container">
-                <form name="agendamento-contato" netlify>
-                    <h3>Prefere Agendar o Contato?</h3>
-
-                    <p>
-                        <label for="nome">Nome:</label>
-                        <input type="text" name="nome" id="nome" required>
-                    </p>
-
-                    <p>
-                        <label for="whatsapp">WhatsApp:</label>
-                        <input type="tel" name="whatsapp" id="whatsapp" placeholder="(XX) XXXXX-XXXX" required>
-                    </p>
-
-                    <p>
-                        <label>Horário:</label>
-                        <div class="radio-group">
-                            <label>
-                                <input type="radio" name="horario" value="manha" required> Manhã
-                            </label>
-                            <label>
-                                <input type="radio" name="horario" value="tarde"> Tarde
-                            </label>
-                            <label>
-                                <input type="radio" name="horario" value="apos-18h"> Após 18 horas
-                            </label>
-                        </div>
-                    </p>
-
-                    <p>
-                        <button type="submit">Enviar Agendamento</button>
-                    </p>
-                </form>
+                <a href="tel:1197098-8512" class="contato-btn">
+                    📞 Ligar Agora
+                </a>
             </div>
         </div>
     </section>
@@ -568,12 +628,11 @@
     <footer class="footer">
         <div class="container">
             <p>&copy; 2024 Aurea Sky Taboão. Todos os direitos reservados.</p>
-            <p>WhatsApp: (11) 97098-8512</p>
             <p>Desenvolvido por Imóveis Taboão</p>
         </div>
     </footer>
 
-    <!-- Modal para imagens -->
+    <!-- Modal -->
     <div id="imageModal" class="modal">
         <span class="close" onclick="closeModal()">&times;</span>
         <img class="modal-content" id="modalImage">
@@ -603,7 +662,20 @@
                 closeModal();
             }
         });
+
+        // Smooth scroll para links internos
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
     </script>
 </body>
 </html>
-
