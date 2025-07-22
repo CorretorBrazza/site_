@@ -1,0 +1,254 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Seu Negócio de Sucesso</title>
+    <meta name="description" content="Transforme sua ideia em realidade com nossa solução inovadora" />
+    <meta name="author" content="Lovable" />
+
+    <meta property="og:title" content="Seu Negócio de Sucesso" />
+    <meta property="og:description" content="Transforme sua ideia em realidade com nossa solução inovadora" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://via.placeholder.com/800x400" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@lovable_dev" />
+    <meta name="twitter:image" content="https://via.placeholder.com/800x400" />
+
+    <style>
+      :root {
+        --primary-color: #007bff;
+        --secondary-color: #28a745;
+        --text-color: #333;
+        --background-color: #fff;
+        --font-family: 'Inter', Arial, Helvetica, sans-serif;
+      }
+
+      html {
+        box-sizing: border-box;
+        font-size: 16px;
+      }
+
+      *,
+      *:before,
+      *:after {
+        box-sizing: inherit;
+      }
+
+      body {
+        background: var(--background-color);
+        color: var(--text-color);
+        font-family: var(--font-family);
+        margin: 0;
+        padding: 0;
+      }
+
+      #root {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 0;
+      }
+
+      .hero {
+        width: 100%;
+        background: linear-gradient(90deg, var(--primary-color) 60%, var(--secondary-color) 100%);
+        color: #fff;
+        padding: 3rem 1.5rem 2rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .hero img {
+        max-width: 100%;
+        border-radius: 1rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 32px 0 rgba(0,0,0,0.08);
+      }
+
+      .hero-title {
+        font-size: 2.7rem;
+        font-weight: 800;
+        margin: 0 0 1rem 0;
+        line-height: 1.1;
+        letter-spacing: -2px;
+      }
+
+      .hero-subtitle {
+        font-size: 1.25rem;
+        font-weight: 400;
+        margin: 0 0 2rem 0;
+        opacity: 0.95;
+      }
+
+      .cta-btn {
+        display: inline-block;
+        background: #fff;
+        color: var(--primary-color);
+        font-weight: 700;
+        border: none;
+        border-radius: 2rem;
+        padding: 0.85rem 2.5rem;
+        font-size: 1.15rem;
+        text-decoration: none;
+        cursor: pointer;
+        box-shadow: 0 3px 16px 0 rgba(0, 123, 255, 0.08);
+        transition: background 0.15s, color 0.15s;
+        margin-top: 1rem;
+      }
+      .cta-btn:hover,
+      .cta-btn:focus {
+        background: var(--secondary-color);
+        color: #fff;
+        outline: none;
+      }
+
+      .benefits {
+        width: 100%;
+        max-width: 800px;
+        margin: 3rem auto 0 auto;
+        padding: 0 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .benefits-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        justify-content: center;
+        align-items: stretch;
+      }
+      .benefit {
+        background: #f4f8fc;
+        border-radius: 1rem;
+        padding: 1.6rem 1.3rem;
+        min-width: 220px;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 2px 14px 0 rgba(40, 167, 69, 0.06);
+        font-size: 1.11rem;
+        font-weight: 500;
+        color: var(--primary-color);
+        gap: 0.9rem;
+      }
+      .benefit-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.2rem;
+        height: 2.2rem;
+        border-radius: 100%;
+        background: var(--secondary-color);
+        color: #fff;
+        font-size: 1.1rem;
+        margin-right: 0.5rem;
+        flex-shrink: 0;
+      }
+
+      .testimonials {
+        margin: 3.5rem 0 2.5rem 0;
+        padding: 0 1.5rem;
+        width: 100%;
+        max-width: 700px;
+      }
+
+      .testimonial-card {
+        background: #fff;
+        border-radius: 1.1rem;
+        box-shadow: 0 4px 20px 0 rgba(0, 123, 255, 0.07);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .testimonial-text {
+        font-style: italic;
+        color: #434a54;
+        font-size: 1.18rem;
+        margin-bottom: 1.1rem;
+      }
+      .testimonial-author {
+        font-weight: 700;
+        color: var(--secondary-color);
+        font-size: 1rem;
+      }
+
+      @media (max-width: 800px) {
+        .benefits-list {
+          flex-direction: column;
+          gap: 1.3rem;
+        }
+        .benefit {
+          min-width: unset;
+        }
+        .hero img {
+          margin-bottom: 1.5rem;
+        }
+        .hero-title { font-size: 2rem; }
+      }
+      @media (max-width: 480px) {
+        .hero-title { font-size: 1.4rem; }
+        .benefit { font-size: 1rem; padding: 1.2rem 1rem; }
+        .hero-subtitle { font-size: 1rem; }
+        .testimonial-card { padding: 1.1rem; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="root">
+      <section class="hero">
+        <img src="https://via.placeholder.com/800x400" alt="Imagem ilustrativa do seu negócio de sucesso - hero image" />
+        <h1 class="hero-title">Seu Negócio de Sucesso</h1>
+        <p class="hero-subtitle">Transforme sua ideia em realidade com nossa solução inovadora</p>
+        <a class="cta-btn" href="#beneficios">Comece Agora</a>
+      </section>
+
+      <section class="benefits" id="beneficios">
+        <ul class="benefits-list">
+          <li class="benefit">
+            <span class="benefit-icon">
+              <!-- Fast Icon (Rocket) SVG -->
+              <svg width="21" height="21" fill="none" viewBox="0 0 20 20"><path fill="#fff" d="M9.14 12.324a1.863 1.863 0 1 0 0-3.726 1.863 1.863 0 0 0 0 3.726Z"/><path fill="#fff" fill-rule="evenodd" d="M15.972 2.767c.442.442.654.952.66 1.551.004.487-.135 1.07-.386 1.598-.25.526-.613 1.067-1.07 1.524l-1.185 1.185c-.092.091-.204.151-.33.171l-2.287.362a.417.417 0 0 0-.346.346l-.362 2.287a.417.417 0 0 1-.17.33l-1.186 1.186c-.456.456-.996.819-1.523 1.07-.528.25-1.111.39-1.599.385-.599-.006-1.108-.218-1.55-.66C1.31 10.353.728 8.713 1.583 7.146c.032-.06.067-.118.104-.176A7.783 7.783 0 0 1 7.329 1.688c.058-.037.117-.072.176-.103C8.713.728 10.353 1.31 12.232 3.188l1.185 1.184c.091.091.16.203.17.33l.362 2.288a.417.417 0 0 0 .346.346l2.287.362c.127.02.239.08.33.17ZM16.069 17.39c.063.063.096.13.103.2-.004.045-.02.12-.091.192-.072.07-.148.087-.193.09-.069-.006-.136-.04-.199-.103l-2.447-2.447c-.06-.061-.092-.129-.099-.199a.206.206 0 0 1 .09-.192c.073-.072.148-.088.193-.091.07.007.138.04.2.103l2.447 2.447Zm-1.847-1.847c.063.064.096.13.103.2-.004.046-.02.12-.092.192-.071.071-.148.088-.192.09-.07-.007-.137-.04-.2-.104L12.386 13.28c-.06-.06-.092-.127-.099-.198a.206.206 0 0 1 .092-.192c.073-.073.148-.089.193-.091.069.007.137.04.199.104l2.447 2.447Z" clip-rule="evenodd"/></svg>
+            </span>
+            Rápido e Eficiente
+          </li>
+          <li class="benefit">
+            <span class="benefit-icon">
+              <!-- Support Icon (Headset) SVG -->
+              <svg width="21" height="21" fill="none" viewBox="0 0 20 20"><path fill="#fff" d="M10 1.667C5.397 1.667 1.667 5.396 1.667 10v2.5c0 .92.746 1.666 1.666 1.666h1.667c.368 0 .667-.299.667-.666v-2.5c0-.367-.299-.667-.667-.667H4.167v-1.333A5.831 5.831 0 0 1 10 4.167c3.221 0 5.833 2.613 5.833 5.834v1.333h-.833c-.368 0-.667.3-.667.667v2.5c0 .367.299.667.667.667h1.666c.92 0 1.667-.746 1.667-1.667v-2.5c0-4.604-3.73-8.333-8.333-8.333Z"/><path fill="#fff" d="M7.5 16.667h5v-.834a1.667 1.667 0 0 0-1.666-1.666H9.167a1.667 1.667 0 0 0-1.667 1.666v.834Z"/></svg>
+            </span>
+            Suporte 24/7
+          </li>
+          <li class="benefit">
+            <span class="benefit-icon">
+              <!-- Guarantee Icon (Shield) SVG -->
+              <svg width="21" height="21" fill="none" viewBox="0 0 20 20"><path fill="#fff" d="M10 2.5c-.186 0-.373.042-.549.125L3.951 5.225A1.25 1.25 0 0 0 3.097 6.43c.52 6.106 5.592 8.624 6.318 8.967a1.253 1.253 0 0 0 1.17 0c.726-.343 5.798-2.861 6.318-8.967a1.25 1.25 0 0 0-.855-1.205l-5.5-2.6A1.25 1.25 0 0 0 10 2.5Z"/></svg>
+            </span>
+            Resultados Garantidos
+          </li>
+        </ul>
+      </section>
+
+      <section class="testimonials">
+        <div class="testimonial-card">
+          <p class="testimonial-text">"Excelente serviço!"</p>
+          <div class="testimonial-author">João Silva</div>
+        </div>
+      </section>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+```
