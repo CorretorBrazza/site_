@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abiatar Residence Tower - Apartamentos no Centro de Taboão da Serra</title>
+
+    <meta name="description" content="Abiatar Residence Tower - Apartamentos de 1 e 2 dormitórios com lazer completo no coração de Taboão da Serra. Entre Kalunga e Banco do Brasil.">
+    <meta name="keywords" content="Abiatar Residence Tower, apartamento Taboão da Serra, 1 dormitório, 2 dormitórios, centro Taboão, lazer completo">
+
+    <meta property="og:title" content="Abiatar Residence Tower - Apartamentos no Centro de Taboão da Serra">
+    <meta property="og:description" content="Apartamentos de 1 e 2 dormitórios com lazer completo no coração de Taboão da Serra.">
+    <meta property="og:image" content="https://imoveistaboao.com.br/images/logotipo-tower-residence.jpg">
+    <meta property="og:url" content="https://imoveistaboao.com.br/tower.html">
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Abiatar Residence Tower - Apartamentos no Centro de Taboão da Serra">
+    <meta name="twitter:description" content="Apartamentos de 1 e 2 dormitórios com lazer completo no coração de Taboão da Serra.">
+    <meta name="twitter:image" content="https://imoveistaboao.com.br/images/logotipo-tower-residence.jpg">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #1e293b;
+            background-color: #f8fafc;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 3px solid #0f172a;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo-img {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .whatsapp-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #25d366;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s;
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        .whatsapp-btn:hover {
+            background: #20bd5a;
+            transform: translateY(-2px);
+        }
+
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: white;
+            text-align: center;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+
+        .hero-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.5), rgba(0,0,0,0.7));
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            padding: 40px 20px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 20px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .hero-highlight {
+            color: #38bdf8;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+            margin-bottom: 40px;
+            opacity: 0.95;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #25d366;
+            color: white;
+            padding: 16px 32px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            min-height: 44px;
+        }
+
+        .btn-primary:hover {
+            background: #20bd5a;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            min-height: 44px;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .section {
+            padding: 80px 0;
+        }
+
+        .section-accent {
+            background: #f1f5f9;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(2rem, 4vw, 2.5rem);
+            margin-bottom: 16px;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #64748b;
+            margin-bottom: 60px;
+        }
+
+        .location-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #38bdf8;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 48px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: transform 0.3s;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-icon {
+            font-size: 4rem;
+            margin-bottom: 24px;
+        }
+
+        .card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 16px;
+            color: #0f172a;
+        }
+
+        .card p {
+            font-size: 1.1rem;
+            color: #64748b;
+        }
+
+        .grid {
+            display: grid;
+            gap: 24px;
+        }
+
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+        .grid-5 { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+
+        .amenity-card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            transition: all 0.3s;
+        }
+
+        .amenity-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .amenity-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+
+        .amenity-label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            aspect-ratio: 4/3;
+            cursor: pointer;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .plan-selector {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 48px;
+        }
+
+        .plan-btn {
+            padding: 16px 32px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-height: 44px;
+        }
+
+        .plan-btn.active {
+            background: #0f172a;
+            color: white;
+            border-color: #0f172a;
+        }
+
+        .plan-btn:hover:not(.active) {
+            border-color: #0f172a;
+        }
+
+        .plan-display {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .plan-card {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .plan-header {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .plan-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+            color: #0f172a;
+        }
+
+        .plan-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .plan-badge {
+            display: inline-block;
+            background: #f1f5f9;
+            color: #0f172a;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .plan-image-container {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .plan-image-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        .cta-section {
+            background: #0f172a;
+            color: white;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: clamp(2rem, 4vw, 2.5rem);
+            margin-bottom: 16px;
+        }
+
+        .cta-section p {
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .btn-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: #0f172a;
+            padding: 16px 48px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            min-height: 44px;
+        }
+
+        .btn-cta:hover {
+            background: #f1f5f9;
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            background: #020617;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .footer-logo {
+            height: 40px;
+            width: auto;
+            margin-bottom: 16px;
+            object-fit: contain;
+        }
+
+        .footer p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .floating-whatsapp {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1000;
+            background: #25d366;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+            transition: all 0.3s;
+            animation: pulse 2s infinite;
+            text-decoration: none;
+        }
+
+        .floating-whatsapp:hover {
+            background: #20bd5a;
+            transform: scale(1.1);
+        }
+
+        .floating-whatsapp svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4); }
+            50% { box-shadow: 0 4px 30px rgba(37, 211, 102, 0.6); }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .logo-img {
+                height: 40px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                width: 100%;
+                max-width: 300px;
+                margin: 0 auto;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .section {
+                padding: 60px 0;
+            }
+
+            .card {
+                padding: 32px 24px;
+            }
+
+            .plan-header {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-5 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <img src="images/logotipo-tower-residence.jpg" alt="Abiatar Residence Tower" class="logo-img">
+                <a href="https://wa.me/5511970988512?text=Ol%C3%A1%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20o%20Tower" class="whatsapp-btn" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                    </svg>
+                    <span>WhatsApp</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-bg">
+            <img src="images/tower-fachada.jpg" alt="Fachada do Abiatar Residence Tower">
+            <div class="hero-overlay"></div>
+        </div>
+
+        <div class="hero-content">
+            <div class="container">
+                <span class="badge">Lançamento</span>
+                <h1>
+                    Viva o Extraordinário no<br>
+                    <span class="hero-highlight">Abiatar Residence Tower</span>
+                </h1>
+                <p>Apartamentos de 1 e 2 dormitórios com lazer completo no coração de Taboão da Serra</p>
+
+                <div class="hero-buttons">
+                    <a href="https://wa.me/5511970988512?text=Ol%C3%A1%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20o%20Tower" class="btn-primary" target="_blank" rel="noopener noreferrer">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                        </svg>
+                        Fale Conosco
+                    </a>
+                    <button class="btn-secondary" onclick="document.getElementById('plantas').scrollIntoView({behavior: 'smooth'})">
+                        Ver Plantas
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-accent">
+        <div class="container">
+            <h2 class="section-title">Localização Privilegiada</h2>
+            <div class="location-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                </svg>
+                <span>Centro de Taboão da Serra</span>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🏢</div>
+                <h3>Entre a Kalunga e o Banco do Brasil</h3>
+                <p>No coração de Taboão da Serra, com comércio e serviços ao seu alcance</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Lazer Completo</h2>
+            <p class="section-subtitle">Uma infraestrutura pensada para o seu bem-estar e conforto</p>
+
+            <div class="grid grid-5">
+                <div class="amenity-card">
+                    <div class="amenity-icon">🏊‍♂️</div>
+                    <div class="amenity-label">Piscina</div>
+                </div>
+                <div class="amenity-card">
+                    <div class="amenity-icon">💪</div>
+                    <div class="amenity-label">Academia</div>
+                </div>
+                <div class="amenity-card">
+                    <div class="amenity-icon">🍽️</div>
+                    <div class="amenity-label">Salão de Festas</div>
+                </div>
+                <div class="amenity-card">
+                    <div class="amenity-icon">🏠</div>
+                    <div class="amenity-label">Home Office</div>
+                </div>
+                <div class="amenity-card">
+                    <div class="amenity-icon">👶</div>
+                    <div class="amenity-label">Playground</div>
+                </div>
+                <div class="amenity-card">
+                    <div class="amenity-icon">☀️</div>
+                    <div class="amenity-label">Deck Solar</div>
+                </div>
+                <div class="amenity-card">
+                    <div class="amenity-icon">🍖</div>
+                    <div class="amenity-label">Churrasqueira</div>
+                </div>
+                <div class="amenity-card">
+                    <div class="amenity-icon">🌳</div>
+                    <div class="amenity-label">Fitness Externo</div>
+                </div>
+                <div class="amenity-card">
+                    <div class="amenity-icon">🎮</div>
+                    <div class="amenity-label">Sala de Jogos</div>
+                </div>
+                <div class="amenity-card">
+                    <div class="amenity-icon">🛒</div>
+                    <div class="amenity-label">Mini Mercado</div>
+                </div>
+                <div class="amenity-card">
+                    <div class="amenity-icon">🌴</div>
+                    <div class="amenity-label">Redário</div>
+                </div>
+                <div class="amenity-card">
+                    <div class="amenity-icon">🧸</div>
+                    <div class="amenity-label">Brinquedoteca</div>
+                </div>
+                <div class="amenity-card">
+                    <div class="amenity-icon">☕</div>
+                    <div class="amenity-label">Lounge Caffe</div>
+                </div>
+                <div class="amenity-card">
+                    <div class="amenity-icon">🎵</div>
+                    <div class="amenity-label">Estúdio Música</div>
+                </div>
+                <div class="amenity-card">
+                    <div class="amenity-icon">🐾</div>
+                    <div class="amenity-label">Pet Place</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-accent">
+        <div class="container">
+            <h2 class="section-title">Conheça o Empreendimento</h2>
+            <p class="section-subtitle">Espaços projetados para proporcionar qualidade de vida</p>
+
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="images/tower-piscina.jpg" alt="Piscina com deck molhado do Abiatar Residence Tower" loading="lazy">
+                </div>
+                <div class="gallery-item">
+                    <img src="images/tower-academia.jpg" alt="Academia completa e moderna do Abiatar Residence Tower" loading="lazy">
+                </div>
+                <div class="gallery-item">
+                    <img src="images/tower-vista.jpg" alt="Vista panorâmica do empreendimento Abiatar Residence Tower" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="plantas" class="section">
+        <div class="container">
+            <h2 class="section-title">Opções de Plantas</h2>
+            <p class="section-subtitle">Apartamentos de 1 e 2 dormitórios com varanda integrada</p>
+
+            <div class="plan-selector">
+                <button class="plan-btn active" onclick="selectPlan(0)">41m²</button>
+                <button class="plan-btn" onclick="selectPlan(1)">40m²</button>
+                <button class="plan-btn" onclick="selectPlan(2)">46m²</button>
+            </div>
+
+            <div class="plan-display">
+                <div class="plan-card">
+                    <div class="plan-header">
+                        <div class="plan-info">
+                            <h3 id="plan-title">Plantas 1, 2, 12 e 13</h3>
+                            <div class="plan-badges">
+                                <span class="plan-badge" id="plan-area">41m²</span>
+                                <span class="plan-badge" id="plan-rooms">2 Dormitórios</span>
+                            </div>
+                        </div>
+                        <div>
+                            <a href="https://wa.me/5511970988512?text=Ol%C3%A1%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20o%20Tower" class="whatsapp-btn" style="width: 100%; justify-content: center;" target="_blank" rel="noopener noreferrer">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                                </svg>
+                                Saiba Mais
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="plan-image-container">
+                        <img id="plan-image" src="images/tower-planta-41m2.jpg" alt="Planta de 41m²" loading="lazy">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section cta-section">
+        <div class="container">
+            <span class="badge">Lançamento</span>
+            <h2>Não Perca Esta Oportunidade</h2>
+            <p>Entre em contato conosco e descubra como realizar o sonho do seu apartamento próprio no Centro de Taboão da Serra</p>
+
+            <a href="https://wa.me/5511970988512?text=Ol%C3%A1%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20o%20Tower" class="btn-cta" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                </svg>
+                Fale Conosco pelo WhatsApp
+            </a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <img src="images/logotipo-tower-residence.jpg" alt="Abiatar Residence Tower" class="footer-logo">
+            <p>&copy; 2024 Abiatar Residence Tower. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/5511970988512?text=Ol%C3%A1%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20o%20Tower" class="floating-whatsapp" target="_blank" rel="noopener noreferrer" aria-label="Fale conosco no WhatsApp">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+        </svg>
+    </a>
+
+    <script>
+        const plans = [
+            {
+                title: 'Plantas 1, 2, 12 e 13',
+                area: '41m²',
+                rooms: '2 Dormitórios',
+                image: 'images/tower-planta-41m2.jpg'
+            },
+            {
+                title: 'Plantas 3, 4, 5, 6, 8, 9, 10, 11',
+                area: '40m²',
+                rooms: '2 Dormitórios',
+                image: 'images/tower-planta-40m2.jpg'
+            },
+            {
+                title: 'Planta 7',
+                area: '46m²',
+                rooms: '2 Dormitórios',
+                image: 'images/tower-planta-46m2.jpg'
+            }
+        ];
+
+        function selectPlan(index) {
+            const buttons = document.querySelectorAll('.plan-btn');
+            buttons.forEach((btn, i) => {
+                if (i === index) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            const plan = plans[index];
+            document.getElementById('plan-title').textContent = plan.title;
+            document.getElementById('plan-area').textContent = plan.area;
+            document.getElementById('plan-rooms').textContent = plan.rooms;
+            document.getElementById('plan-image').src = plan.image;
+            document.getElementById('plan-image').alt = `Planta de ${plan.area}`;
+        }
+    </script>
+</body>
+</html>
