@@ -33,34 +33,50 @@ export default async function Home() {
             Casas e apartamentos em Taboão da Serra com a segurança e transparência que você merece.
           </p>
 
-          <Link
-            href="https://wa.me/5511932785602"
-            className="inline-flex bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-full font-bold transition-all items-center justify-center gap-2 group shadow-2xl"
-          >
-            Falar com um Corretor
-            <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
-          </Link>
+          <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
+            <Link
+              href="https://wa.me/5511932785602"
+              className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-full font-bold transition-all flex items-center justify-center gap-2 group shadow-2xl"
+            >
+              Falar com um Corretor
+              <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              href="#"
+              className="w-full md:w-auto bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/30 px-10 py-4 rounded-full font-bold transition-all flex items-center justify-center gap-2 group"
+            >
+              Imóveis na Planta
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* Categorias Rápidas */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <Link href="/venda?tipo=Casa" className="group relative h-64 rounded-3xl overflow-hidden shadow-lg border border-gray-100">
-              <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=600" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Casas" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-8">
-                <HomeIcon className="text-blue-400 mb-2" />
-                <h3 className="text-2xl font-bold text-white uppercase tracking-tight">Casas</h3>
-                <p className="text-gray-300 text-sm">Espaço e conforto para sua família</p>
-              </div>
-            </Link>
-            <Link href="/venda?tipo=Apartamento" className="group relative h-64 rounded-3xl overflow-hidden shadow-lg border border-gray-100">
-              <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80&w=600" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Apartamentos" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <Link href="#" className="group relative h-64 rounded-3xl overflow-hidden shadow-lg border border-gray-100">
+              <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=600" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Em Construção" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-8">
                 <Building2 className="text-blue-400 mb-2" />
-                <h3 className="text-2xl font-bold text-white uppercase tracking-tight">Apartamentos</h3>
-                <p className="text-gray-300 text-sm">Praticidade e localização privilegiada</p>
+                <h3 className="text-2xl font-bold text-white uppercase tracking-tight">Em Construção</h3>
+                <p className="text-gray-300 text-sm">Oportunidades únicas de investimento</p>
+              </div>
+            </Link>
+            <Link href="/venda" className="group relative h-64 rounded-3xl overflow-hidden shadow-lg border border-gray-100">
+              <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80&w=600" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Imóveis Prontos" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-8">
+                <HomeIcon className="text-blue-400 mb-2" />
+                <h3 className="text-2xl font-bold text-white uppercase tracking-tight">Imóveis Prontos</h3>
+                <p className="text-gray-300 text-sm">Mude-se agora com todo conforto</p>
+              </div>
+            </Link>
+            <Link href="/locacao" className="group relative h-64 rounded-3xl overflow-hidden shadow-lg border border-gray-100">
+              <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=80&w=600" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Locação" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-8">
+                <Map className="text-blue-400 mb-2" />
+                <h3 className="text-2xl font-bold text-white uppercase tracking-tight">Locação</h3>
+                <p className="text-gray-300 text-sm">As melhores opções para alugar</p>
               </div>
             </Link>
           </div>

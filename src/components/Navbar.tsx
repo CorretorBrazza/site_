@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Menu, X, Phone } from 'lucide-react';
+import { Menu, X, Phone, MessageCircle } from 'lucide-react';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,9 +36,9 @@ export default function Navbar() {
               href="https://wa.me/5511932785602"
               className="bg-blue-600 text-white px-5 py-2 md:px-6 md:py-2.5 rounded-full text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 flex items-center gap-2"
             >
-              <Phone size={16} className="md:hidden" />
+              <MessageCircle size={16} className="md:hidden" />
               <span className="hidden md:inline">Contato</span>
-              <span className="md:hidden">Ligar</span>
+              <span className="md:hidden">WhatsApp</span>
             </Link>
 
             {/* Mobile Menu Button */}
