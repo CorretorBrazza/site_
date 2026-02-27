@@ -1,0 +1,37 @@
+{
+  "referencia": "VD001",
+  "titulo": "APARTAMENTO LOCAÇÃO VILA PORTUGAL COM VAGA",
+  "descricao": "Condomínio Vila Portugal\n​02 Dormitórios + Sala, Cozinha e Lavanderia\n​Com vaga de garagem 🚗\n​Diferencial: Ao lado do Assaí e da Rod. Régis Bittencourt.\n​Valor: R$ 1.600,00 (Pacote)\n​⚠️ Observação: Condomínios simples, sem elevador e com ponto de ônibus a 150m.",
+  "transacao": "Venda",
+  "tipoImovel": "Casa",
+  "videoUrl": "",
+  "endereco": {
+    "rua": "",
+    "numero": "",
+    "bairro": "",
+    "cidade": "Taboão da Serra",
+    "estado": "SP",
+    "cep": ""
+  },
+  "caracteristicas": {
+    "quartos": 2,
+    "suites": 0,
+    "banheiros": 0,
+    "vagas": 1,
+    "areaUtil": 0,
+    "areaTotal": 0
+  },
+  "precoLocacao": 1600,
+  "destaque": true,
+  "status": "Ativo",
+  "fotos": [
+    "/uploads/imoveis/VD001/1772213398972-villa_portugal_(3).jpeg",
+    "/uploads/imoveis/VD001/1772213398989-villa_portugal_(4).jpeg",
+    "/uploads/imoveis/VD001/1772213398999-villa_portugal_(5).jpeg",
+    "/uploads/imoveis/VD001/1772213399005-villa_portugal_(6).jpeg",
+    "/uploads/imoveis/VD001/1772213399014-villa_portugal_(1).jpeg",
+    "/uploads/imoveis/VD001/1772213399020-villa_portugal_(2).jpeg"
+  ],
+  "id": "vd001",
+  "updatedAt": "2026-02-27T17:29:58.936Z"
+}
