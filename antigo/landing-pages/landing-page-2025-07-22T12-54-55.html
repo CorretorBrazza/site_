@@ -1,0 +1,472 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sua Solução Inovadora</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2260ff;
+      --primary-dark: #1542b2;
+      --secondary: #f5f7fa;
+      --accent: #ffb800;
+      --text: #222d3b;
+      --text-light: #57627a;
+      --white: #ffffff;
+      --gray: #e9ecef;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: var(--secondary);
+      line-height: 1.6;
+    }
+
+    header {
+      background: var(--white);
+      box-shadow: 0 2px 6px rgba(34,96,255,0.06);
+      padding: 0.5rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: var(--primary);
+      letter-spacing: 1px;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-weight: 500;
+      text-decoration: none;
+      color: var(--text);
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary-dark);
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(100deg, var(--primary) 60%, var(--primary-dark));
+      color: var(--white);
+      padding: 4.5rem 0 3.5rem 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-content {
+      max-width: 600px;
+      margin: 0 auto;
+      z-index: 1;
+      position: relative;
+    }
+
+    .hero h1 {
+      font-size: 2.8rem;
+      font-family: 'Montserrat', sans-serif;
+      margin-bottom: 1.2rem;
+      line-height: 1.1;
+      font-weight: 700;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      color: #e9ecef;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--primary-dark);
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 0.95rem 2.7rem;
+      border-radius: 50px;
+      border: none;
+      box-shadow: 0 4px 20px rgba(255,184,0,0.18);
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s, transform 0.1s;
+      text-decoration: none;
+    }
+    .cta-btn:hover {
+      background: #ffd45c;
+      color: var(--primary);
+      transform: translateY(-2px) scale(1.03);
+    }
+
+    /* Decorative bubbles */
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.17;
+      pointer-events: none;
+    }
+    .bubble1 { width: 120px; height: 120px; left: -60px; top: 50px; background: white; }
+    .bubble2 { width: 70px; height: 70px; right: 15%; top: 70px; background: var(--accent);}
+    .bubble3 { width: 42px; height: 42px; left: 30%; bottom: 25px; background: var(--white);}
+    .bubble4 { width: 85px; height: 85px; right: -62px; bottom: -18px; background: var(--primary-dark);}
+  
+    /* Benefits Section */
+    .benefits {
+      padding: 4rem 0 2.5rem 0;
+      background: var(--secondary);
+      text-align: center;
+    }
+    .benefits h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .benefits-list {
+      display: flex;
+      gap: 2.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .benefit {
+      background: var(--white);
+      border-radius: 18px;
+      box-shadow: 0 2px 10px rgba(34,96,255,0.06);
+      padding: 2rem 1.4rem;
+      max-width: 330px;
+      flex: 1 1 260px;
+      min-width: 230px;
+      margin-bottom: 1.7rem;
+      transition: box-shadow 0.22s, transform 0.2s;
+      text-align: left;
+    }
+    .benefit:hover {
+      box-shadow: 0 10px 38px rgba(34,96,255,0.13);
+      transform: translateY(-6px) scale(1.03);
+    }
+    .benefit-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--primary);
+      margin-bottom: 1rem;
+      color: var(--white);
+      font-size: 2rem;
+      box-shadow: 0 4px 14px rgba(34,96,255,0.08);
+    }
+    .benefit h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.26rem;
+      font-weight: 600;
+      margin-bottom: 0.65rem;
+      color: var(--primary-dark);
+    }
+    .benefit p {
+      color: var(--text-light);
+      font-size: 1rem;
+    }
+
+    /* Testimonials */
+    .testimonials {
+      padding: 3.2rem 0 2.8rem 0;
+      background: var(--gray);
+    }
+    .testimonials h2 {
+      text-align: center;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 2rem;
+      color: var(--text);
+      margin-bottom: 2.2rem;
+    }
+    .testimonials-list {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .testimonial {
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(34,96,255,0.07);
+      padding: 2.2rem 1.5rem 1.2rem 1.5rem;
+      max-width: 320px;
+      flex: 1 1 240px;
+      position: relative;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .testimonial:before {
+      content: "“";
+      font-size: 3.3rem;
+      color: var(--primary);
+      position: absolute;
+      left: 22px;
+      top: 8px;
+      opacity: 0.22;
+    }
+    .testimonial-text {
+      font-size: 1.06rem;
+      color: var(--text-light);
+      margin-bottom: 1.3rem;
+      margin-left: 22px;
+      margin-top: 0.8rem;
+    }
+    .testimonial-user {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+    .testimonial-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--primary);
+      background: var(--gray);
+    }
+    .testimonial-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .testimonial-name {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      color: var(--primary-dark);
+      font-size: 1rem;
+    }
+    .testimonial-job {
+      font-size: 0.93rem;
+      color: var(--text-light);
+      margin-top: 1px;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--primary-dark);
+      color: var(--white);
+      text-align: center;
+      padding: 2rem 1rem 1.2rem 1rem;
+      font-size: 1rem;
+      letter-spacing: 0.01em;
+      margin-top: 0;
+    }
+    .footer-links {
+      margin-bottom: 1rem;
+      display: flex;
+      gap: 1.8rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.17s;
+    }
+    .footer-links a:hover {
+      color: var(--white);
+      text-decoration: underline;
+    }
+    .footer-logo {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 1.15rem;
+      display: inline-block;
+      margin-bottom: 0.7rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 990px) {
+      .benefits-list, .testimonials-list {
+        gap: 1.2rem;
+      }
+    }
+    @media (max-width: 767px) {
+      nav {
+        flex-direction: column;
+        gap: 0.7rem;
+      }
+      .nav-links {
+        gap: 1.2rem;
+      }
+      .benefits-list,
+      .testimonials-list {
+        flex-direction: column;
+        align-items: center;
+      }
+      .hero {
+        padding: 2.7rem 0 1.5rem 0;
+      }
+      .benefits {
+        padding: 2rem 0 1rem 0;
+      }
+      .testimonials {
+        padding: 2rem 0 1.3rem 0;
+      }
+    }
+    @media (max-width: 480px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+      .benefits h2, .testimonials h2 {
+        font-size: 1.25rem;
+      }
+      .benefit, .testimonial {
+        padding: 1.3rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header & Navigation -->
+  <header>
+    <div class="container">
+      <nav>
+        <a href="#" class="logo" aria-label="Página inicial">InovaSoluções</a>
+        <ul class="nav-links">
+          <li><a href="#beneficios">Benefícios</a></li>
+          <li><a href="#depoimentos">Depoimentos</a></li>
+          <li><a href="#contato">Contato</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero" id="inicio">
+    <span class="bubble bubble1"></span>
+    <span class="bubble bubble2"></span>
+    <span class="bubble bubble3"></span>
+    <span class="bubble bubble4"></span>
+    <div class="container hero-content">
+      <h1>Transforme seu Negócio com Soluções Digitais Inteligentes</h1>
+      <p>Desenvolvemos plataformas inovadoras e personalizadas que impulsionam resultados.<br>
+      Simplifique processos, engaje clientes e destaque-se no mercado.</p>
+      <a href="#contato" class="cta-btn">Solicite uma Demonstração</a>
+    </div>
+  </section>
+
+  <!-- Benefits Section -->
+  <section class="benefits" id="beneficios">
+    <div class="container">
+      <h2>Por que escolher a InovaSoluções?</h2>
+      <div class="benefits-list">
+
+        <div class="benefit">
+          <div class="benefit-icon" style="background: var(--accent); color: var(--primary-dark);">
+            <!-- Icon: Rocket -->
+            <svg width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 23c6 0 10-6.5 10-14V4.9c0-.6-.4-1-1-1C8.5 3.9 3.9 8.5 3.9 23c0 .6.4 1 1 1H14z" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="14" cy="10" r="2" fill="currentColor"/></svg>
+          </div>
+          <h3>Implementação Ágil</h3>
+          <p>Lançamento rápido e acompanhamento especializado, sem complicações.</p>
+        </div>
+
+        <div class="benefit">
+          <div class="benefit-icon">
+            <!-- Icon: Shield/Check -->
+            <svg width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 25c8-4 9-8 9-13V7l-9-4-9 4v5c0 5 1 9 9 13z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 14l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Segurança e Estabilidade</h3>
+          <p>Soluções confiáveis com as melhores práticas de segurança digital.</p>
+        </div>
+
+        <div class="benefit">
+          <div class="benefit-icon" style="background: var(--accent); color: var(--primary-dark);">
+            <!-- Icon: Trending Up -->
+            <svg width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 18l6-6 5 5 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 20v-5h-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <h3>Resultados Visíveis</h3>
+          <p>Mensure o crescimento do seu negócio com ferramentas de análise eficazes.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials" id="depoimentos">
+    <div class="container">
+      <h2>O que nossos clientes dizem</h2>
+      <div class="testimonials-list">
+        
+        <div class="testimonial">
+          <div class="testimonial-text">Solução robusta, intuitiva e exatamente o que precisávamos! O suporte foi excepcional em todas as etapas.</div>
+          <div class="testimonial-user">
+            <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Mariana Souza" class="testimonial-avatar" loading="lazy">
+            <div class="testimonial-info">
+              <span class="testimonial-name">Mariana Souza</span>
+              <span class="testimonial-job">Gestora, AlfaTech</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial">
+          <div class="testimonial-text">Nosso processo foi otimizado em tempo recorde. A equipe surpreendeu pela agilidade e inovação!</div>
+          <div class="testimonial-user">
+            <img src="https://randomuser.me/api/portraits/men/33.jpg" alt="Carlos Meireles" class="testimonial-avatar" loading="lazy">
+            <div class="testimonial-info">
+              <span class="testimonial-name">Carlos Meireles</span>
+              <span class="testimonial-job">Diretor, MercadoFácil</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial">
+          <div class="testimonial-text">Recomendo sem hesitar! Profissionalismo e resultados acima das expectativas da nossa empresa.</div>
+          <div class="testimonial-user">
+            <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Aline Ribeiro" class="testimonial-avatar" loading="lazy">
+            <div class="testimonial-info">
+              <span class="testimonial-name">Aline Ribeiro</span>
+              <span class="testimonial-job">Empreendedora</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="contato">
+    <div class="footer-logo">InovaSoluções</div>
+    <div class="footer-links">
+      <a href="mailto:contato@inovasolucoes.com">contato@inovasolucoes.com</a>

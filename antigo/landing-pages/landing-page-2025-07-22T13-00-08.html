@@ -1,0 +1,479 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Landing Page Moderna</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #624AF2;
+      --primary-dark: #4833B7;
+      --secondary: #FAF6FF;
+      --accent: #FFB547;
+      --text: #232047;
+      --muted: #656580;
+      --bg: #FFFFFF;
+      --border-radius: 1rem;
+      --shadow: 0 2px 8px rgba(98,74,242,0.07);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--secondary);
+      color: var(--text);
+      font-family: 'Inter', Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      scroll-behavior: smooth;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* Header & Navigation */
+    header {
+      background: var(--bg);
+      box-shadow: var(--shadow);
+      padding: 0.5rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: var(--primary);
+      letter-spacing: -1px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+    .nav-links a {
+      font-weight: 500;
+      color: var(--muted);
+      transition: color .2s;
+      padding: .5rem;
+      border-radius: .5rem;
+    }
+    .nav-links a:hover {
+      color: var(--primary-dark);
+      background: var(--secondary);
+    }
+    /* Responsive navbar */
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 2rem;
+      cursor: pointer;
+      color: var(--primary);
+    }
+
+    /* Hero Section */
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 3rem;
+      padding: 3.5rem 0 2.5rem 0;
+      flex-wrap: wrap;
+    }
+    .hero-content {
+      flex: 1 1 330px;
+      min-width: 300px;
+    }
+    .hero-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin: 0 0 .7rem 0;
+      color: var(--primary-dark);
+      line-height: 1.15;
+    }
+    .hero-desc {
+      color: var(--muted);
+      font-size: 1.15rem;
+      margin-bottom: 2rem;
+      max-width: 470px;
+    }
+    .hero-cta {
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      color: #fff;
+      padding: 0.85rem 2.2rem;
+      font-size: 1.17rem;
+      border-radius: 2rem;
+      border: none;
+      font-weight: 600;
+      letter-spacing: .5px;
+      transition: background .2s, transform .2s;
+      box-shadow: 0 4px 20px rgba(98,74,242,0.12);
+      cursor: pointer;
+    }
+    .hero-cta:hover {
+      background: linear-gradient(90deg, var(--primary-dark), var(--accent));
+      transform: translateY(-2px) scale(1.03);
+    }
+    .hero-img {
+      flex: 1 1 350px;
+      text-align: right;
+      min-width: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .hero-img img {
+      max-width: 100%;
+      width: 360px;
+      min-width: 220px;
+      border-radius: 1.2rem;
+      box-shadow: 0px 6px 28px rgba(98,74,242,0.10);
+      border: 5px solid #fff;
+      background: #eee;
+    }
+
+    /* Features/Benefits Section */
+    .features {
+      background: var(--bg);
+      padding: 3rem 0 2.5rem 0;
+    }
+    .features-title {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 2rem;
+    }
+    .features-list {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .feature-box {
+      background: var(--secondary);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      flex: 1 1 250px;
+      max-width: 320px;
+      text-align: center;
+      padding: 2rem 1.5rem 1.5rem 1.5rem;
+      margin: 0.7rem 0;
+      transition: transform .17s;
+      border-bottom: 4px solid transparent;
+      min-width: 250px;
+    }
+    .feature-box:hover {
+      transform: translateY(-3px) scale(1.037);
+      border-bottom: 4px solid var(--primary);
+    }
+    .feature-icon {
+      font-size: 2.4rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+    .feature-title {
+      font-size: 1.19rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: .5rem;
+    }
+    .feature-desc {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 0;
+    }
+
+    /* Testimonials Section */
+    .testimonials {
+      background: linear-gradient(90deg, #f3edff 60%, #eaf9ff 100%);
+      padding: 3rem 0;
+    }
+    .testimonials-title {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 2rem;
+    }
+    .testimonials-list {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .testimonial-box {
+      background: var(--bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 2.2rem 1.4rem 2rem 1.4rem;
+      max-width: 340px;
+      min-width: 260px;
+      flex: 1 1 260px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .testimonial-photo {
+      width: 63px;
+      height: 63px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 1rem;
+      box-shadow: 0 3px 12px rgba(98,74,242,0.09);
+      border: 3px solid var(--secondary);
+    }
+    .testimonial-text {
+      font-size: 1.07rem;
+      color: var(--muted);
+      margin-bottom: 1.1rem;
+      text-align: center;
+    }
+    .testimonial-name {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 1.07rem;
+      margin-bottom: 0;
+    }
+    .testimonial-role {
+      font-size: .96rem;
+      color: var(--muted);
+      margin-bottom: 0;
+      font-weight: 500;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--primary-dark);
+      color: #fff;
+      padding: 2rem 0 1.1rem 0;
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.7rem;
+      margin-bottom: 1.2rem;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      color: #fff;
+      opacity: .87;
+      font-size: 1rem;
+      transition: opacity .15s;
+    }
+    .footer-links a:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+    .footer-copy {
+      color: #ececf7;
+      font-size: 0.97rem;
+      opacity: .82;
+      margin: 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 950px) {
+      .hero {
+        flex-direction: column-reverse;
+        text-align: center;
+        gap: 2rem;
+        padding: 2.8rem 0 2rem 0;
+      }
+      .hero-img {
+        justify-content: center;
+        text-align: center;
+      }
+      .hero-content, .hero-img {
+        min-width: 220px;
+        width: 100%;
+      }
+      .features-list,
+      .testimonials-list {
+        flex-direction: column;
+        align-items: center;
+      }
+      .feature-box,
+      .testimonial-box {
+        max-width: 440px !important;
+        width: 100%;
+      }
+    }
+    @media (max-width: 650px) {
+      .container { padding: 0 0.7rem; }
+      .features { padding: 2rem 0 1.5rem 0; }
+      .testimonials { padding: 2rem 0; }
+      .features-title,
+      .testimonials-title { font-size: 1.45rem; }
+      .hero-title { font-size: 1.6rem; }
+    }
+    @media (max-width: 750px) {
+      .nav-links {
+        position: absolute;
+        top: 68px;
+        right: 22px;
+        background: var(--bg);
+        flex-direction: column;
+        align-items: flex-start;
+        box-shadow: var(--shadow);
+        padding: 1.2rem 2.2rem 1.3rem 1.2rem;
+        gap: 1.1rem;
+        border-radius: 0 0 .9rem .9rem;
+        min-width: 170px;
+        z-index: 99;
+        display: none;
+        animation: fadeInNav .2s;
+      }
+      .nav-links.open {
+        display: flex;
+      }
+      .nav-toggle {
+        display: block;
+      }
+    }
+    @keyframes fadeInNav {
+      from {opacity: 0; transform: translateY(-12px);}
+      to {opacity: 1; transform: none;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <div class="logo">NovaChance</div>
+        <button class="nav-toggle" aria-label="Abrir navegação" aria-expanded="false">&#9776;</button>
+        <div class="nav-links" id="navLinks">
+          <a href="#hero">Início</a>
+          <a href="#features">Recursos</a>
+          <a href="#testimonials">Depoimentos</a>
+          <a href="#contato">Contato</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero container" id="hero">
+      <div class="hero-content">
+        <h1 class="hero-title">Dê um passo para o futuro.<br> Impulsione seu negócio agora!</h1>
+        <p class="hero-desc">Nossa solução digital conecta você ao sucesso. Tenha mais eficiência, satisfação de clientes e crescimento. Descubra como sua empresa pode evoluir hoje mesmo.</p>
+        <a href="#features"><button class="hero-cta">Comece Agora</button></a>
+      </div>
+      <div class="hero-img">
+        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80" alt="Crescimento digital">
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+      <div class="container">
+        <h2 class="features-title">Por que escolher a NovaChance?</h2>
+        <ul class="features-list">
+          <li class="feature-box">
+            <span class="feature-icon">🚀</span>
+            <h3 class="feature-title">Performance Superior</h3>
+            <p class="feature-desc">Tecnologia de ponta que garante velocidade, estabilidade e resultados reais para seu negócio.</p>
+          </li>
+          <li class="feature-box">
+            <span class="feature-icon">🛡️</span>
+            <h3 class="feature-title">Segurança Avançada</h3>
+            <p class="feature-desc">Seus dados protegidos com os melhores protocolos, garantindo privacidade e confiabilidade completa.</p>
+          </li>
+          <li class="feature-box">
+            <span class="feature-icon">🤝</span>
+            <h3 class="feature-title">Atendimento Personalizado</h3>
+            <p class="feature-desc">Equipe especializada sempre pronta para ajudar e orientar você a alcançar seus objetivos.</p>
+          </li>
+          <li class="feature-box">
+            <span class="feature-icon">🌱</span>
+            <h3 class="feature-title">Crescimento Escalável</h3>
+            <p class="feature-desc">Soluções moldáveis conforme a demanda da sua empresa, sem limites para você crescer.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+      <div class="container">
+        <h2 class="testimonials-title">Depoimentos de Clientes</h2>
+        <ul class="testimonials-list">
+          <li class="testimonial-box">
+            <img class="testimonial-photo" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Maria Silva">
+            <p class="testimonial-text">“Impressionada com o atendimento e a facilidade de uso da plataforma. A NovaChance realmente superou minhas expectativas!”</p>
+            <p class="testimonial-name">Maria Silva</p>
+            <p class="testimonial-role">Empresária</p>
+          </li>
+          <li class="testimonial-box">
+            <img class="testimonial-photo" src="https://randomuser.me/api/portraits/men/33.jpg" alt="Carlos Oliveira">
+            <p class="testimonial-text">“Garantiram total segurança para os meus dados. Hoje tenho tranquilidade e posso focar apenas no crescimento!”</p>
+            <p class="testimonial-name">Carlos Oliveira</p>
+            <p class="testimonial-role">Marketeiro Digital</p>
+          </li>
+          <li class="testimonial-box">
+            <img class="testimonial-photo" src="https://randomuser.me/api/portraits/women/55.jpg" alt="Fernanda Lima">
+            <p class="testimonial-text">“A escalabilidade do serviço é incrível. Conforme minha empresa cresce, a plataforma acompanha perfeitamente.”</p>
+            <p class="testimonial-name">Fernanda Lima</p>
+            <p class="testimonial-role">CEO Startup</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer id="contato">
+    <div class="container">
+      <div class="footer-links">
+        <a href="#hero">Início</a>
+        <a href="#features">Recursos</a>
+        <a href="#testimonials">Depoimentos</a>
+        <a href="mailto:contato@novachance.com">contato@novachance.com</a>
+      </div>
+      <p class="footer-copy">&copy; 2024 NovaChance. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Responsive Navbar Toggle
+    const navToggle = document.querySelector('.nav-toggle');
+    const navLinks = document.getElementById('navLinks');
+    navToggle.addEventListener('click', function() {
+      const expanded = navLinks.classList.toggle('open');
+      navToggle.setAttribute('aria-expanded', expanded ? "true" : "false");
+    });
+    // Close navbar on link click (in mobile)
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        if(window.innerWidth <= 750){
+          navLinks.classList.remove('open');
+          navToggle.setAttribute('aria-expanded','false');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+```

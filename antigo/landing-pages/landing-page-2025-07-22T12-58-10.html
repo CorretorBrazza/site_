@@ -1,0 +1,548 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Landing Page Moderna</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0056D6;
+      --primary-hover: #003e99;
+      --secondary: #3ad29f;
+      --bg: #f8fafc;
+      --white: #fff;
+      --gray: #525e75;
+      --danger: #ed5565;
+      --radius: 1rem;
+      --shadow: 0 4px 24px 0 rgba(64,72,101,0.07);
+      --transition: 0.2s cubic-bezier(.47,1.64,.41,.8);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Montserrat', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--gray);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+      transition: color var(--transition);
+    }
+
+    header {
+      background: var(--white);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .container {
+      max-width: 1100px;
+      width: 92%;
+      margin: 0 auto;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 70px;
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--primary);
+      letter-spacing: 1.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--gray);
+      font-weight: 500;
+      transition: color var(--transition);
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus {
+      color: var(--primary);
+    }
+
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 3.5rem 0 2.5rem 0;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+
+    .hero-content {
+      flex: 1 1 330px;
+      min-width: 260px;
+    }
+
+    .hero-title {
+      font-size: 2.6rem;
+      line-height: 1.1;
+      color: var(--primary);
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: 1px;
+    }
+
+    .hero-desc {
+      font-size: 1.25rem;
+      color: var(--gray);
+      margin-bottom: 2rem;
+      max-width: 470px;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      background: linear-gradient(90deg, var(--primary) 70%, var(--secondary) 100%);
+      color: var(--white);
+      font-weight: 700;
+      padding: 0.95rem 2.4rem;
+      border-radius: 2rem;
+      font-size: 1.1rem;
+      box-shadow: 0 2px 10px rgba(0,86,214,0.12);
+      border: none;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition);
+      letter-spacing: 0.5px;
+    }
+
+    .hero-cta:hover,
+    .hero-cta:focus {
+      background: linear-gradient(90deg, var(--primary-hover) 70%, var(--secondary) 100%);
+      transform: translateY(-2px) scale(1.04);
+    }
+
+    .hero-img {
+      flex: 1 1 320px;
+      display: flex;
+      justify-content: flex-end;
+      min-width: 260px;
+    }
+
+    .hero-img img {
+      width: 340px;
+      max-width: 100%;
+      border-radius: var(--radius);
+      box-shadow: 0 6px 36px 0 rgba(0,86,214,0.15);
+      object-fit: cover;
+    }
+
+    .benefits-section {
+      padding: 3.5rem 0 3rem 0;
+      background: var(--white);
+      border-radius: var(--radius);
+      margin-top: 2rem;
+      box-shadow: var(--shadow);
+    }
+
+    .benefits-title {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 2.1rem;
+      letter-spacing: 1px;
+    }
+
+    .benefits {
+      display: flex;
+      gap: 2.2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .benefit {
+      background: var(--bg);
+      border-radius: 0.75rem;
+      padding: 2rem 1.8rem;
+      width: 300px;
+      max-width: 100%;
+      text-align: center;
+      box-shadow: 0 2px 18px 0 rgba(64,72,101,0.06);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+
+    .benefit:hover,
+    .benefit:focus-within {
+      box-shadow: 0 4px 24px 0 rgba(64,72,101,0.12);
+      transform: translateY(-4px) scale(1.04);
+    }
+
+    .benefit-icon {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 1.2rem;
+      transition: color var(--transition);
+    }
+
+    .benefit-title {
+      font-size: 1.13rem;
+      font-weight: 600;
+      color: var(--gray);
+      margin-bottom: 0.7rem;
+      letter-spacing: 0.2px;
+    }
+
+    .benefit-desc {
+      color: #6c757d;
+      font-size: 1rem;
+      font-weight: 400;
+    }
+
+    .testimonials-section {
+      padding: 3.5rem 0;
+      margin-top: 2rem;
+      background: linear-gradient(95deg,#e8f3ff 60%,#f1fff7 100%);
+      border-radius: var(--radius);
+    }
+
+    .testimonials-title {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 2.1rem;
+      letter-spacing: 1px;
+    }
+
+    .testimonials {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: stretch;
+    }
+
+    .testimonial {
+      background: var(--white);
+      border-radius: 0.9rem;
+      padding: 2rem 1.5rem;
+      width: 320px;
+      max-width: 100%;
+      box-shadow: 0 2px 18px 0 rgba(0,86,214,0.09);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 0.3rem;
+      transition: transform var(--transition), box-shadow var(--transition);
+      position: relative;
+    }
+
+    .testimonial:hover,
+    .testimonial:focus-within {
+      box-shadow: 0 4px 24px 0 rgba(0,86,214,0.14);
+      transform: translateY(-4px) scale(1.03);
+    }
+
+    .testimonial-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--primary);
+      margin-bottom: 1.1rem;
+    }
+
+    .testimonial-content {
+      font-size: 1rem;
+      color: #525e75;
+      font-style: italic;
+      margin-bottom: 1.3rem;
+    }
+
+    .testimonial-name {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 1.07rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .testimonial-role {
+      font-size: 0.94rem;
+      color: #6c757d;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--primary);
+      color: var(--white);
+      margin-top: auto;
+    }
+
+    .footer-container {
+      max-width: 1100px;
+      width: 92%;
+      margin: 0 auto;
+      padding: 2rem 0 1rem 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .footer-logo {
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 0.6rem;
+      color: var(--white);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.2rem;
+      margin-bottom: 1.1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .footer-links a {
+      color: var(--white);
+      opacity: 0.88;
+      font-size: 0.97rem;
+      transition: opacity var(--transition);
+    }
+
+    .footer-links a:hover,
+    .footer-links a:focus {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
+    .footer-copy {
+      font-size: 0.96rem;
+      opacity: 0.67;
+      text-align: center;
+    }
+
+    /* Hamburger menu (mobile) */
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px;
+      margin-left: 18px;
+    }
+
+    .menu-bar {
+      display: block;
+      width: 28px;
+      height: 3px;
+      margin: 5px auto;
+      background-color: var(--primary);
+      border-radius: 2px;
+      transition: all var(--transition);
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        flex-direction: column-reverse;
+        text-align: center;
+        gap: 2.5rem;
+      }
+      .hero-img {
+        justify-content: center;
+      }
+      .hero-content {
+        align-items: center;
+        margin-top: 1.5rem;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .benefits,
+      .testimonials {
+        flex-direction: column;
+        gap: 2.5rem;
+        align-items: center;
+      }
+      .benefit,
+      .testimonial {
+        width: 95%;
+        min-width: 0;
+        margin: 0 auto;
+      }
+      nav {
+        height: 60px;
+      }
+      .container,
+      .footer-container {
+        width: 98%;
+      }
+    }
+
+    @media (max-width: 570px) {
+      .hero-title {
+        font-size: 1.89rem;
+      }
+      .testimonials-section,
+      .benefits-section {
+        padding: 2.2rem 0;
+      }
+      .benefits-title,
+      .testimonials-title {
+        font-size: 1.35rem;
+      }
+      .footer-container {
+        padding: 1.2rem 0 0.7rem 0;
+      }
+    }
+
+    /* Mobile menu */
+    @media (max-width: 600px) {
+      .nav-links {
+        position: absolute;
+        top: 65px;
+        left: 0;
+        width: 100%;
+        background: var(--white);
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.1rem;
+        padding: 1.2rem 7%;
+        box-shadow: 0 8px 32px 0 rgba(0,86,214,0.09);
+        pointer-events: none;
+        opacity: 0;
+        transition: all var(--transition);
+        z-index: 100;
+      }
+      .nav-links.open {
+        pointer-events: auto;
+        opacity: 1;
+      }
+      .menu-toggle {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header e Navegação -->
+  <header>
+    <div class="container">
+      <nav>
+        <span class="logo">SuaMarca</span>
+        <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-menu">
+          <span class="menu-bar"></span>
+          <span class="menu-bar"></span>
+          <span class="menu-bar"></span>
+        </button>
+        <ul class="nav-links" id="nav-menu">
+          <li><a href="#beneficios">Benefícios</a></li>
+          <li><a href="#depoimentos">Depoimentos</a></li>
+          <li><a href="#contato">Contato</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Seção Hero -->
+  <main class="container">
+    <section class="hero">
+      <div class="hero-content">
+        <h1 class="hero-title">Impulsione seu Negócio com <span style="color:var(--secondary);">Tecnologia</span> e Inovação</h1>
+        <p class="hero-desc">
+          Descubra como nossa solução pode transformar a experiência dos seus clientes e aumentar seus resultados. Fácil, rápido e eficiente para o seu negócio.
+        </p>
+        <a href="#contato" class="hero-cta">Quero saber mais</a>
+      </div>
+      <div class="hero-img">
+        <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=570&q=80" alt="Equipe tecnológica">
+      </div>
+    </section>
+
+    <!-- Seção Benefícios/Recursos -->
+    <section class="benefits-section" id="beneficios">
+      <h2 class="benefits-title">Por que escolher nossa solução?</h2>
+      <div class="benefits">
+        <div class="benefit" tabindex="0">
+          <div class="benefit-icon" aria-hidden="true">🚀</div>
+          <h3 class="benefit-title">Desempenho Imbatível</h3>
+          <p class="benefit-desc">
+            Tecnologia moderna que garante velocidade e máxima eficiência para o seu negócio crescer sem limites.
+          </p>
+        </div>
+        <div class="benefit" tabindex="0">
+          <div class="benefit-icon" aria-hidden="true">🔒</div>
+          <h3 class="benefit-title">Segurança Total</h3>
+          <p class="benefit-desc">
+            Proteção de dados de ponta a ponta, com conformidade e tranquilidade para você e seus clientes.
+          </p>
+        </div>
+        <div class="benefit" tabindex="0">
+          <div class="benefit-icon" aria-hidden="true">✨</div>
+          <h3 class="benefit-title">Simplicidade no Uso</h3>
+          <p class="benefit-desc">
+            Interface intuitiva e fácil de usar, mesmo para quem não tem experiência técnica.
+          </p>
+        </div>
+        <div class="benefit" tabindex="0">
+          <div class="benefit-icon" aria-hidden="true">🤝</div>
+          <h3 class="benefit-title">Suporte Premium</h3>
+          <p class="benefit-desc">
+            Equipe dedicada pronta para te ajudar sempre que precisar, 24 horas por dia, 7 dias por semana.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção Depoimentos -->
+    <section class="testimonials-section" id="depoimentos">
+      <h2 class="testimonials-title">O que nossos clientes dizem</h2>
+      <div class="testimonials">
+        <div class="testimonial" tabindex="0">
+          <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Depoimento João Almeida">
+          <p class="testimonial-content">
+            “A solução transformou nossos processos internos! Agilidade e eficiência se tornaram a marca registrada do nosso atendimento.”
+          </p>
+          <div class="testimonial-name">João Almeida</div>
+          <div class="testimonial-role">Diretor de Operações</div>
+        </div>
+        <div class="testimonial" tabindex="0">
+          <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Depoimento Mariana Souza">
+          <p class="testimonial-content">
+            “Nunca vi um suporte tão pró-ativo. A equipe resolve rápido e sempre me deixa confiante para focar no meu negócio.”
+          </p>
+          <div class="testimonial-name">Mariana Souza</div>
+          <div class="testimonial-role">Empreendedora Digital</div>
+        </div>
+        <div class="testimonial" tabindex="0">
+          <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/76.jpg" alt="Depoimento Carlos Henrique">
+          <p class="testimonial-content">
+            “Recomendo para qualquer empresa que busca inovação com segurança. Muito fácil de usar e resultados aparecem rápido!”
+          </p>
+          <div class="testimonial-name">Carlos Henrique</div>
+          <div class
