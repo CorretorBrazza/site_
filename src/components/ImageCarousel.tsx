@@ -10,6 +10,11 @@ interface ImageCarouselProps {
 
 export default function ImageCarousel({ images, alt }: ImageCarouselProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [touchStart, setTouchStart] = useState<number | null>(null);
+    const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+    // Distância mínima para considerar um swipe
+    const minSwipeDistance = 50;
 
     if (!images || images.length === 0) {
         return (
@@ -27,14 +32,42 @@ export default function ImageCarousel({ images, alt }: ImageCarouselProps) {
         setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
     };
 
+    const onTouchStart = (e: React.TouchEvent) => {
+        setTouchEnd(null);
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const onTouchMove = (e: React.TouchEvent) => {
+        setTouchEnd(e.targetTouches[0].clientX);
+    };
+
+    const onTouchEnd = () => {
+        if (!touchStart || !touchEnd) return;
+
+        const distance = touchStart - touchEnd;
+        const isLeftSwipe = distance > minSwipeDistance;
+        const isRightSwipe = distance < -minSwipeDistance;
+
+        if (isLeftSwipe) {
+            nextSlide();
+        } else if (isRightSwipe) {
+            prevSlide();
+        }
+    };
+
     return (
         <div className="relative group w-full">
             {/* Main Image */}
-            <div className="relative h-[350px] md:h-[550px] w-full overflow-hidden rounded-2xl shadow-xl bg-gray-100">
+            <div
+                className="relative h-[350px] md:h-[550px] w-full overflow-hidden rounded-2xl shadow-xl bg-gray-100"
+                onTouchStart={onTouchStart}
+                onTouchMove={onTouchMove}
+                onTouchEnd={onTouchEnd}
+            >
                 <img
                     src={images[currentIndex]}
                     alt={`${alt} - Foto ${currentIndex + 1}`}
-                    className="w-full h-full object-cover transition-all duration-700 ease-in-out"
+                    className="w-full h-full object-cover transition-all duration-700 ease-in-out pointer-events-none"
                 />
 
                 {/* Overlays */}

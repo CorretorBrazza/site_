@@ -46,10 +46,10 @@ export default function NovoImovel() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
       const data = new FormData();
-      
+
       // Prepara o objeto do imóvel (sem as fotos ainda, elas serão processadas no server)
       const imovelCompleto = {
         ...formData,
@@ -57,7 +57,7 @@ export default function NovoImovel() {
       };
 
       data.append('imovel', JSON.stringify(imovelCompleto));
-      
+
       // Adiciona cada arquivo de foto ao FormData
       selectedFiles.forEach(file => {
         data.append('fotos', file);
@@ -88,10 +88,37 @@ export default function NovoImovel() {
         {/* Seção 1: Informações Básicas */}
         <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
           <h2 className="text-lg font-bold border-b pb-2">Informações Básicas</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Transação</label>
+              <select
+                className="mt-1 block w-full border rounded-md p-2"
+                value={formData.transacao}
+                onChange={e => setFormData({ ...formData, transacao: e.target.value as any })}
+              >
+                <option value="Venda">Venda</option>
+                <option value="Locação">Locação</option>
+                <option value="Venda e Locação">Venda e Locação</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Tipo do Imóvel</label>
+              <select
+                className="mt-1 block w-full border rounded-md p-2"
+                value={formData.tipoImovel}
+                onChange={e => setFormData({ ...formData, tipoImovel: e.target.value })}
+              >
+                <option value="Casa">Casa</option>
+                <option value="Apartamento">Apartamento</option>
+                <option value="Terreno">Terreno</option>
+                <option value="Comercial">Comercial</option>
+              </select>
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="md:col-span-1">
               <label className="block text-sm font-medium text-gray-700">Referência</label>
-              <input 
+              <input
                 type="text" disabled
                 className="mt-1 block w-full border bg-gray-100 rounded-md p-2 text-gray-500 italic"
                 placeholder="Gerada automaticamente"
@@ -99,19 +126,19 @@ export default function NovoImovel() {
             </div>
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700">Título do Imóvel</label>
-              <input 
+              <input
                 type="text" required
                 className="mt-1 block w-full border rounded-md p-2"
-                onChange={e => setFormData({...formData, titulo: e.target.value})}
+                onChange={e => setFormData({ ...formData, titulo: e.target.value })}
               />
             </div>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Descrição Detalhada</label>
-            <textarea 
+            <textarea
               rows={4} required
               className="mt-1 block w-full border rounded-md p-2"
-              onChange={e => setFormData({...formData, descricao: e.target.value})}
+              onChange={e => setFormData({ ...formData, descricao: e.target.value })}
             />
           </div>
         </section>
@@ -121,9 +148,9 @@ export default function NovoImovel() {
           <h2 className="text-lg font-bold border-b pb-2">Mídia (Fotos e Vídeo)</h2>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Fotos do Imóvel (Selecione várias)</label>
-            <input 
-              type="file" 
-              multiple 
+            <input
+              type="file"
+              multiple
               accept="image/*"
               className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               onChange={handleFileChange}
@@ -134,11 +161,11 @@ export default function NovoImovel() {
           </div>
           <div className="pt-4">
             <label className="block text-sm font-medium text-gray-700">Link do Vídeo (YouTube/Vimeo)</label>
-            <input 
-              type="url" 
+            <input
+              type="url"
               placeholder="https://www.youtube.com/watch?v=..."
               className="mt-1 block w-full border rounded-md p-2"
-              onChange={e => setFormData({...formData, videoUrl: e.target.value})}
+              onChange={e => setFormData({ ...formData, videoUrl: e.target.value })}
             />
           </div>
         </section>
@@ -149,17 +176,17 @@ export default function NovoImovel() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="md:col-span-3">
               <label className="block text-sm font-medium text-gray-700">Rua/Logradouro</label>
-              <input type="text" className="mt-1 block w-full border rounded-md p-2" onChange={e => setFormData({...formData, endereco: {...formData.endereco, rua: e.target.value}})} />
+              <input type="text" className="mt-1 block w-full border rounded-md p-2" onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, rua: e.target.value } })} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Número</label>
-              <input type="text" className="mt-1 block w-full border rounded-md p-2" onChange={e => setFormData({...formData, endereco: {...formData.endereco, numero: e.target.value}})} />
+              <input type="text" className="mt-1 block w-full border rounded-md p-2" onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, numero: e.target.value } })} />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <input type="text" placeholder="Bairro" className="border rounded-md p-2" onChange={e => setFormData({...formData, endereco: {...formData.endereco, bairro: e.target.value}})} />
-            <input type="text" placeholder="Cidade" defaultValue="Taboão da Serra" className="border rounded-md p-2" onChange={e => setFormData({...formData, endereco: {...formData.endereco, cidade: e.target.value}})} />
-            <input type="text" placeholder="Estado" defaultValue="SP" className="border rounded-md p-2" onChange={e => setFormData({...formData, endereco: {...formData.endereco, estado: e.target.value}})} />
+            <input type="text" placeholder="Bairro" className="border rounded-md p-2" onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, bairro: e.target.value } })} />
+            <input type="text" placeholder="Cidade" defaultValue="Taboão da Serra" className="border rounded-md p-2" onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, cidade: e.target.value } })} />
+            <input type="text" placeholder="Estado" defaultValue="SP" className="border rounded-md p-2" onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, estado: e.target.value } })} />
           </div>
         </section>
 
@@ -169,46 +196,46 @@ export default function NovoImovel() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
               <label>Quartos</label>
-              <input type="number" className="block w-full border rounded-md p-2" onChange={e => setFormData({...formData, caracteristicas: {...formData.caracteristicas, quartos: Number(e.target.value)}})} />
+              <input type="number" className="block w-full border rounded-md p-2" onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, quartos: Number(e.target.value) } })} />
             </div>
             <div>
               <label>Suítes</label>
-              <input type="number" className="block w-full border rounded-md p-2" onChange={e => setFormData({...formData, caracteristicas: {...formData.caracteristicas, suites: Number(e.target.value)}})} />
+              <input type="number" className="block w-full border rounded-md p-2" onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, suites: Number(e.target.value) } })} />
             </div>
             <div>
               <label>Vagas</label>
-              <input type="number" className="block w-full border rounded-md p-2" onChange={e => setFormData({...formData, caracteristicas: {...formData.caracteristicas, vagas: Number(e.target.value)}})} />
+              <input type="number" className="block w-full border rounded-md p-2" onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, vagas: Number(e.target.value) } })} />
             </div>
             <div>
               <label>Área Útil (m²)</label>
-              <input type="number" className="block w-full border rounded-md p-2" onChange={e => setFormData({...formData, caracteristicas: {...formData.caracteristicas, areaUtil: Number(e.target.value)}})} />
+              <input type="number" className="block w-full border rounded-md p-2" onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, areaUtil: Number(e.target.value) } })} />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
             <div>
               <label className="block text-sm font-bold text-blue-700">Valor de Venda (R$)</label>
-              <input type="number" className="mt-1 block w-full border-2 border-blue-100 rounded-md p-2 outline-none" onChange={e => setFormData({...formData, precoVenda: Number(e.target.value)})} />
+              <input type="number" className="mt-1 block w-full border-2 border-blue-100 rounded-md p-2 outline-none" onChange={e => setFormData({ ...formData, precoVenda: Number(e.target.value) })} />
             </div>
             <div>
               <label className="block text-sm font-bold text-green-700">Valor de Locação (R$)</label>
-              <input type="number" className="mt-1 block w-full border-2 border-green-100 rounded-md p-2 outline-none" onChange={e => setFormData({...formData, precoLocacao: Number(e.target.value)})} />
+              <input type="number" className="mt-1 block w-full border-2 border-green-100 rounded-md p-2 outline-none" onChange={e => setFormData({ ...formData, precoLocacao: Number(e.target.value) })} />
             </div>
           </div>
           <div className="flex items-center gap-2 pt-4">
-            <input type="checkbox" id="destaque" className="w-5 h-5" onChange={e => setFormData({...formData, destaque: e.target.checked})} />
+            <input type="checkbox" id="destaque" className="w-5 h-5" onChange={e => setFormData({ ...formData, destaque: e.target.checked })} />
             <label htmlFor="destaque" className="font-semibold text-gray-700 cursor-pointer">Colocar em Destaque na Home</label>
           </div>
         </section>
 
         <div className="flex gap-4">
-          <button 
+          <button
             type="submit"
             disabled={loading}
             className={`flex-1 text-white py-4 rounded-xl font-bold text-lg shadow-lg transition-all ${loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
           >
             {loading ? 'Processando e Enviando...' : 'Salvar e Publicar Tudo'}
           </button>
-          <button 
+          <button
             type="button"
             onClick={() => router.push('/dashboard')}
             className="px-8 bg-gray-200 text-gray-700 py-4 rounded-xl font-bold hover:bg-gray-300"

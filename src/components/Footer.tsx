@@ -46,7 +46,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={18} className="text-blue-500 shrink-0" />
-                <span>contato@imoveistabao.com.br</span>
+                <span>contato@imoveistaboao.com.br</span>
               </li>
             </ul>
           </div>
