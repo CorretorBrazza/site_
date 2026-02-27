@@ -16,7 +16,7 @@
   "caracteristicas": {
     "quartos": 2,
     "suites": 0,
-    "banheiros": 0,
+    "banheiros": 1,
     "vagas": 1,
     "areaUtil": 0,
     "areaTotal": 0
@@ -33,5 +33,5 @@
     "/uploads/imoveis/VD001/1772213399020-villa_portugal_(2).jpeg"
   ],
   "id": "vd001",
-  "updatedAt": "2026-02-27T17:41:04.817Z"
+  "updatedAt": "2026-02-27T23:43:02.446Z"
 }
