@@ -2,8 +2,8 @@
   "referencia": "VD001",
   "titulo": "APARTAMENTO LOCAÇÃO VILA PORTUGAL COM VAGA",
   "descricao": "Condomínio Vila Portugal\n​02 Dormitórios + Sala, Cozinha e Lavanderia\n​Com vaga de garagem 🚗\n​Diferencial: Ao lado do Assaí e da Rod. Régis Bittencourt.\n​Valor: R$ 1.600,00 (Pacote)\n​⚠️ Observação: Condomínios simples, sem elevador e com ponto de ônibus a 150m.",
-  "transacao": "Venda",
-  "tipoImovel": "Casa",
+  "transacao": "Locação",
+  "tipoImovel": "Apartamento",
   "videoUrl": "",
   "endereco": {
     "rua": "",
@@ -33,5 +33,5 @@
     "/uploads/imoveis/VD001/1772213399020-villa_portugal_(2).jpeg"
   ],
   "id": "vd001",
-  "updatedAt": "2026-02-27T17:29:58.936Z"
+  "updatedAt": "2026-02-27T17:32:41.768Z"
 }
