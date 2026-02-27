@@ -1,4 +1,4 @@
-import { getImoveis } from '@/app/actions/imovel-actions';
+import { getImoveis } from '@/app/actions/imovel-server-actions';
 import CardImovel from '@/components/CardImovel';
 import Link from 'next/link';
 

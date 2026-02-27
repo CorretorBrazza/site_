@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { salvarEPublicarImovel } from '@/app/actions/imovel-actions';
+import { salvarEPublicarImovelAction } from '@/app/actions/imovel-server-actions';
 
 export default function NovoImovel() {
   const router = useRouter();
@@ -63,7 +63,7 @@ export default function NovoImovel() {
         data.append('fotos', file);
       });
 
-      const result = await salvarEPublicarImovel(data);
+      const result = await salvarEPublicarImovelAction(data);
 
       if (result.success) {
         alert('Imóvel e fotos publicados com sucesso!');

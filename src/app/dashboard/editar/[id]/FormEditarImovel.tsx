@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { salvarEPublicarImovel } from '@/app/actions/imovel-actions';
+import { salvarEPublicarImovelAction } from '@/app/actions/imovel-server-actions';
 import { Imovel } from '@/types/imovel';
 
 export default function FormEditarImovel({ imovel }: { imovel: Imovel }) {
@@ -23,14 +23,13 @@ export default function FormEditarImovel({ imovel }: { imovel: Imovel }) {
     
     try {
       const data = new FormData();
-      // Ao editar, mantemos o mesmo ID e Referência
       data.append('imovel', JSON.stringify(formData));
       
       selectedFiles.forEach(file => {
         data.append('fotos', file);
       });
 
-      const result = await salvarEPublicarImovel(data);
+      const result = await salvarEPublicarImovelAction(data);
 
       if (result.success) {
         alert('Imóvel atualizado com sucesso!');
@@ -106,7 +105,7 @@ export default function FormEditarImovel({ imovel }: { imovel: Imovel }) {
       <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
         <h2 className="text-lg font-bold border-b pb-2">Mídia</h2>
         <div className="flex gap-4 overflow-x-auto py-2">
-          {formData.fotos.map((foto, idx) => (
+          {formData.fotos && formData.fotos.map((foto, idx) => (
             <img key={idx} src={foto} alt="Atual" className="h-20 w-20 object-cover rounded border" />
           ))}
         </div>

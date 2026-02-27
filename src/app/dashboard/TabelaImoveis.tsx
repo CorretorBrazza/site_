@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Imovel } from '@/types/imovel';
-import { excluirImovel } from '@/app/actions/imovel-actions';
+import { excluirImovelAction } from '@/app/actions/imovel-server-actions';
 import { useState } from 'react';
 
 interface TabelaImoveisProps {
