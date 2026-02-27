@@ -2,24 +2,36 @@ import Link from 'next/link';
 
 export default function Navbar() {
   return (
-    <nav className="bg-white border-b sticky top-0 z-50">
+    <nav className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
+        <div className="flex justify-between h-20 items-center">
           <div className="flex-shrink-0">
-            <Link href="/" className="text-2xl font-bold text-blue-700">
-              Imóveis <span className="text-gray-800 text-base font-medium">Taboão</span>
+            <Link href="/" className="group flex flex-col">
+              <span className="text-2xl font-black text-blue-700 tracking-tight leading-none group-hover:text-blue-800 transition-colors">
+                IMÓVEIS
+              </span>
+              <span className="text-xs font-bold text-gray-500 tracking-[0.2em] leading-none mt-1">
+                TABOÃO DA SERRA
+              </span>
             </Link>
           </div>
-          <div className="flex gap-2 sm:gap-4 items-center">
-            <div className="flex space-x-3 sm:space-x-6 mr-2 sm:mr-6">
-              <Link href="/venda" className="text-gray-600 hover:text-blue-700 text-sm sm:text-base font-medium transition-colors">Venda</Link>
-              <Link href="/locacao" className="text-gray-600 hover:text-blue-700 text-sm sm:text-base font-medium transition-colors">Locação</Link>
-            </div>
-            {process.env.NODE_ENV === 'development' && (
-              <Link href="/dashboard" className="bg-blue-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold hover:bg-blue-700 transition-all shadow-sm">
-                Dash
+          
+          <div className="flex items-center gap-8">
+            <div className="hidden md:flex space-x-8">
+              <Link href="/venda" className="text-gray-600 hover:text-blue-700 font-semibold transition-colors">
+                Comprar
               </Link>
-            )}
+              <Link href="/locacao" className="text-gray-600 hover:text-blue-700 font-semibold transition-colors">
+                Alugar
+              </Link>
+            </div>
+            
+            <Link 
+              href="https://wa.me/5511932785602" 
+              className="bg-blue-600 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
+            >
+              Contato
+            </Link>
           </div>
         </div>
       </div>

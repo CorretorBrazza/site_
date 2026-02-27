@@ -1,5 +1,6 @@
 import { Imovel } from '@/types/imovel';
 import Link from 'next/link';
+import { BedDouble, ShowerHead, Car, Maximize } from 'lucide-react';
 
 interface CardImovelProps {
   imovel: Imovel;
@@ -17,51 +18,57 @@ export default function CardImovel({ imovel }: CardImovelProps) {
 
   return (
     <Link href={`/imovel/${imovel.id}`} className="block group">
-      <div className="bg-white rounded-lg shadow-md overflow-hidden group-hover:shadow-xl transition-shadow duration-300 border border-gray-100 h-full">
-        <div className="relative h-48 w-full">
+      <div className="bg-white rounded-2xl shadow-sm hover:shadow-2xl hover:shadow-blue-900/10 overflow-hidden transition-all duration-500 border border-gray-100 h-full flex flex-col">
+        <div className="relative h-64 w-full overflow-hidden">
           <img
             src={imovel.fotos[0]}
             alt={imovel.titulo}
-            className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+            className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700"
           />
-          <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded">
-            {imovel.transacao}
-          </div>
-          {imovel.destaque && (
-            <div className="absolute top-2 right-2 bg-yellow-400 text-gray-900 text-[10px] font-bold px-2 py-1 rounded uppercase">
-              Destaque
+          <div className="absolute top-4 left-4 flex gap-2">
+            <div className="bg-blue-600 text-white text-[10px] uppercase tracking-wider font-black px-3 py-1.5 rounded-full shadow-lg">
+              {imovel.transacao}
             </div>
-          )}
+            {imovel.destaque && (
+              <div className="bg-white/90 backdrop-blur-sm text-blue-900 text-[10px] uppercase tracking-wider font-black px-3 py-1.5 rounded-full shadow-lg">
+                Destaque
+              </div>
+            )}
+          </div>
         </div>
-        
-        <div className="p-4">
-          <p className="text-blue-700 font-bold text-xl mb-1">
-            {preco ? formatCurrency(preco) : 'Consulte'}
-            {imovel.transacao === 'Locação' && <span className="text-sm font-normal text-gray-500"> /mês</span>}
-          </p>
-          <h3 className="text-gray-800 font-semibold text-lg line-clamp-1 mb-1 group-hover:text-blue-700 transition-colors">
+
+        <div className="p-6 flex flex-col flex-grow">
+          <div className="mb-4">
+            <p className="text-2xl font-black text-blue-700 leading-none">
+              {preco ? formatCurrency(preco) : 'Consulte'}
+              {imovel.transacao === 'Locação' && <span className="text-sm font-bold text-gray-400"> /mês</span>}
+            </p>
+          </div>
+
+          <h3 className="text-gray-900 font-bold text-xl line-clamp-2 mb-2 group-hover:text-blue-700 transition-colors leading-tight">
             {imovel.titulo}
           </h3>
-          <p className="text-gray-500 text-sm mb-4">
+
+          <p className="text-gray-500 text-sm font-medium mb-6">
             {imovel.endereco.bairro}, {imovel.endereco.cidade}
           </p>
-          
-          <div className="flex justify-between items-center text-gray-600 text-sm border-t pt-3">
-            <div className="flex items-center gap-1" title="Quartos">
-              <span>🛏️</span>
-              <span>{imovel.caracteristicas.quartos}</span>
+
+          <div className="mt-auto grid grid-cols-4 gap-2 text-gray-600 border-t border-gray-50 pt-6">
+            <div className="flex flex-col items-center gap-1" title="Quartos">
+              <BedDouble size={18} className="text-blue-500" />
+              <span className="text-[10px] font-bold uppercase text-gray-400">{imovel.caracteristicas.quartos} Qts</span>
             </div>
-            <div className="flex items-center gap-1" title="Banheiros">
-              <span>🚿</span>
-              <span>{imovel.caracteristicas.banheiros}</span>
+            <div className="flex flex-col items-center gap-1" title="Banheiros">
+              <ShowerHead size={18} className="text-blue-500" />
+              <span className="text-[10px] font-bold uppercase text-gray-400">{imovel.caracteristicas.banheiros} Ban</span>
             </div>
-            <div className="flex items-center gap-1" title="Vagas">
-              <span>🚗</span>
-              <span>{imovel.caracteristicas.vagas}</span>
+            <div className="flex flex-col items-center gap-1" title="Vagas">
+              <Car size={18} className="text-blue-500" />
+              <span className="text-[10px] font-bold uppercase text-gray-400">{imovel.caracteristicas.vagas} Vag</span>
             </div>
-            <div className="flex items-center gap-1" title="Área Útil">
-              <span>📏</span>
-              <span>{imovel.caracteristicas.areaUtil}m²</span>
+            <div className="flex flex-col items-center gap-1" title="Área Útil">
+              <Maximize size={18} className="text-blue-500" />
+              <span className="text-[10px] font-bold uppercase text-gray-400">{imovel.caracteristicas.areaUtil}m²</span>
             </div>
           </div>
         </div>
