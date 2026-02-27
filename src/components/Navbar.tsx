@@ -24,11 +24,14 @@ export default function Navbar() {
 
           <div className="flex items-center gap-4 md:gap-8">
             <div className="hidden md:flex space-x-8">
+              <Link href="#" className="text-gray-600 hover:text-blue-700 font-semibold transition-colors">
+                Imóveis em Construção
+              </Link>
               <Link href="/venda" className="text-gray-600 hover:text-blue-700 font-semibold transition-colors">
-                Comprar
+                Imóveis Prontos
               </Link>
               <Link href="/locacao" className="text-gray-600 hover:text-blue-700 font-semibold transition-colors">
-                Alugar
+                Imóveis para Locação
               </Link>
             </div>
 

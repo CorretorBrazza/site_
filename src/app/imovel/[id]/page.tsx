@@ -2,6 +2,7 @@ import { getImoveis } from '@/app/actions/imovel-server-actions';
 import { notFound } from 'next/navigation';
 
 import ImageCarousel from '@/components/ImageCarousel';
+import ShareButton from '@/components/ShareButton';
 
 export default async function ImovelDetalhes({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
