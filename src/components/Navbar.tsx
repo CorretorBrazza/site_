@@ -15,9 +15,11 @@ export default function Navbar() {
               <Link href="/venda" className="text-gray-600 hover:text-blue-700 font-medium transition-colors">Venda</Link>
               <Link href="/locacao" className="text-gray-600 hover:text-blue-700 font-medium transition-colors">Locação</Link>
             </div>
-            <Link href="/dashboard" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-all shadow-sm">
-              Dashboard
-            </Link>
+            {process.env.NODE_ENV === 'development' && (
+              <Link href="/dashboard" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-all shadow-sm">
+                Dashboard
+              </Link>
+            )}
           </div>
         </div>
       </div>
