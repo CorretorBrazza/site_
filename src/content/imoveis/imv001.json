@@ -1,0 +1,30 @@
+{
+  "id": "imv001",
+  "referencia": "IMV001",
+  "titulo": "Casa de Teste no Centro de Taboão",
+  "descricao": "Esta é uma casa de teste cadastrada para validar o novo sistema de Dashboard e Deploy Automático.",
+  "transacao": "Venda",
+  "tipoImovel": "Casa",
+  "endereco": {
+    "rua": "Rua Principal",
+    "numero": "100",
+    "bairro": "Centro",
+    "cidade": "Taboão da Serra",
+    "estado": "SP",
+    "cep": "06763-000"
+  },
+  "caracteristicas": {
+    "quartos": 3,
+    "suites": 1,
+    "banheiros: 2,
+    "vagas": 2,
+    "areaUtil": 120,
+    "areaTotal": 200
+  },
+  "precoVenda": 550000,
+  "fotos": ["https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&q=80&w=800"],
+  "status": "Ativo",
+  "destaque": true,
+  "createdAt": "2026-02-27T10:00:00.000Z",
+  "updatedAt": "2026-02-27T10:00:00.000Z"
+}
