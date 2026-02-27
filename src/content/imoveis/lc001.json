@@ -1,9 +1,9 @@
 {
   "referencia": "LC001",
-  "titulo": "APARTAMENTO LOCAÇÃO 2 DORMITÓRIOS COM VAGA",
-  "descricao": "Condomínio Vila Portugal\n​02 Dormitórios + Sala, Cozinha e Lavanderia\n​Com vaga de garagem 🚗\n​Diferencial: Ao lado do Assaí e da Rod. Régis Bittencourt.\n​Valor: R$ 1.600,00 (Pacote)\n​⚠️ Observação: Condomínios simples, sem elevador e com ponto de ônibus a 150m.",
-  "transacao": "Locação",
-  "tipoImovel": "Apartamento",
+  "titulo": "APARTAMENTO LOCAÇÃO FIT TABOÃO",
+  "descricao": "Condomínio Fit Taboão\n​02 Dormitórios + Sala, Cozinha e Lavanderia\nPonto de ônibus na porte!\n​Valor: R$ 1.500,00 (Pacote)\n​⚠️ Observação: Condomínios simples, sem elevador!",
+  "transacao": "Venda",
+  "tipoImovel": "Casa",
   "videoUrl": "",
   "endereco": {
     "rua": "",
@@ -14,24 +14,25 @@
     "cep": ""
   },
   "caracteristicas": {
-    "quartos": 0,
+    "quartos": 2,
     "suites": 0,
     "banheiros": 0,
     "vagas": 0,
     "areaUtil": 0,
     "areaTotal": 0
   },
-  "precoLocacao": 1600,
-  "destaque": true,
+  "precoLocacao": 1500,
+  "destaque": false,
   "status": "Ativo",
   "fotos": [
-    "/uploads/imoveis/LC001/1772196111740-villa_portugal_(3).jpeg",
-    "/uploads/imoveis/LC001/1772196111756-villa_portugal_(4).jpeg",
-    "/uploads/imoveis/LC001/1772196111760-villa_portugal_(5).jpeg",
-    "/uploads/imoveis/LC001/1772196111764-villa_portugal_(6).jpeg",
-    "/uploads/imoveis/LC001/1772196111772-villa_portugal_(1).jpeg",
-    "/uploads/imoveis/LC001/1772196111783-villa_portugal_(2).jpeg"
+    "/uploads/imoveis/LC001/1772206429609-fit_taboao_(1).jpeg",
+    "/uploads/imoveis/LC001/1772206429621-fit_taboao_(2).jpeg",
+    "/uploads/imoveis/LC001/1772206429626-fit_taboao_(3).jpeg",
+    "/uploads/imoveis/LC001/1772206429630-fit_taboao_(4).jpeg",
+    "/uploads/imoveis/LC001/1772206429633-fit_taboao_(5).jpeg",
+    "/uploads/imoveis/LC001/1772206429647-fit_taboao_(6).jpeg",
+    "/uploads/imoveis/LC001/1772206429656-fit_taboao_(7).jpeg"
   ],
   "id": "lc001",
-  "updatedAt": "2026-02-27T15:30:15.574Z"
+  "updatedAt": "2026-02-27T15:33:49.588Z"
 }
