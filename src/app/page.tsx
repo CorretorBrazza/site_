@@ -41,12 +41,6 @@ export default async function Home() {
               Falar com um Corretor
               <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </Link>
-            <Link
-              href="#"
-              className="w-full md:w-auto bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/30 px-10 py-4 rounded-full font-bold transition-all flex items-center justify-center gap-2 group"
-            >
-              Imóveis na Planta
-            </Link>
           </div>
         </div>
       </section>
@@ -56,7 +50,7 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <Link href="#" className="group relative h-64 rounded-3xl overflow-hidden shadow-lg border border-gray-100">
-              <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=600" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Em Construção" />
+              <img src="https://images.unsplash.com/photo-1541888946425-d81bb19480c5?auto=format&fit=crop&q=80&w=800" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Imóveis em Construção" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-8">
                 <Building2 className="text-blue-400 mb-2" />
                 <h3 className="text-2xl font-bold text-white uppercase tracking-tight">Em Construção</h3>

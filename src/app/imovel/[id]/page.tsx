@@ -23,14 +23,19 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
       {/* Header Info */}
-      <div className="mb-8">
-        <div className="flex flex-wrap items-center gap-2 mb-2 text-sm text-gray-500 font-bold uppercase tracking-wider">
-          <span className="text-blue-600">{imovel.transacao}</span>
-          <span className="text-gray-300">•</span>
-          <span>Ref: {imovel.referencia}</span>
+      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+          <div className="flex flex-wrap items-center gap-2 mb-2 text-sm text-gray-500 font-bold uppercase tracking-wider">
+            <span className="text-blue-600">{imovel.transacao}</span>
+            <span className="text-gray-300">•</span>
+            <span>Ref: {imovel.referencia}</span>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight mb-2 leading-tight">{imovel.titulo}</h1>
+          <p className="text-gray-500 font-medium">{imovel.endereco.bairro}, {imovel.endereco.cidade} - {imovel.endereco.estado}</p>
         </div>
-        <h1 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight mb-2 leading-tight">{imovel.titulo}</h1>
-        <p className="text-gray-500 font-medium">{imovel.endereco.bairro}, {imovel.endereco.cidade} - {imovel.endereco.estado}</p>
+        <div className="flex shrink-0">
+          <ShareButton />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">

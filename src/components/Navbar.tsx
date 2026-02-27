@@ -57,18 +57,25 @@ export default function Navbar() {
         <div className="md:hidden bg-white border-b absolute w-full left-0 animate-in fade-in slide-in-from-top-4 duration-300">
           <div className="px-4 py-6 space-y-4">
             <Link
+              href="#"
+              onClick={() => setIsOpen(false)}
+              className="block text-lg font-bold text-gray-900 hover:text-blue-700 py-2 border-b border-gray-50"
+            >
+              Imóveis em Construção
+            </Link>
+            <Link
               href="/venda"
               onClick={() => setIsOpen(false)}
               className="block text-lg font-bold text-gray-900 hover:text-blue-700 py-2 border-b border-gray-50"
             >
-              Comprar Imóvel
+              Imóveis Prontos
             </Link>
             <Link
               href="/locacao"
               onClick={() => setIsOpen(false)}
               className="block text-lg font-bold text-gray-900 hover:text-blue-700 py-2 border-b border-gray-50"
             >
-              Alugar Imóvel
+              Imóveis Locação
             </Link>
             <Link
               href="/institucional"
