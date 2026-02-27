@@ -42,15 +42,16 @@ export default function Footer() {
               </ul>
             </div>
           </div>
+        </div>
 
-          <div className="border-t border-gray-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-500 text-xs">
-            <p>&copy; {new Date().getFullYear()} Imóveis Taboão da Serra. Todos os direitos reservados.</p>
-            <div className="flex gap-6">
-              <Link href="/privacidade" className="hover:text-white transition-colors">Privacidade</Link>
-              <Link href="/termos" className="hover:text-white transition-colors">Termos de Uso</Link>
-            </div>
+        <div className="border-t border-gray-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-500 text-xs">
+          <p>&copy; {new Date().getFullYear()} Imóveis Taboão da Serra. Todos os direitos reservados.</p>
+          <div className="flex gap-6">
+            <Link href="/privacidade" className="hover:text-white transition-colors">Privacidade</Link>
+            <Link href="/termos" className="hover:text-white transition-colors">Termos de Uso</Link>
           </div>
         </div>
+      </div>
     </footer>
   );
 }
