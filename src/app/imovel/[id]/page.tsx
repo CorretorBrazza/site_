@@ -1,6 +1,8 @@
 import { getImoveis } from '@/app/actions/imovel-server-actions';
 import { notFound } from 'next/navigation';
 
+import ImageCarousel from '@/components/ImageCarousel';
+
 export default async function ImovelDetalhes({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const imoveis = await getImoveis();
@@ -22,36 +24,20 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
     <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
       {/* Header Info */}
       <div className="mb-8">
-        <div className="flex flex-wrap items-center gap-2 mb-2 text-sm text-gray-500">
-          <span>{imovel.transacao}</span>
-          <span>•</span>
+        <div className="flex flex-wrap items-center gap-2 mb-2 text-sm text-gray-500 font-bold uppercase tracking-wider">
+          <span className="text-blue-600">{imovel.transacao}</span>
+          <span className="text-gray-300">•</span>
           <span>Ref: {imovel.referencia}</span>
         </div>
-        <h1 className="text-3xl font-bold text-gray-900">{imovel.titulo}</h1>
-        <p className="text-gray-600">{imovel.endereco.bairro}, {imovel.endereco.cidade} - {imovel.endereco.estado}</p>
+        <h1 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight mb-2 leading-tight">{imovel.titulo}</h1>
+        <p className="text-gray-500 font-medium">{imovel.endereco.bairro}, {imovel.endereco.cidade} - {imovel.endereco.estado}</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* Left Column: Images & Description */}
-        <div className="lg:col-span-2">
-          {/* Galeria de Fotos */}
-          <div className="flex gap-4 overflow-x-auto pb-4 snap-x scrollbar-hide">
-            {imovel.fotos.length > 0 ? (
-              imovel.fotos.map((foto, index) => (
-                <div key={index} className="snap-center shrink-0 w-full">
-                  <img 
-                    src={foto} 
-                    alt={`${imovel.titulo} - Foto ${index + 1}`} 
-                    className="w-full h-[300px] md:h-[500px] object-cover rounded-xl shadow-lg"
-                  />
-                </div>
-              ))
-            ) : (
-              <div className="w-full h-[300px] bg-gray-200 rounded-xl flex items-center justify-center text-gray-500">
-                Sem fotos disponíveis
-              </div>
-            )}
-          </div>
+        <div className="lg:col-span-2 space-y-8">
+          {/* Galeria de Fotos com Carrossel */}
+          <ImageCarousel images={imovel.fotos} alt={imovel.titulo} />
 
           <div className="bg-white p-6 rounded-xl border border-gray-100 mb-8 shadow-sm">
             <h2 className="text-xl font-bold mb-4">Descrição</h2>
@@ -98,7 +84,7 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
               </p>
             </div>
 
-            <a 
+            <a
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -106,7 +92,7 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
             >
               <span>Falar com Corretor</span>
             </a>
-            
+
             <p className="text-[10px] text-gray-400 mt-4 text-center uppercase tracking-wider">
               Código do Imóvel: {imovel.referencia}
             </p>

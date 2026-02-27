@@ -30,31 +30,23 @@ export default async function Home() {
             <span className="text-blue-500">história continua.</span>
           </h1>
           <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto font-medium">
-            Casas, apartamentos e terrenos em Taboão da Serra com a segurança e transparência que você merece.
+            Casas e apartamentos em Taboão da Serra com a segurança e transparência que você merece.
           </p>
 
-          {/* Busca Rápida */}
-          <div className="bg-white/10 backdrop-blur-xl p-2 rounded-2xl md:rounded-full border border-white/20 max-w-3xl mx-auto flex flex-col md:flex-row gap-2 shadow-2xl">
-            <div className="flex-grow flex items-center px-6 gap-3">
-              <Search className="text-blue-400" size={20} />
-              <input
-                type="text"
-                placeholder="Qual bairro você procura?"
-                className="bg-transparent border-none text-white placeholder-gray-400 focus:ring-0 w-full text-lg py-3 outline-none"
-              />
-            </div>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-full font-bold transition-all flex items-center justify-center gap-2 group">
-              Buscar Imóvel
-              <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </button>
-          </div>
+          <Link
+            href="https://wa.me/5511932785602"
+            className="inline-flex bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-full font-bold transition-all items-center justify-center gap-2 group shadow-2xl"
+          >
+            Falar com um Corretor
+            <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+          </Link>
         </div>
       </section>
 
       {/* Categorias Rápidas */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <Link href="/venda?tipo=Casa" className="group relative h-64 rounded-3xl overflow-hidden shadow-lg border border-gray-100">
               <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=600" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Casas" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-8">
@@ -69,14 +61,6 @@ export default async function Home() {
                 <Building2 className="text-blue-400 mb-2" />
                 <h3 className="text-2xl font-bold text-white uppercase tracking-tight">Apartamentos</h3>
                 <p className="text-gray-300 text-sm">Praticidade e localização privilegiada</p>
-              </div>
-            </Link>
-            <Link href="/venda?tipo=Terreno" className="group relative h-64 rounded-3xl overflow-hidden shadow-lg border border-gray-100">
-              <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=600" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Terrenos" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-8">
-                <Map className="text-blue-400 mb-2" />
-                <h3 className="text-2xl font-bold text-white uppercase tracking-tight">Terrenos</h3>
-                <p className="text-gray-300 text-sm">Oportunidades de investimento</p>
               </div>
             </Link>
           </div>

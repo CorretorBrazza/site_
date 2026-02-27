@@ -2,8 +2,8 @@
   "referencia": "LC001",
   "titulo": "APARTAMENTO LOCAÇÃO FIT TABOÃO",
   "descricao": "Condomínio Fit Taboão\n​02 Dormitórios + Sala, Cozinha e Lavanderia\nPonto de ônibus na porte!\n​Valor: R$ 1.500,00 (Pacote)\n​⚠️ Observação: Condomínios simples, sem elevador!",
-  "transacao": "Venda",
-  "tipoImovel": "Casa",
+  "transacao": "Locação",
+  "tipoImovel": "Apartamento",
   "videoUrl": "",
   "endereco": {
     "rua": "",
@@ -34,5 +34,5 @@
     "/uploads/imoveis/LC001/1772206429656-fit_taboao_(7).jpeg"
   ],
   "id": "lc001",
-  "updatedAt": "2026-02-27T15:33:49.588Z"
+  "updatedAt": "2026-02-27T16:28:55.738Z"
 }
