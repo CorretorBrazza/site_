@@ -90,11 +90,11 @@ export default function NovoImovel() {
           <h2 className="text-lg font-bold border-b pb-2">Informações Básicas</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="md:col-span-1">
-              <label className="block text-sm font-medium text-gray-700">Referência (Ex: IMV001)</label>
+              <label className="block text-sm font-medium text-gray-700">Referência</label>
               <input 
-                type="text" required
-                className="mt-1 block w-full border rounded-md p-2"
-                onChange={e => setFormData({...formData, referencia: e.target.value.toUpperCase()})}
+                type="text" disabled
+                className="mt-1 block w-full border bg-gray-100 rounded-md p-2 text-gray-500 italic"
+                placeholder="Gerada automaticamente"
               />
             </div>
             <div className="md:col-span-2">

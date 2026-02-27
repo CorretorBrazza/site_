@@ -34,15 +34,26 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* Left Column: Images & Description */}
         <div className="lg:col-span-2">
-          <div className="rounded-xl overflow-hidden mb-8 shadow-lg">
-            <img 
-              src={imovel.fotos[0]} 
-              alt={imovel.titulo} 
-              className="w-full h-auto object-cover max-h-[500px]"
-            />
+          {/* Galeria de Fotos */}
+          <div className="flex gap-4 overflow-x-auto pb-4 snap-x scrollbar-hide">
+            {imovel.fotos.length > 0 ? (
+              imovel.fotos.map((foto, index) => (
+                <div key={index} className="snap-center shrink-0 w-full">
+                  <img 
+                    src={foto} 
+                    alt={`${imovel.titulo} - Foto ${index + 1}`} 
+                    className="w-full h-[300px] md:h-[500px] object-cover rounded-xl shadow-lg"
+                  />
+                </div>
+              ))
+            ) : (
+              <div className="w-full h-[300px] bg-gray-200 rounded-xl flex items-center justify-center text-gray-500">
+                Sem fotos disponíveis
+              </div>
+            )}
           </div>
 
-          <div className="bg-white p-6 rounded-xl border border-gray-100 mb-8">
+          <div className="bg-white p-6 rounded-xl border border-gray-100 mb-8 shadow-sm">
             <h2 className="text-xl font-bold mb-4">Descrição</h2>
             <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
               {imovel.descricao}

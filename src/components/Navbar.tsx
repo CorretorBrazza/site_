@@ -10,14 +10,14 @@ export default function Navbar() {
               Imóveis <span className="text-gray-800 text-base font-medium">Taboão</span>
             </Link>
           </div>
-          <div className="flex gap-4 items-center">
-            <div className="hidden md:flex space-x-6 mr-6">
-              <Link href="/venda" className="text-gray-600 hover:text-blue-700 font-medium transition-colors">Venda</Link>
-              <Link href="/locacao" className="text-gray-600 hover:text-blue-700 font-medium transition-colors">Locação</Link>
+          <div className="flex gap-2 sm:gap-4 items-center">
+            <div className="flex space-x-3 sm:space-x-6 mr-2 sm:mr-6">
+              <Link href="/venda" className="text-gray-600 hover:text-blue-700 text-sm sm:text-base font-medium transition-colors">Venda</Link>
+              <Link href="/locacao" className="text-gray-600 hover:text-blue-700 text-sm sm:text-base font-medium transition-colors">Locação</Link>
             </div>
             {process.env.NODE_ENV === 'development' && (
-              <Link href="/dashboard" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-all shadow-sm">
-                Dashboard
+              <Link href="/dashboard" className="bg-blue-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold hover:bg-blue-700 transition-all shadow-sm">
+                Dash
               </Link>
             )}
           </div>

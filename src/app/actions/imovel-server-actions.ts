@@ -9,11 +9,33 @@ import { revalidatePath } from 'next/cache';
 const CONTENT_PATH = path.join(process.cwd(), 'src/content/imoveis');
 const PUBLIC_UPLOADS_PATH = path.join(process.cwd(), 'public', 'uploads', 'imoveis');
 
+export async function getProximaReferencia(transacao: string) {
+  const imoveis = await getImoveis();
+  const prefixo = transacao.includes('Venda') ? 'VD' : 'LC';
+  
+  const numeros = imoveis
+    .filter(i => i.referencia.startsWith(prefixo))
+    .map(i => {
+      const num = parseInt(i.referencia.replace(prefixo, ''));
+      return isNaN(num) ? 0 : num;
+    });
+
+  const maiorNumero = numeros.length > 0 ? Math.max(...numeros) : 0;
+  const proximo = (maiorNumero + 1).toString().padStart(3, '0');
+  
+  return `${prefixo}${proximo}`;
+}
+
 export async function salvarEPublicarImovelAction(formData: FormData) {
   try {
     const imovelJson = formData.get('imovel') as string;
     const imovelData = JSON.parse(imovelJson) as Imovel;
     const files = formData.getAll('fotos') as File[];
+
+    // Se não tiver referência (novo imóvel), gera uma automática
+    if (!imovelData.referencia || imovelData.referencia === '') {
+      imovelData.referencia = await getProximaReferencia(imovelData.transacao);
+    }
 
     const imovelId = imovelData.referencia.toLowerCase();
     imovelData.id = imovelId;
@@ -57,7 +79,7 @@ export async function salvarEPublicarImovelAction(formData: FormData) {
     revalidatePath(`/imovel/${imovelId}`);
     revalidatePath('/dashboard');
     
-    return { success: true, id: imovelId };
+    return { success: true, id: imovelId, referencia: imovelData.referencia };
   } catch (error) {
     console.error('Erro detalhado:', error);
     return { success: false, error: 'Falha ao processar a publicação.' };
@@ -93,7 +115,7 @@ export async function excluirImovelAction(id: string) {
 
 export async function getImoveis() {
   if (!fs.existsSync(CONTENT_PATH)) return [];
-  const files = fs.readdirSync(CONTENT_PATH);
+  const files = fs.readdirSync(CONTENT_PATH).filter(f => f.endsWith('.json'));
   return files.map(file => {
     const content = fs.readFileSync(path.join(CONTENT_PATH, file), 'utf-8');
     return JSON.parse(content) as Imovel;
