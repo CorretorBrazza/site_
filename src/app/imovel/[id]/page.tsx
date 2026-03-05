@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 
 import ImageCarousel from '@/components/ImageCarousel';
 import ShareButton from '@/components/ShareButton';
+import BannerLocacao from '@/components/BannerLocacao';
 
 export default async function ImovelDetalhes({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -13,6 +14,7 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
     notFound();
   }
 
+  const isLocacao = imovel.transacao === 'Locação' || imovel.transacao === 'Venda e Locação';
   const preco = imovel.transacao === 'Venda' ? imovel.precoVenda : imovel.precoLocacao;
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
@@ -105,6 +107,14 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
           </div>
         </div>
       </div>
+
+      {/* Banner Promocional - exibido apenas para imóveis de locação */}
+      {isLocacao && (
+        <div className="mt-12">
+          <BannerLocacao />
+        </div>
+      )}
     </div>
   );
 }
+
