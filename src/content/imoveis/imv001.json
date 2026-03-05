@@ -1,7 +1,7 @@
 {
   "id": "imv001",
   "referencia": "IMV001",
-  "titulo": "Casa de Teste no Centro de Taboão",
+  "titulo": "Casa de Teste no Centro de Taboão da Serra",
   "descricao": "Esta é uma casa de teste cadastrada para validar o novo sistema de Dashboard e Deploy Automático.",
   "transacao": "Venda",
   "tipoImovel": "Casa",
@@ -22,9 +22,11 @@
     "areaTotal": 200
   },
   "precoVenda": 550000,
-  "fotos": ["https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&q=80&w=800"],
+  "fotos": [
+    "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&q=80&w=800"
+  ],
   "status": "Ativo",
   "destaque": true,
   "createdAt": "2026-02-27T10:00:00.000Z",
-  "updatedAt": "2026-02-27T10:00:00.000Z"
+  "updatedAt": "2026-03-05T18:47:54.453Z"
 }
