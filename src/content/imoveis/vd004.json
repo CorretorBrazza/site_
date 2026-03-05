@@ -1,0 +1,55 @@
+{
+  "referencia": "VD004",
+  "titulo": "CONDOMÍNIO BRISAS 73M2",
+  "descricao": "LINDO APARTAMENTO CONDOMÍNIO COLINAS DO SOL BRISAS\n73M2\n3 DORMITÓRIOS\nSUÍTE\nVISTA LIVRE\nANDAR ALTO\nREPLETO DE PLANEJADOS\nVAGA COBERTA\nACEITA FINANCIAMENTO",
+  "transacao": "Venda",
+  "tipoImovel": "Apartamento",
+  "videoUrl": "",
+  "endereco": {
+    "rua": "Rua Maria Abadia dos Santos",
+    "numero": "107",
+    "bairro": "",
+    "cidade": "Taboão da Serra",
+    "estado": "SP",
+    "cep": ""
+  },
+  "caracteristicas": {
+    "quartos": 3,
+    "suites": 1,
+    "banheiros": 0,
+    "vagas": 1,
+    "areaUtil": 73,
+    "areaTotal": 0
+  },
+  "precoVenda": 489999,
+  "destaque": true,
+  "status": "Ativo",
+  "corretor": {
+    "nome": "BRAZZA",
+    "telefone": "5511932785602"
+  },
+  "fotos": [
+    "/uploads/imoveis/VD004/1772753580224-WhatsApp_Image_2026-02-12_at_11.58.03_(1).jpeg",
+    "/uploads/imoveis/VD004/1772753580401-WhatsApp_Image_2026-02-12_at_11.58.03_(2).jpeg",
+    "/uploads/imoveis/VD004/1772753580435-WhatsApp_Image_2026-02-12_at_11.58.03_(3).jpeg",
+    "/uploads/imoveis/VD004/1772753580439-WhatsApp_Image_2026-02-12_at_11.58.03_(4).jpeg",
+    "/uploads/imoveis/VD004/1772753580474-WhatsApp_Image_2026-02-12_at_11.58.03_(5).jpeg",
+    "/uploads/imoveis/VD004/1772753580505-WhatsApp_Image_2026-02-12_at_11.58.03_(6).jpeg",
+    "/uploads/imoveis/VD004/1772753580540-WhatsApp_Image_2026-02-12_at_11.58.03_(7).jpeg",
+    "/uploads/imoveis/VD004/1772753580573-WhatsApp_Image_2026-02-12_at_11.58.03_(8).jpeg",
+    "/uploads/imoveis/VD004/1772753580589-WhatsApp_Image_2026-02-12_at_11.58.03_(9).jpeg",
+    "/uploads/imoveis/VD004/1772753580602-WhatsApp_Image_2026-02-12_at_11.58.03_(10).jpeg",
+    "/uploads/imoveis/VD004/1772753580644-WhatsApp_Image_2026-02-12_at_11.58.03_(11).jpeg",
+    "/uploads/imoveis/VD004/1772753580669-WhatsApp_Image_2026-02-12_at_11.58.03_(12).jpeg",
+    "/uploads/imoveis/VD004/1772753580699-WhatsApp_Image_2026-02-12_at_11.58.03_(13).jpeg",
+    "/uploads/imoveis/VD004/1772753580719-WhatsApp_Image_2026-02-12_at_11.58.03_(14).jpeg",
+    "/uploads/imoveis/VD004/1772753580758-WhatsApp_Image_2026-02-12_at_11.58.03_(15).jpeg",
+    "/uploads/imoveis/VD004/1772753580777-WhatsApp_Image_2026-02-12_at_11.58.03_(16).jpeg",
+    "/uploads/imoveis/VD004/1772753580825-WhatsApp_Image_2026-02-12_at_11.58.03_(17).jpeg",
+    "/uploads/imoveis/VD004/1772753580828-WhatsApp_Image_2026-02-12_at_11.58.03_(18).jpeg",
+    "/uploads/imoveis/VD004/1772753580892-WhatsApp_Image_2026-02-12_at_11.58.03_(19).jpeg",
+    "/uploads/imoveis/VD004/1772753580933-WhatsApp_Image_2026-02-12_at_11.58.03.jpeg"
+  ],
+  "id": "vd004",
+  "updatedAt": "2026-03-05T23:33:00.204Z"
+}
