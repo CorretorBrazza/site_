@@ -16,7 +16,7 @@
   "caracteristicas": {
     "quartos": 3,
     "suites": 1,
-    "banheiros": 0,
+    "banheiros": 2,
     "vagas": 1,
     "areaUtil": 73,
     "areaTotal": 0
@@ -43,5 +43,5 @@
     "/uploads/imoveis/VD003/1772753075350-WhatsApp_Image_2026-02-28_at_18.34.42.jpeg"
   ],
   "id": "vd003",
-  "updatedAt": "2026-03-05T23:24:35.281Z"
+  "updatedAt": "2026-03-05T23:38:19.040Z"
 }
