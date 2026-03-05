@@ -19,6 +19,11 @@ export interface Endereco {
   cep: string;
 }
 
+export interface Corretor {
+  nome: string;
+  telefone: string;
+}
+
 export interface Imovel {
   id: string;
   referencia: string;
@@ -34,6 +39,8 @@ export interface Imovel {
   videoUrl?: string;
   status: StatusImovel;
   destaque: boolean;
+  corretor?: Corretor;
   createdAt: string;
   updatedAt: string;
 }
+

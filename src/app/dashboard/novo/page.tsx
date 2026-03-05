@@ -35,7 +35,16 @@ export default function NovoImovel() {
     precoLocacao: undefined as number | undefined,
     destaque: false,
     status: 'Ativo' as any,
+    corretor: {
+      nome: 'BRAZZA',
+      telefone: '5511932785602'
+    }
   });
+
+  const CORRETORES = [
+    { nome: 'BRAZZA', telefone: '5511932785602' },
+    { nome: 'MARIA', telefone: '551170988512' }
+  ];
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -112,6 +121,23 @@ export default function NovoImovel() {
                 <option value="Apartamento">Apartamento</option>
                 <option value="Terreno">Terreno</option>
                 <option value="Comercial">Comercial</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Corretor Responsável</label>
+              <select
+                className="mt-1 block w-full border rounded-md p-2 bg-blue-50/50"
+                value={formData.corretor.nome}
+                onChange={e => {
+                  const selectCorretor = CORRETORES.find(c => c.nome === e.target.value);
+                  if (selectCorretor) {
+                    setFormData({ ...formData, corretor: selectCorretor });
+                  }
+                }}
+              >
+                {CORRETORES.map(c => (
+                  <option key={c.nome} value={c.nome}>{c.nome}</option>
+                ))}
               </select>
             </div>
           </div>

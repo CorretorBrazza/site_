@@ -20,8 +20,9 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };
 
+  const corretorTelefone = imovel.corretor?.telefone || '5511932785602';
   const whatsappMsg = `Olá, tenho interesse no imóvel de referência [${imovel.referencia}] (${imovel.titulo}) que vi no site.`;
-  const whatsappUrl = `https://wa.me/5511932785602?text=${encodeURIComponent(whatsappMsg)}`;
+  const whatsappUrl = `https://wa.me/${corretorTelefone}?text=${encodeURIComponent(whatsappMsg)}`;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
