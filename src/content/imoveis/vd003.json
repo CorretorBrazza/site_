@@ -1,0 +1,47 @@
+{
+  "referencia": "VD003",
+  "titulo": "CONDOMINIO BRISAS 73M2",
+  "descricao": "LINDO APARTAMENTO CONDOMÍNIO COLINAS DO SOL BRISAS\n73M2\n3 DORMITÓRIOS\nSUÍTE\nVISTA LIVRE\nANDAR ALTO\nACEITA FINANCIAMENTO\n",
+  "transacao": "Venda",
+  "tipoImovel": "Apartamento",
+  "videoUrl": "",
+  "endereco": {
+    "rua": "Rua Maria Abadia dos Santos",
+    "numero": "107",
+    "bairro": "",
+    "cidade": "Taboão da Serra",
+    "estado": "SP",
+    "cep": ""
+  },
+  "caracteristicas": {
+    "quartos": 3,
+    "suites": 1,
+    "banheiros": 0,
+    "vagas": 1,
+    "areaUtil": 73,
+    "areaTotal": 0
+  },
+  "precoVenda": 450000,
+  "destaque": false,
+  "status": "Ativo",
+  "corretor": {
+    "nome": "BRAZZA",
+    "telefone": "5511932785602"
+  },
+  "fotos": [
+    "/uploads/imoveis/VD003/1772753075291-WhatsApp_Image_2026-02-28_at_18.34.42_(1).jpeg",
+    "/uploads/imoveis/VD003/1772753075297-WhatsApp_Image_2026-02-28_at_18.34.42_(2).jpeg",
+    "/uploads/imoveis/VD003/1772753075302-WhatsApp_Image_2026-02-28_at_18.34.42_(3).jpeg",
+    "/uploads/imoveis/VD003/1772753075309-WhatsApp_Image_2026-02-28_at_18.34.42_(4).jpeg",
+    "/uploads/imoveis/VD003/1772753075313-WhatsApp_Image_2026-02-28_at_18.34.42_(5).jpeg",
+    "/uploads/imoveis/VD003/1772753075319-WhatsApp_Image_2026-02-28_at_18.34.42_(6).jpeg",
+    "/uploads/imoveis/VD003/1772753075323-WhatsApp_Image_2026-02-28_at_18.34.42_(7).jpeg",
+    "/uploads/imoveis/VD003/1772753075327-WhatsApp_Image_2026-02-28_at_18.34.42_(8).jpeg",
+    "/uploads/imoveis/VD003/1772753075331-WhatsApp_Image_2026-02-28_at_18.34.42_(9).jpeg",
+    "/uploads/imoveis/VD003/1772753075338-WhatsApp_Image_2026-02-28_at_18.34.42_(10).jpeg",
+    "/uploads/imoveis/VD003/1772753075343-WhatsApp_Image_2026-02-28_at_18.34.42_(11).jpeg",
+    "/uploads/imoveis/VD003/1772753075350-WhatsApp_Image_2026-02-28_at_18.34.42.jpeg"
+  ],
+  "id": "vd003",
+  "updatedAt": "2026-03-05T23:24:35.281Z"
+}
