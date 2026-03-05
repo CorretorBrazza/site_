@@ -1,0 +1,50 @@
+{
+  "referencia": "VD002",
+  "titulo": "CONDOMÍNIO BRISAS 73M2",
+  "descricao": "LINDO APARTAMENTO CONDOMÍNIO COLINAS DO SOL BRISAS\n73M2\n3 DORMITÓRIOS\nSUÍTE\nVISTA LIVRE\nANDAR INTERMEDIÁRIO\nACEITA FINANCIAMENTO\n",
+  "transacao": "Venda",
+  "tipoImovel": "Apartamento",
+  "videoUrl": "",
+  "endereco": {
+    "rua": "Rua Maria Abadia dos Santos",
+    "numero": "107",
+    "bairro": "",
+    "cidade": "Taboão da Serra",
+    "estado": "SP",
+    "cep": ""
+  },
+  "caracteristicas": {
+    "quartos": 3,
+    "suites": 1,
+    "banheiros": 0,
+    "vagas": 1,
+    "areaUtil": 73,
+    "areaTotal": 0
+  },
+  "precoVenda": 440000,
+  "destaque": true,
+  "status": "Ativo",
+  "corretor": {
+    "nome": "BRAZZA",
+    "telefone": "5511932785602"
+  },
+  "fotos": [
+    "/uploads/imoveis/VD002/1772752845879-WhatsApp_Image_2026-02-28_at_18.33.30_(2).jpeg",
+    "/uploads/imoveis/VD002/1772752845895-WhatsApp_Image_2026-02-28_at_18.33.30_(6).jpeg",
+    "/uploads/imoveis/VD002/1772752845912-WhatsApp_Image_2026-02-28_at_18.33.30_(7).jpeg",
+    "/uploads/imoveis/VD002/1772752845916-WhatsApp_Image_2026-02-28_at_18.33.30_(8).jpeg",
+    "/uploads/imoveis/VD002/1772752845919-WhatsApp_Image_2026-02-28_at_18.33.30_(9).jpeg",
+    "/uploads/imoveis/VD002/1772752845927-WhatsApp_Image_2026-02-28_at_18.33.30_(11).jpeg",
+    "/uploads/imoveis/VD002/1772752845933-WhatsApp_Image_2026-02-28_at_18.33.31_(2).jpeg",
+    "/uploads/imoveis/VD002/1772752845946-WhatsApp_Image_2026-02-28_at_18.33.31_(3).jpeg",
+    "/uploads/imoveis/VD002/1772752845953-WhatsApp_Image_2026-02-28_at_18.33.31_(8).jpeg",
+    "/uploads/imoveis/VD002/1772752845962-WhatsApp_Image_2026-02-28_at_18.33.31_(9).jpeg",
+    "/uploads/imoveis/VD002/1772752845966-WhatsApp_Image_2026-02-28_at_18.33.31_(10).jpeg",
+    "/uploads/imoveis/VD002/1772752845982-WhatsApp_Image_2026-02-28_at_18.33.31_(14).jpeg",
+    "/uploads/imoveis/VD002/1772752846006-WhatsApp_Image_2026-02-28_at_18.33.31_(16).jpeg",
+    "/uploads/imoveis/VD002/1772752846017-WhatsApp_Image_2026-02-28_at_18.33.31_(17).jpeg",
+    "/uploads/imoveis/VD002/1772752846021-WhatsApp_Image_2026-02-28_at_18.33.31_(19).jpeg"
+  ],
+  "id": "vd002",
+  "updatedAt": "2026-03-05T23:20:45.854Z"
+}

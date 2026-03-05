@@ -24,7 +24,18 @@ export default function FormEditarImovel({ imovel, proprietarioInicial }: { imov
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setSelectedFiles(Array.from(e.target.files));
+      const files = Array.from(e.target.files);
+      const totalSize = files.reduce((acc, file) => acc + file.size, 0);
+      const maxSize = 5 * 1024 * 1024; // 5MB
+
+      if (totalSize > maxSize) {
+        alert(`O tamanho total das fotos (${(totalSize / 1024 / 1024).toFixed(2)}MB) excede o limite de 5MB. Por favor, selecione menos fotos ou use imagens menores.`);
+        e.target.value = ''; // Limpa o input
+        setSelectedFiles([]);
+        return;
+      }
+
+      setSelectedFiles(files);
     }
   };
 
