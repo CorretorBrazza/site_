@@ -18,7 +18,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
     if (confirm(`Tem certeza que deseja excluir permanentemente o imóvel ${ref}?`)) {
       setLoadingId(id);
       try {
-        await excluirImovel(id);
+        await excluirImovelAction(id);
         alert('Imóvel excluído!');
         router.refresh(); // Atualiza a lista
       } catch (error) {
@@ -50,9 +50,8 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                   <td className="px-6 py-4 font-semibold text-gray-900">{imovel.titulo}</td>
                   <td className="px-6 py-4">{imovel.transacao}</td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                      imovel.status === 'Ativo' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                    }`}>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${imovel.status === 'Ativo' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                      }`}>
                       {imovel.status}
                     </span>
                   </td>
@@ -60,7 +59,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                     <Link href={`/dashboard/editar/${imovel.id}`} className="text-blue-600 hover:text-blue-800 font-semibold">
                       Editar
                     </Link>
-                    <button 
+                    <button
                       onClick={() => handleExcluir(imovel.id, imovel.referencia)}
                       disabled={loadingId === imovel.id}
                       className="text-red-500 hover:text-red-700 font-semibold disabled:text-gray-400"
