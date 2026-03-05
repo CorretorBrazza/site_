@@ -5,11 +5,22 @@ import { useRouter } from 'next/navigation';
 import { salvarEPublicarImovelAction } from '@/app/actions/imovel-server-actions';
 import { Imovel } from '@/types/imovel';
 
-export default function FormEditarImovel({ imovel }: { imovel: Imovel }) {
+export default function FormEditarImovel({ imovel, proprietarioInicial }: { imovel: Imovel, proprietarioInicial: any }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [formData, setFormData] = useState<Imovel>(imovel);
+  const [propData, setPropData] = useState({
+    nome: proprietarioInicial?.nome || '',
+    telefone: proprietarioInicial?.telefone || '',
+    email: proprietarioInicial?.email || '',
+    observacoes: proprietarioInicial?.observacoes || ''
+  });
+
+  const CORRETORES = [
+    { nome: 'BRAZZA', telefone: '5511932785602' },
+    { nome: 'MARIA', telefone: '551170988512' }
+  ];
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -24,6 +35,7 @@ export default function FormEditarImovel({ imovel }: { imovel: Imovel }) {
     try {
       const data = new FormData();
       data.append('imovel', JSON.stringify(formData));
+      data.append('proprietario', JSON.stringify(propData));
 
       selectedFiles.forEach(file => {
         data.append('fotos', file);
@@ -97,6 +109,23 @@ export default function FormEditarImovel({ imovel }: { imovel: Imovel }) {
               value={formData.tipoImovel}
               onChange={e => setFormData({ ...formData, tipoImovel: e.target.value })}
             />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Corretor Responsável</label>
+            <select
+              className="mt-1 block w-full border rounded-md p-2 bg-blue-50/50"
+              value={formData.corretor?.nome || 'BRAZZA'}
+              onChange={e => {
+                const selectCorretor = CORRETORES.find(c => c.nome === e.target.value);
+                if (selectCorretor) {
+                  setFormData({ ...formData, corretor: selectCorretor });
+                }
+              }}
+            >
+              {CORRETORES.map(c => (
+                <option key={c.nome} value={c.nome}>{c.nome}</option>
+              ))}
+            </select>
           </div>
         </div>
       </section>
@@ -174,6 +203,55 @@ export default function FormEditarImovel({ imovel }: { imovel: Imovel }) {
             <input type="checkbox" checked={formData.status === 'Ativo'} onChange={e => setFormData({ ...formData, status: e.target.checked ? 'Ativo' : 'Inativo' })} />
             <span>Ativo</span>
           </label>
+        </div>
+      </section>
+
+      {/* Seção 4: Dados do Proprietário (Apenas Local) */}
+      <section className="bg-gray-50 p-6 rounded-xl border-2 border-dashed border-gray-300 space-y-4">
+        <div className="flex items-center justify-between border-b border-gray-200 pb-2">
+          <h2 className="text-lg font-bold text-gray-800">Dados Privados do Proprietário</h2>
+          <span className="text-[10px] font-black uppercase bg-gray-200 px-2 py-1 rounded text-gray-600 tracking-tighter">Apenas Local</span>
+        </div>
+        <p className="text-xs text-gray-500 italic">Estes dados NÃO são salvos no site online e não ficam visíveis para o público. São apenas para seu controle interno.</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Nome do Proprietário</label>
+            <input
+              type="text"
+              className="mt-1 block w-full border rounded-md p-2 bg-white"
+              value={propData.nome}
+              onChange={e => setPropData({ ...propData, nome: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Telefone / WhatsApp</label>
+            <input
+              type="text"
+              className="mt-1 block w-full border rounded-md p-2 bg-white"
+              value={propData.telefone}
+              onChange={e => setPropData({ ...propData, telefone: e.target.value })}
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">E-mail</label>
+            <input
+              type="email"
+              className="mt-1 block w-full border rounded-md p-2 bg-white"
+              value={propData.email}
+              onChange={e => setPropData({ ...propData, email: e.target.value })}
+            />
+          </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Observações Internas (Ex: Onde retirar chaves, horários, etc)</label>
+          <textarea
+            rows={3}
+            className="mt-1 block w-full border rounded-md p-2 bg-white"
+            value={propData.observacoes}
+            onChange={e => setPropData({ ...propData, observacoes: e.target.value })}
+          />
         </div>
       </section>
 

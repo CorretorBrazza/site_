@@ -8,6 +8,12 @@ export default function NovoImovel() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [propData, setPropData] = useState({
+    nome: '',
+    telefone: '',
+    email: '',
+    observacoes: ''
+  });
   const [formData, setFormData] = useState({
     referencia: '',
     titulo: '',
@@ -66,6 +72,7 @@ export default function NovoImovel() {
       };
 
       data.append('imovel', JSON.stringify(imovelCompleto));
+      data.append('proprietario', JSON.stringify(propData));
 
       // Adiciona cada arquivo de foto ao FormData
       selectedFiles.forEach(file => {
@@ -250,6 +257,51 @@ export default function NovoImovel() {
           <div className="flex items-center gap-2 pt-4">
             <input type="checkbox" id="destaque" className="w-5 h-5" onChange={e => setFormData({ ...formData, destaque: e.target.checked })} />
             <label htmlFor="destaque" className="font-semibold text-gray-700 cursor-pointer">Colocar em Destaque na Home</label>
+          </div>
+        </section>
+
+        {/* Seção 4: Dados do Proprietário (Apenas Local) */}
+        <section className="bg-gray-50 p-6 rounded-xl border-2 border-dashed border-gray-300 space-y-4">
+          <div className="flex items-center justify-between border-b border-gray-200 pb-2">
+            <h2 className="text-lg font-bold text-gray-800">Dados Privados do Proprietário</h2>
+            <span className="text-[10px] font-black uppercase bg-gray-200 px-2 py-1 rounded text-gray-600 tracking-tighter">Apenas Local</span>
+          </div>
+          <p className="text-xs text-gray-500 italic">Estes dados NÃO são salvos no site online e não ficam visíveis para o público. São apenas para seu controle interno.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Nome do Proprietário</label>
+              <input
+                type="text"
+                className="mt-1 block w-full border rounded-md p-2 bg-white"
+                onChange={e => setPropData({ ...propData, nome: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Telefone / WhatsApp</label>
+              <input
+                type="text"
+                className="mt-1 block w-full border rounded-md p-2 bg-white"
+                onChange={e => setPropData({ ...propData, telefone: e.target.value })}
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">E-mail</label>
+              <input
+                type="email"
+                className="mt-1 block w-full border rounded-md p-2 bg-white"
+                onChange={e => setPropData({ ...propData, email: e.target.value })}
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Observações Internas (Ex: Onde retirar chaves, horários, etc)</label>
+            <textarea
+              rows={3}
+              className="mt-1 block w-full border rounded-md p-2 bg-white"
+              onChange={e => setPropData({ ...propData, observacoes: e.target.value })}
+            />
           </div>
         </section>
 

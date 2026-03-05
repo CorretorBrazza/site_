@@ -8,11 +8,12 @@ import { revalidatePath } from 'next/cache';
 
 const CONTENT_PATH = path.join(process.cwd(), 'src/content/imoveis');
 const PUBLIC_UPLOADS_PATH = path.join(process.cwd(), 'public', 'uploads', 'imoveis');
+const PROPRIETARIOS_PATH = path.join(process.cwd(), 'src/data/proprietarios');
 
 export async function getProximaReferencia(transacao: string) {
   const imoveis = await getImoveis();
   const prefixo = transacao.includes('Venda') ? 'VD' : 'LC';
-  
+
   const numeros = imoveis
     .filter(i => i.referencia.startsWith(prefixo))
     .map(i => {
@@ -22,7 +23,7 @@ export async function getProximaReferencia(transacao: string) {
 
   const maiorNumero = numeros.length > 0 ? Math.max(...numeros) : 0;
   const proximo = (maiorNumero + 1).toString().padStart(3, '0');
-  
+
   return `${prefixo}${proximo}`;
 }
 
@@ -30,6 +31,7 @@ export async function salvarEPublicarImovelAction(formData: FormData) {
   try {
     const imovelJson = formData.get('imovel') as string;
     const imovelData = JSON.parse(imovelJson) as Imovel;
+    const proprietarioJson = formData.get('proprietario') as string | null;
     const files = formData.getAll('fotos') as File[];
 
     // Se não tiver referência (novo imóvel), gera uma automática
@@ -65,6 +67,11 @@ export async function salvarEPublicarImovelAction(formData: FormData) {
     const jsonPath = path.join(CONTENT_PATH, `${imovelId}.json`);
     fs.writeFileSync(jsonPath, JSON.stringify(imovelData, null, 2), 'utf-8');
 
+    // Salva dados do proprietário localmente (se existirem)
+    if (proprietarioJson) {
+      salvarDadosProprietario(imovelId, JSON.parse(proprietarioJson));
+    }
+
     if (process.env.NODE_ENV === 'development') {
       try {
         execSync('git add .');
@@ -78,7 +85,7 @@ export async function salvarEPublicarImovelAction(formData: FormData) {
     revalidatePath('/');
     revalidatePath(`/imovel/${imovelId}`);
     revalidatePath('/dashboard');
-    
+
     return { success: true, id: imovelId, referencia: imovelData.referencia };
   } catch (error) {
     console.error('Erro detalhado:', error);
@@ -91,7 +98,7 @@ export async function excluirImovelAction(id: string) {
     const filePath = path.join(CONTENT_PATH, `${id.toLowerCase()}.json`);
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
-      
+
       if (process.env.NODE_ENV === 'development') {
         try {
           execSync('git add .');
@@ -101,7 +108,7 @@ export async function excluirImovelAction(id: string) {
           console.log('Git: Nada para commitar ou erro de push.');
         }
       }
-      
+
       revalidatePath('/');
       revalidatePath('/dashboard');
       return { success: true };
@@ -120,4 +127,22 @@ export async function getImoveis() {
     const content = fs.readFileSync(path.join(CONTENT_PATH, file), 'utf-8');
     return JSON.parse(content) as Imovel;
   });
+}
+
+// Funções para dados do Proprietário (Apenas Local)
+export async function salvarDadosProprietario(imovelId: string, dados: any) {
+  if (!fs.existsSync(PROPRIETARIOS_PATH)) {
+    fs.mkdirSync(PROPRIETARIOS_PATH, { recursive: true });
+  }
+  const filePath = path.join(PROPRIETARIOS_PATH, `${imovelId}.json`);
+  fs.writeFileSync(filePath, JSON.stringify(dados, null, 2), 'utf-8');
+}
+
+export async function getDadosProprietario(imovelId: string) {
+  const filePath = path.join(PROPRIETARIOS_PATH, `${imovelId}.json`);
+  if (fs.existsSync(filePath)) {
+    const content = fs.readFileSync(filePath, 'utf-8');
+    return JSON.parse(content);
+  }
+  return null;
 }
