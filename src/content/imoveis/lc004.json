@@ -1,0 +1,34 @@
+{
+  "referencia": "LC004",
+  "titulo": "CONDOMÍNIO BRISAS 2 DORMITÓRIOS",
+  "descricao": "CONDOMÍNIO BRISAS 2 DORMITÓRIOS\n\n☀️ DIFERENCIAL: Lazer completo.\n🛏️ 2 Dormitórios \n🚗 Vaga de garagem \nVALORES:\n💰 PACOTE : 2500,00\nSolicite fotos pelo whats\n",
+  "transacao": "Locação",
+  "tipoImovel": "Apartamento",
+  "videoUrl": "",
+  "endereco": {
+    "rua": "Maria Abadia dos Santos",
+    "numero": "107",
+    "bairro": "",
+    "cidade": "Taboão da Serra",
+    "estado": "SP",
+    "cep": ""
+  },
+  "caracteristicas": {
+    "quartos": 2,
+    "suites": 0,
+    "banheiros": 1,
+    "vagas": 2,
+    "areaUtil": 0,
+    "areaTotal": 0
+  },
+  "precoLocacao": 2500,
+  "destaque": false,
+  "status": "Ativo",
+  "corretor": {
+    "nome": "MARIA",
+    "telefone": "551170988512"
+  },
+  "fotos": [],
+  "id": "lc004",
+  "updatedAt": "2026-03-10T14:33:56.022Z"
+}
