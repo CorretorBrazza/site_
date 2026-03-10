@@ -1,0 +1,48 @@
+{
+  "referencia": "VD005",
+  "titulo": "SOBRADO MONTE ALEGRE",
+  "descricao": "LINDO SOBRADO NO JARDIM MONTE ALEGRE\n\nTerreno 125m² no Jardim Monte Alegre, em Taboão da Serra.\n\nO imóvel conta com 2 dormitórios, sendo 1 suíte e outro quarto com sacada com vista para o Jardim América.\n\n",
+  "transacao": "Venda",
+  "tipoImovel": "Casa",
+  "videoUrl": "",
+  "endereco": {
+    "rua": "",
+    "numero": "",
+    "bairro": "",
+    "cidade": "Taboão da Serra",
+    "estado": "SP",
+    "cep": ""
+  },
+  "caracteristicas": {
+    "quartos": 2,
+    "suites": 1,
+    "banheiros": 1,
+    "vagas": 1,
+    "areaUtil": 125,
+    "areaTotal": 0
+  },
+  "precoVenda": 380000,
+  "destaque": true,
+  "status": "Ativo",
+  "corretor": {
+    "nome": "MARIA",
+    "telefone": "551170988512"
+  },
+  "fotos": [
+    "/uploads/imoveis/VD005/1773148223360-WhatsApp_Image_2026-03-10_at_06.32.49_(1).jpeg",
+    "/uploads/imoveis/VD005/1773148223373-WhatsApp_Image_2026-03-10_at_06.32.49_(2).jpeg",
+    "/uploads/imoveis/VD005/1773148223390-WhatsApp_Image_2026-03-10_at_06.32.49_(3).jpeg",
+    "/uploads/imoveis/VD005/1773148223393-WhatsApp_Image_2026-03-10_at_06.32.49.jpeg",
+    "/uploads/imoveis/VD005/1773148223406-WhatsApp_Image_2026-03-10_at_06.32.50_(1).jpeg",
+    "/uploads/imoveis/VD005/1773148223408-WhatsApp_Image_2026-03-10_at_06.32.50_(2).jpeg",
+    "/uploads/imoveis/VD005/1773148223411-WhatsApp_Image_2026-03-10_at_06.32.50_(3).jpeg",
+    "/uploads/imoveis/VD005/1773148223422-WhatsApp_Image_2026-03-10_at_06.32.50_(4).jpeg",
+    "/uploads/imoveis/VD005/1773148223425-WhatsApp_Image_2026-03-10_at_06.32.50.jpeg",
+    "/uploads/imoveis/VD005/1773148223440-WhatsApp_Image_2026-03-10_at_06.32.51_(1).jpeg",
+    "/uploads/imoveis/VD005/1773148223454-WhatsApp_Image_2026-03-10_at_06.32.51_(2).jpeg",
+    "/uploads/imoveis/VD005/1773148223457-WhatsApp_Image_2026-03-10_at_06.32.51.jpeg",
+    "/uploads/imoveis/VD005/1773148223470-WhatsApp_Image_2026-03-10_at_06.32.52.jpeg"
+  ],
+  "id": "vd005",
+  "updatedAt": "2026-03-10T13:10:23.326Z"
+}
