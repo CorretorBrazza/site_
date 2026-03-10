@@ -1,0 +1,40 @@
+{
+  "referencia": "LC002",
+  "titulo": "APARTAMENTO LOCAÇÃO VILA PORTUGAL COM VAGA",
+  "descricao": "Condomínio Vila Portugal\n​02 Dormitórios + Sala, Cozinha e Lavanderia\n​Com vaga de garagem 🚗\n​Diferencial: Ao lado do Assaí e da Rod. Régis Bittencourt.\n​Valor: R$ 1.600,00 (Pacote)\n​⚠️ Observação: Condomínios simples, sem elevador e com ponto de ônibus a 150m.",
+  "transacao": "Locação",
+  "tipoImovel": "Apartamento",
+  "videoUrl": "",
+  "endereco": {
+    "rua": "Rua Ana Martins Ribeiro",
+    "numero": "63",
+    "bairro": "Jardim Mirna",
+    "cidade": "Taboão da Serra",
+    "estado": "SP",
+    "cep": ""
+  },
+  "caracteristicas": {
+    "quartos": 2,
+    "suites": 0,
+    "banheiros": 1,
+    "vagas": 1,
+    "areaUtil": 0,
+    "areaTotal": 0
+  },
+  "precoLocacao": 1600,
+  "destaque": true,
+  "status": "Ativo",
+  "corretor": {
+    "nome": "BRAZZA",
+    "telefone": "5511932785602"
+  },
+  "fotos": [
+    "/uploads/imoveis/LC002/1773147233446-WhatsApp_Image_2026-03-06_at_17.44.39_(2).jpeg",
+    "/uploads/imoveis/LC002/1773147233453-WhatsApp_Image_2026-03-06_at_17.44.39_(3).jpeg",
+    "/uploads/imoveis/LC002/1773147233456-WhatsApp_Image_2026-03-06_at_17.44.39_(4).jpeg",
+    "/uploads/imoveis/LC002/1773147233460-WhatsApp_Image_2026-03-06_at_17.44.39_(5).jpeg",
+    "/uploads/imoveis/LC002/1773147233463-WhatsApp_Image_2026-03-06_at_17.44.39.jpeg"
+  ],
+  "id": "lc002",
+  "updatedAt": "2026-03-10T12:53:53.439Z"
+}
