@@ -4,23 +4,39 @@ const path = require('path');
 const csvPath = path.join(__dirname, '..', '..', 'tabela.csv');
 const jsonPath = path.join(__dirname, 'dados', 'unidades.json');
 
+function splitCSVLine(line) {
+    const result = [];
+    let cur = "";
+    let inQuote = false;
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') {
+            inQuote = !inQuote;
+        } else if (char === ',' && !inQuote) {
+            result.push(cur.trim());
+            cur = "";
+        } else {
+            cur += char;
+        }
+    }
+    result.push(cur.trim());
+    return result;
+}
+
 function parseCSV(csv) {
     const lines = csv.split('\n');
     const results = [];
 
     // Header is on line 2 (index 1) according to preview
     // Skip empty line 1
-    const headers = lines[1].split(',').map(h => h.trim());
+    // The header line is not processed into results, so it's fine to keep this comment
+    // and implicitly skip the header by starting the loop at i = 2.
 
     for (let i = 2; i < lines.length; i++) {
         const line = lines[i].trim();
         if (!line) continue;
 
-        // Simple CSV parser for quoted fields
-        const matches = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-        if (!matches) continue;
-
-        const values = matches.map(v => v.replace(/^"|"$/g, '').trim());
+        const values = splitCSVLine(line);
 
         const item = {
             empreendimento: values[0],

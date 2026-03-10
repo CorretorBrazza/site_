@@ -44,19 +44,26 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function calcularParcelas(dataEntrega) {
         const hj = new Date();
+        // Start is next month
         const start = new Date(hj.getFullYear(), hj.getMonth() + 1, 1);
-        const [anoE, mesE] = dataEntrega.split('-').map(Number);
+
+        let [anoE, mesE] = dataEntrega.split('-').map(Number);
+        if (!mesE) mesE = 1; // Fallback
         const end = new Date(anoE, mesE - 1, 1);
 
-        if (end <= start) return { mensais: 0, anuais: 0 };
+        if (end <= start) {
+            // Already delivered or delivery is very soon
+            return { mensais: 0, anuais: 0 };
+        }
 
-        // Total months
-        const mensais = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+        // Total months between start and end (inclusive of end month)
+        // Using month difference + 1 to include the delivery month
+        const mensais = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth()) + 1;
 
-        // Count decembers
+        // Count decembers between start and end (inclusive)
         let anuais = 0;
         let check = new Date(start);
-        while (check < end) {
+        while (check <= end) {
             if (check.getMonth() === 11) anuais++;
             check.setMonth(check.getMonth() + 1);
         }
@@ -64,7 +71,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         return { mensais, anuais };
     }
 
+    function formatDate(iso) {
+        if (!iso || !iso.includes('-')) return iso;
+        const [ano, mes] = iso.split('-');
+        return `${mes}/${ano}`;
+    }
+
     function formatBRL(val) {
+        if (isNaN(val)) return 'R$ 0,00';
         return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
@@ -173,7 +187,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                 </div>
 
-                <div class="delivery-badge">Entrega: ${u.entrega}</div>
+                <div class="delivery-badge">Entrega: ${formatDate(u.entrega)}</div>
             `;
             resultsList.appendChild(card);
         });
