@@ -6,9 +6,9 @@
   "tipoImovel": "Apartamento",
   "videoUrl": "",
   "endereco": {
-    "rua": "",
-    "numero": "",
-    "bairro": "",
+    "rua": " Rua Carlos Marques Teixeira",
+    "numero": "180",
+    "bairro": "Indiana",
     "cidade": "Taboão da Serra",
     "estado": "SP",
     "cep": ""
@@ -34,5 +34,9 @@
     "/uploads/imoveis/LC001/1772206429656-fit_taboao_(7).jpeg"
   ],
   "id": "lc001",
-  "updatedAt": "2026-02-27T16:28:55.738Z"
+  "updatedAt": "2026-03-10T13:03:57.421Z",
+  "corretor": {
+    "nome": "MARIA",
+    "telefone": "551170988512"
+  }
 }
