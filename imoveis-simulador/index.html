@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Imobiliário | Imóveis Taboão</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <h1 class="logo">Imóveis <span>Taboão</span></h1>
+            <nav>
+                <span class="tagline">Simulador de Crédito e Entrada</span>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="simulator-card">
+            <div class="card-header">
+                <h2>Simule seu Sonho</h2>
+                <p>Descubra quais unidades cabem no seu orçamento em poucos segundos.</p>
+            </div>
+
+            <form id="simulator-form" class="sim-form">
+                <div class="input-group">
+                    <label for="financiamento">Financiamento Aprovado (R$)</label>
+                    <input type="text" id="financiamento" placeholder="Ex: 250.000,00" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="fgts">FGTS Disponível (R$)</label>
+                    <input type="text" id="fgts" placeholder="Ex: 20.000,00" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="mensal_max">Parcela Mensal Máxima (R$)</label>
+                    <input type="text" id="mensal_max" placeholder="Ex: 1.500,00" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="anual_max">Parcela Anual Máxima (R$)</label>
+                    <input type="text" id="anual_max" placeholder="Ex: 5.000,00" required>
+                </div>
+
+                <button type="submit" class="btn-primary">CALCULAR OPORTUNIDADES</button>
+            </form>
+        </section>
+
+        <section id="results-section" class="results-area hidden">
+            <div class="results-filters">
+                <h3>Oportunidades Encontradas</h3>
+                <div class="filter-controls">
+                    <input type="text" id="search-input" placeholder="Buscar empreendimento...">
+                    <div class="checkbox-filters">
+                        <label><input type="checkbox" id="filter-vaga"> Com Vaga</label>
+                        <label><input type="checkbox" id="filter-garden"> Garden</label>
+                        <label><input type="checkbox" id="filter-pne"> PNE</label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="results-list" class="results-grid">
+                <!-- Cards will be rendered here -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2026 Imóveis Taboão - Inteligência Imobiliária</p>
+        </div>
+    </footer>
+
+    <script src="js/dados.js"></script>
+    <script src="js/simulador.js"></script>
+</body>
+</html>

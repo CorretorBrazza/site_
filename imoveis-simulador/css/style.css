@@ -1,0 +1,352 @@
+:root {
+    --primary: #e84325;
+    --primary-dark: #c1341c;
+    --bg: #f8f9fa;
+    --card-bg: #ffffff;
+    --text: #2d3436;
+    --text-light: #636e72;
+    --border: #dfe6e9;
+    --success: #00b894;
+    --warning: #fdcb6e;
+    --danger: #d63031;
+    --radius: 12px;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.main-header {
+    background: #fff;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+}
+
+.main-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.logo span {
+    color: var(--primary);
+}
+
+.tagline {
+    font-weight: 300;
+    color: var(--text-light);
+}
+
+/* Simulator Card */
+.simulator-card {
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 40px;
+}
+
+.card-header {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.card-header h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: var(--primary);
+}
+
+.sim-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    align-items: flex-end;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.input-group input {
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.btn-primary {
+    grid-column: 1 / -1;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 16px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 10px;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+/* Results Area */
+.results-area {
+    margin-bottom: 60px;
+}
+
+.results-area.hidden {
+    display: none;
+}
+
+.results-filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.filter-controls {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+#search-input {
+    padding: 10px 15px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    width: 250px;
+}
+
+.checkbox-filters {
+    display: flex;
+    gap: 15px;
+}
+
+.checkbox-filters label {
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Grid and Cards */
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+}
+
+.unit-card {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 25px;
+    border: 1px solid var(--border);
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.unit-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow);
+}
+
+.status-indicator {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60px;
+    height: 60px;
+    clip-path: polygon(100% 0, 0 0, 100% 100%);
+}
+
+.status-indicator.bg-green {
+    background: var(--success);
+}
+
+.status-indicator.bg-yellow {
+    background: var(--warning);
+}
+
+.status-indicator.bg-red {
+    background: var(--danger);
+}
+
+.unit-card .project-name {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: var(--text-light);
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.unit-card h4 {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+}
+
+.unit-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+}
+
+.info-item span {
+    display: block;
+    color: var(--text-light);
+    font-size: 0.75rem;
+}
+
+.info-item strong {
+    font-weight: 600;
+}
+
+.price-section {
+    border-top: 1px solid var(--border);
+    padding-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.total-price span {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-light);
+}
+
+.total-price strong {
+    font-size: 1rem;
+    color: var(--text-light);
+}
+
+.down-payment {
+    text-align: right;
+}
+
+.down-payment span {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.down-payment strong {
+    font-size: 1.4rem;
+    color: var(--primary);
+    display: block;
+}
+
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px;
+    background: #fff;
+    border-radius: 12px;
+    color: var(--text-light);
+    border: 1px dashed var(--border);
+}
+
+.delivery-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: #f1f2f6;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin-top: 10px;
+}
+
+.main-footer {
+    text-align: center;
+    padding: 40px 0;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.unit-card {
+    animation: fadeIn 0.5s ease backwards;
+}
+
+@media (max-width: 600px) {
+    .simulator-card {
+        padding: 20px;
+    }
+
+    .sim-form {
+        grid-template-columns: 1fr;
+    }
+
+    .results-filters {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    #search-input {
+        width: 100%;
+    }
+}
