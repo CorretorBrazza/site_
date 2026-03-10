@@ -18,19 +18,22 @@ export const empreendimentos: Empreendimento[] = [
     {
         slug: 'villa-sao-francisco-2',
         name: 'Villa São Francisco II',
-        address: 'R. Maria Karachaki Ferras, 199 – Jardim Três Irmãos, Taboão da Serra – SP',
+        address: 'R. Maria Francisca de Jesus, 199 – Jardim Três Irmãos, Taboão da Serra – SP',
         status: 'Em Construção',
         heroImage: '/images/empreendimentos/vsf2-fachada.webp',
         images: [
             '/images/empreendimentos/vsf2-fachada.webp',
-            '/images/empreendimentos/vsf2-piscina.webp'
+            '/images/empreendimentos/vsf2-piscina.webp',
+            '/images/empreendimentos/vsf2-planta1.webp',
+            '/images/empreendimentos/vsf2-planta2.webp'
         ],
-        amenities: ['Piscina', 'Garagem', 'Pet Place', 'Academia', 'Salão de Festas', 'Churrasqueira', 'Playground', 'Espaço Fitness', 'Quadra', 'Brinquedoteca'],
-        dormitorios: '2 Dormitórios',
+        amenities: ['Piscina', 'Garagem', 'Academia', 'Salão de Festas', 'Home Office', 'Bicicletário', 'Playground', 'Churrasqueira', 'Brinquedoteca'],
+        dormitorios: '1 e 2 Dormitórios',
         vagas: '1 Vaga',
         area: '42m² a 48m²',
         deliveryDate: 'Abril 2026',
-        description: 'O Villa São Francisco II é o empreendimento perfeito para quem busca conforto, segurança e uma localização privilegiada em Taboão da Serra. Com plantas inteligentes e área de lazer completa, o projeto foi planejado para oferecer o máximo de bem-estar para você e sua família.'
+        description: 'O Villa São Francisco II é o empreendimento perfeito para quem busca conforto, segurança e uma localização privilegiada em Taboão da Serra. Com plantas inteligentes e área de lazer completa, o projeto foi planejado para oferecer o máximo de bem-estar para você e sua família.',
+        videoUrl: 'https://www.youtube.com/watch?v=m0sHuARH4IM'
     },
     {
         slug: 'villa-sao-francisco-3',
@@ -129,14 +132,14 @@ export const empreendimentos: Empreendimento[] = [
     {
         slug: 'residencial-clube-laguna',
         name: 'Residencial Clube Laguna',
-        address: 'Parque Industrial das Oliveiras, Taboão da Serra - SP',
+        address: 'R. José de Souza Costa, 221 - Parque Laguna, Taboão da Serra - SP',
         status: 'Em Construção',
         heroImage: '/images/empreendimentos/laguna-fachada.webp',
         images: [
             '/images/empreendimentos/laguna-fachada.webp',
             '/images/empreendimentos/laguna-academia.webp'
         ],
-        amenities: ['Clube Completo', 'Piscina', 'Academia', 'Quadra', 'Churrasqueira', 'Salão de Festas'],
+        amenities: ['Piscina', 'Garagem', 'Pet Place', 'Academia', 'Salão de Festas', 'Home Office', 'Bicicletário', 'Playground', 'Cinema', 'Churrasqueira', 'Fitness Externo', 'Sala de Jogos', 'Brinquedoteca'],
         dormitorios: '2 Dormitórios',
         vagas: '1 Vaga',
         area: '41m² a 47m²',
@@ -163,14 +166,14 @@ export const empreendimentos: Empreendimento[] = [
     {
         slug: 'innovare-morumbi',
         name: 'Innovare Morumbi',
-        address: 'Morumbi/Taboão da Serra',
+        address: 'Av. Guilherme Dumont Villares, 622 - Portal do Morumbi, São Paulo - SP',
         status: 'Lançamento',
         heroImage: '/images/empreendimentos/innovare-morumbi-fachada.jpg',
         images: [
             '/images/empreendimentos/innovare-morumbi-fachada.jpg',
             '/images/empreendimentos/innovare-morumbi-piscina.jpg'
         ],
-        amenities: ['Piscina', 'Academia', 'Salão de Festas', 'Churrasqueira', 'Playground'],
+        amenities: ['Piscina', 'Garagem', 'Academia', 'Salão de Festas', 'Bicicletário', 'Playground', 'Deck Solar', 'Churrasqueira'],
         dormitorios: '2 Dormitórios',
         vagas: '1 Vaga',
         area: 'A partir de 40m²',
