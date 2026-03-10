@@ -181,23 +181,94 @@ body {
 
 /* Grid and Cards */
 .results-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.project-group {
+    background: #fff;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: box-shadow 0.3s;
+}
+
+.project-group:hover {
+    box-shadow: var(--shadow);
+}
+
+.project-header {
+    padding: 20px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    background: #fff;
+}
+
+.project-info-main h4 {
+    font-size: 1.2rem;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+
+.project-info-main p {
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.project-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.unit-count-badge {
+    background: #f1f2f6;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.btn-toggle-units {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.unit-list-container {
+    display: none;
+    padding: 20px 25px;
+    background: #fafafa;
+    border-top: 1px solid var(--border);
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.unit-list-container.active {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 25px;
 }
 
 .unit-card {
     background: #fff;
-    border-radius: var(--radius);
-    padding: 25px;
+    border-radius: 8px;
+    padding: 20px;
     border: 1px solid var(--border);
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: transform 0.2s;
     position: relative;
     overflow: hidden;
 }
 
 .unit-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-3px);
     box-shadow: var(--shadow);
 }
 
@@ -290,13 +361,13 @@ body {
 }
 
 .no-results {
-    grid-column: 1 / -1;
     text-align: center;
     padding: 60px;
     background: #fff;
     border-radius: 12px;
     color: var(--text-light);
     border: 1px dashed var(--border);
+    width: 100%;
 }
 
 .delivery-badge {

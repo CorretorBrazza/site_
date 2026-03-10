@@ -122,79 +122,112 @@ document.addEventListener('DOMContentLoaded', async () => {
         resultsSection.scrollIntoView({ behavior: 'smooth' });
     });
 
+    const filterSemVaga = document.getElementById('filter-sem-vaga');
+
     // 5. Filtering and Rendering
     function filterResults() {
         const search = searchInput.value.toLowerCase();
         const hasVaga = filterVaga.checked;
+        const noVaga = filterSemVaga.checked;
         const isGarden = filterGarden.checked;
         const isPne = filterPne.checked;
 
         return currentResults.filter(u => {
+            const desc = u.descricao.toLowerCase();
             const matchesSearch = u.empreendimento.toLowerCase().includes(search);
-            const matchesVaga = !hasVaga || u.descricao.toLowerCase().includes('vaga');
-            const matchesGarden = !isGarden || u.descricao.toLowerCase().includes('garden');
-            const matchesPne = !isPne || u.descricao.toLowerCase().includes('pne');
-            return matchesSearch && matchesVaga && matchesGarden && matchesPne;
+
+            // Refined Vaga Logic:
+            // "Com Vaga" must have "vaga" AND NOT "sem vaga"
+            // "Sem Vaga" must have "sem vaga"
+            let matchesVagaState = true;
+            if (hasVaga) {
+                matchesVagaState = desc.includes('vaga') && !desc.includes('sem vaga');
+            } else if (noVaga) {
+                matchesVagaState = desc.includes('sem vaga');
+            }
+
+            const matchesGarden = !isGarden || desc.includes('garden');
+            const matchesPne = !isPne || desc.includes('pne');
+
+            return matchesSearch && matchesVagaState && matchesGarden && matchesPne;
         });
+    }
+
+    function groupResults(unidades) {
+        const groups = {};
+        unidades.forEach(u => {
+            if (!groups[u.empreendimento]) {
+                groups[u.empreendimento] = {
+                    name: u.empreendimento,
+                    units: [],
+                    minEntrada: Infinity,
+                    entrega: u.entrega
+                };
+            }
+            groups[u.empreendimento].units.push(u);
+            if (u.entrada < groups[u.empreendimento].minEntrada) {
+                groups[u.empreendimento].minEntrada = u.entrada;
+            }
+        });
+
+        // Convert to array and sort projects by the one that has the unit with lowest entry
+        return Object.values(groups).sort((a, b) => a.minEntrada - b.minEntrada);
     }
 
     function renderResults() {
         const filtered = filterResults();
+        const grouped = groupResults(filtered);
+
         resultsList.innerHTML = '';
 
-        if (filtered.length === 0) {
-            resultsList.innerHTML = '<p class="no-results">Nenhuma unidade encontrada para esses filtros.</p>';
+        if (grouped.length === 0) {
+            resultsList.innerHTML = '<div class="no-results">Nenhuma oportunidade encontrada. Tente ajustar os filtros ou valores.</div>';
             return;
         }
 
-        filtered.slice(0, 50).forEach((u, idx) => { // Render top 50 for performance
-            const card = document.createElement('div');
-            card.className = 'unit-card';
-            card.style.animationDelay = `${idx * 0.05}s`;
+        grouped.forEach((project, pIdx) => {
+            const groupDiv = document.createElement('div');
+            groupDiv.className = 'project-group';
 
-            card.innerHTML = `
-                <div class="status-indicator ${u.status}"></div>
-                <div class="project-name">${u.empreendimento}</div>
-                <h4>Uni ${u.unidade} ${u.torre ? '- Torre ' + u.torre : ''}</h4>
-                
-                <div class="unit-info">
-                    <div class="info-item">
-                        <span>Área</span>
-                        <strong>${u.area} m²</strong>
+            const unitListHtml = project.units.map(u => `
+                <div class="unit-card">
+                    <div class="status-indicator ${u.status}"></div>
+                    <h4>Uni ${u.unidade} ${u.torre ? '- Torre ' + u.torre : ''}</h4>
+                    <div class="unit-info">
+                        <div class="info-item"><span>Área</span><strong>${u.area} m²</strong></div>
+                        <div class="info-item"><span>Tipo</span><strong>${u.descricao}</strong></div>
+                        <div class="info-item"><span>Mensais</span><strong>${u.mensais}x</strong></div>
+                        <div class="info-item"><span>Anuais</span><strong>${u.anuais}x</strong></div>
                     </div>
-                    <div class="info-item">
-                        <span>Tipo</span>
-                        <strong>${u.descricao}</strong>
-                    </div>
-                    <div class="info-item">
-                        <span>Mensais</span>
-                        <strong>${u.mensais}x</strong>
-                    </div>
-                    <div class="info-item">
-                        <span>Anuais</span>
-                        <strong>${u.anuais}x</strong>
+                    <div class="price-section">
+                        <div class="total-price"><span>Valor Total</span><strong>${formatBRL(u.valor)}</strong></div>
+                        <div class="down-payment"><span>Até a entrega:</span><strong>${formatBRL(u.entrada)}</strong></div>
                     </div>
                 </div>
+            `).join('');
 
-                <div class="price-section">
-                    <div class="total-price">
-                        <span>Valor Total</span>
-                        <strong>${formatBRL(u.valor)}</strong>
+            groupDiv.innerHTML = `
+                <div class="project-header" onclick="this.parentElement.querySelector('.unit-list-container').classList.toggle('active')">
+                    <div class="project-info-main">
+                        <h4>${project.name}</h4>
+                        <p>Entrega prevista: ${formatDate(project.entrega)}</p>
                     </div>
-                    <div class="down-payment">
-                        <span>Entrada Necessária</span>
-                        <strong>${u.entrada === 0 ? 'R$ 0,00' : formatBRL(u.entrada)}</strong>
+                    <div class="project-actions">
+                        <span class="unit-count-badge">${project.units.length} unidades</span>
+                        <button class="btn-toggle-units">Ver Unidades</button>
                     </div>
                 </div>
-
-                <div class="delivery-badge">Entrega: ${formatDate(u.entrega)}</div>
+                <div class="unit-list-container">
+                    ${unitListHtml}
+                </div>
             `;
-            resultsList.appendChild(card);
+
+            resultsList.appendChild(groupDiv);
         });
     }
 
     // Filter Listeners
-    [searchInput, filterVaga, filterGarden, filterPne].forEach(el => {
+    [searchInput, filterVaga, filterSemVaga, filterGarden, filterPne].forEach(el => {
         el.addEventListener('input', renderResults);
     });
 });
