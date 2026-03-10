@@ -28,7 +28,9 @@
     "nome": "MARIA",
     "telefone": "551170988512"
   },
-  "fotos": [],
+  "fotos": [
+    "/uploads/imoveis/LC004/1773153391138-no_photo.png"
+  ],
   "id": "lc004",
-  "updatedAt": "2026-03-10T14:33:56.022Z"
+  "updatedAt": "2026-03-10T14:36:31.130Z"
 }
