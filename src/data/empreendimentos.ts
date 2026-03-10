@@ -46,7 +46,7 @@ export const empreendimentos: Empreendimento[] = [
         dormitorios: '2 Dormitórios',
         vagas: '1 Vaga',
         area: '42m² a 48m²',
-        deliveryDate: 'Em breve',
+        deliveryDate: 'Abril 2026',
         description: 'Continuação do sucesso Villa São Francisco, a fase III traz ainda mais modernidade e conforto para sua família.'
     },
     {
@@ -63,7 +63,7 @@ export const empreendimentos: Empreendimento[] = [
         dormitorios: '2 Dormitórios',
         vagas: '1 Vaga',
         area: '42m² a 48m²',
-        deliveryDate: 'Lançamento',
+        deliveryDate: 'Maio 2027',
         description: 'O mais novo lançamento da família Villa São Francisco. Qualidade Abiatar que você já conhece.'
     },
     {
@@ -89,7 +89,7 @@ export const empreendimentos: Empreendimento[] = [
         dormitorios: '2 Dormitórios',
         vagas: '1 Vaga',
         area: '42m²',
-        deliveryDate: 'Em Construção',
+        deliveryDate: 'Agosto 2026',
         description: 'O Griffe Jasmins oferece sofisticação e lazer completo em uma localização estratégica. Um projeto feito para quem não abre mão de qualidade.'
     },
     {
@@ -106,7 +106,7 @@ export const empreendimentos: Empreendimento[] = [
         dormitorios: '2 Dormitórios',
         vagas: '1 Vaga',
         area: '42m²',
-        deliveryDate: 'Em Construção',
+        deliveryDate: 'Agosto 2028',
         description: 'A segunda fase do Griffe Jasmins traz o diferencial do rooftop com vista panorâmica e lazer sofisticado.'
     },
     {
@@ -123,7 +123,7 @@ export const empreendimentos: Empreendimento[] = [
         dormitorios: '2 Dormitórios',
         vagas: '1 Vaga',
         area: '42m²',
-        deliveryDate: '2025',
+        deliveryDate: 'Janeiro 2029',
         description: 'Viva no topo com o Áurea Sky. Um empreendimento moderno com lazer diferenciado e localização privilegiada.'
     },
     {
@@ -140,7 +140,7 @@ export const empreendimentos: Empreendimento[] = [
         dormitorios: '2 Dormitórios',
         vagas: '1 Vaga',
         area: '41m² a 47m²',
-        deliveryDate: 'Em Construção',
+        deliveryDate: 'Dez/27 (A e B) - Jun/28 (C e D)',
         description: 'Um verdadeiro clube para sua família. O Residencial Clube Laguna oferece lazer de resort e segurança 24 horas.'
     },
     {
@@ -157,7 +157,7 @@ export const empreendimentos: Empreendimento[] = [
         dormitorios: '2 Dormitórios',
         vagas: '1 Vaga',
         area: '40m² a 46m²',
-        deliveryDate: 'Lançamento',
+        deliveryDate: 'Maio 2029',
         description: 'VIVA NO CENTRO DE TUDO. Alvenaria convencional com flexibilidade de plantas e localização estratégica ao lado da futura estação de metrô.'
     },
     {
@@ -174,7 +174,7 @@ export const empreendimentos: Empreendimento[] = [
         dormitorios: '2 Dormitórios',
         vagas: '1 Vaga',
         area: 'A partir de 40m²',
-        deliveryDate: 'Lançamento',
+        deliveryDate: 'Novembro 2027',
         description: 'Inovação e modernidade no Portal do Morumbi. Um projeto pensado para o seu estilo de vida.'
     },
     {
@@ -208,7 +208,7 @@ export const empreendimentos: Empreendimento[] = [
         dormitorios: '2 Dormitórios',
         vagas: '1 Vaga',
         area: 'A partir de 42m²',
-        deliveryDate: 'Em Construção',
+        deliveryDate: 'Agosto 2028',
         description: 'Localização privilegiada próxima ao Shopping Taboão, com lazer completo para toda a família.'
     },
     {
@@ -242,7 +242,7 @@ export const empreendimentos: Empreendimento[] = [
         dormitorios: '2 Dormitórios',
         vagas: '1 Vaga',
         area: '42m²',
-        deliveryDate: 'Em Construção',
+        deliveryDate: 'Outubro 2026',
         description: 'A segunda fase do sucesso Vila Parque Central. Localização central e lazer para todos os momentos.'
     }
 ];
