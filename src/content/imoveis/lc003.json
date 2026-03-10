@@ -1,0 +1,39 @@
+{
+  "referencia": "LC003",
+  "titulo": "FIRENZE 2 DORMITÓRIOS",
+  "descricao": "💥Condomínio parque Firenze, Embú das Artes.SP*\n💥Grupo 14 \n💥Andar alto \n💥Apto, 2 dormitórios, sala, sacada,  gourmet.\n💥Cozinha e lavanderia.\n💥Com planejados no banheiros, sacada e 💥cozinha.\n💥1 vaga de garagem \n💥Pacote R$3.000.00\n💥Aceita depósito Caução ",
+  "transacao": "Locação",
+  "tipoImovel": "Apartamento",
+  "videoUrl": "",
+  "endereco": {
+    "rua": "",
+    "numero": "",
+    "bairro": "",
+    "cidade": "Taboão da Serra",
+    "estado": "SP",
+    "cep": ""
+  },
+  "caracteristicas": {
+    "quartos": 2,
+    "suites": 0,
+    "banheiros": 1,
+    "vagas": 1,
+    "areaUtil": 0,
+    "areaTotal": 0
+  },
+  "precoLocacao": 3000,
+  "destaque": false,
+  "status": "Ativo",
+  "corretor": {
+    "nome": "MARIA",
+    "telefone": "551170988512"
+  },
+  "fotos": [
+    "/uploads/imoveis/LC003/1773149127398-WhatsApp_Image_2026-03-07_at_07.00.08.jpeg",
+    "/uploads/imoveis/LC003/1773149127403-WhatsApp_Image_2026-03-07_at_07.00.09_(1).jpeg",
+    "/uploads/imoveis/LC003/1773149127406-WhatsApp_Image_2026-03-07_at_07.00.09_(2).jpeg",
+    "/uploads/imoveis/LC003/1773149127409-WhatsApp_Image_2026-03-07_at_07.00.09.jpeg"
+  ],
+  "id": "lc003",
+  "updatedAt": "2026-03-10T13:25:27.389Z"
+}
