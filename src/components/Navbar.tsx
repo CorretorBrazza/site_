@@ -24,8 +24,8 @@ export default function Navbar() {
 
           <div className="flex items-center gap-4 md:gap-8">
             <div className="hidden md:flex space-x-8">
-              <Link href="#" className="text-gray-600 hover:text-blue-700 font-semibold transition-colors">
-                Imóveis em Construção
+              <Link href="/#empreendimentos" className="text-gray-600 hover:text-blue-700 font-semibold transition-colors">
+                Empreendimentos
               </Link>
               <Link href="/venda" className="text-gray-600 hover:text-blue-700 font-semibold transition-colors">
                 Imóveis Prontos
@@ -60,11 +60,11 @@ export default function Navbar() {
         <div className="md:hidden bg-white border-b absolute w-full left-0 animate-in fade-in slide-in-from-top-4 duration-300">
           <div className="px-4 py-6 space-y-4">
             <Link
-              href="#"
+              href="/#empreendimentos"
               onClick={() => setIsOpen(false)}
               className="block text-lg font-bold text-gray-900 hover:text-blue-700 py-2 border-b border-gray-50"
             >
-              Imóveis em Construção
+              Empreendimentos
             </Link>
             <Link
               href="/venda"

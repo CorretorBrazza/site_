@@ -2,6 +2,9 @@ import Link from 'next/link';
 import { Search, Home as HomeIcon, Building2, Map, ChevronRight, CheckCircle2 } from 'lucide-react';
 import { getImoveis } from '@/app/actions/imovel-server-actions';
 import CardImovel from '@/components/CardImovel';
+import EmpreendimentoCard from '@/components/EmpreendimentoCard';
+import { empreendimentos } from '@/data/empreendimentos';
+import * as motion from 'framer-motion/client';
 
 export default async function Home() {
   const allImoveis = await getImoveis();
@@ -49,7 +52,7 @@ export default async function Home() {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Link href="#" className="group relative h-64 rounded-3xl overflow-hidden shadow-lg border border-gray-100">
+            <Link href="#empreendimentos" className="group relative h-64 rounded-3xl overflow-hidden shadow-lg border border-gray-100">
               <img src="https://images.unsplash.com/photo-1541888946425-d81bb19480c5?auto=format&fit=crop&q=80&w=800" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Imóveis em Construção" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-8">
                 <Building2 className="text-blue-400 mb-2" />
@@ -73,6 +76,39 @@ export default async function Home() {
                 <p className="text-gray-300 text-sm">As melhores opções para alugar</p>
               </div>
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Empreendimentos em Construção */}
+      <section id="empreendimentos" className="py-24 bg-gray-50 border-y border-gray-100">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <span className="text-blue-600 font-bold uppercase tracking-widest text-xs mb-3 block">
+              Novos Lançamentos
+            </span>
+            <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tighter uppercase mb-6">
+              Empreendimentos <span className="text-blue-600">em Destaque</span>
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto font-medium">
+              Conheça os projetos que estão transformando a paisagem urbana de Taboão da Serra e região.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-6xl mx-auto">
+            {empreendimentos.map((emp) => (
+              <EmpreendimentoCard
+                key={emp.slug}
+                slug={emp.slug}
+                name={emp.name}
+                address={emp.address}
+                status={emp.status}
+                image={emp.heroImage}
+                amenities={emp.amenities}
+                dormitorios={emp.dormitorios}
+                deliveryDate={emp.deliveryDate}
+              />
+            ))}
           </div>
         </div>
       </section>

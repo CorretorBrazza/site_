@@ -189,11 +189,31 @@ export default function FormEditarImovel({ imovel, proprietarioInicial }: { imov
       {/* Seção: Características e Preço */}
       <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
         <h2 className="text-lg font-bold border-b pb-2">Características e Valores</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-          <input type="number" placeholder="Quartos" className="border rounded-md p-2" value={formData.caracteristicas.quartos} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, quartos: Number(e.target.value) } })} />
-          <input type="number" placeholder="Suítes" className="border rounded-md p-2" value={formData.caracteristicas.suites} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, suites: Number(e.target.value) } })} />
-          <input type="number" placeholder="Banheiros" className="border rounded-md p-2" value={formData.caracteristicas.banheiros} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, banheiros: Number(e.target.value) } })} />
-          <input type="number" placeholder="Área (m²)" className="border rounded-md p-2" value={formData.caracteristicas.areaUtil} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, areaUtil: Number(e.target.value) } })} />
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1">Quartos</label>
+            <input type="number" placeholder="Quartos" className="w-full border rounded-md p-2" value={formData.caracteristicas.quartos} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, quartos: Number(e.target.value) } })} />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1">Suítes</label>
+            <input type="number" placeholder="Suítes" className="w-full border rounded-md p-2" value={formData.caracteristicas.suites} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, suites: Number(e.target.value) } })} />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1">Banheiros</label>
+            <input type="number" placeholder="Banheiros" className="w-full border rounded-md p-2" value={formData.caracteristicas.banheiros} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, banheiros: Number(e.target.value) } })} />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1">Vagas</label>
+            <input type="number" placeholder="Vagas" className="w-full border rounded-md p-2" value={formData.caracteristicas.vagas} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, vagas: Number(e.target.value) } })} />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1">Área Útil (m²)</label>
+            <input type="number" placeholder="Área Útil" className="w-full border rounded-md p-2" value={formData.caracteristicas.areaUtil} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, areaUtil: Number(e.target.value) } })} />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1">Área Total (m²)</label>
+            <input type="number" placeholder="Área Total" className="w-full border rounded-md p-2" value={formData.caracteristicas.areaTotal} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, areaTotal: Number(e.target.value) } })} />
+          </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
           <div>
