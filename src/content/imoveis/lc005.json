@@ -1,0 +1,49 @@
+{
+  "referencia": "LC005",
+  "titulo": "CEREJEIRAS 1 117M2 2 VAGAS",
+  "descricao": " Condomínio Cerejeiras 1.\n✔️andar  alto - Vista livre\n✔️Dependência de empregada\n✔️Lazer completo \n✔️2 vagas\n✔️117m\n✔️R$ 4.200,00 o pacote\n✔️Mais informações: 11 97098.8512",
+  "transacao": "Locação",
+  "tipoImovel": "Apartamento",
+  "videoUrl": "",
+  "endereco": {
+    "rua": "",
+    "numero": "",
+    "bairro": "",
+    "cidade": "Taboão da Serra",
+    "estado": "SP",
+    "cep": ""
+  },
+  "caracteristicas": {
+    "quartos": 4,
+    "suites": 1,
+    "banheiros": 3,
+    "vagas": 2,
+    "areaUtil": 117,
+    "areaTotal": 0
+  },
+  "precoLocacao": 4200,
+  "destaque": false,
+  "status": "Ativo",
+  "corretor": {
+    "nome": "MARIA",
+    "telefone": "551170988512"
+  },
+  "fotos": [
+    "/uploads/imoveis/LC005/1773835573803-cerejeiras_1_locacao_(1).jpeg",
+    "/uploads/imoveis/LC005/1773835573819-cerejeiras_1_locacao_(2).jpeg",
+    "/uploads/imoveis/LC005/1773835573824-cerejeiras_1_locacao_(3).jpeg",
+    "/uploads/imoveis/LC005/1773835573835-cerejeiras_1_locacao_(4).jpeg",
+    "/uploads/imoveis/LC005/1773835573846-cerejeiras_1_locacao_(5).jpeg",
+    "/uploads/imoveis/LC005/1773835573852-cerejeiras_1_locacao_(6).jpeg",
+    "/uploads/imoveis/LC005/1773835573863-cerejeiras_1_locacao_(7).jpeg",
+    "/uploads/imoveis/LC005/1773835573954-cerejeiras_1_locacao_(8).jpeg",
+    "/uploads/imoveis/LC005/1773835573958-cerejeiras_1_locacao_(9).jpeg",
+    "/uploads/imoveis/LC005/1773835573965-cerejeiras_1_locacao_(10).jpeg",
+    "/uploads/imoveis/LC005/1773835573971-cerejeiras_1_locacao_(11).jpeg",
+    "/uploads/imoveis/LC005/1773835573974-cerejeiras_1_locacao_(12).jpeg",
+    "/uploads/imoveis/LC005/1773835573983-cerejeiras_1_locacao_(13).jpeg",
+    "/uploads/imoveis/LC005/1773835573988-cerejeiras_1_locacao_(14).jpeg"
+  ],
+  "id": "lc005",
+  "updatedAt": "2026-03-18T12:06:13.762Z"
+}
