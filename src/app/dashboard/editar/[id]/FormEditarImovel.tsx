@@ -19,7 +19,7 @@ export default function FormEditarImovel({ imovel, proprietarioInicial }: { imov
 
   const CORRETORES = [
     { nome: 'BRAZZA', telefone: '5511932785602' },
-    { nome: 'MARIA', telefone: '551170988512' }
+    { nome: 'MARIA', telefone: '5511970988512' }
   ];
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
