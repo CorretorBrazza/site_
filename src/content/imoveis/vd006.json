@@ -1,0 +1,63 @@
+{
+  "referencia": "VD006",
+  "titulo": "ATUA TABOÃO 70m2",
+  "descricao": "Status venda\nCondomínio  Atua  \nTaboão da Serra\nEstrada São Francisco 1800\n°andar  alto\n70mts\n3 quartos (1 suíte) \n2 banheiros\nVenda $530.000mil\nApartamento quitado e da financiamento\n 1 vagas (uma fixa)\nChuveiro a gás \nLazer completo:\nPiscina adulto e infantil \nSauna \n2 quadras\n2 churrasqueiras\n2 salões de festas \nDog Walking\nBosque para caminhada\nSala Cinema\nBrinquedoteca \nPlay graund ao ar livre\nPlay ground cobertura \nSala de leitura\nSala de jogos \nEspaço Beauty \nMercadinho\nFeiras duas vezes na semana\nAcademia \n5 subsolos com vagas cobertas\nPortaria 24 horas\n",
+  "transacao": "Venda",
+  "tipoImovel": "Apartamento",
+  "videoUrl": "",
+  "endereco": {
+    "rua": "",
+    "numero": "",
+    "bairro": "",
+    "cidade": "Taboão da Serra",
+    "estado": "SP",
+    "cep": ""
+  },
+  "caracteristicas": {
+    "quartos": 3,
+    "suites": 1,
+    "banheiros": 2,
+    "vagas": 1,
+    "areaUtil": 73,
+    "areaTotal": 73
+  },
+  "precoVenda": 530000,
+  "destaque": false,
+  "status": "Ativo",
+  "corretor": {
+    "nome": "MARIA",
+    "telefone": "5511970988512"
+  },
+  "fotos": [
+    "/uploads/imoveis/VD006/1775597776653-WhatsApp_Image_2026-04-07_at_15.42.54_(1).jpeg",
+    "/uploads/imoveis/VD006/1775597776715-WhatsApp_Image_2026-04-07_at_15.42.54_(2).jpeg",
+    "/uploads/imoveis/VD006/1775597776748-WhatsApp_Image_2026-04-07_at_15.42.54_(3).jpeg",
+    "/uploads/imoveis/VD006/1775597776787-WhatsApp_Image_2026-04-07_at_15.42.54.jpeg",
+    "/uploads/imoveis/VD006/1775597776817-WhatsApp_Image_2026-04-07_at_15.42.55_(1).jpeg",
+    "/uploads/imoveis/VD006/1775597776835-WhatsApp_Image_2026-04-07_at_15.42.55_(2).jpeg",
+    "/uploads/imoveis/VD006/1775597776922-WhatsApp_Image_2026-04-07_at_15.42.55_(3).jpeg",
+    "/uploads/imoveis/VD006/1775597776964-WhatsApp_Image_2026-04-07_at_15.42.55.jpeg",
+    "/uploads/imoveis/VD006/1775597776984-WhatsApp_Image_2026-04-07_at_15.42.56.jpeg",
+    "/uploads/imoveis/VD006/1775597777032-WhatsApp_Image_2026-04-07_at_15.42.58_(1).jpeg",
+    "/uploads/imoveis/VD006/1775597777048-WhatsApp_Image_2026-04-07_at_15.42.58_(2).jpeg",
+    "/uploads/imoveis/VD006/1775597777067-WhatsApp_Image_2026-04-07_at_15.42.58_(3).jpeg",
+    "/uploads/imoveis/VD006/1775597777079-WhatsApp_Image_2026-04-07_at_15.42.58_(4).jpeg",
+    "/uploads/imoveis/VD006/1775597777097-WhatsApp_Image_2026-04-07_at_15.42.58.jpeg",
+    "/uploads/imoveis/VD006/1775597777117-WhatsApp_Image_2026-04-07_at_15.42.59_(1).jpeg",
+    "/uploads/imoveis/VD006/1775597777139-WhatsApp_Image_2026-04-07_at_15.42.59_(2).jpeg",
+    "/uploads/imoveis/VD006/1775597777167-WhatsApp_Image_2026-04-07_at_15.42.59.jpeg",
+    "/uploads/imoveis/VD006/1775597777185-WhatsApp_Image_2026-04-07_at_15.42.51_(1).jpeg",
+    "/uploads/imoveis/VD006/1775597777196-WhatsApp_Image_2026-04-07_at_15.42.51_(2).jpeg",
+    "/uploads/imoveis/VD006/1775597777233-WhatsApp_Image_2026-04-07_at_15.42.51.jpeg",
+    "/uploads/imoveis/VD006/1775597777250-WhatsApp_Image_2026-04-07_at_15.42.52_(1).jpeg",
+    "/uploads/imoveis/VD006/1775597777286-WhatsApp_Image_2026-04-07_at_15.42.52_(2).jpeg",
+    "/uploads/imoveis/VD006/1775597777311-WhatsApp_Image_2026-04-07_at_15.42.52_(3).jpeg",
+    "/uploads/imoveis/VD006/1775597777334-WhatsApp_Image_2026-04-07_at_15.42.52.jpeg",
+    "/uploads/imoveis/VD006/1775597777380-WhatsApp_Image_2026-04-07_at_15.42.53_(1).jpeg",
+    "/uploads/imoveis/VD006/1775597777395-WhatsApp_Image_2026-04-07_at_15.42.53_(2).jpeg",
+    "/uploads/imoveis/VD006/1775597777431-WhatsApp_Image_2026-04-07_at_15.42.53_(3).jpeg",
+    "/uploads/imoveis/VD006/1775597777472-WhatsApp_Image_2026-04-07_at_15.42.53.jpeg"
+  ],
+  "id": "vd006",
+  "updatedAt": "2026-04-07T21:36:16.618Z"
+}
