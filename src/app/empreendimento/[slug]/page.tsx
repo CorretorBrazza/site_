@@ -1,8 +1,37 @@
+import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { empreendimentos } from '@/data/empreendimentos';
 import { MapPin, Calendar, CheckCircle2, Ruler, BedDouble, Car, PlayCircle, MessageCircle, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import ImageCarousel from '@/components/ImageCarousel';
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const { slug } = await params;
+    const emp = empreendimentos.find((e) => e.slug === slug);
+
+    if (!emp) {
+        return {
+            title: 'Empreendimento não encontrado | Imóveis Taboão',
+        };
+    }
+
+    return {
+        title: `Imóveis Taboão | ${emp.name}`,
+        description: emp.description.substring(0, 160) + '...',
+        openGraph: {
+            title: `Imóveis Taboão | ${emp.name}`,
+            description: emp.description.substring(0, 160) + '...',
+            images: [emp.heroImage],
+            type: 'website',
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: `Imóveis Taboão | ${emp.name}`,
+            description: emp.description.substring(0, 160) + '...',
+            images: [emp.heroImage],
+        },
+    };
+}
 
 export default async function EmpreendimentoPage({
     params,

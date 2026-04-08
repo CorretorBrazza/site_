@@ -18,6 +18,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Imóveis Taboão | Sua casa em Taboão da Serra",
   description: "Encontre os melhores imóveis para venda e locação em Taboão da Serra e região.",
+  verification: {
+    google: 'oQxjY9vnc0x9K0xHcXK2pw4lzr9lj4tcbQa2fIbXdok',
+  },
 };
 
 export default function RootLayout({

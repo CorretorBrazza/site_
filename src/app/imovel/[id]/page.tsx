@@ -1,9 +1,39 @@
+import { Metadata } from 'next';
 import { getImoveis } from '@/app/actions/imovel-server-actions';
 import { notFound } from 'next/navigation';
 
 import ImageCarousel from '@/components/ImageCarousel';
 import ShareButton from '@/components/ShareButton';
 import BannerLocacao from '@/components/BannerLocacao';
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const imoveis = await getImoveis();
+  const imovel = imoveis.find(i => i.id === id);
+
+  if (!imovel) {
+    return {
+      title: 'Imóvel não encontrado | Imóveis Taboão',
+    };
+  }
+
+  return {
+    title: `Imóveis Taboão | ${imovel.titulo}`,
+    description: imovel.descricao.substring(0, 160) + '...',
+    openGraph: {
+      title: `Imóveis Taboão | ${imovel.titulo}`,
+      description: imovel.descricao.substring(0, 160) + '...',
+      images: imovel.fotos.length > 0 ? [imovel.fotos[0]] : [],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `Imóveis Taboão | ${imovel.titulo}`,
+      description: imovel.descricao.substring(0, 160) + '...',
+      images: imovel.fotos.length > 0 ? [imovel.fotos[0]] : [],
+    },
+  };
+}
 
 export default async function ImovelDetalhes({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
