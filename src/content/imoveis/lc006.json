@@ -1,0 +1,50 @@
+{
+  "referencia": "LC006",
+  "titulo": "APARTAMENTO SEMI MOBILIADO COM VAGA",
+  "descricao": "🏡 Aluga-se Apartamento – Próximo ao Parque das Hortênsias\n\nÓtima localização na Rua Vilobaldo Barros!\n\nO Imóvel: 2 quartos, sala, cozinha, banheiro e sacada.\n\nLazer no Condomínio: Quadra poliesportiva, parquinho e salão de festas.\n\nValores:\n💰 R$ 1.900,00: Sem mobília.\n💰 R$ 2.100,00: Com móveis (exceto eletroeletrônicos).\n\n⚠️ Condição: 2 meses de depósito.",
+  "transacao": "Locação",
+  "tipoImovel": "Apartamento",
+  "videoUrl": "",
+  "endereco": {
+    "rua": "Rua Vilobaudo Barros de Macedo",
+    "numero": "",
+    "bairro": "",
+    "cidade": "Taboão da Serra",
+    "estado": "SP",
+    "cep": ""
+  },
+  "caracteristicas": {
+    "quartos": 2,
+    "suites": 0,
+    "banheiros": 1,
+    "vagas": 1,
+    "areaUtil": 0,
+    "areaTotal": 0
+  },
+  "precoLocacao": 1900,
+  "destaque": true,
+  "status": "Ativo",
+  "corretor": {
+    "nome": "MARIA",
+    "telefone": "5511970988512"
+  },
+  "fotos": [
+    "/uploads/imoveis/LC006/1776096261033-VILOBAUDO_(1).jpeg",
+    "/uploads/imoveis/LC006/1776096261140-VILOBAUDO_(2).jpeg",
+    "/uploads/imoveis/LC006/1776096261146-VILOBAUDO_(3).jpeg",
+    "/uploads/imoveis/LC006/1776096261157-VILOBAUDO_(4).jpeg",
+    "/uploads/imoveis/LC006/1776096261174-VILOBAUDO_(5).jpeg",
+    "/uploads/imoveis/LC006/1776096261239-VILOBAUDO_(6).jpeg",
+    "/uploads/imoveis/LC006/1776096261245-VILOBAUDO_(7).jpeg",
+    "/uploads/imoveis/LC006/1776096261255-VILOBAUDO_(8).jpeg",
+    "/uploads/imoveis/LC006/1776096261289-VILOBAUDO_(9).jpeg",
+    "/uploads/imoveis/LC006/1776096261296-VILOBAUDO_(10).jpeg",
+    "/uploads/imoveis/LC006/1776096261308-VILOBAUDO_(11).jpeg",
+    "/uploads/imoveis/LC006/1776096261315-VILOBAUDO_(12).jpeg",
+    "/uploads/imoveis/LC006/1776096261332-VILOBAUDO_(13).jpeg",
+    "/uploads/imoveis/LC006/1776096261356-VILOBAUDO_(14).jpeg",
+    "/uploads/imoveis/LC006/1776096261363-VILOBAUDO_(15).jpeg"
+  ],
+  "id": "lc006",
+  "updatedAt": "2026-04-13T16:04:20.941Z"
+}
