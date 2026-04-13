@@ -137,14 +137,37 @@ export const empreendimentos: Empreendimento[] = [
         heroImage: '/images/empreendimentos/laguna-fachada.webp',
         images: [
             '/images/empreendimentos/laguna-fachada.webp',
-            '/images/empreendimentos/laguna-academia.webp'
+            '/images/empreendimentos/laguna-academia.webp',
+            '/images/empreendimentos/laguna-apto-living.webp',
+            '/images/empreendimentos/laguna-bicicletario.webp',
+            '/images/empreendimentos/laguna-brinquedoteca.webp',
+            '/images/empreendimentos/laguna-car-wash.webp',
+            '/images/empreendimentos/laguna-churrasqueira.webp',
+            '/images/empreendimentos/laguna-cinema.webp',
+            '/images/empreendimentos/laguna-coworking.webp',
+            '/images/empreendimentos/laguna-ferramentaria.webp',
+            '/images/empreendimentos/laguna-fitness-externo.webp',
+            '/images/empreendimentos/laguna-garage-band.webp',
+            '/images/empreendimentos/laguna-massagem.webp',
+            '/images/empreendimentos/laguna-pet-care.webp',
+            '/images/empreendimentos/laguna-piscina-aerea.webp',
+            '/images/empreendimentos/laguna-pub.webp',
+            '/images/empreendimentos/laguna-salao-beleza.webp',
+            '/images/empreendimentos/laguna-salao-festas.webp',
+            '/images/empreendimentos/laguna-zen-spa.webp'
         ],
-        amenities: ['Piscina', 'Garagem', 'Pet Place', 'Academia', 'Salão de Festas', 'Home Office', 'Bicicletário', 'Playground', 'Cinema', 'Churrasqueira', 'Fitness Externo', 'Sala de Jogos', 'Brinquedoteca'],
-        dormitorios: '2 Dormitórios',
+        amenities: [
+            'Piscina', 'Garagem', 'Pet Place', 'Academia', 'Salão de Festas', 'Bicicletário', 
+            'Playground', 'Cinema', 'Churrasqueira', 'Fitness Externo', 'Sala de Jogos', 
+            'Brinquedoteca', 'Pizza Lounge', 'Deck Solar', 'Redário', 'Praça de Jogos', 
+            'Car Wash', 'Ferramentaria', 'Pub', 'Sala de Massagem', 'Zen Spa', 
+            'Garage Band', 'Salão de Beleza', 'Coworking'
+        ],
+        dormitorios: '1 e 2 Dormitórios',
         vagas: '1 Vaga',
         area: '41m² a 47m²',
         deliveryDate: 'Dez/27 (A e B) - Jun/28 (C e D)',
-        description: 'Um verdadeiro clube para sua família. O Residencial Clube Laguna oferece lazer de resort e segurança 24 horas.'
+        description: 'Um verdadeiro clube para sua família. O Residencial Clube Laguna oferece lazer de resort com mais de 20 opções de entretenimento e segurança 24 horas.'
     },
     {
         slug: 'abiatar-residence-tower',
