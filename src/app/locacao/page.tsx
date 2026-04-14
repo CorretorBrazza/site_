@@ -1,6 +1,12 @@
+import { Metadata } from 'next';
 import { getImoveis } from '@/app/actions/imovel-server-actions';
 import CardImovel from '@/components/CardImovel';
 import BannerLocacao from '@/components/BannerLocacao';
+
+export const metadata: Metadata = {
+  title: 'imoveistaboão, Imóveis para Locação',
+  description: 'Encontre as melhores casas e apartamentos para alugar em Taboão da Serra e região.',
+};
 
 export default async function LocacaoPage() {
   const allImoveis = await getImoveis();

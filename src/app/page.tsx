@@ -10,8 +10,48 @@ export default async function Home() {
   const allImoveis = await getImoveis();
   const destaques = allImoveis.filter(i => i.destaque && i.status === 'Ativo').slice(0, 3);
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'RealEstateAgent',
+    'name': 'Imóveis Taboão',
+    'image': 'https://imoveistaboao.com.br/favicon.ico',
+    '@id': 'https://imoveistaboao.com.br',
+    'url': 'https://imoveistaboao.com.br',
+    'telephone': '+5511932785602',
+    'address': {
+      '@type': 'PostalAddress',
+      'streetAddress': 'Taboão da Serra',
+      'addressLocality': 'Taboão da Serra',
+      'addressRegion': 'SP',
+      'postalCode': '06750-000',
+      'addressCountry': 'BR'
+    },
+    'geo': {
+      '@type': 'GeoCoordinates',
+      'latitude': -23.6247,
+      'longitude': -46.7885
+    },
+    'openingHoursSpecification': {
+      '@type': 'OpeningHoursSpecification',
+      'dayOfWeek': [
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday'
+      ],
+      'opens': '09:00',
+      'closes': '18:00'
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Hero Section */}
       <section className="relative h-[85vh] flex items-center justify-center overflow-hidden">
         {/* Background Overlay com Gradiente Premium */}

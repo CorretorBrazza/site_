@@ -1,9 +1,15 @@
+import { Metadata } from 'next';
 import { getImoveis } from '@/app/actions/imovel-server-actions';
 import CardImovel from '@/components/CardImovel';
 
+export const metadata: Metadata = {
+  title: 'imoveistaboão, Imóveis para Venda',
+  description: 'Confira as melhores oportunidades de casas e apartamentos para venda em Taboão da Serra e região.',
+};
+
 export default async function VendaPage() {
   const allImoveis = await getImoveis();
-  const imoveis = allImoveis.filter(i => 
+  const imoveis = allImoveis.filter(i =>
     (i.transacao === 'Venda' || i.transacao === 'Venda e Locação') && i.status === 'Ativo'
   );
 
@@ -13,7 +19,7 @@ export default async function VendaPage() {
         <h1 className="text-3xl font-bold text-gray-900">Imóveis para Venda</h1>
         <p className="text-gray-600 mt-2">Encontramos {imoveis.length} oportunidades em Taboão da Serra.</p>
       </header>
-      
+
       {imoveis.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {imoveis.map(imovel => (

@@ -16,17 +16,17 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     }
 
     return {
-        title: `Imóveis Taboão | ${emp.name}`,
+        title: `imoveistaboão, ${emp.name}`,
         description: emp.description.substring(0, 160) + '...',
         openGraph: {
-            title: `Imóveis Taboão | ${emp.name}`,
+            title: `imoveistaboão, ${emp.name}`,
             description: emp.description.substring(0, 160) + '...',
             images: [emp.heroImage],
             type: 'website',
         },
         twitter: {
             card: 'summary_large_image',
-            title: `Imóveis Taboão | ${emp.name}`,
+            title: `imoveistaboão, ${emp.name}`,
             description: emp.description.substring(0, 160) + '...',
             images: [emp.heroImage],
         },

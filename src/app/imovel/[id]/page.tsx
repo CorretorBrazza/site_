@@ -18,17 +18,17 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   }
 
   return {
-    title: `Imóveis Taboão | ${imovel.titulo}`,
+    title: `imoveistaboão, ${imovel.titulo}`,
     description: imovel.descricao.substring(0, 160) + '...',
     openGraph: {
-      title: `Imóveis Taboão | ${imovel.titulo}`,
+      title: `imoveistaboão, ${imovel.titulo}`,
       description: imovel.descricao.substring(0, 160) + '...',
       images: imovel.fotos.length > 0 ? [imovel.fotos[0]] : [],
       type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
-      title: `Imóveis Taboão | ${imovel.titulo}`,
+      title: `imoveistaboão, ${imovel.titulo}`,
       description: imovel.descricao.substring(0, 160) + '...',
       images: imovel.fotos.length > 0 ? [imovel.fotos[0]] : [],
     },
