@@ -12,9 +12,59 @@ export interface Empreendimento {
     deliveryDate: string;
     description: string;
     videoUrl?: string;
+    logoUrl?: string;
+    plantImages?: string[];
+    virtualTourUrl?: string;
+    fichaUrl?: string;
+    croquiUrl?: string;
+    progressPercentage?: number;
+    lastUpdateDate?: string;
+    dormitorioOptions?: Array<{ dormitorios: string; area: string; vagas: string }>;
 }
 
 export const empreendimentos: Empreendimento[] = [
+    {
+        slug: '360-home-club',
+        name: '360 Home Club',
+        address: 'R. Áurea Tavares, 440 – Loteamento Pq. Industrial das Oliveiras, Taboão da Serra – SP',
+        status: 'Lançamento',
+        heroImage: '/images/empreendimentos/360-home-club/fachada.jpg',
+        logoUrl: '/images/empreendimentos/360-home-club/logo.png',
+        images: [
+            '/images/empreendimentos/360-home-club/fachada.jpg',
+        ],
+        amenities: [
+            'Brinquedoteca',
+            'Cinema',
+            'Coworking',
+            'Espaço Beleza',
+            'Espaço Connect',
+            'Espaço Gourmet',
+            'Espaço Gourmet com Churrasqueira na Cobertura',
+            'Fitness',
+            'Insta Spot',
+            'Market',
+            'Oficina / Ateliê',
+            'Pet Care',
+            'Pet Place',
+            'Piscina Adulto',
+            'Piscina Infantil',
+            'Playground',
+            'Quadra de Beach Tennis',
+            'Quadra de Streetball',
+            'Salão de Festas',
+            'Salão de Jogos'
+        ],
+        dormitorios: '2 Dormitórios',
+        vagas: '427 vagas automóveis + 36 motos + 186 bicicletas',
+        area: '41m² a 71m²',
+        deliveryDate: 'A confirmar',
+        description: 'Um novo jeito de viver bem em Taboão da Serra. O 360 Home Club Taboão é um empreendimento pensado para oferecer conforto, lazer e qualidade de vida em um dos pontos mais estratégicos da cidade. Com apartamentos de 2 dormitórios, plantas inteligentes de 41 a 43 m², com varanda, opção de vaga e unidades garden de 50 a 71 m², o projeto alia funcionalidade e bem-estar para o dia a dia. Com conceito de home club, o condomínio conta com mais de 20 itens de lazer. Tudo isso próximo ao Shopping Taboão, com fácil acesso à Rodovia Régis Bittencourt e às futuras estações da Linha 4-Amarela do metrô. Enquadrado no programa Minha Casa Minha Vida, com entrada facilitada e parcelas acessíveis para quem ganha até 6 salários mínimos.',
+        dormitorioOptions: [
+            { dormitorios: '2 Dormitórios com Varanda', area: '41m² a 43m²', vagas: 'Opcional' },
+            { dormitorios: 'Garden (Térreo)', area: '50m² a 71m²', vagas: 'Opcional' },
+        ]
+    },
     {
         slug: 'villa-sao-francisco-2',
         name: 'Villa São Francisco II',
@@ -135,6 +185,8 @@ export const empreendimentos: Empreendimento[] = [
         address: 'R. José de Souza Costa, 221 - Parque Laguna, Taboão da Serra - SP',
         status: 'Em Construção',
         heroImage: '/images/empreendimentos/laguna-fachada.webp',
+        logoUrl: '/images/empreendimentos/laguna-logo.webp',
+        videoUrl: 'https://www.youtube.com/watch?v=XHauCjjHIzo',
         images: [
             '/images/empreendimentos/laguna-fachada.webp',
             '/images/empreendimentos/laguna-academia.webp',
@@ -154,20 +206,38 @@ export const empreendimentos: Empreendimento[] = [
             '/images/empreendimentos/laguna-pub.webp',
             '/images/empreendimentos/laguna-salao-beleza.webp',
             '/images/empreendimentos/laguna-salao-festas.webp',
-            '/images/empreendimentos/laguna-zen-spa.webp'
+            '/images/empreendimentos/laguna-zen-spa.webp',
+            '/images/empreendimentos/laguna-planta-1pav.webp',
+            '/images/empreendimentos/laguna-planta-2pav.webp',
+            '/images/empreendimentos/laguna-planta-3pav.webp',
+            '/images/empreendimentos/laguna-implantacao.webp'
         ],
+        plantImages: [
+            '/images/empreendimentos/laguna-planta-1pav.webp',
+            '/images/empreendimentos/laguna-planta-2pav.webp',
+            '/images/empreendimentos/laguna-planta-3pav.webp',
+            '/images/empreendimentos/laguna-implantacao.webp'
+        ],
+        virtualTourUrl: 'https://www.youtube.com/embed/XHauCjjHIzo',
+        fichaUrl: 'https://abiatar.com/wp-content/uploads/2025/06/Ficha-tecnica_Residencial-Clube-Laguna.pdf',
+        croquiUrl: 'https://abiatar.com/wp-content/uploads/2025/06/Croqui-R.Clube-Laguna.html',
         amenities: [
-            'Piscina', 'Garagem', 'Pet Place', 'Academia', 'Salão de Festas', 'Bicicletário', 
-            'Playground', 'Cinema', 'Churrasqueira', 'Fitness Externo', 'Sala de Jogos', 
-            'Brinquedoteca', 'Pizza Lounge', 'Deck Solar', 'Redário', 'Praça de Jogos', 
-            'Car Wash', 'Ferramentaria', 'Pub', 'Sala de Massagem', 'Zen Spa', 
-            'Garage Band', 'Salão de Beleza', 'Coworking'
+            'Piscina', 'Garagem', 'Pet Place', 'Academia', 'Salão de Festas', 'Home Office', 
+            'Bicicletário', 'Playground', 'Cinema', 'Churrasqueira', 'Fitness Externo', 
+            'Sala de Jogos', 'Pizza Lounge', 'Brinquedoteca', 'Car Wash', 'Ferramentaria', 
+            'Pub', 'Sala de Massagem', 'Zen Spa', 'Garage Band', 'Salão de Beleza', 'Coworking'
         ],
         dormitorios: '1 e 2 Dormitórios',
         vagas: '1 Vaga',
         area: '41m² a 47m²',
         deliveryDate: 'Dez/27 (A e B) - Jun/28 (C e D)',
-        description: 'Um verdadeiro clube para sua família. O Residencial Clube Laguna oferece lazer de resort com mais de 20 opções de entretenimento e segurança 24 horas.'
+        description: 'O Residencial Clube Laguna é um verdadeiro clube residencial localizado no Parque Laguna, oferecendo uma experiência de lazer completa com mais de 20 opções de entretenimento. Com apartamentos de 1 e 2 dormitórios, o empreendimento conta com piscina, academia, salão de festas, cinema, brinquedoteca, espaço pet, coworking e muito mais. Uma localização privilegiada com segurança 24 horas e infraestrutura completa para você e sua família viverem momentos inesquecíveis.',
+        progressPercentage: 21,
+        lastUpdateDate: '08/04/2026',
+        dormitorioOptions: [
+            { dormitorios: '1 Dormitório', area: '41m² a 45m²', vagas: '1 Vaga' },
+            { dormitorios: '2 Dormitórios', area: '45m² a 47m²', vagas: '1 Vaga' }
+        ]
     },
     {
         slug: 'abiatar-residence-tower',
