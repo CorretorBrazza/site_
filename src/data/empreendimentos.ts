@@ -1,3 +1,25 @@
+export interface BlocoInfo {
+    nome: string;
+    andares: string;
+    gardensPortAndar: number;
+    aptosPortAndar: number;
+    totalUnidades: number;
+    area: string;
+    elevadores: number;
+}
+
+export interface VagasDetalhadas {
+    automoveis: number;
+    pne: number;
+    motos: number;
+    bicicletas: number;
+}
+
+export interface Proximidade {
+    referencia: string;
+    distancia: string;
+}
+
 export interface Empreendimento {
     slug: string;
     name: string;
@@ -20,6 +42,14 @@ export interface Empreendimento {
     progressPercentage?: number;
     lastUpdateDate?: string;
     dormitorioOptions?: Array<{ dormitorios: string; area: string; vagas: string }>;
+    programaHabitacional?: string;
+    blocos?: number;
+    totalUnidades?: number;
+    blocosInfo?: BlocoInfo[];
+    vagasDetalhadas?: VagasDetalhadas;
+    proximidades?: Proximidade[];
+    seoTitle?: string;
+    seoDescription?: string;
 }
 
 export const empreendimentos: Empreendimento[] = [
@@ -32,6 +62,29 @@ export const empreendimentos: Empreendimento[] = [
         logoUrl: '/images/empreendimentos/360-home-club/logo.png',
         images: [
             '/images/empreendimentos/360-home-club/fachada.jpg',
+        ],
+        programaHabitacional: 'Minha Casa Minha Vida',
+        blocos: 2,
+        totalUnidades: 427,
+        blocosInfo: [
+            {
+                nome: 'Bloco 1',
+                andares: 'Térreo + 20 andares',
+                gardensPortAndar: 4,
+                aptosPortAndar: 10,
+                totalUnidades: 204,
+                area: '41m² a 61m²',
+                elevadores: 4,
+            },
+            {
+                nome: 'Bloco 2',
+                andares: 'Térreo + 18 andares',
+                gardensPortAndar: 7,
+                aptosPortAndar: 12,
+                totalUnidades: 223,
+                area: '41m² a 71m²',
+                elevadores: 4,
+            },
         ],
         amenities: [
             'Brinquedoteca',
@@ -49,21 +102,36 @@ export const empreendimentos: Empreendimento[] = [
             'Pet Place',
             'Piscina Adulto',
             'Piscina Infantil',
-            'Playground',
+            'Playground Infantil',
             'Quadra de Beach Tennis',
             'Quadra de Streetball',
             'Salão de Festas',
-            'Salão de Jogos'
+            'Salão de Jogos',
         ],
         dormitorios: '2 Dormitórios',
-        vagas: '427 vagas automóveis + 36 motos + 186 bicicletas',
+        vagas: '427 automóveis + 13 PNE + 36 motos + 186 bicicletas',
+        vagasDetalhadas: {
+            automoveis: 427,
+            pne: 13,
+            motos: 36,
+            bicicletas: 186,
+        },
         area: '41m² a 71m²',
         deliveryDate: 'A confirmar',
-        description: 'Um novo jeito de viver bem em Taboão da Serra. O 360 Home Club Taboão é um empreendimento pensado para oferecer conforto, lazer e qualidade de vida em um dos pontos mais estratégicos da cidade. Com apartamentos de 2 dormitórios, plantas inteligentes de 41 a 43 m², com varanda, opção de vaga e unidades garden de 50 a 71 m², o projeto alia funcionalidade e bem-estar para o dia a dia. Com conceito de home club, o condomínio conta com mais de 20 itens de lazer. Tudo isso próximo ao Shopping Taboão, com fácil acesso à Rodovia Régis Bittencourt e às futuras estações da Linha 4-Amarela do metrô. Enquadrado no programa Minha Casa Minha Vida, com entrada facilitada e parcelas acessíveis para quem ganha até 6 salários mínimos.',
+        description: 'Um novo jeito de viver bem em Taboão da Serra. O 360 Home Club é um empreendimento com 2 blocos e 427 unidades, pensado para oferecer conforto, lazer e qualidade de vida em um dos pontos mais estratégicos da cidade. Com apartamentos de 2 dormitórios e varandas, plantas inteligentes de 41 a 71 m², o projeto alia funcionalidade e bem-estar no dia a dia. Com conceito de home club, o condomínio conta com 20 itens de lazer. Próximo ao Shopping Taboão, com fácil acesso à Rodovia Régis Bittencourt e às futuras estações da Linha 4-Amarela do metrô. Enquadrado no programa Minha Casa Minha Vida, com entrada facilitada e parcelas acessíveis.',
         dormitorioOptions: [
-            { dormitorios: '2 Dormitórios com Varanda', area: '41m² a 43m²', vagas: 'Opcional' },
-            { dormitorios: 'Garden (Térreo)', area: '50m² a 71m²', vagas: 'Opcional' },
-        ]
+            { dormitorios: '2 Dorms. com Varanda – Bloco 1', area: '41m² a 61m²', vagas: 'Opcional' },
+            { dormitorios: '2 Dorms. com Varanda – Bloco 2', area: '41m² a 71m²', vagas: 'Opcional' },
+            { dormitorios: 'Garden – Bloco 1 (Térreo)', area: '50m² a 61m²', vagas: 'Opcional' },
+            { dormitorios: 'Garden – Bloco 2 (Térreo)', area: '50m² a 71m²', vagas: 'Opcional' },
+        ],
+        proximidades: [
+            { referencia: 'Shopping Taboão', distancia: '600 metros' },
+            { referencia: 'Rodovia Régis Bittencourt', distancia: '800 metros' },
+            { referencia: 'Futuras estações Linha 4-Amarela do Metrô', distancia: 'Acesso facilitado' },
+        ],
+        seoTitle: 'LANÇAMENTO AO LADO DO SHOPPING | Aptos até 71m² | 360 Home Club – Taboão da Serra',
+        seoDescription: 'Lançamento MCMV em Taboão da Serra! 360 Home Club: apts de 2 dorms com varanda e gardens até 71m², 20 itens de lazer, a 600m do Shopping Taboão. Parcelas acessíveis. Fale agora!',
     },
     {
         slug: 'villa-sao-francisco-2',
@@ -222,9 +290,9 @@ export const empreendimentos: Empreendimento[] = [
         fichaUrl: 'https://abiatar.com/wp-content/uploads/2025/06/Ficha-tecnica_Residencial-Clube-Laguna.pdf',
         croquiUrl: 'https://abiatar.com/wp-content/uploads/2025/06/Croqui-R.Clube-Laguna.html',
         amenities: [
-            'Piscina', 'Garagem', 'Pet Place', 'Academia', 'Salão de Festas', 'Home Office', 
-            'Bicicletário', 'Playground', 'Cinema', 'Churrasqueira', 'Fitness Externo', 
-            'Sala de Jogos', 'Pizza Lounge', 'Brinquedoteca', 'Car Wash', 'Ferramentaria', 
+            'Piscina', 'Garagem', 'Pet Place', 'Academia', 'Salão de Festas', 'Home Office',
+            'Bicicletário', 'Playground', 'Cinema', 'Churrasqueira', 'Fitness Externo',
+            'Sala de Jogos', 'Pizza Lounge', 'Brinquedoteca', 'Car Wash', 'Ferramentaria',
             'Pub', 'Sala de Massagem', 'Zen Spa', 'Garage Band', 'Salão de Beleza', 'Coworking'
         ],
         dormitorios: '1 e 2 Dormitórios',

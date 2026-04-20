@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { empreendimentos } from '@/data/empreendimentos';
-import { MapPin, Calendar, CheckCircle2, Ruler, BedDouble, Car, PlayCircle, MessageCircle, ChevronLeft } from 'lucide-react';
+import { MapPin, Calendar, CheckCircle2, Ruler, BedDouble, Car, PlayCircle, MessageCircle, ChevronLeft, Building2, ParkingCircle, Bike, Accessibility, Navigation } from 'lucide-react';
 import Link from 'next/link';
 import PropertyHeroBanner from '@/components/PropertyHeroBanner';
 import PropertyTabsSection from '@/components/PropertyTabsSection';
@@ -19,19 +19,22 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         };
     }
 
+    const title = emp.seoTitle || `imoveistaboão, ${emp.name}`;
+    const description = emp.seoDescription || emp.description.substring(0, 160) + '...';
+
     return {
-        title: `imoveistaboão, ${emp.name}`,
-        description: emp.description.substring(0, 160) + '...',
+        title,
+        description,
         openGraph: {
-            title: `imoveistaboão, ${emp.name}`,
-            description: emp.description.substring(0, 160) + '...',
+            title,
+            description,
             images: [emp.heroImage],
             type: 'website',
         },
         twitter: {
             card: 'summary_large_image',
-            title: `imoveistaboão, ${emp.name}`,
-            description: emp.description.substring(0, 160) + '...',
+            title,
+            description,
             images: [emp.heroImage],
         },
     };
@@ -127,6 +130,88 @@ export default async function EmpreendimentoPage({
                         {/* Dormitorios Section */}
                         {emp.dormitorioOptions && emp.dormitorioOptions.length > 0 && (
                             <DormitoriosSection options={emp.dormitorioOptions} />
+                        )}
+
+                        {/* Blocos Info */}
+                        {emp.blocosInfo && emp.blocosInfo.length > 0 && (
+                            <div className="bg-white p-8 md:p-10 rounded-2xl border border-gray-100 shadow-sm">
+                                <h2 className="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+                                    <Building2 className="text-blue-600" size={24} />
+                                    Detalhes dos Blocos
+                                </h2>
+                                <p className="text-sm text-gray-500 mb-6">
+                                    {emp.blocos} blocos · {emp.totalUnidades} unidades no total
+                                    {emp.programaHabitacional && ` · ${emp.programaHabitacional}`}
+                                </p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {emp.blocosInfo.map((bloco) => (
+                                        <div key={bloco.nome} className="border border-blue-100 bg-blue-50/50 rounded-xl p-6">
+                                            <h3 className="text-lg font-black text-blue-700 mb-4">{bloco.nome}</h3>
+                                            <ul className="space-y-2 text-sm text-gray-700">
+                                                <li className="flex justify-between"><span className="text-gray-500">Andares</span><span className="font-semibold">{bloco.andares}</span></li>
+                                                <li className="flex justify-between"><span className="text-gray-500">Gardens / andar</span><span className="font-semibold">{bloco.gardensPortAndar} unidades</span></li>
+                                                <li className="flex justify-between"><span className="text-gray-500">Aptos / andar</span><span className="font-semibold">{bloco.aptosPortAndar} unidades</span></li>
+                                                <li className="flex justify-between"><span className="text-gray-500">Total de unidades</span><span className="font-semibold">{bloco.totalUnidades}</span></li>
+                                                <li className="flex justify-between"><span className="text-gray-500">Metragem</span><span className="font-semibold">{bloco.area}</span></li>
+                                                <li className="flex justify-between"><span className="text-gray-500">Elevadores</span><span className="font-semibold">{bloco.elevadores} por bloco</span></li>
+                                            </ul>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Vagas Detalhadas */}
+                        {emp.vagasDetalhadas && (
+                            <div className="bg-white p-8 md:p-10 rounded-2xl border border-gray-100 shadow-sm">
+                                <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                                    <ParkingCircle className="text-blue-600" size={24} />
+                                    Estacionamento
+                                </h2>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <div className="text-center bg-gray-50 rounded-xl p-5">
+                                        <Car className="text-blue-600 mx-auto mb-2" size={28} />
+                                        <p className="text-3xl font-black text-gray-900">{emp.vagasDetalhadas.automoveis}</p>
+                                        <p className="text-xs text-gray-500 mt-1 font-medium">Automóveis</p>
+                                    </div>
+                                    <div className="text-center bg-gray-50 rounded-xl p-5">
+                                        <Accessibility className="text-purple-600 mx-auto mb-2" size={28} />
+                                        <p className="text-3xl font-black text-gray-900">{emp.vagasDetalhadas.pne}</p>
+                                        <p className="text-xs text-gray-500 mt-1 font-medium">PNE</p>
+                                    </div>
+                                    <div className="text-center bg-gray-50 rounded-xl p-5">
+                                        <Car className="text-orange-500 mx-auto mb-2" size={28} />
+                                        <p className="text-3xl font-black text-gray-900">{emp.vagasDetalhadas.motos}</p>
+                                        <p className="text-xs text-gray-500 mt-1 font-medium">Motos</p>
+                                    </div>
+                                    <div className="text-center bg-gray-50 rounded-xl p-5">
+                                        <Bike className="text-green-600 mx-auto mb-2" size={28} />
+                                        <p className="text-3xl font-black text-gray-900">{emp.vagasDetalhadas.bicicletas}</p>
+                                        <p className="text-xs text-gray-500 mt-1 font-medium">Bicicletas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Proximidades */}
+                        {emp.proximidades && emp.proximidades.length > 0 && (
+                            <div className="bg-white p-8 md:p-10 rounded-2xl border border-gray-100 shadow-sm">
+                                <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                                    <Navigation className="text-blue-600" size={24} />
+                                    Localização e Acessos
+                                </h2>
+                                <ul className="space-y-3">
+                                    {emp.proximidades.map((item) => (
+                                        <li key={item.referencia} className="flex items-center justify-between bg-gray-50 rounded-xl px-5 py-4">
+                                            <div className="flex items-center gap-3">
+                                                <MapPin className="text-blue-500 shrink-0" size={18} />
+                                                <span className="font-medium text-gray-800">{item.referencia}</span>
+                                            </div>
+                                            <span className="text-sm font-bold text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">{item.distancia}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         )}
 
                         {/* Building Progress */}
