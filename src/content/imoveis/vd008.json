@@ -1,0 +1,40 @@
+{
+  "referencia": "VD008",
+  "titulo": "OTIMO TERRENO 125,40 M2",
+  "descricao": "Ótimo Terreno\n125,40 m2\n\n5,80 metros de frente\n22 metros de cada lado\nfechando com 5,70 metros\n\nTerreno plano, limpo e murado!\nRua Sem Saída\n\n150 metros da Estrada dos Miradas\nNenhum débito!\n\nDocumentação totalmente em dia!\n\nValor para venda: 400mil",
+  "transacao": "Venda",
+  "tipoImovel": "Terreno",
+  "videoUrl": "https://youtube.com/shorts/xm094SrG5BI?feature=share",
+  "endereco": {
+    "rua": "Rua Jose Laborin",
+    "numero": "64",
+    "bairro": "",
+    "cidade": "São Paulo",
+    "estado": "SP",
+    "cep": ""
+  },
+  "caracteristicas": {
+    "quartos": 0,
+    "suites": 0,
+    "banheiros": 0,
+    "vagas": 0,
+    "areaUtil": 0,
+    "areaTotal": 125
+  },
+  "precoVenda": 400000,
+  "destaque": true,
+  "status": "Ativo",
+  "corretor": {
+    "nome": "BRAZZA",
+    "telefone": "5511932785602"
+  },
+  "fotos": [
+    "/uploads/imoveis/VD008/1777400769083-WhatsApp_Image_2026-04-28_at_15.11.57_(1).jpeg",
+    "/uploads/imoveis/VD008/1777400769102-WhatsApp_Image_2026-04-28_at_15.11.57_(2).jpeg",
+    "/uploads/imoveis/VD008/1777400769115-WhatsApp_Image_2026-04-28_at_15.11.57.jpeg",
+    "/uploads/imoveis/VD008/1777400769127-WhatsApp_Image_2026-04-28_at_15.11.58_(1).jpeg",
+    "/uploads/imoveis/VD008/1777400769165-WhatsApp_Image_2026-04-28_at_15.11.58.jpeg"
+  ],
+  "id": "vd008",
+  "updatedAt": "2026-04-28T18:26:09.064Z"
+}
