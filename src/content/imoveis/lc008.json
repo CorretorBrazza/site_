@@ -1,0 +1,46 @@
+{
+  "referencia": "LC008",
+  "titulo": "JARDINS DA CIDADE 3 DORMITORIOS",
+  "descricao": "Oportunidade no Condomínio Jardins da Cidade – Conforto e Praticidade\n\nLocalizado em um dos condomínios mais desejados da região, este apartamento de 73m² oferece o equilíbrio perfeito entre modernidade e silêncio, por estar voltado para a face interna do condomínio.\n\nDestaques do Imóvel:\n\n3 Dormitórios (sendo 1 suíte) com armários planejados de excelente qualidade.\n\nCozinha funcional e repleta de planejados.\n\nVaranda com fechamento em vidro e cortina solar, ideal para momentos de relaxamento.\n\nAcabamento impecável: piso em porcelanato, duchas instaladas e pintura nova.\n\n1 vaga de garagem.\n\nDiferenciais do Condomínio:\n\nAcesso exclusivo e interno ao Shopping Taboão.\n\nLazer de clube completo, incluindo sauna, piscinas, academia e áreas de convivência.\n\nValor do Pacote (Aluguel + Condomínio + IPTU): R$ 4.000,00",
+  "transacao": "Locação",
+  "tipoImovel": "Apartamento",
+  "videoUrl": "",
+  "endereco": {
+    "rua": "",
+    "numero": "",
+    "bairro": "",
+    "cidade": "Taboão da Serra",
+    "estado": "SP",
+    "cep": ""
+  },
+  "caracteristicas": {
+    "quartos": 3,
+    "suites": 1,
+    "banheiros": 1,
+    "vagas": 1,
+    "areaUtil": 73,
+    "areaTotal": 73
+  },
+  "precoLocacao": 3999,
+  "destaque": true,
+  "status": "Ativo",
+  "corretor": {
+    "nome": "MARIA",
+    "telefone": "5511970988512"
+  },
+  "fotos": [
+    "/uploads/imoveis/LC008/1777371247072-jardins_da_cidade_locacao_(1).jpeg",
+    "/uploads/imoveis/LC008/1777371247337-jardins_da_cidade_locacao_(2).jpeg",
+    "/uploads/imoveis/LC008/1777371247365-jardins_da_cidade_locacao_(3).jpeg",
+    "/uploads/imoveis/LC008/1777371247457-jardins_da_cidade_locacao_(4).jpeg",
+    "/uploads/imoveis/LC008/1777371247502-jardins_da_cidade_locacao_(5).jpeg",
+    "/uploads/imoveis/LC008/1777371247523-jardins_da_cidade_locacao_(6).jpeg",
+    "/uploads/imoveis/LC008/1777371248928-jardins_da_cidade_locacao_(7).jpeg",
+    "/uploads/imoveis/LC008/1777371249104-jardins_da_cidade_locacao_(8).jpeg",
+    "/uploads/imoveis/LC008/1777371249273-jardins_da_cidade_locacao_(9).jpeg",
+    "/uploads/imoveis/LC008/1777371249319-jardins_da_cidade_locacao_(10).jpeg",
+    "/uploads/imoveis/LC008/1777371249350-jardins_da_cidade_locacao_(11).jpeg"
+  ],
+  "id": "lc008",
+  "updatedAt": "2026-04-28T10:14:06.286Z"
+}
