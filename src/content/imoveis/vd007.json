@@ -1,0 +1,42 @@
+{
+  "referencia": "VD007",
+  "titulo": "CASA TABOÃO CONDOMÍNIO FECHADO",
+  "descricao": "DOCUMENTAÇÃO OK\nFINANCIA\nESTUDA PERTUMA\n\nSobrado Exclusivo com Vista para a Mata Parque das Cigarreiras, Taboão da Serra\n\nOportunidade Única:\nConforto de Condomínio Fechado com Custo Zero de Taxa Mensal!\n Características\n\nÁrea de serviço\nArmário banheiro\nArmário closet\nArmário cozinha\nCarpete de madeira\nCozinha\nEm condomínio fechado\nEscritório ou quarto\nEsgoto\nInterfone\nLavanderia\nPavimentação\nPorcelanato\nQuintal\nSacada\nSem condomínio\n\n\nSobrado Exclusivo com Vista para a Mata Parque das Cigarreiras, Taboão da Serra\n\nOportunidade Única:\nConforto de Condomínio Fechado com Custo Zero de Taxa Mensal!\n\nSe você busca tranquilidade, segurança e contato com a natureza sem abrir mão da praticidade urbana, este é o seu novo lar. Localizado em um refúgio exclusivo com apenas 6 sobrados germinados, este imóvel de 132m² combina ambientes espaçosos com uma localização estratégica.\n\nDestaques do Imóvel:\nÁrea Construída:\n132m² de puro aproveitamento e iluminação natural.\n3 Dormitórios Flexíveis: Inclui um cômodo independente com vista panorâmica para a Mata Atlântica perfeito para um home office inspirador, estúdio ou suíte master.\nLiving Aconchegante:\nSala de estar ampla para momentos em família.\nLavanderia com Vista:\nUm diferencial raro, com ventilação natural e o verde da mata como cenário.\nVagas de Garagem:\n02 vagas cobertas, com espaço que permite acomodar até um 3º veículo na área útil.",
+  "transacao": "Venda",
+  "tipoImovel": "Casa",
+  "videoUrl": "",
+  "endereco": {
+    "rua": "",
+    "numero": "",
+    "bairro": "",
+    "cidade": "Taboão da Serra",
+    "estado": "SP",
+    "cep": ""
+  },
+  "caracteristicas": {
+    "quartos": 0,
+    "suites": 0,
+    "banheiros": 0,
+    "vagas": 0,
+    "areaUtil": 0,
+    "areaTotal": 0
+  },
+  "precoVenda": 700000,
+  "destaque": false,
+  "status": "Ativo",
+  "corretor": {
+    "nome": "BRAZZA",
+    "telefone": "5511932785602"
+  },
+  "fotos": [
+    "/uploads/imoveis/VD007/1777399775276-CASA_COND_FECHADO_(1).jpeg",
+    "/uploads/imoveis/VD007/1777399775288-CASA_COND_FECHADO_(2).jpeg",
+    "/uploads/imoveis/VD007/1777399775293-CASA_COND_FECHADO_(3).jpeg",
+    "/uploads/imoveis/VD007/1777399775303-CASA_COND_FECHADO_(4).jpeg",
+    "/uploads/imoveis/VD007/1777399775308-CASA_COND_FECHADO_(5).jpeg",
+    "/uploads/imoveis/VD007/1777399775317-CASA_COND_FECHADO_(6).jpeg",
+    "/uploads/imoveis/VD007/1777399775327-CASA_COND_FECHADO_(7).jpeg"
+  ],
+  "id": "vd007",
+  "updatedAt": "2026-04-28T18:09:35.252Z"
+}
