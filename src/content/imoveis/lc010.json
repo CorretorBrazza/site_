@@ -1,0 +1,50 @@
+{
+  "referencia": "LC010",
+  "titulo": "CASA 2 DORMITÓRIOS COM VAGA",
+  "descricao": "📍 Casa para Locação – Jardim São Paulo | Taboão da Serra (SP)\n📌 Próxima à Cinpal - Não Independente\n\n💰 Valores:\n\nR$ 1.300,00 sem vaga de garagem\nR$ 1.400,00 com vaga (portão eletrônico)\n\n🔐 Garantia: 2 meses de depósito\n\n🏡 Detalhes do imóvel:\n\nCasa não independente\nAproximadamente 55m²\n2 dormitórios (sendo 1 suíte)\nSala aconchegante\nCozinha planejada\nLavabo\nEscada interna em caracol\nLavanderia compartilhada\nImóvel bem ventilado e com ótimo aproveitamento de espaço\n\n🚗 Opção de 1 vaga de garagem com portão automático\n\n📍 Localizada na Rua Avelina da Silva Nunes, no bairro Jardim São Paulo, em Taboão da Serra.\n\n✨ Ótima opção para quem busca praticidade, conforto e boa localização!",
+  "transacao": "Locação",
+  "tipoImovel": "Casa",
+  "videoUrl": "",
+  "endereco": {
+    "rua": "",
+    "numero": "",
+    "bairro": "",
+    "cidade": "Taboão da Serra",
+    "estado": "SP",
+    "cep": ""
+  },
+  "caracteristicas": {
+    "quartos": 0,
+    "suites": 0,
+    "banheiros": 0,
+    "vagas": 0,
+    "areaUtil": 0,
+    "areaTotal": 0
+  },
+  "precoLocacao": 1300,
+  "destaque": false,
+  "status": "Ativo",
+  "corretor": {
+    "nome": "MARIA",
+    "telefone": "5511970988512"
+  },
+  "fotos": [
+    "/uploads/imoveis/LC010/1777399386933-CASA_LOCACAO_(1).jpeg",
+    "/uploads/imoveis/LC010/1777399386977-CASA_LOCACAO_(2).jpeg",
+    "/uploads/imoveis/LC010/1777399386989-CASA_LOCACAO_(3).jpeg",
+    "/uploads/imoveis/LC010/1777399386993-CASA_LOCACAO_(4).jpeg",
+    "/uploads/imoveis/LC010/1777399386997-CASA_LOCACAO_(5).jpeg",
+    "/uploads/imoveis/LC010/1777399387003-CASA_LOCACAO_(6).jpeg",
+    "/uploads/imoveis/LC010/1777399387006-CASA_LOCACAO_(7).jpeg",
+    "/uploads/imoveis/LC010/1777399387013-CASA_LOCACAO_(8).jpeg",
+    "/uploads/imoveis/LC010/1777399387019-CASA_LOCACAO_(9).jpeg",
+    "/uploads/imoveis/LC010/1777399387023-CASA_LOCACAO_(10).jpeg",
+    "/uploads/imoveis/LC010/1777399387027-CASA_LOCACAO_(11).jpeg",
+    "/uploads/imoveis/LC010/1777399387031-CASA_LOCACAO_(12).jpeg",
+    "/uploads/imoveis/LC010/1777399387044-CASA_LOCACAO_(13).jpeg",
+    "/uploads/imoveis/LC010/1777399387060-CASA_LOCACAO_(14).jpeg",
+    "/uploads/imoveis/LC010/1777399387095-CASA_LOCACAO_(15).jpeg"
+  ],
+  "id": "lc010",
+  "updatedAt": "2026-04-28T18:03:06.900Z"
+}
