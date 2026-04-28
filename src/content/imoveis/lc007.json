@@ -1,0 +1,45 @@
+{
+  "referencia": "LC007",
+  "titulo": "KITNET MOBILIADA INTERCAP",
+  "descricao": "Kitnet 1300.00 com fogão e geladeira água e luz e gás incluso \n\n Bairro Intercap\n\nPróximo Av São Paulo",
+  "transacao": "Locação",
+  "tipoImovel": "Apartamento",
+  "videoUrl": "",
+  "endereco": {
+    "rua": "",
+    "numero": "",
+    "bairro": "",
+    "cidade": "Taboão da Serra",
+    "estado": "SP",
+    "cep": ""
+  },
+  "caracteristicas": {
+    "quartos": 0,
+    "suites": 0,
+    "banheiros": 0,
+    "vagas": 0,
+    "areaUtil": 0,
+    "areaTotal": 0
+  },
+  "precoLocacao": 1300,
+  "destaque": false,
+  "status": "Ativo",
+  "corretor": {
+    "nome": "MARIA",
+    "telefone": "5511970988512"
+  },
+  "fotos": [
+    "/uploads/imoveis/LC007/1777370881011-kit_intercap_(1).jpeg",
+    "/uploads/imoveis/LC007/1777370881036-kit_intercap_(2).jpeg",
+    "/uploads/imoveis/LC007/1777370881061-kit_intercap_(3).jpeg",
+    "/uploads/imoveis/LC007/1777370881076-kit_intercap_(4).jpeg",
+    "/uploads/imoveis/LC007/1777370881090-kit_intercap_(5).jpeg",
+    "/uploads/imoveis/LC007/1777370881103-kit_intercap_(6).jpeg",
+    "/uploads/imoveis/LC007/1777370881120-kit_intercap_(7).jpeg",
+    "/uploads/imoveis/LC007/1777370881154-kit_intercap_(8).jpeg",
+    "/uploads/imoveis/LC007/1777370881169-kit_intercap_(9).jpeg",
+    "/uploads/imoveis/LC007/1777370881176-kit_intercap_(10).jpeg"
+  ],
+  "id": "lc007",
+  "updatedAt": "2026-04-28T10:08:00.993Z"
+}
