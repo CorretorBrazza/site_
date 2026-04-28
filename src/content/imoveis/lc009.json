@@ -1,0 +1,50 @@
+{
+  "referencia": "LC009",
+  "titulo": "APARTAMENTO LOCAÇÃO 2 DORMITORIOS",
+  "descricao": "📍 Locação – Parque Pinheiros\n\nApartamento disponível para locação na Rua Rosa Provençal Delgadio, bairro Parque Pinheiros.\n\n💰 Valor do aluguel: R$ 1.300,00\n🔐 Garantia locatícia: 2 meses de caução ou seguro fiança\n\n🛏️ Características do imóvel:\n\n2 dormitórios\nSala\nCozinha\nÁrea de serviço\nSem vaga de garagem\nAproximadamente 60m²\nApartamento\n\n📌 Ideal para quem busca praticidade e boa localização!\n",
+  "transacao": "Locação",
+  "tipoImovel": "Apartamento",
+  "videoUrl": "",
+  "endereco": {
+    "rua": "",
+    "numero": "",
+    "bairro": "",
+    "cidade": "Taboão da Serra",
+    "estado": "SP",
+    "cep": ""
+  },
+  "caracteristicas": {
+    "quartos": 2,
+    "suites": 0,
+    "banheiros": 1,
+    "vagas": 0,
+    "areaUtil": 0,
+    "areaTotal": 0
+  },
+  "precoLocacao": 1300,
+  "destaque": false,
+  "status": "Ativo",
+  "corretor": {
+    "nome": "MARIA",
+    "telefone": "5511970988512"
+  },
+  "fotos": [
+    "/uploads/imoveis/LC009/1777372603487-provencal_(1).jpeg",
+    "/uploads/imoveis/LC009/1777372603508-provencal_(2).jpeg",
+    "/uploads/imoveis/LC009/1777372603516-provencal_(3).jpeg",
+    "/uploads/imoveis/LC009/1777372603528-provencal_(4).jpeg",
+    "/uploads/imoveis/LC009/1777372603864-provencal_(5).jpeg",
+    "/uploads/imoveis/LC009/1777372603974-provencal_(6).jpeg",
+    "/uploads/imoveis/LC009/1777372604305-provencal_(7).jpeg",
+    "/uploads/imoveis/LC009/1777372604391-provencal_(8).jpeg",
+    "/uploads/imoveis/LC009/1777372605000-provencal_(9).jpeg",
+    "/uploads/imoveis/LC009/1777372605120-provencal_(10).jpeg",
+    "/uploads/imoveis/LC009/1777372605913-provencal_(11).jpeg",
+    "/uploads/imoveis/LC009/1777372605985-provencal_(12).jpeg",
+    "/uploads/imoveis/LC009/1777372605994-provencal_(13).jpeg",
+    "/uploads/imoveis/LC009/1777372606039-provencal_(14).jpeg",
+    "/uploads/imoveis/LC009/1777372606069-provencal_(15).jpeg"
+  ],
+  "id": "lc009",
+  "updatedAt": "2026-04-28T10:36:43.441Z"
+}
