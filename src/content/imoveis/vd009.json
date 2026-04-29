@@ -1,0 +1,44 @@
+{
+  "referencia": "VD009",
+  "titulo": "APARTAMENTO MOBILIADO 2 DORMITORIOS",
+  "descricao": "OPORTUNIDADE: APTO 2 DORMS – CONDOMÍNIO SING\n\nMETRAGEM: 40m² bem distribuídos.\n\nMOBILIADO: Móveis planejados em todos os cômodos (quarto, cozinha e sala).\n\nVAGA: Garagem coberta.\n\nLOCALIZAÇÃO: Estr. Velha de Itapecerica, a 40 metros da Estr. do Campo Limpo.\n\nLAZER COMPLETO: Piscina, academia, playground, churrasqueira, salão de festas e jogos.\n\nACESSIBILIDADE: Prédio com rampas, piso tátil e elevadores.\n\nNEGOCIAÇÃO: R$ 320.000,00. Aceita financiamento. Documentação impecável.",
+  "transacao": "Venda",
+  "tipoImovel": "Apartamento",
+  "videoUrl": "",
+  "endereco": {
+    "rua": "Estrada Velha de Itapecerica",
+    "numero": "19",
+    "bairro": "",
+    "cidade": "Taboão da Serra",
+    "estado": "SP",
+    "cep": ""
+  },
+  "caracteristicas": {
+    "quartos": 2,
+    "suites": 0,
+    "banheiros": 1,
+    "vagas": 1,
+    "areaUtil": 40,
+    "areaTotal": 0
+  },
+  "precoVenda": 320000,
+  "destaque": true,
+  "status": "Ativo",
+  "corretor": {
+    "nome": "MARIA",
+    "telefone": "5511970988512"
+  },
+  "fotos": [
+    "/uploads/imoveis/VD009/1777467207316-WhatsApp_Image_2026-04-29_at_09.08.13_(2).jpeg",
+    "/uploads/imoveis/VD009/1777467207338-WhatsApp_Image_2026-04-29_at_09.08.14_(1).jpeg",
+    "/uploads/imoveis/VD009/1777467207352-WhatsApp_Image_2026-04-29_at_09.08.14.jpeg",
+    "/uploads/imoveis/VD009/1777467207456-WhatsApp_Image_2026-04-29_at_09.08.13_(1).jpeg",
+    "/uploads/imoveis/VD009/1777467207483-WhatsApp_Image_2026-04-29_at_09.08.13.jpeg",
+    "/uploads/imoveis/VD009/1777467207505-WhatsApp_Image_2026-04-29_at_09.08.12_(3).jpeg",
+    "/uploads/imoveis/VD009/1777467207518-WhatsApp_Image_2026-04-29_at_09.08.12_(2).jpeg",
+    "/uploads/imoveis/VD009/1777467207547-WhatsApp_Image_2026-04-29_at_09.08.12_(1).jpeg",
+    "/uploads/imoveis/VD009/1777467207555-WhatsApp_Image_2026-04-29_at_09.08.12.jpeg"
+  ],
+  "id": "vd009",
+  "updatedAt": "2026-04-29T12:53:27.266Z"
+}
