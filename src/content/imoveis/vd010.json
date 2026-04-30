@@ -1,0 +1,45 @@
+{
+  "referencia": "VD010",
+  "titulo": "Apartamento à venda no Vale dos Pinheiros!",
+  "descricao": "Apartamento à venda no Vale dos Pinheiros! 📍\n\nQuer morar bem localizado em Taboão da Serra por um preço justo? Confira este imóvel:\n\n✅ 52m² bem distribuídos\n✅ 3º Andar\n✅ Vaga de garagem inclusa\n✅ Condomínio com quadra, playground e muita área verde!\n\n💰 Investimento: R$ 235.000,00\n📉 Custos fixos: Condomínio R$ 370 + IPTU R$ 92\n\nACEITA FINANCIAMENTO BANCÁRIO\n\nDOCUMENTAÇÃO 100% EM DIA\n\nESTUDA PERMUTA\n\nLocalização estratégica: próximo a tudo o que você precisa no dia a dia.\n👉 Vamos agendar uma visita? Entre em contato agora!\n",
+  "transacao": "Venda",
+  "tipoImovel": "Apartamento",
+  "videoUrl": "",
+  "endereco": {
+    "rua": "",
+    "numero": "",
+    "bairro": "",
+    "cidade": "Taboão da Serra",
+    "estado": "SP",
+    "cep": ""
+  },
+  "caracteristicas": {
+    "quartos": 2,
+    "suites": 0,
+    "banheiros": 1,
+    "vagas": 1,
+    "areaUtil": 50,
+    "areaTotal": 52
+  },
+  "destaque": false,
+  "status": "Ativo",
+  "corretor": {
+    "nome": "MARIA",
+    "telefone": "5511970988512"
+  },
+  "fotos": [
+    "/uploads/imoveis/VD010/1777557656652-Vale_dos_pinheiros_venda_(30).jpeg",
+    "/uploads/imoveis/VD010/1777557656689-Vale_dos_pinheiros_venda_(31).jpeg",
+    "/uploads/imoveis/VD010/1777557656717-Vale_dos_pinheiros_venda_(32).jpeg",
+    "/uploads/imoveis/VD010/1777557656734-Vale_dos_pinheiros_venda_(33).jpeg",
+    "/uploads/imoveis/VD010/1777557656762-Vale_dos_pinheiros_venda_(34).jpeg",
+    "/uploads/imoveis/VD010/1777557656796-Vale_dos_pinheiros_venda_(35).jpeg",
+    "/uploads/imoveis/VD010/1777557656881-Vale_dos_pinheiros_venda_(36).jpeg",
+    "/uploads/imoveis/VD010/1777557656998-Vale_dos_pinheiros_venda_(37).jpeg",
+    "/uploads/imoveis/VD010/1777557657048-Vale_dos_pinheiros_venda_(38).jpeg",
+    "/uploads/imoveis/VD010/1777557657058-Vale_dos_pinheiros_venda_(39).jpeg",
+    "/uploads/imoveis/VD010/1777557657063-Vale_dos_pinheiros_venda_(40).jpeg"
+  ],
+  "id": "vd010",
+  "updatedAt": "2026-04-30T14:00:56.567Z"
+}
