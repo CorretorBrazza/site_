@@ -100,7 +100,7 @@ export default function BannerAutoResponder() {
                   Marketplace Auto Reply
                 </h3>
                 <p className="text-[10px] md:text-xs font-medium mt-0.5" style={{ color: '#C4B5FD' }}>
-                  Responda leads do OLX e Facebook Marketplace 24/7 no automático!
+                  Responda leads do Messenger e Facebook Marketplace 24/7 no automático!
                 </p>
               </div>
             </div>
