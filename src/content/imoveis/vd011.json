@@ -1,0 +1,46 @@
+{
+  "referencia": "VD011",
+  "titulo": "Condomínio Vida Nova com Financiamento",
+  "descricao": "🏡 Seu Novo Lar Espera Por Você no Condomínio Vida Nova! 🏡\nImagine viver em um apartamento aconchegante, em um condomínio que oferece tudo o que você e sua família precisam para viver com conforto e segurança. Apresentamos este charmoso apartamento de 57m², localizado na desejada Estrada São Francisco, 1900 - Jardim Helena, Taboão da Serra - SP.\nDetalhes do Imóvel:\nÁrea: 57m² muito bem distribuídos\nDormitórios: 2 quartos espaçosos, perfeitos para o seu descanso.\nBanheiro: 1 banheiro moderno.\nSala: Uma sala acolhedora, ideal para seus momentos de lazer e convívio.\nSacada: Desfrute de um espaço extra para relaxar e apreciar a vista.\nCozinha: Funcional e prática, perfeita para suas criações culinárias.\nLavanderia: Área de serviço conveniente.\nVaga de Garagem: 1 vaga coberta, garantindo praticidade e segurança para seu veículo.\nViva a Experiência Condomínio Vida Nova:\nO Condomínio Vida Nova é sinônimo de cuidado e bem-estar. Aqui, você encontra uma infraestrutura completa para o seu dia a dia:\nMercado 24 horas: Conveniência ao seu alcance a qualquer hora.\nAcademia: Mantenha a forma sem sair de casa.\nBrinquedoteca e Parque Infantil: Diversão garantida para as crianças.\nQuadra de Futebol: Lazer e esporte para todas as idades.\nDesfrute de um ambiente familiar, seguro e muito bem cuidado, onde cada detalhe foi pensado para o seu conforto.\nLocalização Privilegiada:\nSituado em um andar intermediário do Bloco A, com vista para a rua, este apartamento oferece fácil acesso a comércios, serviços e transporte.\nInvista no Seu Sonho!\nValor: R$ 368.000\nFacilidade: Aceita financiamento!\nNão perca essa oportunidade única de realizar o sonho da casa própria em um dos melhores condomínios da região.\nAgende sua visita e venha se encantar!",
+  "transacao": "Venda",
+  "tipoImovel": "Apartamento",
+  "videoUrl": "",
+  "endereco": {
+    "rua": "",
+    "numero": "",
+    "bairro": "",
+    "cidade": "Taboão da Serra",
+    "estado": "SP",
+    "cep": ""
+  },
+  "caracteristicas": {
+    "quartos": 2,
+    "suites": 0,
+    "banheiros": 1,
+    "vagas": 1,
+    "areaUtil": 57,
+    "areaTotal": 57
+  },
+  "precoVenda": 368000,
+  "destaque": false,
+  "status": "Ativo",
+  "corretor": {
+    "nome": "MARIA",
+    "telefone": "5511970988512"
+  },
+  "fotos": [
+    "/uploads/imoveis/VD011/1778937447466-VidaNova_Venda_(1).jpeg",
+    "/uploads/imoveis/VD011/1778937447478-VidaNova_Venda_(2).jpeg",
+    "/uploads/imoveis/VD011/1778937447481-VidaNova_Venda_(3).jpeg",
+    "/uploads/imoveis/VD011/1778937447485-VidaNova_Venda_(4).jpeg",
+    "/uploads/imoveis/VD011/1778937447532-VidaNova_Venda_(5).jpeg",
+    "/uploads/imoveis/VD011/1778937447537-VidaNova_Venda_(6).jpeg",
+    "/uploads/imoveis/VD011/1778937447545-VidaNova_Venda_(7).jpeg",
+    "/uploads/imoveis/VD011/1778937447550-VidaNova_Venda_(8).jpeg",
+    "/uploads/imoveis/VD011/1778937447559-VidaNova_Venda_(9).jpeg",
+    "/uploads/imoveis/VD011/1778937447565-VidaNova_Venda_(10).jpeg",
+    "/uploads/imoveis/VD011/1778937447570-VidaNova_Venda_(11).jpeg"
+  ],
+  "id": "vd011",
+  "updatedAt": "2026-05-16T13:17:27.449Z"
+}
