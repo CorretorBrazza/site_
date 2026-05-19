@@ -10,9 +10,11 @@ export const metadata: Metadata = {
 
 export default async function LocacaoPage() {
   const allImoveis = await getImoveis();
-  const imoveis = allImoveis.filter(i =>
-    (i.transacao === 'Locação' || i.transacao === 'Venda e Locação') && i.status === 'Ativo'
-  );
+  const imoveis = allImoveis
+    .filter(i =>
+      (i.transacao === 'Locação' || i.transacao === 'Venda e Locação') && i.status === 'Ativo'
+    )
+    .sort((a, b) => (a.precoLocacao ?? 0) - (b.precoLocacao ?? 0));
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
