@@ -9,6 +9,12 @@ import AmenitiesGrid from '@/components/AmenitiesGrid';
 import DormitoriosSection from '@/components/DormitoriosSection';
 import BuildingProgressSection from '@/components/BuildingProgressSection';
 
+export async function generateStaticParams() {
+    return empreendimentos.map((emp) => ({
+        slug: emp.slug,
+    }));
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;
     const emp = empreendimentos.find((e) => e.slug === slug);

@@ -6,11 +6,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://imoveistaboao.com.br';
 
     // Páginas estáticas
-    const routes = ['', '/venda', '/locacao'].map((route) => ({
-        url: `${baseUrl}${route}`,
+    const staticRoutes = [
+        { path: '', priority: 1.0, changeFrequency: 'daily' as const },
+        { path: '/venda', priority: 0.8, changeFrequency: 'daily' as const },
+        { path: '/locacao', priority: 0.8, changeFrequency: 'daily' as const },
+        { path: '/sobre-nos', priority: 0.6, changeFrequency: 'monthly' as const },
+        { path: '/contato', priority: 0.6, changeFrequency: 'monthly' as const },
+        { path: '/politica-de-privacidade', priority: 0.4, changeFrequency: 'monthly' as const },
+        { path: '/termos-de-uso', priority: 0.4, changeFrequency: 'monthly' as const },
+    ];
+
+    const routes = staticRoutes.map((route) => ({
+        url: `${baseUrl}${route.path}`,
         lastModified: new Date(),
-        changeFrequency: 'daily' as const,
-        priority: route === '' ? 1 : 0.8,
+        changeFrequency: route.changeFrequency,
+        priority: route.priority,
     }));
 
     // Empreendimentos dinâmicos

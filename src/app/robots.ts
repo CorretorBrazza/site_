@@ -5,7 +5,6 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: '/dashboard/',
     },
     sitemap: 'https://imoveistaboao.com.br/sitemap.xml',
   };

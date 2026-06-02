@@ -33,15 +33,17 @@ export default function Navbar() {
               <Link href="/locacao" className="text-gray-600 hover:text-blue-700 font-semibold transition-colors">
                 Imóveis para Locação
               </Link>
+              <Link href="/sobre-nos" className="text-gray-600 hover:text-blue-700 font-semibold transition-colors">
+                Sobre Nós
+              </Link>
             </div>
 
             <Link
-              href="https://wa.me/5511932785602"
+              href="/contato"
               className="bg-blue-600 text-white px-5 py-2 md:px-6 md:py-2.5 rounded-full text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 flex items-center gap-2"
             >
               <MessageCircle size={16} className="md:hidden" />
-              <span className="hidden md:inline">Contato</span>
-              <span className="md:hidden">WhatsApp</span>
+              <span>Contato</span>
             </Link>
 
             {/* Mobile Menu Button */}
@@ -81,11 +83,18 @@ export default function Navbar() {
               Imóveis Locação
             </Link>
             <Link
-              href="/institucional"
+              href="/sobre-nos"
+              onClick={() => setIsOpen(false)}
+              className="block text-lg font-bold text-gray-900 hover:text-blue-700 py-2 border-b border-gray-50"
+            >
+              Sobre Nós
+            </Link>
+            <Link
+              href="/contato"
               onClick={() => setIsOpen(false)}
               className="block text-lg font-bold text-gray-900 hover:text-blue-700 py-2"
             >
-              Sobre Nós
+              Contato
             </Link>
           </div>
         </div>

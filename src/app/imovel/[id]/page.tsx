@@ -6,6 +6,13 @@ import ImageCarousel from '@/components/ImageCarousel';
 import ShareButton from '@/components/ShareButton';
 import BannerLocacao from '@/components/BannerLocacao';
 
+export async function generateStaticParams() {
+  const imoveis = await getImoveis();
+  return imoveis.map((imovel) => ({
+    id: imovel.id,
+  }));
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
   const imoveis = await getImoveis();

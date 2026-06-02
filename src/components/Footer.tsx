@@ -17,10 +17,10 @@ export default function Footer() {
             <div>
               <h4 className="text-sm font-bold uppercase tracking-widest mb-6 text-blue-500">Navegação</h4>
               <ul className="space-y-4 text-gray-400 font-medium">
-                <li><Link href="#" className="hover:text-white transition-colors">Imóveis em Construção</Link></li>
+                <li><Link href="/#empreendimentos" className="hover:text-white transition-colors">Imóveis em Construção</Link></li>
                 <li><Link href="/venda" className="hover:text-white transition-colors">Imóveis Prontos</Link></li>
                 <li><Link href="/locacao" className="hover:text-white transition-colors">Imóveis Locação</Link></li>
-                <li><Link href="/institucional" className="hover:text-white transition-colors">Sobre Nós</Link></li>
+                <li><Link href="/sobre-nos" className="hover:text-white transition-colors">Sobre Nós</Link></li>
               </ul>
             </div>
 
@@ -47,8 +47,8 @@ export default function Footer() {
         <div className="border-t border-gray-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-500 text-xs">
           <p>&copy; {new Date().getFullYear()} Imóveis Taboão da Serra. Todos os direitos reservados.</p>
           <div className="flex gap-6">
-            <Link href="/privacidade" className="hover:text-white transition-colors">Privacidade</Link>
-            <Link href="/termos" className="hover:text-white transition-colors">Termos de Uso</Link>
+            <Link href="/politica-de-privacidade" className="hover:text-white transition-colors">Privacidade</Link>
+            <Link href="/termos-de-uso" className="hover:text-white transition-colors">Termos de Uso</Link>
           </div>
         </div>
       </div>
