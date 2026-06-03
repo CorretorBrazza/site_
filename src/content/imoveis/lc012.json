@@ -1,0 +1,58 @@
+{
+  "referencia": "LC012",
+  "titulo": "Apartamento 100% MOBILIADO",
+  "descricao": "🔑 Mude Rápido! Apartamento 100% Mobiliado em Taboão da Serra\nProcurando praticidade absoluta? Esse apartamento tem tudo, desde a máquina de lavar e cafeteira até os talheres na gaveta! É entrar e morar.\n\n✨ O que o imóvel oferece:\nMobiliado Completo: Equipado com eletrodomésticos, móveis e utensílios.\n\nDormitórios: 2 quartos aconchegantes.\n\nDiferenciais: Sacada e 1 vaga de garagem.\n\n🏊 Lazer de Clube (Condomínio Completo):\nPiscina para os dias de sol e estrutura de lazer completa para você e sua família.\n\n📍 Localização Imbatível:\nEm frente ao Colégio Adventista de Taboão da Serra. Excelente infraestrutura de comércio, transporte e serviços ao redor.\n\n🛡️ Condições de Locação Facilitadas:\nAceita Depósito Caução! (Sem burocracia excessiva).\n\n📦 Ideal para quem busca agilidade: Perfeito para quem não quer ter o trabalho e o custo de comprar móveis ou fazer mudança pesada.\n\nQuer conhecer? Agende uma visita agora mesmo!",
+  "transacao": "Locação",
+  "tipoImovel": "Apartamento",
+  "videoUrl": "",
+  "endereco": {
+    "rua": "Rua José André de Moraes",
+    "numero": "",
+    "bairro": "",
+    "cidade": "Taboão da Serra",
+    "estado": "SP",
+    "cep": ""
+  },
+  "caracteristicas": {
+    "quartos": 2,
+    "suites": 0,
+    "banheiros": 1,
+    "vagas": 1,
+    "areaUtil": 0,
+    "areaTotal": 0
+  },
+  "precoLocacao": 4000,
+  "destaque": true,
+  "status": "Ativo",
+  "corretor": {
+    "nome": "BRAZZA",
+    "telefone": "5511932785602"
+  },
+  "fotos": [
+    "/uploads/imoveis/LC012/1780525954259-locacao_pq_da_serra_mobiliado__(7).jpeg",
+    "/uploads/imoveis/LC012/1780525954295-locacao_pq_da_serra_mobiliado__(25).jpeg",
+    "/uploads/imoveis/LC012/1780525956208-locacao_pq_da_serra_mobiliado__(26).jpeg",
+    "/uploads/imoveis/LC012/1780525956238-locacao_pq_da_serra_mobiliado__(27).jpeg",
+    "/uploads/imoveis/LC012/1780525956259-locacao_pq_da_serra_mobiliado__(28).jpeg",
+    "/uploads/imoveis/LC012/1780525956265-locacao_pq_da_serra_mobiliado__(29).jpeg",
+    "/uploads/imoveis/LC012/1780525956290-locacao_pq_da_serra_mobiliado__(23).jpeg",
+    "/uploads/imoveis/LC012/1780525956296-locacao_pq_da_serra_mobiliado__(24).jpeg",
+    "/uploads/imoveis/LC012/1780525956306-locacao_pq_da_serra_mobiliado__(22).jpeg",
+    "/uploads/imoveis/LC012/1780525956310-locacao_pq_da_serra_mobiliado__(21).jpeg",
+    "/uploads/imoveis/LC012/1780525956315-locacao_pq_da_serra_mobiliado__(2).jpeg",
+    "/uploads/imoveis/LC012/1780525956326-locacao_pq_da_serra_mobiliado__(19).jpeg",
+    "/uploads/imoveis/LC012/1780525956329-locacao_pq_da_serra_mobiliado__(20).jpeg",
+    "/uploads/imoveis/LC012/1780525956341-locacao_pq_da_serra_mobiliado__(17).jpeg",
+    "/uploads/imoveis/LC012/1780525956345-locacao_pq_da_serra_mobiliado__(18).jpeg",
+    "/uploads/imoveis/LC012/1780525956357-locacao_pq_da_serra_mobiliado__(15).jpeg",
+    "/uploads/imoveis/LC012/1780525956372-locacao_pq_da_serra_mobiliado__(16).jpeg",
+    "/uploads/imoveis/LC012/1780525956496-locacao_pq_da_serra_mobiliado__(13).jpeg",
+    "/uploads/imoveis/LC012/1780525956628-locacao_pq_da_serra_mobiliado__(14).jpeg",
+    "/uploads/imoveis/LC012/1780525956673-locacao_pq_da_serra_mobiliado__(11).jpeg",
+    "/uploads/imoveis/LC012/1780525956965-locacao_pq_da_serra_mobiliado__(12).jpeg",
+    "/uploads/imoveis/LC012/1780525957407-locacao_pq_da_serra_mobiliado__(10).jpeg",
+    "/uploads/imoveis/LC012/1780525957496-locacao_pq_da_serra_mobiliado__(1).jpeg"
+  ],
+  "id": "lc012",
+  "updatedAt": "2026-06-03T22:32:34.215Z"
+}
