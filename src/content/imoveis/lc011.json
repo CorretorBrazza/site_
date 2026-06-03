@@ -1,0 +1,54 @@
+{
+  "referencia": "LC011",
+  "titulo": "Apartamento 61m2 com vaga",
+  "descricao": "🏢 Aluga-se Lindo Apartamento no Parque Pinheiros!\nProcurando um lugar pronto para morar, espaçoso e com excelente localização em Taboão da Serra? Acabou de encontrar!\n\n✨ Detalhes do Imóvel:\nEspaço: 61 m² muito bem distribuídos\n\nDormitórios: 2 quartos confortáveis\n\nBanheiro: 1 banheiro social\n\nVaga: 1 vaga de garagem\n\n🌳 Lazer no Condomínio:\nSalão de festas para suas comemorações\n\nÁrea no terraço com churrasqueira (perfeito para o fim de semana!)\n\n📍 Localização Privilegiada:\nRua Carlos Sequeira Neto, 469 – Parque Pinheiros, Taboão da Serra - SP.\n\n💰 Valores (Pacote Fechado):\nR$ 2.000,00/mês (Já INCLUSO Aluguel, Condomínio e IPTU!)\n\nConsumos de água, luz e gás são pagos à parte.\n",
+  "transacao": "Locação",
+  "tipoImovel": "Apartamento",
+  "videoUrl": "",
+  "endereco": {
+    "rua": "Rua Carlos Serqueira Neto",
+    "numero": "469",
+    "bairro": "Parque Pinheiros",
+    "cidade": "Taboão da Serra",
+    "estado": "SP",
+    "cep": ""
+  },
+  "caracteristicas": {
+    "quartos": 2,
+    "suites": 0,
+    "banheiros": 1,
+    "vagas": 1,
+    "areaUtil": 61,
+    "areaTotal": 61
+  },
+  "precoLocacao": 2000,
+  "destaque": true,
+  "status": "Ativo",
+  "corretor": {
+    "nome": "MARIA",
+    "telefone": "5511970988512"
+  },
+  "fotos": [
+    "/uploads/imoveis/LC011/1780521231025-apartamento_locacao__(8).jpeg",
+    "/uploads/imoveis/LC011/1780521231054-apartamento_locacao__(9).jpeg",
+    "/uploads/imoveis/LC011/1780521231058-apartamento_locacao__(2).jpeg",
+    "/uploads/imoveis/LC011/1780521231069-apartamento_locacao__(3).jpeg",
+    "/uploads/imoveis/LC011/1780521231076-apartamento_locacao__(4).jpeg",
+    "/uploads/imoveis/LC011/1780521231086-apartamento_locacao__(5).jpeg",
+    "/uploads/imoveis/LC011/1780521231092-apartamento_locacao__(6).jpeg",
+    "/uploads/imoveis/LC011/1780521231106-apartamento_locacao__(7).jpeg",
+    "/uploads/imoveis/LC011/1780521231133-apartamento_locacao__(13).jpeg",
+    "/uploads/imoveis/LC011/1780521231149-apartamento_locacao__(14).jpeg",
+    "/uploads/imoveis/LC011/1780521231156-apartamento_locacao__(15).jpeg",
+    "/uploads/imoveis/LC011/1780521231166-apartamento_locacao__(16).jpeg",
+    "/uploads/imoveis/LC011/1780521231175-apartamento_locacao__(17).jpeg",
+    "/uploads/imoveis/LC011/1780521231237-apartamento_locacao__(18).jpeg",
+    "/uploads/imoveis/LC011/1780521231250-apartamento_locacao__(19).jpeg",
+    "/uploads/imoveis/LC011/1780521231284-apartamento_locacao__(1).jpeg",
+    "/uploads/imoveis/LC011/1780521231286-apartamento_locacao__(10).jpeg",
+    "/uploads/imoveis/LC011/1780521231291-apartamento_locacao__(11).jpeg",
+    "/uploads/imoveis/LC011/1780521231305-apartamento_locacao__(12).jpeg"
+  ],
+  "id": "lc011",
+  "updatedAt": "2026-06-03T21:13:50.935Z"
+}
