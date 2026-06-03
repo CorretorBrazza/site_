@@ -6,6 +6,8 @@ import ImageCarousel from '@/components/ImageCarousel';
 import ShareButton from '@/components/ShareButton';
 import BannerLocacao from '@/components/BannerLocacao';
 
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   const imoveis = await getImoveis();
   return imoveis.map((imovel) => ({

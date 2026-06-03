@@ -9,6 +9,8 @@ import AmenitiesGrid from '@/components/AmenitiesGrid';
 import DormitoriosSection from '@/components/DormitoriosSection';
 import BuildingProgressSection from '@/components/BuildingProgressSection';
 
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
     return empreendimentos.map((emp) => ({
         slug: emp.slug,

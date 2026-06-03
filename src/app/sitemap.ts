@@ -2,6 +2,8 @@ import { MetadataRoute } from 'next';
 import { empreendimentos } from '@/data/empreendimentos';
 import { getImoveis } from '@/app/actions/imovel-server-actions';
 
+export const dynamic = 'force-static';
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://imoveistaboao.com.br';
 
