@@ -3,69 +3,69 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 const TABELA_MCMV_2026 = [
-    { renda: 1500, finanziamento: 86551.61, parcela: 449.99, subsidio_com: 55000.00, subsidio_sem: 16500.00 },
-    { renda: 1600, finanziamento: 92583.50, parcela: 479.99, subsidio_com: 55000.00, subsidio_sem: 16500.00 },
-    { renda: 1700, finanziamento: 98615.39, parcela: 509.99, subsidio_com: 55000.00, subsidio_sem: 16500.00 },
-    { renda: 1800, finanziamento: 104647.29, parcela: 539.99, subsidio_com: 55000.00, subsidio_sem: 16500.00 },
-    { renda: 1900, finanziamento: 110679.18, parcela: 569.99, subsidio_com: 55000.00, subsidio_sem: 16500.00 },
-    { renda: 2000, finanziamento: 116711.07, parcela: 599.99, subsidio_com: 50777.00, subsidio_sem: 15233.00 },
-    { renda: 2100, finanziamento: 122742.96, parcela: 629.99, subsidio_com: 44812.00, subsidio_sem: 13443.00 },
-    { renda: 2200, finanziamento: 124802.43, parcela: 659.99, subsidio_com: 39562.00, subsidio_sem: 11868.00 },
-    { renda: 2300, finanziamento: 130648.25, parcela: 689.99, subsidio_com: 34440.00, subsidio_sem: 10332.00 },
-    { renda: 2400, finanziamento: 136494.07, parcela: 719.99, subsidio_com: 29735.00, subsidio_sem: 8920.00 },
-    { renda: 2500, finanziamento: 142339.89, parcela: 749.99, subsidio_com: 25438.00, subsidio_sem: 7631.00 },
-    { renda: 2600, finanziamento: 148185.72, parcela: 779.99, subsidio_com: 21538.00, subsidio_sem: 6461.00 },
-    { renda: 2700, finanziamento: 154031.54, parcela: 809.99, subsidio_com: 18026.00, subsidio_sem: 5407.00 },
-    { renda: 2800, finanziamento: 159877.36, parcela: 839.99, subsidio_com: 14893.00, subsidio_sem: 4467.00 },
-    { renda: 2900, finanziamento: 151319.11, parcela: 869.99, subsidio_com: 12351.00, subsidio_sem: 3705.00 },
-    { renda: 3000, finanziamento: 156818.49, parcela: 899.99, subsidio_com: 9909.00, subsidio_sem: 2972.00 },
-    { renda: 3100, finanziamento: 162317.87, parcela: 929.99, subsidio_com: 7819.00, subsidio_sem: 2345.00 },
-    { renda: 3200, finanziamento: 167817.25, parcela: 959.99, subsidio_com: 6072.00, subsidio_sem: 1821.00 },
-    { renda: 3300, finanziamento: 173316.63, parcela: 989.99, subsidio_com: 4659.00, subsidio_sem: 0 },
-    { renda: 3400, finanziamento: 178816.02, parcela: 1019.99, subsidio_com: 3571.00, subsidio_sem: 0 },
-    { renda: 3500, finanziamento: 184315.40, parcela: 1049.99, subsidio_com: 2799.00, subsidio_sem: 0 },
-    { renda: 3600, finanziamento: 178933.54, parcela: 1079.99, subsidio_com: 2384.00, subsidio_sem: 0 },
-    { renda: 3700, finanziamento: 184117.67, parcela: 1109.99, subsidio_com: 2214.00, subsidio_sem: 0 },
-    { renda: 3800, finanziamento: 189301.79, parcela: 1139.99, subsidio_com: 2192.00, subsidio_sem: 0 },
-    { renda: 3900, finanziamento: 194485.92, parcela: 1169.99, subsidio_com: 2171.00, subsidio_sem: 0 },
-    { renda: 4000, finanziamento: 199670.04, parcela: 1199.99, subsidio_com: 2149.00, subsidio_sem: 0 },
-    { renda: 4100, finanziamento: 183124.89, parcela: 1229.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 4200, finanziamento: 187759.13, parcela: 1259.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 4300, finanziamento: 192393.36, parcela: 1289.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 4400, finanziamento: 197027.60, parcela: 1319.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 4500, finanziamento: 201661.83, parcela: 1349.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 4600, finanziamento: 206296.07, parcela: 1379.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 4700, finanziamento: 210930.30, parcela: 1409.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 4800, finanziamento: 186671.14, parcela: 1439.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 4863, finanziamento: 189250.60, parcela: 1458.89, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 4900, finanziamento: 190765.52, parcela: 1469.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 5000, finanziamento: 194859.91, parcela: 1499.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 5100, finanziamento: 198954.29, parcela: 1529.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 5200, finanziamento: 203048.67, parcela: 1559.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 5300, finanziamento: 207143.06, parcela: 1589.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 5400, finanziamento: 211237.44, parcela: 1619.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 5500, finanziamento: 215331.82, parcela: 1649.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 5600, finanziamento: 219426.21, parcela: 1679.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 5700, finanziamento: 223520.59, parcela: 1709.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 5800, finanziamento: 227614.98, parcela: 1739.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 5900, finanziamento: 231709.36, parcela: 1769.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 6000, finanziamento: 235803.74, parcela: 1799.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 6100, finanziamento: 239898.13, parcela: 1829.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 6200, finanziamento: 243992.51, parcela: 1859.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 6300, finanziamento: 248086.89, parcela: 1889.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 6400, finanziamento: 252181.28, parcela: 1919.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 6500, finanziamento: 256275.66, parcela: 1949.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 6600, finanziamento: 260370.05, parcela: 1979.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 6700, finanziamento: 264464.43, parcela: 2009.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 6800, finanziamento: 268558.81, parcela: 2039.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 6900, finanziamento: 272653.20, parcela: 2069.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 7000, finanziamento: 276747.58, parcela: 2099.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 7100, finanziamento: 280000.00, parcela: 2123.83, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 8700, finanziamento: 293662.97, parcela: 2609.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 10000, finanziamento: 338584.94, parcela: 2999.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 12000, finanziamento: 400000.00, parcela: 3533.18, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 15000, finanziamento: 384334.74, parcela: 3749.99, subsidio_com: 0, subsidio_sem: 0 },
-    { renda: 16210, finanziamento: 415966.15, parcela: 4052.49, subsidio_com: 0, subsidio_sem: 0 }
+    { renda: 1500, financiamento: 86551.61, parcela: 449.99, subsidio_com: 55000.00, subsidio_sem: 16500.00 },
+    { renda: 1600, financiamento: 92583.50, parcela: 479.99, subsidio_com: 55000.00, subsidio_sem: 16500.00 },
+    { renda: 1700, financiamento: 98615.39, parcela: 509.99, subsidio_com: 55000.00, subsidio_sem: 16500.00 },
+    { renda: 1800, financiamento: 104647.29, parcela: 539.99, subsidio_com: 55000.00, subsidio_sem: 16500.00 },
+    { renda: 1900, financiamento: 110679.18, parcela: 569.99, subsidio_com: 55000.00, subsidio_sem: 16500.00 },
+    { renda: 2000, financiamento: 116711.07, parcela: 599.99, subsidio_com: 50777.00, subsidio_sem: 15233.00 },
+    { renda: 2100, financiamento: 122742.96, parcela: 629.99, subsidio_com: 44812.00, subsidio_sem: 13443.00 },
+    { renda: 2200, financiamento: 124802.43, parcela: 659.99, subsidio_com: 39562.00, subsidio_sem: 11868.00 },
+    { renda: 2300, financiamento: 130648.25, parcela: 689.99, subsidio_com: 34440.00, subsidio_sem: 10332.00 },
+    { renda: 2400, financiamento: 136494.07, parcela: 719.99, subsidio_com: 29735.00, subsidio_sem: 8920.00 },
+    { renda: 2500, financiamento: 142339.89, parcela: 749.99, subsidio_com: 25438.00, subsidio_sem: 7631.00 },
+    { renda: 2600, financiamento: 148185.72, parcela: 779.99, subsidio_com: 21538.00, subsidio_sem: 6461.00 },
+    { renda: 2700, financiamento: 154031.54, parcela: 809.99, subsidio_com: 18026.00, subsidio_sem: 5407.00 },
+    { renda: 2800, financiamento: 159877.36, parcela: 839.99, subsidio_com: 14893.00, subsidio_sem: 4467.00 },
+    { renda: 2900, financiamento: 151319.11, parcela: 869.99, subsidio_com: 12351.00, subsidio_sem: 3705.00 },
+    { renda: 3000, financiamento: 156818.49, parcela: 899.99, subsidio_com: 9909.00, subsidio_sem: 2972.00 },
+    { renda: 3100, financiamento: 162317.87, parcela: 929.99, subsidio_com: 7819.00, subsidio_sem: 2345.00 },
+    { renda: 3200, financiamento: 167817.25, parcela: 959.99, subsidio_com: 6072.00, subsidio_sem: 1821.00 },
+    { renda: 3300, financiamento: 173316.63, parcela: 989.99, subsidio_com: 4659.00, subsidio_sem: 0 },
+    { renda: 3400, financiamento: 178816.02, parcela: 1019.99, subsidio_com: 3571.00, subsidio_sem: 0 },
+    { renda: 3500, financiamento: 184315.40, parcela: 1049.99, subsidio_com: 2799.00, subsidio_sem: 0 },
+    { renda: 3600, financiamento: 178933.54, parcela: 1079.99, subsidio_com: 2384.00, subsidio_sem: 0 },
+    { renda: 3700, financiamento: 184117.67, parcela: 1109.99, subsidio_com: 2214.00, subsidio_sem: 0 },
+    { renda: 3800, financiamento: 189301.79, parcela: 1139.99, subsidio_com: 2192.00, subsidio_sem: 0 },
+    { renda: 3900, financiamento: 194485.92, parcela: 1169.99, subsidio_com: 2171.00, subsidio_sem: 0 },
+    { renda: 4000, financiamento: 199670.04, parcela: 1199.99, subsidio_com: 2149.00, subsidio_sem: 0 },
+    { renda: 4100, financiamento: 183124.89, parcela: 1229.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 4200, financiamento: 187759.13, parcela: 1259.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 4300, financiamento: 192393.36, parcela: 1289.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 4400, financiamento: 197027.60, parcela: 1319.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 4500, financiamento: 201661.83, parcela: 1349.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 4600, financiamento: 206296.07, parcela: 1379.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 4700, financiamento: 210930.30, parcela: 1409.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 4800, financiamento: 186671.14, parcela: 1439.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 4863, financiamento: 189250.60, parcela: 1458.89, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 4900, financiamento: 190765.52, parcela: 1469.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 5000, financiamento: 194859.91, parcela: 1499.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 5100, financiamento: 198954.29, parcela: 1529.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 5200, financiamento: 203048.67, parcela: 1559.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 5300, financiamento: 207143.06, parcela: 1589.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 5400, financiamento: 211237.44, parcela: 1619.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 5500, financiamento: 215331.82, parcela: 1649.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 5600, financiamento: 219426.21, parcela: 1679.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 5700, financiamento: 223520.59, parcela: 1709.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 5800, financiamento: 227614.98, parcela: 1739.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 5900, financiamento: 231709.36, parcela: 1769.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 6000, financiamento: 235803.74, parcela: 1799.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 6100, financiamento: 239898.13, parcela: 1829.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 6200, financiamento: 243992.51, parcela: 1859.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 6300, financiamento: 248086.89, parcela: 1889.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 6400, financiamento: 252181.28, parcela: 1919.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 6500, financiamento: 256275.66, parcela: 1949.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 6600, financiamento: 260370.05, parcela: 1979.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 6700, financiamento: 264464.43, parcela: 2009.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 6800, financiamento: 268558.81, parcela: 2039.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 6900, financiamento: 272653.20, parcela: 2069.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 7000, financiamento: 276747.58, parcela: 2099.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 7100, financiamento: 280000.00, parcela: 2123.83, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 8700, financiamento: 293662.97, parcela: 2609.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 10000, financiamento: 338584.94, parcela: 2999.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 12000, financiamento: 400000.00, parcela: 3533.18, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 15000, financiamento: 384334.74, parcela: 3749.99, subsidio_com: 0, subsidio_sem: 0 },
+    { renda: 16210, financiamento: 415966.15, parcela: 4052.49, subsidio_com: 0, subsidio_sem: 0 }
 ];
 
 interface Message {
@@ -96,6 +96,12 @@ export default function SimuladorClient() {
 
     const chatAreaRef = useRef<HTMLDivElement>(null);
     const totalSteps = 8;
+
+    // Referência mutável para as variáveis para evitar stale closures nos temporizadores
+    const variablesRef = useRef(variables);
+    useEffect(() => {
+        variablesRef.current = variables;
+    }, [variables]);
 
     // Detectar dispositivo e origem no cliente
     useEffect(() => {
@@ -175,9 +181,9 @@ export default function SimuladorClient() {
             const timer = setTimeout(() => {
                 setIsTyping(false);
 
-                const rendaUsuario = variables.renda || 0;
+                const rendaUsuario = variablesRef.current.renda || 0;
                 let d = TABELA_MCMV_2026.find(f => f.renda >= rendaUsuario) || TABELA_MCMV_2026[TABELA_MCMV_2026.length - 1];
-                const subsidio = variables.dependentes ? d.subsidio_com : d.subsidio_sem;
+                const subsidio = variablesRef.current.dependentes ? d.subsidio_com : d.subsidio_sem;
                 const total = d.financiamento + subsidio;
                 const formatar = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
