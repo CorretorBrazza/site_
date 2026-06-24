@@ -304,7 +304,10 @@ export default function SimuladorClient() {
             // Enviar Lead com consentimento usando o token de ativação do FormSubmit
             fetch('https://formsubmit.co/ajax/64cee96f2e8b53a77b5af43a643a3614', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
                 body: JSON.stringify({ _subject: `Novo Lead: ${lead.nome}`, ...lead })
             });
 
