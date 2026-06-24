@@ -23,6 +23,7 @@ export default function ContactForm() {
     setStatus('submitting');
 
     try {
+      // Envio de formulário direto para o e-mail real do corretor
       const response = await fetch('https://formsubmit.co/ajax/corretorbrazza@gmail.com', {
         method: 'POST',
         headers: {

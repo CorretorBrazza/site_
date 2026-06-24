@@ -301,7 +301,7 @@ export default function SimuladorClient() {
         const lead = { ...variables, consentimento: aceitou, ...dadosAutomaticos };
 
         if (aceitou) {
-            // Enviar Lead com consentimento
+            // Enviar Lead com consentimento diretamente para o e-mail real
             fetch('https://formsubmit.co/ajax/corretorbrazza@gmail.com', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
