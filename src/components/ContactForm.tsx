@@ -23,8 +23,8 @@ export default function ContactForm() {
     setStatus('submitting');
 
     try {
-      // Envio de formulário direto para o e-mail real do corretor
-      const response = await fetch('https://formsubmit.co/ajax/lancamentostaboao@gmail.com', {
+      // Envio de formulário usando o token de ativação do FormSubmit
+      const response = await fetch('https://formsubmit.co/ajax/64cee96f2e8b53a77b5af43a643a3614', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

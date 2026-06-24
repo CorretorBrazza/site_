@@ -301,8 +301,8 @@ export default function SimuladorClient() {
         const lead = { ...variables, consentimento: aceitou, ...dadosAutomaticos };
 
         if (aceitou) {
-            // Enviar Lead com consentimento diretamente para o e-mail real
-            fetch('https://formsubmit.co/ajax/lancamentostaboao@gmail.com', {
+            // Enviar Lead com consentimento usando o token de ativação do FormSubmit
+            fetch('https://formsubmit.co/ajax/64cee96f2e8b53a77b5af43a643a3614', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ _subject: `Novo Lead: ${lead.nome}`, ...lead })
