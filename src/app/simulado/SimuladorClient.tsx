@@ -302,7 +302,7 @@ export default function SimuladorClient() {
 
         if (aceitou) {
             // Enviar Lead com consentimento diretamente para o e-mail real
-            fetch('https://formsubmit.co/ajax/corretorbrazza@gmail.com', {
+            fetch('https://formsubmit.co/ajax/lancamentostaboao@gmail.com', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ _subject: `Novo Lead: ${lead.nome}`, ...lead })

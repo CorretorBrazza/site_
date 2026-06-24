@@ -24,7 +24,7 @@ export default function ContactForm() {
 
     try {
       // Envio de formulário direto para o e-mail real do corretor
-      const response = await fetch('https://formsubmit.co/ajax/corretorbrazza@gmail.com', {
+      const response = await fetch('https://formsubmit.co/ajax/lancamentostaboao@gmail.com', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
