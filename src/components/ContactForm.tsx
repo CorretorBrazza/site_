@@ -23,7 +23,7 @@ export default function ContactForm() {
     setStatus('submitting');
 
     try {
-      const response = await fetch('https://formsubmit.co/ajax/8c997935ed4f426170fe23a0f8ee934a', {
+      const response = await fetch('https://formsubmit.co/ajax/corretorbrazza@gmail.com', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
