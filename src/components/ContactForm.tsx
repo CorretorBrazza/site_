@@ -53,21 +53,21 @@ export default function ContactForm() {
   };
 
   return (
-    <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-      <h3 className="text-xl font-bold text-gray-900 mb-6">Envie uma mensagem</h3>
+    <div className="bg-white p-8 rounded-xl border border-black/5 shadow-sm">
+      <h3 className="text-xl font-serif font-semibold text-primary mb-6">Envie uma mensagem</h3>
 
       {status === 'success' ? (
-        <div className="bg-green-50 border border-green-100 text-green-800 p-6 rounded-xl space-y-3">
+        <div className="bg-emerald-50 border border-emerald-100 text-emerald-800 p-6 rounded-lg space-y-3">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="text-green-600" size={24} />
-            <span className="font-bold text-lg">Mensagem enviada!</span>
+            <CheckCircle2 className="text-emerald-600" size={22} />
+            <span className="font-bold text-base">Mensagem enviada!</span>
           </div>
-          <p className="text-sm">
-            Agradecemos o seu contato. Um de nossos corretores entrará em contato com você o mais breve possível.
+          <p className="text-xs leading-relaxed">
+            Agradecemos o seu contato. Um de nossos consultores retornará o seu contato o mais breve possível.
           </p>
           <button
             onClick={() => setStatus('idle')}
-            className="text-xs font-bold text-green-700 underline hover:text-green-800 pt-2"
+            className="text-xs font-semibold text-emerald-700 underline hover:text-emerald-800 pt-2"
           >
             Enviar outra mensagem
           </button>
@@ -75,7 +75,7 @@ export default function ContactForm() {
       ) : (
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label htmlFor="nome" className="block text-sm font-semibold text-gray-700 mb-1.5">
+            <label htmlFor="nome" className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
               Nome Completo
             </label>
             <input
@@ -86,13 +86,13 @@ export default function ContactForm() {
               value={formData.nome}
               onChange={handleChange}
               placeholder="Digite seu nome completo"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-gray-400 text-gray-900"
+              className="w-full px-4 py-2.5 rounded-lg border border-black/10 focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all placeholder:text-slate-400 text-sm text-primary bg-slate-50/20"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-1.5">
+              <label htmlFor="email" className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
                 E-mail
               </label>
               <input
@@ -103,11 +103,11 @@ export default function ContactForm() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="seu@email.com"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-gray-400 text-gray-900"
+                className="w-full px-4 py-2.5 rounded-lg border border-black/10 focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all placeholder:text-slate-400 text-sm text-primary bg-slate-50/20"
               />
             </div>
             <div>
-              <label htmlFor="telefone" className="block text-sm font-semibold text-gray-700 mb-1.5">
+              <label htmlFor="telefone" className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
                 WhatsApp
               </label>
               <input
@@ -118,13 +118,13 @@ export default function ContactForm() {
                 value={formData.telefone}
                 onChange={handleChange}
                 placeholder="(11) 99999-9999"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-gray-400 text-gray-900"
+                className="w-full px-4 py-2.5 rounded-lg border border-black/10 focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all placeholder:text-slate-400 text-sm text-primary bg-slate-50/20"
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="mensagem" className="block text-sm font-semibold text-gray-700 mb-1.5">
+            <label htmlFor="mensagem" className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
               Mensagem
             </label>
             <textarea
@@ -135,12 +135,12 @@ export default function ContactForm() {
               value={formData.mensagem}
               onChange={handleChange}
               placeholder="Olá, gostaria de saber mais informações sobre..."
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-gray-400 text-gray-900 resize-none"
+              className="w-full px-4 py-2.5 rounded-lg border border-black/10 focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all placeholder:text-slate-400 text-sm text-primary bg-slate-50/20 resize-none"
             />
           </div>
 
           {status === 'error' && (
-            <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-100">
+            <div className="flex items-center gap-2 text-xs text-red-650 bg-red-50 p-3 rounded-lg border border-red-100">
               <AlertCircle size={16} />
               <span>Ocorreu um erro ao enviar. Tente novamente ou chame no WhatsApp.</span>
             </div>
@@ -149,9 +149,9 @@ export default function ContactForm() {
           <button
             type="submit"
             disabled={status === 'submitting'}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition-all flex items-center justify-center gap-2 disabled:opacity-55 disabled:cursor-not-allowed"
+            className="w-full bg-accent hover:bg-accent-hover text-white font-semibold py-3.5 rounded-lg shadow-sm shadow-accent/10 transition-all flex items-center justify-center gap-2 disabled:opacity-55 disabled:cursor-not-allowed"
           >
-            <Send size={18} />
+            <Send size={16} />
             {status === 'submitting' ? 'Enviando...' : 'Enviar Mensagem'}
           </button>
         </form>

@@ -19,8 +19,8 @@ const TABELA_MCMV_2026 = [
     { renda: 2800, financiamento: 159877.36, parcela: 839.99, subsidio_com: 14893.00, subsidio_sem: 4467.00 },
     { renda: 2900, financiamento: 151319.11, parcela: 869.99, subsidio_com: 12351.00, subsidio_sem: 3705.00 },
     { renda: 3000, financiamento: 156818.49, parcela: 899.99, subsidio_com: 9909.00, subsidio_sem: 2972.00 },
-    { renda: 3100, financiamento: 162317.87, parcela: 929.99, subsidio_com: 7819.00, subsidio_sem: 2345.00 },
-    { renda: 3200, financiamento: 167817.25, parcela: 959.99, subsidio_com: 6072.00, subsidio_sem: 1821.00 },
+    { renda: 3100, financiamento: 162317.87, parcela: 929.99, subsidio_com: 7819.00, subsidio_sem: 2345.05 },
+    { renda: 3200, financiamento: 167817.25, parcela: 959.99, subsidio_com: 6072.00, subsidio_sem: 1821.60 },
     { renda: 3300, financiamento: 173316.63, parcela: 989.99, subsidio_com: 4659.00, subsidio_sem: 0 },
     { renda: 3400, financiamento: 178816.02, parcela: 1019.99, subsidio_com: 3571.00, subsidio_sem: 0 },
     { renda: 3500, financiamento: 184315.40, parcela: 1049.99, subsidio_com: 2799.00, subsidio_sem: 0 },
@@ -97,7 +97,7 @@ export default function SimuladorClient() {
     const chatAreaRef = useRef<HTMLDivElement>(null);
     const totalSteps = 8;
 
-    // Referência mutável para as variáveis para evitar stale closures nos temporizadores
+    // Referência mutável para as variáveis para evitar stale closures
     const variablesRef = useRef(variables);
     useEffect(() => {
         variablesRef.current = variables;
@@ -114,26 +114,25 @@ export default function SimuladorClient() {
         }
     }, []);
 
-    // Rolar chat para baixo quando novas mensagens forem adicionadas
+    // Rolar chat para baixo
     useEffect(() => {
         if (chatAreaRef.current) {
             chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
         }
     }, [messages, isTyping]);
 
-    // Lógica principal do fluxo do Chatbot
+    // Fluxo do Chatbot
     useEffect(() => {
         if (!isChatActive) return;
 
         if (step === 1) {
-            // Boas-vindas
             setIsTyping(true);
             const timer = setTimeout(() => {
                 setIsTyping(false);
                 setMessages([
                     {
                         type: 'bot',
-                        content: `🏠 Olá! Seja bem-vindo ao <strong>Simulador de Financiamento</strong>!<br><br>Vou te ajudar a descobrir uma estimativa do seu financiamento habitacional com base nas regras do programa <strong>Minha Casa Minha Vida</strong>.<br><br><div style="background: rgba(0,0,0,0.05); padding: 8px; border-radius: 6px; font-size: 12px; color: #555;"><em>Nota: Esta é uma simulação independente e não possui vínculo oficial com a Caixa Econômica Federal.</em></div><br>São apenas 4 perguntas rápidas! Vamos começar? 😊`,
+                        content: `Olá! Seja bem-vindo ao nosso <strong>Estudo de Viabilidade de Financiamento</strong>.<br><br>Vou te guiar em uma simulação com base nas regras de crédito da <strong>Caixa Econômica Federal</strong> e do programa <strong>Minha Casa Minha Vida</strong>.<br><br><div style="background: rgba(0,0,0,0.03); padding: 8px; border-radius: 6px; font-size: 11px; color: #64748b; border: 1px solid rgba(0,0,0,0.05);"><em>Nota: Esta ferramenta é uma simulação independente e não possui vínculo corporativo oficial com a CEF.</em></div><br>Vamos iniciar?`,
                         isHtml: true
                     }
                 ]);
@@ -143,40 +142,36 @@ export default function SimuladorClient() {
         }
 
         if (step === 2) {
-            // Pergunta do Nome
             const timer = setTimeout(() => {
-                setMessages(prev => [...prev, { type: 'bot', content: '📝 Qual o seu nome completo?' }]);
+                setMessages(prev => [...prev, { type: 'bot', content: 'Por favor, informe o seu nome completo:' }]);
                 setInputType('text');
-                setInputPlaceholder('Digite seu nome...');
+                setInputPlaceholder('Digite seu nome completo...');
             }, 1000);
             return () => clearTimeout(timer);
         }
 
         if (step === 3) {
-            // Pergunta da Renda
             const timer = setTimeout(() => {
-                setMessages(prev => [...prev, { type: 'bot', content: '💰 Qual sua <strong>renda bruta mensal</strong>? (Ex: 3500)', isHtml: true }]);
+                setMessages(prev => [...prev, { type: 'bot', content: 'Qual é a sua <strong>renda bruta mensal</strong> comprovada? (Apenas números, ex: 3500)', isHtml: true }]);
                 setInputType('number');
-                setInputPlaceholder('Digite sua renda...');
+                setInputPlaceholder('Renda mensal em R$...');
             }, 500);
             return () => clearTimeout(timer);
         }
 
         if (step === 4) {
-            // Pergunta de Dependentes
             const timer = setTimeout(() => {
-                setMessages(prev => [...prev, { type: 'bot', content: '👨👩👧👦 Você tem filhos menores de 18 anos ou dependentes?' }]);
+                setMessages(prev => [...prev, { type: 'bot', content: 'Você possui filhos menores de 18 anos ou dependentes financeiros?' }]);
                 setInputType('choices');
                 setChoices([
-                    { label: 'Sim', value: true, emoji: '✅' },
-                    { label: 'Não', value: false, emoji: '❌' }
+                    { label: 'Sim, possuo', value: true, emoji: '✓' },
+                    { label: 'Não possuo', value: false, emoji: '✗' }
                 ]);
             }, 500);
             return () => clearTimeout(timer);
         }
 
         if (step === 5) {
-            // Resultado
             setIsTyping(true);
             const timer = setTimeout(() => {
                 setIsTyping(false);
@@ -189,20 +184,20 @@ export default function SimuladorClient() {
 
                 const htmlResultado = `
                     <div class="result-card">
-                        <div style="text-align:center;margin-bottom:12px; font-weight:700; color:var(--primary);">RESULTADO ESTIMADO</div>
-                        <div style="font-size:12px; color:#666;">🏦 Financiamento</div>
-                        <div class="value">${formatar(d.financiamento)}</div>
-                        <div style="margin-top:10px;">
-                            <div style="font-size:12px; color:#666;">📅 Parcela Estimada</div>
-                            <div class="value">${formatar(d.parcela)}</div>
+                        <div style="text-align:center; margin-bottom:14px; font-weight:700; color:var(--primary); font-size:14px; tracking:0.05em; font-family:serif; text-transform:uppercase;">Estimativa Calculada</div>
+                        <div style="font-size:11px; color:#64748b; text-transform:uppercase; font-weight:600; tracking:0.05em;">🏦 Financiamento Estimado</div>
+                        <div class="value" style="font-family:serif; margin-bottom:10px;">${formatar(d.financiamento)}</div>
+                        <div>
+                            <div style="font-size:11px; color:#64748b; text-transform:uppercase; font-weight:600; tracking:0.05em;">📅 Parcela Inicial Estimada</div>
+                            <div class="value" style="font-family:serif; margin-bottom:10px;">${formatar(d.parcela)}</div>
                         </div>
-                        <div style="margin-top:10px;">
-                            <div style="font-size:12px; color:#666;">🎁 Subsídio</div>
-                            <div class="value" style="color:#00c853;">${formatar(subsidio)}</div>
+                        <div>
+                            <div style="font-size:11px; color:#64748b; text-transform:uppercase; font-weight:600; tracking:0.05em;">🎁 Subsídio Estimado</div>
+                            <div class="value" style="color:#10b981; font-family:serif; margin-bottom:10px;">${formatar(subsidio)}</div>
                         </div>
-                        <div class="result-total">
-                            <div style="font-size:11px; opacity:0.8;">VALOR TOTAL LIBERADO</div>
-                            <div style="font-size:22px; font-weight:800;">${formatar(total)}</div>
+                        <div class="result-total" style="background:var(--primary);">
+                            <div style="font-size:10px; opacity:0.8; text-transform:uppercase; tracking:0.1em; font-weight:600;">VALOR TOTAL APROXIMADO LIBERADO</div>
+                            <div style="font-size:20px; font-weight:700; font-family:serif; margin-top:4px;">${formatar(total)}</div>
                         </div>
                     </div>
                 `;
@@ -215,9 +210,8 @@ export default function SimuladorClient() {
         }
 
         if (step === 6) {
-            // Pergunta do Celular
             const timer = setTimeout(() => {
-                setMessages(prev => [...prev, { type: 'bot', content: '📱 Para falar com um especialista, informe seu WhatsApp com DDD:' }]);
+                setMessages(prev => [...prev, { type: 'bot', content: 'Para que um especialista da nossa imobiliária analise as opções que se enquadram no seu perfil, informe seu WhatsApp com DDD:' }]);
                 setInputType('tel');
                 setInputPlaceholder('(11) 99999-9999');
             }, 1500);
@@ -225,20 +219,19 @@ export default function SimuladorClient() {
         }
 
         if (step === 7) {
-            // Privacidade (LGPD)
             const timer = setTimeout(() => {
                 setMessages(prev => [
                     ...prev,
                     {
                         type: 'bot',
-                        content: `🔒 <strong>Privacidade (LGPD)</strong><br><br>Você aceita que um especialista entre em contato para apresentar as melhores opções de imóveis em Taboão da Serra?`,
+                        content: `🔒 <strong>Consentimento (LGPD)</strong><br><br>Você autoriza que nosso consultor entre em contato para apresentar imóveis compatíveis com o seu resultado em Taboão da Serra?`,
                         isHtml: true
                     }
                 ]);
                 setInputType('choices');
                 setChoices([
-                    { label: 'Sim, aceito', value: true, emoji: '✅' },
-                    { label: 'Não aceito', value: false, emoji: '❌' }
+                    { label: 'Autorizo', value: true, emoji: '✓' },
+                    { label: 'Não autorizo', value: false, emoji: '✗' }
                 ]);
             }, 500);
             return () => clearTimeout(timer);
@@ -260,20 +253,17 @@ export default function SimuladorClient() {
         setInputValue('');
 
         if (step === 2) {
-            // Resposta do Nome
             setVariables(prev => ({ ...prev, nome: val }));
             setMessages(prev => [...prev, { type: 'user', content: val }]);
             setInputType('none');
             setStep(3);
         } else if (step === 3) {
-            // Resposta da Renda
             const num = parseFloat(val.replace(/\D/g, '')) || 0;
             setVariables(prev => ({ ...prev, renda: num }));
             setMessages(prev => [...prev, { type: 'user', content: `R$ ${num.toLocaleString('pt-BR')}` }]);
             setInputType('none');
             setStep(4);
         } else if (step === 6) {
-            // Resposta do WhatsApp
             setVariables(prev => ({ ...prev, telefone: val }));
             setMessages(prev => [...prev, { type: 'user', content: val }]);
             setInputType('none');
@@ -283,13 +273,11 @@ export default function SimuladorClient() {
 
     const handleChoiceClick = (value: any, label: string) => {
         if (step === 4) {
-            // Resposta de Dependentes
             setVariables(prev => ({ ...prev, dependentes: value }));
             setMessages(prev => [...prev, { type: 'user', content: label }]);
             setInputType('none');
             setStep(5);
         } else if (step === 7) {
-            // Resposta do Consentimento
             setVariables(prev => ({ ...prev, consentimento: value }));
             setMessages(prev => [...prev, { type: 'user', content: label }]);
             setInputType('none');
@@ -326,14 +314,13 @@ export default function SimuladorClient() {
                     ...prev,
                     {
                         type: 'bot',
-                        content: `🎉 <strong>Tudo certo, ${variables.nome}!</strong><br><br>Seus dados foram enviados. Clique no botão abaixo para falar agora mesmo com o corretor pelo WhatsApp!`,
+                        content: `<strong>Tudo pronto, ${variables.nome}!</strong><br><br>Seus dados foram enviados com sucesso. Clique no botão abaixo para conversar agora mesmo com o nosso consultor especialista via WhatsApp.`,
                         isHtml: true
                     }
                 ]);
                 setInputType('actions');
             }, 1200);
         } else {
-            // Enviar dados anônimos
             if (typeof window !== 'undefined' && (window as any).dataLayer) {
                 (window as any).dataLayer.push({ 'event': 'simulacao_anonima', 'dados': { renda: variables.renda } });
             }
@@ -345,7 +332,7 @@ export default function SimuladorClient() {
                     ...prev,
                     {
                         type: 'bot',
-                        content: `Entendemos seu desejo de privacidade! 🛡️<br>Seus dados de contato não foram salvos.<br><br>Que tal avaliar nossa empresa no Google? Sua opinião é muito importante!`,
+                        content: `Entendemos seu desejo de privacidade. Seus dados de contato não foram salvos.<br><br>Agradecemos a utilização do nosso simulador. Se desejar, sinta-se à vontade para avaliar nossa empresa no Google.`,
                         isHtml: true
                     }
                 ]);
@@ -358,75 +345,285 @@ export default function SimuladorClient() {
     const percentualProgresso = isChatActive ? Math.min((step / totalSteps) * 100, 100) : 0;
 
     return (
-        <div className="fixed inset-0 z-[9999] bg-[#f5f7fa] overflow-y-auto antialiased">
+        <div className="fixed inset-0 z-[9999] bg-[#faf9f6] overflow-y-auto antialiased">
             {/* CSS Global Isolado para a Landing Page e Simulador */}
             <style dangerouslySetInnerHTML={{ __html: `
                 :root {
-                    --primary: #0033a0;
-                    --primary-light: #0055ff;
-                    --secondary: #00c853;
-                    --text-main: #1a2332;
-                    --text-muted: #6b7a8f;
-                    --bg-light: #f5f7fa;
+                    --primary: #0f172a;
+                    --primary-light: #1e293b;
+                    --secondary: #128c7e;
+                    --accent: #bfa15f;
+                    --accent-hover: #ab8e4f;
+                    --text-main: #0f172a;
+                    --text-muted: #64748b;
+                    --bg-light: #faf9f6;
                     --white: #ffffff;
                 }
-                .lp-container { max-width: 600px; margin: 0 auto; background: var(--white); min-height: 100vh; display: flex; flex-direction: column; box-shadow: 0 4px 30px rgba(0,0,0,0.05); }
-                .hero {
-                    position: relative; padding: 60px 24px; text-align: center;
-                    background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('/images/simulado/dor-aluguel.png');
-                    background-size: cover; background-position: center; color: var(--white);
+                .lp-container { 
+                    max-width: 600px; 
+                    margin: 0 auto; 
+                    background: var(--white); 
+                    min-height: 100vh; 
+                    display: flex; 
+                    flex-direction: column; 
+                    box-shadow: 0 4px 30px rgba(0,0,0,0.02); 
+                    border-left: 1px solid rgba(0,0,0,0.05);
+                    border-right: 1px solid rgba(0,0,0,0.05);
                 }
-                .hero h1 { font-size: 28px; font-weight: 800; margin-bottom: 16px; line-height: 1.2; font-family: 'Inter', sans-serif; }
-                .hero p { font-size: 16px; opacity: 0.9; font-family: 'Inter', sans-serif; }
-                .section { padding: 32px 24px; }
-                .section-title { font-size: 22px; font-weight: 700; margin-bottom: 20px; color: var(--primary); font-family: 'Inter', sans-serif; }
-                .benefit-item { display: flex; gap: 16px; margin-bottom: 20px; align-items: flex-start; }
-                .benefit-icon { font-size: 24px; flex-shrink: 0; }
-                .benefit-text h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; font-family: 'Inter', sans-serif; }
-                .benefit-text p { font-size: 14px; color: var(--text-muted); font-family: 'Inter', sans-serif; }
-                .cta-box { padding: 32px 24px; background: #f0f4f8; text-align: center; border-radius: 24px 24px 0 0; margin-top: auto; }
+                .hero {
+                    position: relative; 
+                    padding: 60px 24px; 
+                    text-align: center;
+                    background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), url('/images/simulado/dor-aluguel.png');
+                    background-size: cover; 
+                    background-position: center; 
+                    color: var(--white);
+                }
+                .hero h1 { 
+                    font-size: 38px; 
+                    margin-bottom: 16px; 
+                    line-height: 1.1; 
+                }
+                .hero p { 
+                    font-size: 14px; 
+                    opacity: 0.85; 
+                    font-family: 'Plus Jakarta Sans', sans-serif; 
+                }
+                .section { 
+                    padding: 32px 24px; 
+                }
+                .section-title { 
+                    font-size: 18px; 
+                    margin-bottom: 20px; 
+                    color: var(--primary); 
+                }
+                .benefit-item { 
+                    display: flex; 
+                    gap: 16px; 
+                    margin-bottom: 20px; 
+                    align-items: flex-start; 
+                }
+                .benefit-icon { 
+                    font-size: 20px; 
+                    flex-shrink: 0; 
+                }
+                .benefit-text h3 { 
+                    font-size: 14px; 
+                    font-weight: 600; 
+                    margin-bottom: 4px; 
+                    color: var(--primary);
+                }
+                .benefit-text p { 
+                    font-size: 12px; 
+                    color: var(--text-muted); 
+                    line-height: 1.5;
+                }
+                .cta-box { 
+                    padding: 32px 24px; 
+                    text-align: center; 
+                    margin-top: auto; 
+                }
                 .btn-main {
-                    display: block; width: 100%; padding: 18px;
-                    background: linear-gradient(135deg, var(--primary), var(--primary-light));
-                    color: var(--white); text-decoration: none; border-radius: 16px;
-                    font-weight: 700; font-size: 18px; margin-bottom: 16px;
-                    box-shadow: 0 8px 20px rgba(0, 51, 160, 0.3); transition: transform 0.2s;
-                    border: none; cursor: pointer; font-family: 'Inter', sans-serif;
+                    display: block; 
+                    width: 100%; 
+                    padding: 16px;
+                    background: var(--accent);
+                    color: var(--white); 
+                    text-decoration: none; 
+                    border-radius: 12px;
+                    font-weight: 600; 
+                    font-size: 16px; 
+                    margin-bottom: 16px;
+                    box-shadow: 0 4px 12px rgba(191, 161, 95, 0.15); 
+                    transition: all 0.2s;
+                    border: none; 
+                    cursor: pointer;
                     text-align: center;
                 }
-                .btn-main:active { transform: scale(0.98); }
-                .btn-sub { color: var(--text-muted); text-decoration: underline; font-size: 14px; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; display: inline-block; }
+                .btn-main:hover {
+                    background: var(--accent-hover);
+                }
+                .btn-main:active { 
+                    transform: scale(0.98); 
+                }
+                .btn-sub { 
+                    color: var(--text-muted); 
+                    text-decoration: none; 
+                    font-size: 12px; 
+                    background: none; 
+                    border: none; 
+                    cursor: pointer; 
+                    display: inline-block; 
+                }
+                .btn-sub:hover {
+                    color: var(--primary);
+                    text-decoration: underline;
+                }
 
                 /* ChatBot Styles */
-                .chat-container { display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100dvh; background: var(--white); z-index: 1000; flex-direction: column; }
-                .chat-header { background: var(--primary); padding: 16px 20px; color: var(--white); }
-                .header-logos { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-                .logos-group { display: flex; align-items: center; gap: 10px; background: white; padding: 4px 10px; border-radius: 6px; }
-                .logos-group img { height: 18px; }
-                .chat-area { flex: 1; overflow-y: auto; padding: 20px; background: #f8faff; }
-                .input-area { padding: 16px 20px 24px; background: var(--white); border-top: 1px solid #e8edf5; }
+                .chat-container { 
+                    display: flex; 
+                    position: fixed; 
+                    top: 0; 
+                    left: 0; 
+                    width: 100%; 
+                    height: 100dvh; 
+                    background: var(--white); 
+                    z-index: 1000; 
+                    flex-direction: column; 
+                }
+                .chat-header { 
+                    background: var(--primary); 
+                    padding: 16px 20px; 
+                    color: var(--white); 
+                }
+                .header-logos { 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: space-between; 
+                    margin-bottom: 12px; 
+                }
+                .logos-group { 
+                    display: flex; 
+                    align-items: center; 
+                    gap: 8px; 
+                    background: white; 
+                    padding: 4px 10px; 
+                    border-radius: 6px; 
+                }
+                .logos-group img { 
+                    height: 18px; 
+                }
+                .chat-area { 
+                    flex: 1; 
+                    overflow-y: auto; 
+                    padding: 20px; 
+                    background: #f8fafc; 
+                }
+                .input-area { 
+                    padding: 16px 20px 24px; 
+                    background: var(--white); 
+                    border-top: 1px solid #f1f5f9; 
+                }
 
                 /* Messages */
-                .message { margin-bottom: 16px; display: flex; flex-direction: column; animation: slideUp 0.3s ease; }
-                .message.bot { align-items: flex-start; }
-                .message.user { align-items: flex-end; }
-                .bubble { padding: 12px 16px; border-radius: 18px; max-width: 85%; font-size: 15px; font-family: 'Inter', sans-serif; }
-                .bot .bubble { background: var(--white); color: var(--text-main); border-bottom-left-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-                .user .bubble { background: var(--primary); color: var(--white); border-bottom-right-radius: 4px; }
+                .message { 
+                    margin-bottom: 16px; 
+                    display: flex; 
+                    flex-direction: column; 
+                    animation: slideUp 0.3s ease; 
+                }
+                .message.bot { 
+                    align-items: flex-start; 
+                }
+                .message.user { 
+                    align-items: flex-end; 
+                }
+                .bubble { 
+                    padding: 12px 16px; 
+                    border-radius: 14px; 
+                    max-width: 85%; 
+                    font-size: 14px; 
+                    line-height: 1.5;
+                }
+                .bot .bubble { 
+                    background: var(--white); 
+                    color: var(--text-main); 
+                    border-bottom-left-radius: 4px; 
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
+                    border: 1px solid #f1f5f9;
+                }
+                .user .bubble { 
+                    background: var(--accent); 
+                    color: var(--white); 
+                    border-bottom-right-radius: 4px; 
+                }
 
                 /* Result Card */
-                .result-card { background: var(--white); border: 2px solid var(--primary); border-radius: 16px; padding: 20px; width: 100%; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-                .result-card .value { font-size: 24px; font-weight: 800; color: var(--primary); font-family: 'Inter', sans-serif; }
-                .result-total { background: var(--primary); color: white; padding: 12px; border-radius: 10px; text-align: center; margin-top: 12px; font-family: 'Inter', sans-serif; }
+                .result-card { 
+                    background: var(--white); 
+                    border: 1px solid var(--accent); 
+                    border-radius: 12px; 
+                    padding: 20px; 
+                    width: 100%; 
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.02); 
+                }
+                .result-card .value { 
+                    font-size: 22px; 
+                    font-weight: 700; 
+                    color: var(--primary); 
+                }
+                .result-total { 
+                    background: var(--primary); 
+                    color: white; 
+                    padding: 12px; 
+                    border-radius: 8px; 
+                    text-align: center; 
+                    margin-top: 12px; 
+                }
 
                 /* Form Styles */
-                .input-group { display: flex; gap: 10px; }
-                .input-group input { flex: 1; padding: 14px; border: 2px solid #e0e8f0; border-radius: 12px; outline: none; font-family: 'Inter', sans-serif; font-size: 15px; }
-                .input-group button { padding: 14px 20px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
-                .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-                .choice-btn { padding: 12px; border: 2px solid #e0e8f0; border-radius: 12px; background: white; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 6px; }
-                .choice-btn:active { background: #f0f4f8; }
-                .disclaimer { font-size: 10px; color: var(--text-muted); text-align: center; padding: 10px; background: #f8faff; font-family: 'Inter', sans-serif; }
+                .input-group { 
+                    display: flex; 
+                    gap: 10px; 
+                }
+                .input-group input { 
+                    flex: 1; 
+                    padding: 12px 14px; 
+                    border: 1px solid #e2e8f0; 
+                    border-radius: 8px; 
+                    outline: none; 
+                    font-size: 14px; 
+                    color: var(--text-main);
+                    background: #f8fafc;
+                }
+                .input-group input:focus {
+                    border-color: var(--accent);
+                    background: var(--white);
+                }
+                .input-group button { 
+                    padding: 12px 20px; 
+                    background: var(--accent); 
+                    color: white; 
+                    border: none; 
+                    border-radius: 8px; 
+                    font-weight: 600; 
+                    cursor: pointer; 
+                    font-size: 14px;
+                }
+                .input-group button:hover {
+                    background: var(--accent-hover);
+                }
+                .choices { 
+                    display: grid; 
+                    grid-template-columns: 1fr 1fr; 
+                    gap: 10px; 
+                }
+                .choice-btn { 
+                    padding: 12px; 
+                    border: 1px solid #e2e8f0; 
+                    border-radius: 8px; 
+                    background: white; 
+                    font-weight: 600; 
+                    cursor: pointer; 
+                    font-size: 14px; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    gap: 6px; 
+                    color: var(--text-main);
+                }
+                .choice-btn:hover {
+                    border-color: var(--accent);
+                    background: #fafafa;
+                }
+                .disclaimer { 
+                    font-size: 10px; 
+                    color: var(--text-muted); 
+                    text-align: center; 
+                    padding: 10px; 
+                    background: #faf9f6; 
+                }
 
                 /* Typing Indicator */
                 .typing-indicator { display: flex; gap: 4px; padding: 8px 0; }
@@ -440,49 +637,64 @@ export default function SimuladorClient() {
             {!isChatActive ? (
                 /* Landing Page UI */
                 <div id="landingPage" className="lp-container">
+                    {/* Header com as marcas de credibilidade */}
+                    <header className="flex justify-between items-center px-6 py-4 border-b border-black/5 bg-[#faf9f6]">
+                        <div className="flex items-center gap-3 bg-white px-3 py-1.5 rounded-lg border border-black/5 shadow-xs">
+                            <img src="/images/simulado/logo-caixa.jpg" alt="CAIXA" className="h-6 object-contain" />
+                            <img src="/images/simulado/logo-mcmv.png" alt="MCMV" className="h-6 object-contain border-l border-slate-200 pl-3" />
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase">Simulador de Viabilidade</span>
+                    </header>
+
                     <section className="hero">
-                        <h1>Cansado de pagar aluguel ou morar de favor?</h1>
-                        <p>Chegou a hora de ter um lugar só seu, com a sua cara e a sua liberdade. Imagine a segurança de ter as chaves da sua própria casa.</p>
+                        <h1 className="font-serif italic font-semibold text-accent text-5xl mb-4">Até quando?</h1>
+                        <p className="text-slate-300 text-base leading-relaxed">
+                            Até quando você vai pagar o aluguel de outra pessoa? Planeje a conquista do seu próprio espaço e descubra o valor aproximado do seu financiamento.
+                        </p>
                     </section>
 
-                    <section className="section">
-                        <h2 className="section-title">Seu futuro começa agora:</h2>
+                    <section className="section bg-white">
+                        <h2 className="section-title font-serif text-primary text-lg font-semibold mb-6">Mude o rumo do seu futuro patrimonial:</h2>
                         <div className="benefit-item">
-                            <div className="benefit-icon">💰</div>
-                            <div className="benefit-item-content benefit-text">
-                                <h3>Onde está indo o seu dinheiro?</h3>
-                                <p>O valor do seu aluguel poderia ser o investimento no seu próprio lar.</p>
+                            <div className="benefit-icon text-accent">💰</div>
+                            <div className="benefit-text">
+                                <h3 className="text-primary font-semibold text-sm mb-1">Até quando no aluguel?</h3>
+                                <p className="text-slate-500 text-xs">Mensalidades que sobem todos os anos sem gerar nenhum patrimônio para você. Direcione esse valor para o que é seu.</p>
                             </div>
                         </div>
                         <div className="benefit-item">
-                            <div className="benefit-icon">🔓</div>
-                            <div className="benefit-item-content benefit-text">
-                                <h3>Sua total liberdade</h3>
-                                <p>Sonha em decorar, reformar e ter um espaço para chamar de seu? Liberte-se!</p>
+                            <div className="benefit-icon text-accent">🔓</div>
+                            <div className="benefit-text">
+                                <h3 className="text-primary font-semibold text-sm mb-1">Até quando sem autonomia?</h3>
+                                <p className="text-slate-500 text-xs">Regras de terceiros, restrições para reformas ou animais. Conquiste a total liberdade de ter um lar com a sua cara.</p>
                             </div>
                         </div>
                         <div className="benefit-item">
-                            <div className="benefit-icon">👨‍👩‍👧‍👦</div>
-                            <div className="benefit-item-content benefit-text">
-                                <h3>Segurança para sua família</h3>
-                                <p>Dê o conforto e o futuro seguro que quem você ama merece.</p>
+                            <div className="benefit-icon text-accent">👨‍👩‍👧‍👦</div>
+                            <div className="benefit-text">
+                                <h3 className="text-primary font-semibold text-sm mb-1">Até quando sem estabilidade?</h3>
+                                <p className="text-slate-500 text-xs">Dê a segurança e estabilidade que a sua família merece, livre das preocupações com renovações ou reajustes contratuais.</p>
                             </div>
                         </div>
                     </section>
 
-                    <section className="section" style={{ background: '#f8faff' }}>
-                        <h2 className="section-title">A casa própria está próxima!</h2>
-                        <p style={{ marginBottom: '20px', fontSize: '15px' }}>Com o programa <strong>Minha Casa Minha Vida</strong> e a <strong>CAIXA</strong>, você tem acesso a:</p>
-                        <ul style={{ listStyle: 'none', fontSize: '14px', color: '#4a5a6f' }}>
-                            <li style={{ marginBottom: '10px' }}>✅ Taxas de juros reduzidas</li>
-                            <li style={{ marginBottom: '10px' }}>✅ Subsídios do governo (um desconto que você não devolve!)</li>
-                            <li style={{ marginBottom: '10px' }}>✅ Parcelas que cabem no seu bolso</li>
+                    <section className="section bg-[#faf9f6] border-y border-black/5">
+                        <h2 className="section-title font-serif text-primary text-base font-semibold mb-4">A casa própria é viável</h2>
+                        <p className="text-slate-500 text-xs mb-4 font-medium">Pelo programa <strong>Minha Casa Minha Vida</strong> e o crédito facilitado da <strong>CAIXA Econômica Federal</strong>, as condições são exclusivas:</p>
+                        <ul className="space-y-2.5 text-xs text-slate-650 font-medium">
+                            <li className="flex items-center gap-2">✓ Taxas de juros significativamente reduzidas</li>
+                            <li className="flex items-center gap-2">✓ Subsídios do governo (um desconto real na sua entrada!)</li>
+                            <li className="flex items-center gap-2">✓ Parcelas dimensionadas para caber no seu orçamento</li>
                         </ul>
                     </section>
 
-                    <div className="cta-box">
-                        <button id="startChat" onClick={iniciarSimulacao} className="btn-main">👉 FAZER MINHA SIMULAÇÃO GRATUITA</button>
-                        <a href="/" className="btn-sub">Apenas ver os imóveis disponíveis no site</a>
+                    <div className="cta-box bg-white border-t border-black/5">
+                        <button id="startChat" onClick={iniciarSimulacao} className="btn-main">
+                            👉 FAZER MINHA SIMULAÇÃO GRATUITA
+                        </button>
+                        <a href="/" className="btn-sub">
+                            Apenas ver os imóveis disponíveis no site
+                        </a>
                     </div>
                 </div>
             ) : (
@@ -494,10 +706,10 @@ export default function SimuladorClient() {
                                 <img src="/images/simulado/logo-caixa.jpg" alt="CAIXA" />
                                 <img src="/images/simulado/logo-mcmv.png" alt="MCMV" style={{ borderLeft: '1px solid #ddd', paddingLeft: '8px' }} />
                             </div>
-                            <div style={{ fontSize: '12px', fontWeight: 700, background: 'rgba(255,255,255,0.2)', padding: '4px 8px', borderRadius: '4px' }}>SIMULADOR</div>
+                            <div style={{ fontSize: '11px', fontWeight: 700, background: 'rgba(255,255,255,0.15)', padding: '4px 8px', borderRadius: '4px', color: '#fff', tracking: '0.05em' }}>SIMULADOR CAIXA</div>
                         </div>
-                        <div style={{ height: '4px', background: 'rgba(255,255,255,0.2)', borderRadius: '2px', overflow: 'hidden' }}>
-                            <div id="progressFill" style={{ height: '100%', background: '#00c853', width: `${percentualProgresso}%`, transition: 'width 0.3s' }}></div>
+                        <div style={{ height: '3px', background: 'rgba(255,255,255,0.15)', borderRadius: '1.5px', overflow: 'hidden' }}>
+                            <div id="progressFill" style={{ height: '100%', background: 'var(--accent)', width: `${percentualProgresso}%`, transition: 'width 0.3s' }}></div>
                         </div>
                     </div>
 
@@ -584,13 +796,13 @@ export default function SimuladorClient() {
                             <div>
                                 {variables.consentimento ? (
                                     <a
-                                        href={`https://wa.me/5511970988512?text=${encodeURIComponent(`Olá! Fiz a simulação no site. Minha renda é R$ ${variables.renda} e gostaria de saber mais sobre os imóveis.`)}`}
+                                        href={`https://wa.me/5511970988512?text=${encodeURIComponent(`Olá! Fiz a simulação no site com o mote 'Até quando?'. Minha renda é R$ ${variables.renda} e gostaria de saber mais sobre os imóveis.`)}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="btn-main"
-                                        style={{ display: 'block', textDecoration: 'none', background: '#25d366', boxShadow: '0 8px 20px rgba(37, 211, 102, 0.3)' }}
+                                        style={{ display: 'block', textDecoration: 'none', background: '#128c7e', boxShadow: '0 4px 12px rgba(18, 140, 126, 0.15)' }}
                                     >
-                                        💬 FALAR NO WHATSAPP
+                                        Falar com Especialista no WhatsApp
                                     </a>
                                 ) : (
                                     <a
@@ -598,15 +810,15 @@ export default function SimuladorClient() {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="btn-main"
-                                        style={{ display: 'block', textDecoration: 'none', background: '#ffb400', color: '#000' }}
+                                        style={{ display: 'block', textDecoration: 'none', background: 'var(--accent)', color: '#fff' }}
                                     >
-                                        ⭐ AVALIAR NO GOOGLE
+                                        Avaliar no Google
                                     </a>
                                 )}
                             </div>
                         )}
                     </div>
-                    <div className="disclaimer">⚠️ Simulador independente baseado em dados públicos. Sem vínculo oficial com a CEF ou Governo.</div>
+                    <div className="disclaimer">⚠️ Simulador independente baseado em dados públicos. Sem vínculo oficial com a CEF ou Governo Federal.</div>
                 </div>
             )}
         </div>
