@@ -332,7 +332,7 @@ export default function SimuladorClient() {
                     ...prev,
                     {
                         type: 'bot',
-                        content: `Entendemos seu desejo de privacidade. Seus dados de contato não foram salvos.<br><br>Agradecemos a utilização do nosso simulador. Se desejar, sinta-se à vontade para avaliar nossa empresa no Google.`,
+                        content: `Entendemos seu desejo de privacidade. Seus dados de contato não foram salvos.<br><br>Agradecemos a utilização do nosso simulador. Ajude-nos por favor nos avaliando no Google, você não gasta nem 20 segundos e faz uma enorme diferença para nós!`,
                         isHtml: true
                     }
                 ]);
@@ -806,7 +806,7 @@ export default function SimuladorClient() {
                                     </a>
                                 ) : (
                                     <a
-                                        href="https://www.google.com/search?q=imoveis+taboao+da+serra+avaliacoes"
+                                        href="https://g.page/r/CYpZb9hTQVvMEBM/review"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="btn-main"
