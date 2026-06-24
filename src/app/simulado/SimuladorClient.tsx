@@ -301,14 +301,18 @@ export default function SimuladorClient() {
         const lead = { ...variables, consentimento: aceitou, ...dadosAutomaticos };
 
         if (aceitou) {
-            // Enviar Lead com consentimento usando o token de ativação do FormSubmit
-            fetch('https://formsubmit.co/ajax/64cee96f2e8b53a77b5af43a643a3614', {
+            // Enviar Lead com consentimento usando o token de ativação do Web3Forms
+            fetch('https://api.web3forms.com/submit', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify({ _subject: `Novo Lead: ${lead.nome}`, ...lead })
+                body: JSON.stringify({
+                    access_key: '7d915857-c79e-4ff4-b507-ac4edaa6ce5c',
+                    subject: `Novo Lead: ${lead.nome}`,
+                    ...lead
+                })
             });
 
             if (typeof window !== 'undefined' && (window as any).dataLayer) {

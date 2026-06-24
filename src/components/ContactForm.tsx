@@ -23,15 +23,16 @@ export default function ContactForm() {
     setStatus('submitting');
 
     try {
-      // Envio de formulário usando o token de ativação do FormSubmit
-      const response = await fetch('https://formsubmit.co/ajax/64cee96f2e8b53a77b5af43a643a3614', {
+      // Envio de formulário assíncrono para o Web3Forms
+      const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          _subject: `Novo Contato: ${formData.nome}`,
+          access_key: '7d915857-c79e-4ff4-b507-ac4edaa6ce5c',
+          subject: `Novo Contato: ${formData.nome}`,
           nome: formData.nome,
           email: formData.email,
           telefone: formData.telefone,
