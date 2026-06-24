@@ -22,12 +22,30 @@ export default function ContactForm() {
     e.preventDefault();
     setStatus('submitting');
 
-    // Simulação de envio de formulário com delay
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      setStatus('success');
-      setFormData({ nome: '', email: '', telefone: '', mensagem: '' });
+      const response = await fetch('https://formsubmit.co/ajax/8c997935ed4f426170fe23a0f8ee934a', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          _subject: `Novo Contato: ${formData.nome}`,
+          nome: formData.nome,
+          email: formData.email,
+          telefone: formData.telefone,
+          mensagem: formData.mensagem,
+        }),
+      });
+
+      if (response.ok) {
+        setStatus('success');
+        setFormData({ nome: '', email: '', telefone: '', mensagem: '' });
+      } else {
+        setStatus('error');
+      }
     } catch (error) {
+      console.error(error);
       setStatus('error');
     }
   };
