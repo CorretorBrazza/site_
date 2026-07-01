@@ -80,6 +80,9 @@ interface Variables {
     dependentes?: boolean;
     telefone?: string;
     consentimento?: boolean;
+    resultado?: {
+        total: number;
+    };
 }
 
 export default function SimuladorClient() {
@@ -706,7 +709,7 @@ export default function SimuladorClient() {
                                 <img src="/images/simulado/logo-caixa.jpg" alt="CAIXA" />
                                 <img src="/images/simulado/logo-mcmv.png" alt="MCMV" style={{ borderLeft: '1px solid #ddd', paddingLeft: '8px' }} />
                             </div>
-                            <div style={{ fontSize: '11px', fontWeight: 700, background: 'rgba(255,255,255,0.15)', padding: '4px 8px', borderRadius: '4px', color: '#fff', tracking: '0.05em' }}>SIMULADOR CAIXA</div>
+                            <div style={{ fontSize: '11px', fontWeight: 700, background: 'rgba(255,255,255,0.15)', padding: '4px 8px', borderRadius: '4px', color: '#fff', letterSpacing: '0.05em' }}>SIMULADOR CAIXA</div>
                         </div>
                         <div style={{ height: '3px', background: 'rgba(255,255,255,0.15)', borderRadius: '1.5px', overflow: 'hidden' }}>
                             <div id="progressFill" style={{ height: '100%', background: 'var(--accent)', width: `${percentualProgresso}%`, transition: 'width 0.3s' }}></div>
@@ -796,7 +799,7 @@ export default function SimuladorClient() {
                             <div>
                                 {variables.consentimento ? (
                                     <a
-                                        href={`https://wa.me/5511970988512?text=${encodeURIComponent(`Olá! Fiz a simulação no site com o mote 'Até quando?'. Minha renda é R$ ${variables.renda} e gostaria de saber mais sobre os imóveis.`)}`}
+                                        href={`https://wa.me/5511970988512?text=${encodeURIComponent(`Olá! Sou o(a) ${variables.nome}. Fiz a simulação no site com o mote 'Até quando?'. Minha renda é R$ ${variables.renda?.toLocaleString('pt-BR')} e meu financiamento estimado (com subsídio) é de ${variables.resultado?.total?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}. Gostaria de saber mais sobre os imóveis.`)}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="btn-main"
