@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
 
 const TABELA_MCMV_2026 = [
     { renda: 1500, financiamento: 86551.61, parcela: 449.99, subsidio_com: 55000.00, subsidio_sem: 16500.00 },
@@ -383,12 +384,12 @@ export default function SimuladorClient() {
                     color: var(--white);
                 }
                 .hero h1 { 
-                    font-size: 38px; 
+                    font-size: 42px; 
                     margin-bottom: 16px; 
                     line-height: 1.1; 
                 }
                 .hero p { 
-                    font-size: 14px; 
+                    font-size: 16px; 
                     opacity: 0.85; 
                     font-family: 'Plus Jakarta Sans', sans-serif; 
                 }
@@ -396,7 +397,7 @@ export default function SimuladorClient() {
                     padding: 32px 24px; 
                 }
                 .section-title { 
-                    font-size: 18px; 
+                    font-size: 21px; 
                     margin-bottom: 20px; 
                     color: var(--primary); 
                 }
@@ -411,13 +412,13 @@ export default function SimuladorClient() {
                     flex-shrink: 0; 
                 }
                 .benefit-text h3 { 
-                    font-size: 14px; 
+                    font-size: 16px; 
                     font-weight: 600; 
                     margin-bottom: 4px; 
                     color: var(--primary);
                 }
                 .benefit-text p { 
-                    font-size: 12px; 
+                    font-size: 14px; 
                     color: var(--text-muted); 
                     line-height: 1.5;
                 }
@@ -435,7 +436,7 @@ export default function SimuladorClient() {
                     text-decoration: none; 
                     border-radius: 12px;
                     font-weight: 600; 
-                    font-size: 16px; 
+                    font-size: 18px; 
                     margin-bottom: 16px;
                     box-shadow: 0 4px 12px rgba(191, 161, 95, 0.15); 
                     transition: all 0.2s;
@@ -452,7 +453,7 @@ export default function SimuladorClient() {
                 .btn-sub { 
                     color: var(--text-muted); 
                     text-decoration: none; 
-                    font-size: 12px; 
+                    font-size: 14px; 
                     background: none; 
                     border: none; 
                     cursor: pointer; 
@@ -526,7 +527,7 @@ export default function SimuladorClient() {
                     padding: 12px 16px; 
                     border-radius: 14px; 
                     max-width: 85%; 
-                    font-size: 14px; 
+                    font-size: 16px; 
                     line-height: 1.5;
                 }
                 .bot .bubble { 
@@ -576,7 +577,7 @@ export default function SimuladorClient() {
                     border: 1px solid #e2e8f0; 
                     border-radius: 8px; 
                     outline: none; 
-                    font-size: 14px; 
+                    font-size: 16px; 
                     color: var(--text-main);
                     background: #f8fafc;
                 }
@@ -592,7 +593,7 @@ export default function SimuladorClient() {
                     border-radius: 8px; 
                     font-weight: 600; 
                     cursor: pointer; 
-                    font-size: 14px;
+                    font-size: 16px;
                 }
                 .input-group button:hover {
                     background: var(--accent-hover);
@@ -609,7 +610,7 @@ export default function SimuladorClient() {
                     background: white; 
                     font-weight: 600; 
                     cursor: pointer; 
-                    font-size: 14px; 
+                    font-size: 16px; 
                     display: flex; 
                     align-items: center; 
                     justify-content: center; 
@@ -621,7 +622,7 @@ export default function SimuladorClient() {
                     background: #fafafa;
                 }
                 .disclaimer { 
-                    font-size: 10px; 
+                    font-size: 12px; 
                     color: var(--text-muted); 
                     text-align: center; 
                     padding: 10px; 
@@ -646,7 +647,7 @@ export default function SimuladorClient() {
                             <img src="/images/simulado/logo-caixa.jpg" alt="CAIXA" className="h-6 object-contain" />
                             <img src="/images/simulado/logo-mcmv.png" alt="MCMV" className="h-6 object-contain border-l border-slate-200 pl-3" />
                         </div>
-                        <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase">Simulador de Viabilidade</span>
+                        <span className="text-[12px] font-bold text-slate-400 tracking-wider uppercase">Simulador de Viabilidade</span>
                     </header>
 
                     <section className="hero">
@@ -682,9 +683,9 @@ export default function SimuladorClient() {
                     </section>
 
                     <section className="section bg-[#faf9f6] border-y border-black/5">
-                        <h2 className="section-title font-serif text-primary text-base font-semibold mb-4">A casa própria é viável</h2>
-                        <p className="text-slate-500 text-xs mb-4 font-medium">Pelo programa <strong>Minha Casa Minha Vida</strong> e o crédito facilitado da <strong>CAIXA Econômica Federal</strong>, as condições são exclusivas:</p>
-                        <ul className="space-y-2.5 text-xs text-slate-650 font-medium">
+                        <h2 className="section-title font-serif text-primary text-lg font-semibold mb-4">A casa própria é viável</h2>
+                        <p className="text-slate-500 text-sm mb-4 font-medium">Pelo programa <strong>Minha Casa Minha Vida</strong> e o crédito facilitado da <strong>CAIXA Econômica Federal</strong>, as condições são exclusivas:</p>
+                        <ul className="space-y-2.5 text-sm text-slate-650 font-medium">
                             <li className="flex items-center gap-2">✓ Taxas de juros significativamente reduzidas</li>
                             <li className="flex items-center gap-2">✓ Subsídios do governo (um desconto real na sua entrada!)</li>
                             <li className="flex items-center gap-2">✓ Parcelas dimensionadas para caber no seu orçamento</li>
@@ -695,9 +696,9 @@ export default function SimuladorClient() {
                         <button id="startChat" onClick={iniciarSimulacao} className="btn-main">
                             👉 FAZER MINHA SIMULAÇÃO GRATUITA
                         </button>
-                        <a href="/" className="btn-sub">
+                        <Link href="/" className="btn-sub">
                             Apenas ver os imóveis disponíveis no site
-                        </a>
+                        </Link>
                     </div>
                 </div>
             ) : (
@@ -709,7 +710,7 @@ export default function SimuladorClient() {
                                 <img src="/images/simulado/logo-caixa.jpg" alt="CAIXA" />
                                 <img src="/images/simulado/logo-mcmv.png" alt="MCMV" style={{ borderLeft: '1px solid #ddd', paddingLeft: '8px' }} />
                             </div>
-                            <div style={{ fontSize: '11px', fontWeight: 700, background: 'rgba(255,255,255,0.15)', padding: '4px 8px', borderRadius: '4px', color: '#fff', letterSpacing: '0.05em' }}>SIMULADOR CAIXA</div>
+                            <div style={{ fontSize: '13px', fontWeight: 700, background: 'rgba(255,255,255,0.15)', padding: '4px 8px', borderRadius: '4px', color: '#fff', letterSpacing: '0.05em' }}>SIMULADOR CAIXA</div>
                         </div>
                         <div style={{ height: '3px', background: 'rgba(255,255,255,0.15)', borderRadius: '1.5px', overflow: 'hidden' }}>
                             <div id="progressFill" style={{ height: '100%', background: 'var(--accent)', width: `${percentualProgresso}%`, transition: 'width 0.3s' }}></div>
