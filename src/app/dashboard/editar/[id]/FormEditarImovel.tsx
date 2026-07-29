@@ -2,12 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { salvarEPublicarImovelAction } from '@/app/actions/imovel-server-actions';
+import { salvarEPublicarImovelAction, uploadNovasFotosAction } from '@/app/actions/imovel-server-actions';
 import { Imovel } from '@/types/imovel';
 
 export default function FormEditarImovel({ imovel, proprietarioInicial }: { imovel: Imovel, proprietarioInicial: any }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [uploadingFotos, setUploadingFotos] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [formData, setFormData] = useState<Imovel>(imovel);
   const [propData, setPropData] = useState({
@@ -74,6 +75,30 @@ export default function FormEditarImovel({ imovel, proprietarioInicial }: { imov
 
   const removerNovaFoto = (index: number) => {
     setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
+  };
+
+  const handleFazerUploadFotos = async () => {
+    if (selectedFiles.length === 0) return;
+    setUploadingFotos(true);
+    try {
+      const data = new FormData();
+      selectedFiles.forEach(file => {
+        data.append('fotos', file);
+      });
+      const result = await uploadNovasFotosAction(formData.referencia, data);
+      if (result.success && result.fotosUrls) {
+        const fotosAtuais = formData.fotos || [];
+        setFormData({ ...formData, fotos: [...fotosAtuais, ...result.fotosUrls] });
+        setSelectedFiles([]);
+        alert(`${result.fotosUrls.length} foto(s) enviada(s) com sucesso e adicionada(s) à galeria abaixo! Agora você pode reordená-las.`);
+      } else {
+        alert(result.error || 'Erro ao enviar novas fotos.');
+      }
+    } catch (err) {
+      alert('Erro ao enviar fotos.');
+    } finally {
+      setUploadingFotos(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -317,6 +342,26 @@ export default function FormEditarImovel({ imovel, proprietarioInicial }: { imov
                   </div>
                 ))}
               </div>
+
+              {/* Botão de Upload Imediato */}
+              <button
+                type="button"
+                onClick={handleFazerUploadFotos}
+                disabled={uploadingFotos}
+                className={`w-full mt-4 py-3 px-4 rounded-xl font-bold text-sm text-white shadow-md flex items-center justify-center gap-2 transition-all ${
+                  uploadingFotos ? 'bg-blue-300 cursor-wait' : 'bg-blue-600 hover:bg-blue-700 active:scale-[0.99]'
+                }`}
+              >
+                {uploadingFotos ? (
+                  <>
+                    <span className="animate-spin text-base">⏳</span> Fazendo Upload e Adicionando à Galeria...
+                  </>
+                ) : (
+                  <>
+                    <span>⬆️</span> Fazer Upload das {selectedFiles.length} Nova(s) Foto(s) Agora
+                  </>
+                )}
+              </button>
             </div>
           )}
         </div>

@@ -149,3 +149,32 @@ export async function getDadosProprietario(imovelId: string) {
   }
   return null;
 }
+
+export async function uploadNovasFotosAction(referencia: string, formData: FormData) {
+  try {
+    const files = formData.getAll('fotos') as File[];
+    if (!referencia) {
+      return { success: false, error: 'Referência do imóvel não encontrada.' };
+    }
+
+    const imovelFolder = path.join(PUBLIC_UPLOADS_PATH, referencia);
+    if (!fs.existsSync(imovelFolder)) {
+      fs.mkdirSync(imovelFolder, { recursive: true });
+    }
+
+    const fotosUrls: string[] = [];
+    for (const file of files) {
+      if (file.size === 0) continue;
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const fileName = `${Date.now()}-${file.name.replaceAll(' ', '_')}`;
+      const filePath = path.join(imovelFolder, fileName);
+      fs.writeFileSync(filePath, buffer);
+      fotosUrls.push(`/uploads/imoveis/${referencia}/${fileName}`);
+    }
+
+    return { success: true, fotosUrls };
+  } catch (error) {
+    console.error('Erro no upload de novas fotos:', error);
+    return { success: false, error: 'Falha ao fazer upload das fotos.' };
+  }
+}
