@@ -25,17 +25,17 @@
   "destaque": false,
   "status": "Ativo",
   "fotos": [
+    "/uploads/imoveis/LC001/1785328378637-imagem_alugado_site.png",
     "/uploads/imoveis/LC001/1772206429609-fit_taboao_(1).jpeg",
     "/uploads/imoveis/LC001/1772206429621-fit_taboao_(2).jpeg",
     "/uploads/imoveis/LC001/1772206429626-fit_taboao_(3).jpeg",
     "/uploads/imoveis/LC001/1772206429630-fit_taboao_(4).jpeg",
     "/uploads/imoveis/LC001/1772206429633-fit_taboao_(5).jpeg",
     "/uploads/imoveis/LC001/1772206429647-fit_taboao_(6).jpeg",
-    "/uploads/imoveis/LC001/1772206429656-fit_taboao_(7).jpeg",
-    "/uploads/imoveis/LC001/1785328378637-imagem_alugado_site.png"
+    "/uploads/imoveis/LC001/1772206429656-fit_taboao_(7).jpeg"
   ],
   "id": "lc001",
-  "updatedAt": "2026-07-29T12:32:58.600Z",
+  "updatedAt": "2026-07-29T12:36:04.572Z",
   "corretor": {
     "nome": "MARIA",
     "telefone": "5511970988512"
