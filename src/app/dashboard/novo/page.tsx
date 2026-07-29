@@ -54,19 +54,32 @@ export default function NovoImovel() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const files = Array.from(e.target.files);
-      const totalSize = files.reduce((acc, file) => acc + file.size, 0);
-      const maxSize = 5 * 1024 * 1024; // 5MB
+      const newFiles = Array.from(e.target.files);
+      const combined = [...selectedFiles, ...newFiles];
+      const totalSize = combined.reduce((acc, file) => acc + file.size, 0);
+      const maxSize = 20 * 1024 * 1024; // 20MB
 
       if (totalSize > maxSize) {
-        alert(`O tamanho total das fotos (${(totalSize / 1024 / 1024).toFixed(2)}MB) excede o limite de 5MB. Por favor, selecione menos fotos ou use imagens menores.`);
-        e.target.value = ''; // Limpa o input
-        setSelectedFiles([]);
+        alert(`O tamanho total das fotos (${(totalSize / 1024 / 1024).toFixed(2)}MB) excede 20MB. Por favor, selecione fotos menores.`);
         return;
       }
 
-      setSelectedFiles(files);
+      setSelectedFiles(combined);
+      e.target.value = ''; // Limpa para permitir selecionar mais fotos
     }
+  };
+
+  const moverArquivo = (fromIndex: number, toIndex: number) => {
+    if (toIndex < 0 || toIndex >= selectedFiles.length) return;
+    const novosArquivos = [...selectedFiles];
+    const temp = novosArquivos[fromIndex];
+    novosArquivos[fromIndex] = novosArquivos[toIndex];
+    novosArquivos[toIndex] = temp;
+    setSelectedFiles(novosArquivos);
+  };
+
+  const removerArquivo = (index: number) => {
+    setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -189,18 +202,87 @@ export default function NovoImovel() {
 
         {/* Seção: Mídia (Fotos e Vídeo) */}
         <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
-          <h2 className="text-lg font-bold border-b pb-2">Mídia (Fotos e Vídeo)</h2>
+          <div className="border-b pb-2">
+            <h2 className="text-lg font-bold">Mídia (Fotos e Vídeo)</h2>
+            <p className="text-xs text-gray-500 mt-1">A <strong>1ª foto selecionada</strong> será usada como imagem de Capa e SEO.</p>
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Fotos do Imóvel (Selecione várias)</label>
             <input
               type="file"
               multiple
               accept="image/*"
-              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
               onChange={handleFileChange}
             />
+
             {selectedFiles.length > 0 && (
-              <p className="mt-2 text-sm text-blue-600 font-medium">{selectedFiles.length} arquivos selecionados</p>
+              <div className="mt-4 bg-gray-50 p-4 rounded-xl border border-gray-200">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-bold text-gray-700 uppercase">
+                    Fotos Selecionadas ({selectedFiles.length})
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedFiles([])}
+                    className="text-xs text-red-600 hover:underline"
+                  >
+                    Limpar Todas
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                  {selectedFiles.map((file, idx) => (
+                    <div
+                      key={idx}
+                      className={`relative bg-white rounded-lg border-2 p-2 flex flex-col justify-between ${
+                        idx === 0 ? 'border-amber-500 shadow-md ring-2 ring-amber-200' : 'border-gray-200'
+                      }`}
+                    >
+                      {idx === 0 && (
+                        <span className="absolute top-1 left-1 bg-amber-500 text-white font-bold text-[9px] uppercase px-1.5 py-0.5 rounded shadow z-10">
+                          ⭐ Capa
+                        </span>
+                      )}
+                      <div className="relative aspect-square w-full overflow-hidden rounded mb-2">
+                        <img
+                          src={URL.createObjectURL(file)}
+                          alt={`Preview ${idx + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex justify-between items-center bg-gray-100 p-1 rounded text-xs">
+                        <button
+                          type="button"
+                          onClick={() => moverArquivo(idx, idx - 1)}
+                          disabled={idx === 0}
+                          className="p-1 text-gray-600 disabled:opacity-30"
+                          title="Mover para esquerda"
+                        >
+                          ⬅️
+                        </button>
+                        <span className="font-bold text-[11px] text-gray-500">#{idx + 1}</span>
+                        <button
+                          type="button"
+                          onClick={() => moverArquivo(idx, idx + 1)}
+                          disabled={idx === selectedFiles.length - 1}
+                          className="p-1 text-gray-600 disabled:opacity-30"
+                          title="Mover para direita"
+                        >
+                          ➡️
+                        </button>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removerArquivo(idx)}
+                        className="mt-1 text-[10px] text-red-600 hover:bg-red-50 font-medium py-0.5 rounded text-center"
+                      >
+                        🗑️ Remover
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
           <div className="pt-4">

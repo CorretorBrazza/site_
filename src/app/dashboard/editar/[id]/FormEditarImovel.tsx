@@ -24,19 +24,56 @@ export default function FormEditarImovel({ imovel, proprietarioInicial }: { imov
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const files = Array.from(e.target.files);
-      const totalSize = files.reduce((acc, file) => acc + file.size, 0);
-      const maxSize = 5 * 1024 * 1024; // 5MB
+      const newFiles = Array.from(e.target.files);
+      const combined = [...selectedFiles, ...newFiles];
+      const totalSize = combined.reduce((acc, file) => acc + file.size, 0);
+      const maxSize = 20 * 1024 * 1024; // 20MB
 
       if (totalSize > maxSize) {
-        alert(`O tamanho total das fotos (${(totalSize / 1024 / 1024).toFixed(2)}MB) excede o limite de 5MB. Por favor, selecione menos fotos ou use imagens menores.`);
-        e.target.value = ''; // Limpa o input
-        setSelectedFiles([]);
+        alert(`O tamanho total das novas fotos (${(totalSize / 1024 / 1024).toFixed(2)}MB) excede 20MB. Por favor, selecione fotos menores.`);
         return;
       }
 
-      setSelectedFiles(files);
+      setSelectedFiles(combined);
+      e.target.value = ''; // Limpa para poder adicionar mais
     }
+  };
+
+  const moverFotoEsquerda = (index: number) => {
+    if (index <= 0) return;
+    const fotos = [...(formData.fotos || [])];
+    const temp = fotos[index - 1];
+    fotos[index - 1] = fotos[index];
+    fotos[index] = temp;
+    setFormData({ ...formData, fotos });
+  };
+
+  const moverFotoDireita = (index: number) => {
+    const fotos = [...(formData.fotos || [])];
+    if (index >= fotos.length - 1) return;
+    const temp = fotos[index + 1];
+    fotos[index + 1] = fotos[index];
+    fotos[index] = temp;
+    setFormData({ ...formData, fotos });
+  };
+
+  const definirComoCapa = (index: number) => {
+    if (index === 0) return;
+    const fotos = [...(formData.fotos || [])];
+    const fotoSelecionada = fotos[index];
+    const fotosFiltradas = fotos.filter((_, i) => i !== index);
+    setFormData({ ...formData, fotos: [fotoSelecionada, ...fotosFiltradas] });
+  };
+
+  const removerFotoExistente = (index: number) => {
+    if (confirm('Deseja remover esta foto do imóvel?')) {
+      const fotos = (formData.fotos || []).filter((_, i) => i !== index);
+      setFormData({ ...formData, fotos });
+    }
+  };
+
+  const removerNovaFoto = (index: number) => {
+    setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -142,23 +179,150 @@ export default function FormEditarImovel({ imovel, proprietarioInicial }: { imov
       </section>
 
       {/* Seção: Mídia */}
-      <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
-        <h2 className="text-lg font-bold border-b pb-2">Mídia</h2>
-        <div className="flex gap-4 overflow-x-auto py-2">
-          {formData.fotos && formData.fotos.map((foto, idx) => (
-            <img key={idx} src={foto} alt="Atual" className="h-20 w-20 object-cover rounded border" />
-          ))}
+      <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6">
+        <div className="border-b pb-2">
+          <h2 className="text-lg font-bold">Mídia e Gerenciamento de Fotos</h2>
+          <p className="text-xs text-gray-500 mt-1">
+            A <strong>1ª foto (destacada como Capa)</strong> é a imagem principal usada nas buscas, cards do site e compartilhamentos SEO. Reordene as fotos para alterar a capa.
+          </p>
         </div>
+
+        {/* Fotos Existentes */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Adicionar/Substituir Fotos</label>
+          <label className="block text-sm font-semibold text-gray-700 mb-3">
+            Fotos Salvas ({formData.fotos?.length || 0})
+          </label>
+
+          {(!formData.fotos || formData.fotos.length === 0) ? (
+            <p className="text-sm text-gray-400 italic">Nenhuma foto cadastrada para este imóvel.</p>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {formData.fotos.map((foto, idx) => (
+                <div
+                  key={`${foto}-${idx}`}
+                  className={`relative group bg-gray-50 rounded-lg border-2 p-2 flex flex-col justify-between transition-all ${
+                    idx === 0 ? 'border-amber-500 shadow-md ring-2 ring-amber-300/50' : 'border-gray-200 hover:border-blue-400'
+                  }`}
+                >
+                  {/* Badge de Capa */}
+                  {idx === 0 && (
+                    <span className="absolute top-1 left-1 bg-amber-500 text-white font-bold text-[10px] uppercase px-2 py-0.5 rounded shadow z-10">
+                      ⭐ Capa / SEO
+                    </span>
+                  )}
+
+                  {/* Imagem */}
+                  <div className="relative aspect-square w-full overflow-hidden rounded mb-2">
+                    <img src={foto} alt={`Foto ${idx + 1}`} className="w-full h-full object-cover" />
+                  </div>
+
+                  {/* Botões de Ação */}
+                  <div className="flex flex-col gap-1 text-xs">
+                    <div className="flex justify-between items-center bg-gray-100 p-1 rounded">
+                      <button
+                        type="button"
+                        onClick={() => moverFotoEsquerda(idx)}
+                        disabled={idx === 0}
+                        title="Mover para esquerda"
+                        className="p-1 text-gray-600 hover:text-blue-600 disabled:opacity-30 disabled:hover:text-gray-600"
+                      >
+                        ⬅️
+                      </button>
+                      <span className="font-bold text-[11px] text-gray-500">#{idx + 1}</span>
+                      <button
+                        type="button"
+                        onClick={() => moverFotoDireita(idx)}
+                        disabled={idx === (formData.fotos?.length || 0) - 1}
+                        title="Mover para direita"
+                        className="p-1 text-gray-600 hover:text-blue-600 disabled:opacity-30 disabled:hover:text-gray-600"
+                      >
+                        ➡️
+                      </button>
+                    </div>
+
+                    {idx !== 0 && (
+                      <button
+                        type="button"
+                        onClick={() => definirComoCapa(idx)}
+                        className="w-full text-[10px] bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200 font-semibold py-1 rounded transition-colors"
+                      >
+                        Tornar Capa
+                      </button>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => removerFotoExistente(idx)}
+                      className="w-full text-[10px] text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 py-0.5 rounded font-medium transition-colors"
+                    >
+                      🗑️ Excluir
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Upload de Novas Fotos */}
+        <div className="pt-4 border-t border-gray-100">
+          <label className="block text-sm font-semibold text-gray-800 mb-1">
+            Incluir Novas Fotos (Adiciona sem apagar as fotos acima)
+          </label>
+          <p className="text-xs text-gray-500 mb-3">
+            Você pode selecionar vários arquivos de imagem. Eles serão adicionados à lista de fotos do imóvel ao salvar.
+          </p>
+
           <input
             type="file" multiple accept="image/*"
-            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
             onChange={handleFileChange}
           />
+
+          {/* Previews de Novas Fotos a Incluir */}
+          {selectedFiles.length > 0 && (
+            <div className="mt-4 bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold text-blue-800 uppercase tracking-wide">
+                  Novas Fotos Selecionadas para Adicionar ({selectedFiles.length})
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedFiles([])}
+                  className="text-xs text-red-600 hover:underline"
+                >
+                  Limpar Seleção
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
+                {selectedFiles.map((file, idx) => (
+                  <div key={idx} className="relative bg-white rounded border p-1 shadow-sm flex flex-col items-center">
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt={`Preview ${idx + 1}`}
+                      className="h-16 w-full object-cover rounded"
+                    />
+                    <span className="text-[9px] text-gray-500 truncate w-full text-center mt-1">
+                      {file.name}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => removerNovaFoto(idx)}
+                      className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold shadow hover:bg-red-700"
+                      title="Remover este arquivo da lista a ser enviada"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
-        <div className="pt-4">
-          <label className="block text-sm font-medium text-gray-700">Link do Vídeo</label>
+
+        <div className="pt-4 border-t border-gray-100">
+          <label className="block text-sm font-medium text-gray-700">Link do Vídeo (YouTube/Vimeo)</label>
           <input
             type="url"
             className="mt-1 block w-full border rounded-md p-2"

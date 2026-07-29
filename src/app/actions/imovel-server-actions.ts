@@ -43,23 +43,26 @@ export async function salvarEPublicarImovelAction(formData: FormData) {
     imovelData.id = imovelId;
     imovelData.updatedAt = new Date().toISOString();
 
+    const fotosExistentes = Array.isArray(imovelData.fotos) ? imovelData.fotos : [];
+    const novasFotosUrls: string[] = [];
+
     if (files.length > 0 && files[0].size > 0) {
       const imovelFolder = path.join(PUBLIC_UPLOADS_PATH, imovelData.referencia);
       if (!fs.existsSync(imovelFolder)) {
         fs.mkdirSync(imovelFolder, { recursive: true });
       }
 
-      const fotosUrls: string[] = [];
       for (const file of files) {
         if (file.size === 0) continue;
         const buffer = Buffer.from(await file.arrayBuffer());
         const fileName = `${Date.now()}-${file.name.replaceAll(' ', '_')}`;
         const filePath = path.join(imovelFolder, fileName);
         fs.writeFileSync(filePath, buffer);
-        fotosUrls.push(`/uploads/imoveis/${imovelData.referencia}/${fileName}`);
+        novasFotosUrls.push(`/uploads/imoveis/${imovelData.referencia}/${fileName}`);
       }
-      imovelData.fotos = fotosUrls;
     }
+
+    imovelData.fotos = [...fotosExistentes, ...novasFotosUrls];
 
     if (!fs.existsSync(CONTENT_PATH)) {
       fs.mkdirSync(CONTENT_PATH, { recursive: true });
