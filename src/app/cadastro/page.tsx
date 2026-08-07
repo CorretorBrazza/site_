@@ -66,10 +66,14 @@ export default function CadastroPage() {
               <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto text-emerald-600">
                 <Check className="w-10 h-10" />
               </div>
-              <h2 className="text-2xl font-extrabold text-slate-900">Cadastro Recebido!</h2>
+              <h2 className="text-2xl font-extrabold text-slate-900">Solicitação Recebida com Sucesso!</h2>
               <p className="text-sm text-slate-600">
-                Obrigado, <strong>{nome}</strong>! As instruções de recarga de créditos para o e-mail <strong>{email}</strong> foram enviadas.
+                Obrigado, <strong>{nome}</strong>! Sua solicitação de pacote (<strong>{plano === 'premium' ? '30 Créditos Premium' : '10 Créditos Básico'}</strong>) foi registrada para o e-mail <strong>{email}</strong>.
               </p>
+              <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-2xl text-xs text-left space-y-1">
+                <strong className="block font-bold">🔒 Esteira Financeira:</strong>
+                <span>Os créditos serão liberados automaticamente em sua conta assim que a confirmação do pagamento for concluída.</span>
+              </div>
               <div className="pt-2">
                 <a
                   href="/"
