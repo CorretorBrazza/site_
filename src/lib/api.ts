@@ -1,9 +1,10 @@
 const rawBaseUrl = (
   process.env.NEXT_PUBLIC_API_URL ||
-  'https://imoveis-taboao-api.up.railway.app/api/v1'
+  'https://imoveis-taboao-api-production-4cd9.up.railway.app/api/v1'
 ).trim().replace(/\/+$/, '');
 
 export const API_BASE_URL = rawBaseUrl.endsWith('/api/v1') ? rawBaseUrl : `${rawBaseUrl}/api/v1`;
+
 
 export async function fetchApi<T = any>(
   endpoint: string,
