@@ -105,6 +105,13 @@ export async function getCorretorProfile(email: string) {
   });
 }
 
+export async function registerCorretor(dados: { nome: string; email: string; telefone?: string; plano?: string }) {
+  return fetchApi('/corretor', {
+    method: 'POST',
+    body: JSON.stringify(dados),
+  });
+}
+
 export async function getAnuncios(corretorEmail?: string, status?: string) {
   const query = new URLSearchParams();
   if (corretorEmail) query.append('corretor_email', corretorEmail);
@@ -114,3 +121,4 @@ export async function getAnuncios(corretorEmail?: string, status?: string) {
     method: 'GET',
   });
 }
+

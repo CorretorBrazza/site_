@@ -3,21 +3,39 @@
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Sparkles, Check, ArrowRight, ShieldCheck, Zap, CreditCard, Building2, PhoneCall } from 'lucide-react';
+import { Sparkles, Check, ArrowRight, ShieldCheck, Zap, AlertCircle, Loader2 } from 'lucide-react';
+import { registerCorretor } from '@/lib/api';
 
 export default function CadastroPage() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
   const [plano, setPlano] = useState<'basico' | 'premium'>('basico');
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !nome) return;
 
-    setSubmitted(true);
+    setLoading(true);
+    setErrorMsg('');
+
+    try {
+      const res = await registerCorretor({ nome, email, telefone, plano });
+      if (res.success) {
+        setSubmitted(true);
+      } else {
+        setErrorMsg(res.error || res.message || 'Falha ao registrar cadastro na API.');
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Erro de conexão ao enviar o cadastro.');
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
@@ -181,12 +199,29 @@ export default function CadastroPage() {
                     />
                   </div>
 
+                  {errorMsg && (
+                    <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-xl text-xs flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
+                      <span>{errorMsg}</span>
+                    </div>
+                  )}
+
                   <button
                     type="submit"
-                    className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-extrabold transition-all shadow-md mt-2"
+                    disabled={loading}
+                    className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl text-xs font-extrabold transition-all shadow-md mt-2"
                   >
-                    <span>Confirmar Cadastro e Recarga</span>
-                    <ArrowRight className="w-4 h-4" />
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Enviando cadastro...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Confirmar Cadastro e Recarga</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
                   </button>
                 </form>
               </div>
