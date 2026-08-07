@@ -1,4 +1,8 @@
-const rawBaseUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/v1').trim().replace(/\/+$/, '');
+const rawBaseUrl = (
+  process.env.NEXT_PUBLIC_API_URL ||
+  'https://imoveis-taboao-api.up.railway.app/api/v1'
+).trim().replace(/\/+$/, '');
+
 export const API_BASE_URL = rawBaseUrl.endsWith('/api/v1') ? rawBaseUrl : `${rawBaseUrl}/api/v1`;
 
 export async function fetchApi<T = any>(
@@ -25,12 +29,20 @@ export async function fetchApi<T = any>(
     let json: any = {};
 
     if (text) {
+      // Se a resposta for HTML (ex: 404 do Railway, erro 502/503 ou fallback local)
+      if (text.trim().startsWith('<') || text.includes('<!DOCTYPE')) {
+        return {
+          success: false,
+          error: `A API no Railway retornou página HTML (Status ${res.status}). URL chamada: ${url}. Verifique se a URL da API no Railway está ativa.`,
+        };
+      }
+
       try {
         json = JSON.parse(text);
       } catch (e) {
         return {
           success: false,
-          error: `Resposta da API não é um JSON válido (${res.status}): ${text.substring(0, 150)}`,
+          error: `Erro ao ler resposta da API (${res.status}). URL chamada: ${url}`,
         };
       }
     }
@@ -46,10 +58,11 @@ export async function fetchApi<T = any>(
   } catch (err: any) {
     return {
       success: false,
-      error: err.message || 'Falha na conexão com a API Railway.',
+      error: `Falha na conexão com a API (${url}): ${err.message}`,
     };
   }
 }
+
 
 
 // Métodos de API específicos para o ecossistema V2 Imóveis Taboão
