@@ -39,11 +39,21 @@ function AprovarContent() {
   const [adData, setAdData] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<'preview' | 'fotos' | 'mediakit'>('preview');
 
-  // Formulário de Edição
+  // Formulário de Edição Completo
   const [titulo, setTitulo] = useState('');
+  const [tipoImovel, setTipoImovel] = useState('Apartamento');
+  const [finalidade, setFinalidade] = useState('Venda');
   const [descricao, setDescricao] = useState('');
   const [precoVenda, setPrecoVenda] = useState<number | ''>('');
   const [precoLocacao, setPrecoLocacao] = useState<number | ''>('');
+  const [condominio, setCondominio] = useState<number | ''>('');
+  const [iptu, setIptu] = useState<number | ''>('');
+  const [quartos, setQuartos] = useState<number | ''>('');
+  const [suites, setSuites] = useState<number | ''>('');
+  const [banheiros, setBanheiros] = useState<number | ''>('');
+  const [vagas, setVagas] = useState<number | ''>('');
+  const [areaUtil, setAreaUtil] = useState<number | ''>('');
+  const [bairro, setBairro] = useState('');
 
   // Fotos
   const [fotos, setFotos] = useState<PhotoItem[]>([]);
@@ -85,12 +95,23 @@ function AprovarContent() {
       setAdData(data);
       setApprovalStatus(data.status);
 
-      // Preenche form
+      // Preenche form completo
       const refinados = data.dados_refinados || {};
+      const carac = refinados.caracteristicas || {};
       setTitulo(refinados.titulo || '');
+      setTipoImovel(refinados.tipoImovel || 'Apartamento');
+      setFinalidade(refinados.finalidade || (refinados.precoLocacao ? 'Locação' : 'Venda'));
       setDescricao(refinados.descricao || '');
       setPrecoVenda(refinados.precoVenda ?? '');
       setPrecoLocacao(refinados.precoLocacao ?? '');
+      setCondominio(refinados.condominio ?? '');
+      setIptu(refinados.iptu ?? '');
+      setQuartos(carac.quartos ?? '');
+      setSuites(carac.suites ?? '');
+      setBanheiros(carac.banheiros ?? '');
+      setVagas(carac.vagas ?? '');
+      setAreaUtil(carac.areaUtil ?? carac.areaTotal ?? '');
+      setBairro(refinados.endereco?.bairro || '');
       setFotos(data.fotos || []);
 
       setLoading(false);
@@ -99,18 +120,32 @@ function AprovarContent() {
     loadAdData();
   }, [token, adIdParam]);
 
+  const getPayloadEditado = () => ({
+    titulo,
+    tipoImovel,
+    finalidade,
+    descricao,
+    precoVenda: precoVenda === '' ? null : Number(precoVenda),
+    precoLocacao: precoLocacao === '' ? null : Number(precoLocacao),
+    condominio: condominio === '' ? null : Number(condominio),
+    iptu: iptu === '' ? null : Number(iptu),
+    bairro,
+    caracteristicas: {
+      quartos: quartos === '' ? 0 : Number(quartos),
+      suites: suites === '' ? 0 : Number(suites),
+      banheiros: banheiros === '' ? 0 : Number(banheiros),
+      vagas: vagas === '' ? 0 : Number(vagas),
+      areaUtil: areaUtil === '' ? 0 : Number(areaUtil),
+    },
+  });
+
   // Ação: Salvar Edições
   const handleSaveEdits = async () => {
     if (!adData) return;
     setIsSubmitting(true);
     setFeedbackMsg(null);
 
-    const result = await editAd(token, adData.ad_id, {
-      titulo,
-      descricao,
-      precoVenda: precoVenda === '' ? null : Number(precoVenda),
-      precoLocacao: precoLocacao === '' ? null : Number(precoLocacao),
-    });
+    const result = await editAd(token, adData.ad_id, getPayloadEditado());
 
     setIsSubmitting(false);
 
@@ -143,12 +178,7 @@ function AprovarContent() {
     setIsSubmitting(true);
     setFeedbackMsg(null);
 
-    const result = await approveAd(token, adData.ad_id, {
-      titulo,
-      descricao,
-      precoVenda: precoVenda === '' ? null : Number(precoVenda),
-      precoLocacao: precoLocacao === '' ? null : Number(precoLocacao),
-    });
+    const result = await approveAd(token, adData.ad_id, getPayloadEditado());
 
     setIsSubmitting(false);
 
@@ -159,6 +189,7 @@ function AprovarContent() {
       alert(`Erro ao aprovar anúncio: ${result.error}`);
     }
   };
+
 
   // Ação: Rejeitar
   const handleReject = async () => {
@@ -338,8 +369,8 @@ function AprovarContent() {
               )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="md:col-span-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="md:col-span-2 lg:col-span-4">
                 <label className="block text-xs font-bold text-slate-700 mb-1">Título do Anúncio</label>
                 <input
                   type="text"
@@ -347,6 +378,36 @@ function AprovarContent() {
                   onChange={(e) => setTitulo(e.target.value)}
                   className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Tipo de Imóvel</label>
+                <select
+                  value={tipoImovel}
+                  onChange={(e) => setTipoImovel(e.target.value)}
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                >
+                  <option value="Apartamento">Apartamento</option>
+                  <option value="Casa">Casa</option>
+                  <option value="Casa em Condomínio">Casa em Condomínio</option>
+                  <option value="Sobrado">Sobrado</option>
+                  <option value="Terreno">Terreno</option>
+                  <option value="Galpão">Galpão / Galpão Comercial</option>
+                  <option value="Comercial">Sala / Prédio Comercial</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Finalidade / Negócio</label>
+                <select
+                  value={finalidade}
+                  onChange={(e) => setFinalidade(e.target.value)}
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                >
+                  <option value="Venda">Venda</option>
+                  <option value="Locação">Locação</option>
+                  <option value="Venda e Locação">Venda e Locação</option>
+                </select>
               </div>
 
               <div>
@@ -371,7 +432,96 @@ function AprovarContent() {
                 />
               </div>
 
-              <div className="md:col-span-2">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Condomínio (R$)</label>
+                <input
+                  type="number"
+                  value={condominio}
+                  onChange={(e) => setCondominio(e.target.value ? Number(e.target.value) : '')}
+                  placeholder="Ex: 450"
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">IPTU Mensal/Anual (R$)</label>
+                <input
+                  type="number"
+                  value={iptu}
+                  onChange={(e) => setIptu(e.target.value ? Number(e.target.value) : '')}
+                  placeholder="Ex: 120"
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Área Útil (m²)</label>
+                <input
+                  type="number"
+                  value={areaUtil}
+                  onChange={(e) => setAreaUtil(e.target.value ? Number(e.target.value) : '')}
+                  placeholder="Ex: 68"
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Bairro</label>
+                <input
+                  type="text"
+                  value={bairro}
+                  onChange={(e) => setBairro(e.target.value)}
+                  placeholder="Ex: Parque das Cigarras"
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              {/* Características Quantitativas */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">🛏️ Quartos</label>
+                <input
+                  type="number"
+                  value={quartos}
+                  onChange={(e) => setQuartos(e.target.value ? Number(e.target.value) : '')}
+                  placeholder="Ex: 2"
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">🚿 Suítes</label>
+                <input
+                  type="number"
+                  value={suites}
+                  onChange={(e) => setSuites(e.target.value ? Number(e.target.value) : '')}
+                  placeholder="Ex: 1"
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">🚽 Banheiros Totais</label>
+                <input
+                  type="number"
+                  value={banheiros}
+                  onChange={(e) => setBanheiros(e.target.value ? Number(e.target.value) : '')}
+                  placeholder="Ex: 2"
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">🚗 Vagas de Garagem</label>
+                <input
+                  type="number"
+                  value={vagas}
+                  onChange={(e) => setVagas(e.target.value ? Number(e.target.value) : '')}
+                  placeholder="Ex: 1"
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              <div className="md:col-span-2 lg:col-span-4">
                 <label className="block text-xs font-bold text-slate-700 mb-1">Descrição Comercial</label>
                 <textarea
                   rows={6}
@@ -379,19 +529,6 @@ function AprovarContent() {
                   onChange={(e) => setDescricao(e.target.value)}
                   className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
-              </div>
-            </div>
-
-            {/* Características Validadas (Bloqueadas para manter consistência) */}
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2">
-              <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                Características Técnicas Validadas (RAG)
-              </h4>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs text-slate-700">
-                <div>🛏️ Quartos: <strong className="text-slate-900">{refinados.caracteristicas?.quartos || 0}</strong></div>
-                <div>🚿 Suítes: <strong className="text-slate-900">{refinados.caracteristicas?.suites || 0}</strong></div>
-                <div>🚿 Banheiros: <strong className="text-slate-900">{refinados.caracteristicas?.banheiros || 0}</strong></div>
-                <div>🚗 Vagas: <strong className="text-slate-900">{refinados.caracteristicas?.vagas || 0}</strong></div>
               </div>
             </div>
 
