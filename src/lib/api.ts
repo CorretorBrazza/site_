@@ -1,11 +1,12 @@
-export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/v1';
+const rawBaseUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/v1').trim().replace(/\/+$/, '');
+export const API_BASE_URL = rawBaseUrl.endsWith('/api/v1') ? rawBaseUrl : `${rawBaseUrl}/api/v1`;
 
 export async function fetchApi<T = any>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<{ success: boolean; data?: T; error?: string; message?: string }> {
-  const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+  const cleanEndpoint = endpoint.replace(/^\/+/, '');
+  const url = `${API_BASE_URL}/${cleanEndpoint}`;
 
   const defaultHeaders: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -20,7 +21,19 @@ export async function fetchApi<T = any>(
       },
     });
 
-    const json = await res.json();
+    const text = await res.text();
+    let json: any = {};
+
+    if (text) {
+      try {
+        json = JSON.parse(text);
+      } catch (e) {
+        return {
+          success: false,
+          error: `Resposta da API não é um JSON válido (${res.status}): ${text.substring(0, 150)}`,
+        };
+      }
+    }
 
     if (!res.ok) {
       return {
@@ -37,6 +50,7 @@ export async function fetchApi<T = any>(
     };
   }
 }
+
 
 // Métodos de API específicos para o ecossistema V2 Imóveis Taboão
 
