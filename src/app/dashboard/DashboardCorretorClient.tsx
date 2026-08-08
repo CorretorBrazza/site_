@@ -26,6 +26,16 @@ export default function DashboardCorretorClient({ imoveis }: DashboardCorretorCl
       try {
         setUsuario(JSON.parse(savedUser));
       } catch {}
+    } else {
+      // Usuário padrão de teste se ainda não tiver feito login
+      const defaultUser = {
+        nome: 'Corretor Brazza',
+        email: 'corretorbrazza@gmail.com',
+        saldo_creditos: 5,
+        plano_atual: 'pro',
+      };
+      setUsuario(defaultUser);
+      localStorage.setItem('user_info', JSON.stringify(defaultUser));
     }
 
     // 2. Valida token com a API
