@@ -1,5 +1,5 @@
 export type TipoTransacao = 'Venda' | 'Locação' | 'Venda e Locação';
-export type StatusImovel = 'Ativo' | 'Inativo';
+export type StatusImovel = 'Ativo' | 'Inativo' | 'Expirado' | 'Em Análise' | 'ativo' | 'expirado' | 'em_analise';
 
 export interface Caracteristicas {
   quartos: number;
