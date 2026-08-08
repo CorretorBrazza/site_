@@ -198,10 +198,18 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
-                Senha de Acesso
-              </label>
+              <div className="flex justify-between items-center mb-1">
+                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
+                  Senha de Acesso
+                </label>
+                {modo === 'login' && (
+                  <Link href="/esqueci-senha" className="text-xs text-blue-400 hover:text-blue-300 font-medium">
+                    Esqueceu a senha?
+                  </Link>
+                )}
+              </div>
               <div className="relative">
+
                 <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type={mostrarSenha ? 'text' : 'password'}
