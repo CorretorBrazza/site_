@@ -16,7 +16,11 @@ import {
   MapPin,
   Building2,
   RefreshCw,
-  Search,
+  Lock,
+  KeyRound,
+  LogOut,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { API_BASE_URL } from '@/lib/api';
 
@@ -54,6 +58,15 @@ interface ConhecimentoItem {
 }
 
 export default function AdminDashboardPage() {
+  // Autenticação Admin
+  const [adminToken, setAdminToken] = useState<string | null>(null);
+  const [emailLogin, setEmailLogin] = useState('corretorbrazza@gmail.com');
+  const [senhaLogin, setSenhaLogin] = useState('');
+  const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [erroAuth, setErroAuth] = useState<string | null>(null);
+  const [autenticando, setAutenticando] = useState(false);
+
+  // Estados do Dashboard
   const [abaAtiva, setAbaAtiva] = useState<'conhecimento' | 'corretores' | 'metricas'>('conhecimento');
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<StatsData | null>(null);
@@ -74,13 +87,61 @@ export default function AdminDashboardPage() {
   const [motivoAjuste, setMotivoAjuste] = useState('Bônus de Parceiro Admin');
   const [salvandoCredito, setSalvandoCredito] = useState(false);
 
-  const carregarDadosAdmin = async () => {
+  // Verifica token ao carregar
+  useEffect(() => {
+    const savedToken = localStorage.getItem('admin_token');
+    if (savedToken) {
+      setAdminToken(savedToken);
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (adminToken) {
+      carregarDadosAdmin(adminToken);
+    }
+  }, [adminToken]);
+
+  const handleLoginAdmin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErroAuth(null);
+    setAutenticando(true);
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailLogin, senha: senhaLogin }),
+      });
+
+      const json = await res.json();
+      if (json.success && json.data.token) {
+        localStorage.setItem('admin_token', json.data.token);
+        setAdminToken(json.data.token);
+      } else {
+        setErroAuth(json.message || 'Falha na autenticação administrativa. Verifique e-mail e senha.');
+      }
+    } catch (err) {
+      setErroAuth('Erro ao se conectar com a API no Railway.');
+    } finally {
+      setAutenticando(false);
+    }
+  };
+
+  const handleLogoutAdmin = () => {
+    localStorage.removeItem('admin_token');
+    setAdminToken(null);
+  };
+
+  const carregarDadosAdmin = async (token: string) => {
     setLoading(true);
     try {
+      const headers = { Authorization: `Bearer ${token}` };
       const [resStats, resCorretores, resConhecimento] = await Promise.all([
-        fetch(`${API_BASE_URL}/admin/stats`).then((r) => r.json()),
-        fetch(`${API_BASE_URL}/admin/corretores`).then((r) => r.json()),
-        fetch(`${API_BASE_URL}/admin/conhecimento`).then((r) => r.json()),
+        fetch(`${API_BASE_URL}/admin/stats`, { headers }).then((r) => r.json()),
+        fetch(`${API_BASE_URL}/admin/corretores`, { headers }).then((r) => r.json()),
+        fetch(`${API_BASE_URL}/admin/conhecimento`, { headers }).then((r) => r.json()),
       ]);
 
       if (resStats.success) setStats(resStats.data);
@@ -105,12 +166,9 @@ export default function AdminDashboardPage() {
     }
   };
 
-  useEffect(() => {
-    carregarDadosAdmin();
-  }, []);
-
   const handleEnviarTextoBrutoIa = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!adminToken) return;
     setMsgSucessoIa(null);
     setErroIa(null);
     setProcessandoIa(true);
@@ -118,7 +176,10 @@ export default function AdminDashboardPage() {
     try {
       const res = await fetch(`${API_BASE_URL}/admin/conhecimento/texto-bruto`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${adminToken}`,
+        },
         body: JSON.stringify({
           texto_bruto: textoBruto,
           cidade: cidadeSel,
@@ -131,7 +192,7 @@ export default function AdminDashboardPage() {
         setMsgSucessoIa(`✨ Conhecimento extraído e formatado com sucesso pela IA! Cadastrado: "${json.data.conhecimento.titulo}"`);
         setTextoBruto('');
         setBairroSel('');
-        carregarDadosAdmin();
+        carregarDadosAdmin(adminToken);
       } else {
         setErroIa(json.message || 'Falha ao processar texto bruto com IA.');
       }
@@ -144,13 +205,16 @@ export default function AdminDashboardPage() {
 
   const handleSalvarAjusteCreditos = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!corretorSelecionado) return;
+    if (!corretorSelecionado || !adminToken) return;
     setSalvandoCredito(true);
 
     try {
       const res = await fetch(`${API_BASE_URL}/admin/corretores/creditos`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${adminToken}`,
+        },
         body: JSON.stringify({
           email: corretorSelecionado.email,
           quantidade: Number(qtdCreditos),
@@ -162,7 +226,7 @@ export default function AdminDashboardPage() {
       if (json.success) {
         alert(`Créditos ajustados com sucesso para ${corretorSelecionado.email}!`);
         setCorretorSelecionado(null);
-        carregarDadosAdmin();
+        carregarDadosAdmin(adminToken);
       } else {
         alert(json.message || 'Erro ao ajustar créditos.');
       }
@@ -173,6 +237,91 @@ export default function AdminDashboardPage() {
     }
   };
 
+  // RENDERIZAÇÃO TELA DE LOGIN SE NÃO ESTIVER AUTENTICADO COMO ADMIN
+  if (!adminToken) {
+    return (
+      <div className="bg-slate-950 min-h-screen flex items-center justify-center p-4 text-slate-100">
+        <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-6 opacity-10">
+            <ShieldCheck className="w-40 h-40 text-blue-500" />
+          </div>
+
+          <div className="relative z-10">
+            <div className="inline-flex items-center gap-2 bg-purple-950 text-purple-300 border border-purple-800 text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-6">
+              <Lock className="w-3.5 h-3.5" /> Área Restrita ao Desenvolvedor
+            </div>
+
+            <h1 className="text-2xl font-black text-white tracking-tight mb-2">Painel do Desenvolvedor</h1>
+            <p className="text-xs text-slate-400 mb-6 leading-relaxed">
+              Ambiente protegido por criptografia JWT e privilégios master. Insira suas credenciais de administrador para acessar o RAG e gestão de rede.
+            </p>
+
+            {erroAuth && (
+              <div className="bg-red-950/90 border border-red-800 text-red-200 text-xs p-3.5 rounded-xl mb-6 flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                <span>{erroAuth}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleLoginAdmin} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+                  E-mail Master Admin
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={emailLogin}
+                  onChange={(e) => setEmailLogin(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-blue-500 font-medium"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+                  Senha Criptografada
+                </label>
+                <div className="relative">
+                  <input
+                    type={mostrarSenha ? 'text' : 'password'}
+                    required
+                    value={senhaLogin}
+                    onChange={(e) => setSenhaLogin(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-blue-500 font-medium pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setMostrarSenha(!mostrarSenha)}
+                    className="absolute right-3 top-3 text-slate-500 hover:text-slate-300"
+                  >
+                    {mostrarSenha ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={autenticando}
+                className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-50 mt-2"
+              >
+                {autenticando ? (
+                  <span>Validando Criptografia...</span>
+                ) : (
+                  <>
+                    <KeyRound className="w-4 h-4" />
+                    <span>Autenticar Sessão Master</span>
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // RENDERIZAÇÃO DO DASHBOARD ADMINISTRATIVO SE AUTENTICADO
   return (
     <div className="bg-slate-950 min-h-screen text-slate-100 pb-20">
       {/* Top Header Admin */}
@@ -185,8 +334,8 @@ export default function AdminDashboardPage() {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-black tracking-tight text-white">Painel do Desenvolvedor / Admin</h1>
-                <span className="bg-purple-950 text-purple-300 border border-purple-800 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
-                  Gestão RAG Global
+                <span className="bg-emerald-950 text-emerald-300 border border-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase flex items-center gap-1">
+                  <Lock className="w-3 h-3" /> Sessão Protegida JWT
                 </span>
               </div>
               <p className="text-xs text-slate-400">
@@ -197,17 +346,18 @@ export default function AdminDashboardPage() {
 
           <div className="flex items-center gap-3">
             <button
-              onClick={carregarDadosAdmin}
+              onClick={() => carregarDadosAdmin(adminToken)}
               className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 transition-all text-xs flex items-center gap-1.5 font-bold"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} /> Atualizar Dados
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} /> Atualizar
             </button>
-            <Link
-              href="/dashboard"
-              className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition-all shadow-md"
+            <button
+              onClick={handleLogoutAdmin}
+              title="Encerrar Sessão Master"
+              className="p-2.5 text-slate-400 hover:text-red-400 hover:bg-red-950/40 border border-slate-800 rounded-xl transition-all text-xs flex items-center gap-1 font-bold"
             >
-              Ir para Dashboard Corretor →
-            </Link>
+              <LogOut className="w-4 h-4" /> Sair
+            </button>
           </div>
         </div>
       </div>
