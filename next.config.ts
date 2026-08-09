@@ -4,6 +4,7 @@ const isNetlify = process.env.NETLIFY === "true";
 
 const nextConfig: NextConfig = {
   output: isNetlify ? 'export' : undefined,
+  trailingSlash: true,
   typescript: {
     ignoreBuildErrors: true,
   },
