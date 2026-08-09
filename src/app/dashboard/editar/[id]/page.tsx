@@ -2,6 +2,18 @@ import { getImoveis, getDadosProprietario } from '@/app/actions/imovel-server-ac
 import { notFound } from 'next/navigation';
 import FormEditarImovel from './FormEditarImovel';
 
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  const imoveis = await getImoveis();
+  if (!imoveis || imoveis.length === 0) {
+    return [{ id: 'demo' }];
+  }
+  return imoveis.map((imovel) => ({
+    id: imovel.id,
+  }));
+}
+
 export default async function EditarImovelPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const imoveis = await getImoveis();
