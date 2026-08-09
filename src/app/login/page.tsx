@@ -24,7 +24,7 @@ export default function LoginPage() {
     setErro(null);
     setLoading(true);
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://imoveis-taboao-api-production-4cd9.up.railway.app';
     const endpoint = modo === 'login' ? `${apiUrl}/api/v1/auth/login` : `${apiUrl}/api/v1/auth/register`;
 
     const body = modo === 'login'

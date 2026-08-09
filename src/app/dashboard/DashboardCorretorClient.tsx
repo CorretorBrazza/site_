@@ -41,7 +41,7 @@ export default function DashboardCorretorClient({ imoveis }: DashboardCorretorCl
     // 2. Valida token com a API
     const token = localStorage.getItem('auth_token');
     if (token) {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://imoveis-taboao-api-production-4cd9.up.railway.app';
       fetch(`${apiUrl}/api/v1/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       })

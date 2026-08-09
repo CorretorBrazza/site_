@@ -31,7 +31,7 @@ export default function ModalAcervoFotos({
     if (!isOpen || !adId) return;
 
     setLoading(true);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://imoveis-taboao-api-production-4cd9.up.railway.app';
     fetch(`${apiUrl}/api/v1/storage/acervo/${adId}`)
       .then((res) => res.json())
       .then((json) => {
@@ -49,7 +49,7 @@ export default function ModalAcervoFotos({
   const handleSalvarAnotacao = async () => {
     setSalvandoNota(true);
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://imoveis-taboao-api-production-4cd9.up.railway.app';
       const res = await fetch(`${apiUrl}/api/v1/storage/anotacao`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -30,7 +30,7 @@ export default function ModalExclusaoInteligente({
   const handleExcluir = async () => {
     setLoading(true);
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://imoveis-taboao-api-production-4cd9.up.railway.app';
       const res = await fetch(`${apiUrl}/api/v1/anuncios/${adId}/excluir`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
