@@ -1,14 +1,41 @@
 'use client';
 
 import { useState } from 'react';
-import { Sparkles, Copy, Check, Share2, MessageCircle, Instagram, FileText, X } from 'lucide-react';
+import {
+  Sparkles,
+  Copy,
+  Check,
+  MessageCircle,
+  Instagram,
+  FileText,
+  Video,
+  Tag,
+  X,
+} from 'lucide-react';
 
 interface MediaKitData {
-  titulo?: string;
+  canal_1_portais?: {
+    titulo_curto?: string;
+    titulo_comercial?: string;
+    descricao_enxuta?: string;
+    descricao_completa?: string;
+    ficha_tecnica?: string;
+  };
+  canal_2_whatsapp?: string;
+  canal_3_meta_ads?: string;
+  canal_4_roteiro_canva?: Array<{
+    cena?: number;
+    falar?: string;
+    texto_tela_canva?: string;
+  }>;
+  canal_5_seo_tags?: string[];
+  // Campos legados
   copy_instagram?: string;
   copy_whatsapp?: string;
   copy_portal?: string;
-  pontos_fortes?: string[];
+  descricao_completa?: string;
+  mensagem_whatsapp?: string;
+  titulo_seo?: string;
 }
 
 interface ModalMediaKitProps {
@@ -24,6 +51,7 @@ export default function ModalMediaKit({
   referencia,
   mediaKit,
 }: ModalMediaKitProps) {
+  const [abaAtiva, setAbaAtiva] = useState<'whatsapp' | 'instagram' | 'canva' | 'portais' | 'seo'>('whatsapp');
   const [copiadoTipo, setCopiadoTipo] = useState<string | null>(null);
 
   if (!isOpen) return null;
@@ -35,120 +63,266 @@ export default function ModalMediaKit({
     setTimeout(() => setCopiadoTipo(null), 2500);
   };
 
-  const copyInstagram = mediaKit?.copy_instagram || 
-    `🔥 EXCELENTE OPORTUNIDADE EM TABOÃO DA SERRA! (${referencia})\n\nApartamento impecável pronto para morar! Ideal para sua família.\n\n📲 Entre em contato hoje mesmo para agendar uma visita!\n\n#imoveistaboao #taboaodaserra #corretordeimoveis #imovelavenda`;
+  const copyWhatsapp =
+    mediaKit?.canal_2_whatsapp ||
+    mediaKit?.mensagem_whatsapp ||
+    mediaKit?.copy_whatsapp ||
+    `🚨 *NOVIDADE EM TABOÃO DA SERRA (${referencia})* 🚨\n\nExcelente imóvel disponível!\n📲 Fale comigo para agendar uma visita!`;
 
-  const copyWhatsapp = mediaKit?.copy_whatsapp || 
-    `🚨 *NOVIDADE DE HOJE (${referencia})* 🚨\n\nExcelente imóvel em Taboão da Serra!\n- Pronto para morar\n- Ótima localização\n\nFale comigo para mais detalhes e agendamento de visita!`;
+  const copyInstagram =
+    mediaKit?.canal_3_meta_ads ||
+    mediaKit?.copy_instagram ||
+    `🔥 EXCELENTE OPORTUNIDADE EM TABOÃO DA SERRA! (${referencia})\n\nImóvel impecável pronto para morar! Ideal para sua família.\n\n📲 Entre em contato hoje mesmo para agendar uma visita!\n\n#imoveistaboao #taboaodaserra #corretordeimoveis`;
 
-  const copyPortal = mediaKit?.copy_portal || mediaKit?.titulo || `Imóvel referência ${referencia} em Taboão da Serra.`;
+  const canal1 = mediaKit?.canal_1_portais;
+  const copyPortais =
+    canal1?.descricao_completa ||
+    mediaKit?.descricao_completa ||
+    mediaKit?.copy_portal ||
+    `Imóvel referência ${referencia} em Taboão da Serra. Documentação ok.`;
+
+  const roteiroCanva = mediaKit?.canal_4_roteiro_canva || [];
+  const roteiroCanvaTexto = roteiroCanva.length > 0
+    ? roteiroCanva
+        .map(
+          (c, i) =>
+            `🎬 CENA ${c.cena || i + 1}:\n• O QUE FALAR: "${c.falar}"\n• TEXTO CANVA/TELA: "${c.texto_tela_canva}"\n`
+        )
+        .join('\n')
+    : `🎬 ROTEIRO REELS / CANVA:\nCena 1: Mostre a entrada e diga "Conheça este incrível imóvel em Taboão da Serra!"\nCena 2: Mostre a sala e os quartos destacando o acabamento.`;
+
+  const seoTagsList = mediaKit?.canal_5_seo_tags || ['imoveis taboao', 'taboao da serra', 'apartamento taboao', 'casa taboao'];
+  const seoTagsTexto = seoTagsList.join(', ');
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl relative border border-gray-100 animate-in fade-in zoom-in duration-200">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-all z-10"
-        >
-          <X className="w-5 h-5" />
-        </button>
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-white rounded-3xl max-w-3xl w-full max-h-[92vh] flex flex-col shadow-2xl relative border border-gray-100 overflow-hidden animate-in fade-in zoom-in duration-200">
+        
+        {/* Header Modal */}
+        <div className="bg-slate-900 text-white p-6 relative shrink-0">
+          <button
+            onClick={onClose}
+            className="absolute top-5 right-5 p-2 text-slate-400 hover:text-white rounded-full hover:bg-slate-800 transition-all"
+          >
+            <X className="w-5 h-5" />
+          </button>
 
-        {/* Top Header */}
-        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
-          <div className="w-12 h-12 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold">
-            <Sparkles className="w-6 h-6" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-xl font-black text-gray-900">Media Kit do Imóvel {referencia}</h3>
-              <span className="bg-purple-100 text-purple-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                IA Gerada ✨
-              </span>
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg">
+              <Sparkles className="w-6 h-6" />
             </div>
-            <p className="text-xs text-gray-500 mt-0.5">
-              Copie os textos otimizados em 1 clique para postar no Instagram e WhatsApp
-            </p>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-xl font-black tracking-tight">Media Kit do Imóvel {referencia}</h3>
+                <span className="bg-purple-950 text-purple-300 border border-purple-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">
+                  5 Canais Otimizados ✨
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Texto gerado pela IA. Visualize e copie em 1 clique para colar no seu celular ou computador!
+              </p>
+            </div>
+          </div>
+
+          {/* Abas dos 5 Canais */}
+          <div className="flex flex-wrap gap-2 mt-6 pt-2 border-t border-slate-800 text-xs font-bold">
+            <button
+              onClick={() => setAbaAtiva('whatsapp')}
+              className={`px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
+                abaAtiva === 'whatsapp' ? 'bg-emerald-600 text-white shadow-md' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+              }`}
+            >
+              <MessageCircle className="w-3.5 h-3.5" /> WhatsApp
+            </button>
+            <button
+              onClick={() => setAbaAtiva('instagram')}
+              className={`px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
+                abaAtiva === 'instagram' ? 'bg-pink-600 text-white shadow-md' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+              }`}
+            >
+              <Instagram className="w-3.5 h-3.5" /> Meta Ads (Insta)
+            </button>
+            <button
+              onClick={() => setAbaAtiva('canva')}
+              className={`px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
+                abaAtiva === 'canva' ? 'bg-purple-600 text-white shadow-md' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+              }`}
+            >
+              <Video className="w-3.5 h-3.5" /> Roteiro Canva
+            </button>
+            <button
+              onClick={() => setAbaAtiva('portais')}
+              className={`px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
+                abaAtiva === 'portais' ? 'bg-blue-600 text-white shadow-md' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+              }`}
+            >
+              <FileText className="w-3.5 h-3.5" /> Site / Portais
+            </button>
+            <button
+              onClick={() => setAbaAtiva('seo')}
+              className={`px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
+                abaAtiva === 'seo' ? 'bg-amber-600 text-white shadow-md' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+              }`}
+            >
+              <Tag className="w-3.5 h-3.5" /> Tags SEO
+            </button>
           </div>
         </div>
 
-        {/* Mensagem de Feedback de Cópia */}
+        {/* Notificação de Cópia */}
         {copiadoTipo && (
-          <div className="mb-4 bg-green-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 shadow-md animate-in slide-in-from-top-2 duration-200">
-            <Check className="w-4 h-4" />
-            Copiado com sucesso para a área de transferência! Agora é só colar no {copiadoTipo}.
+          <div className="bg-emerald-600 text-white px-6 py-2.5 text-xs font-bold flex items-center justify-between shadow-md">
+            <div className="flex items-center gap-2">
+              <Check className="w-4 h-4" />
+              <span>Texto copiado com sucesso! Agora é só colar no {copiadoTipo}.</span>
+            </div>
           </div>
         )}
 
-        <div className="space-y-6">
-          {/* Card 1: Copy para WhatsApp */}
-          <div className="bg-emerald-50/50 border border-emerald-200 rounded-xl p-4">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <MessageCircle className="w-4 h-4 text-emerald-600 fill-emerald-100" />
-                <span className="text-sm font-bold text-emerald-950">Texto Direto para WhatsApp & Grupos</span>
+        {/* Corpo do Conteúdo por Aba */}
+        <div className="p-6 overflow-y-auto flex-1 space-y-4">
+          {/* ABA 1: WHATSAPP */}
+          {abaAtiva === 'whatsapp' && (
+            <div className="bg-emerald-50/60 border border-emerald-200 rounded-2xl p-5">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h4 className="font-bold text-emerald-950 text-sm flex items-center gap-2">
+                    <MessageCircle className="w-4 h-4 text-emerald-600" /> Canal 2: WhatsApp (Corretor Forward)
+                  </h4>
+                  <p className="text-[11px] text-emerald-700">Com negrito nativo (*asteriscos*) e contato do corretor.</p>
+                </div>
+                <button
+                  onClick={() => handleCopiar(copyWhatsapp, 'WhatsApp')}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-all flex items-center gap-1.5"
+                >
+                  {copiadoTipo === 'WhatsApp' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  {copiadoTipo === 'WhatsApp' ? 'Copiado!' : 'Copiar Texto WhatsApp'}
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={() => handleCopiar(copyWhatsapp, 'WhatsApp')}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
-              >
-                {copiadoTipo === 'WhatsApp' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                {copiadoTipo === 'WhatsApp' ? 'Copiado!' : 'Copiar Texto WhatsApp'}
-              </button>
+              <div className="bg-white p-4 rounded-xl border border-emerald-100 text-xs text-slate-800 font-mono whitespace-pre-wrap leading-relaxed max-h-80 overflow-y-auto">
+                {copyWhatsapp}
+              </div>
             </div>
-            <div className="bg-white p-3 rounded-lg border border-emerald-100 text-xs text-gray-800 font-mono whitespace-pre-wrap">
-              {copyWhatsapp}
-            </div>
-          </div>
+          )}
 
-          {/* Card 2: Copy para Instagram */}
-          <div className="bg-pink-50/50 border border-pink-200 rounded-xl p-4">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <Instagram className="w-4 h-4 text-pink-600" />
-                <span className="text-sm font-bold text-pink-950">Legenda Persuasiva para Instagram / Feed</span>
+          {/* ABA 2: META ADS (INSTAGRAM) */}
+          {abaAtiva === 'instagram' && (
+            <div className="bg-pink-50/60 border border-pink-200 rounded-2xl p-5">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h4 className="font-bold text-pink-950 text-sm flex items-center gap-2">
+                    <Instagram className="w-4 h-4 text-pink-600" /> Canal 3: Meta Ads (Instagram & Facebook)
+                  </h4>
+                  <p className="text-[11px] text-pink-700">Legenda persuasiva com HOOK de parada de scroll e hashtags.</p>
+                </div>
+                <button
+                  onClick={() => handleCopiar(copyInstagram, 'Instagram')}
+                  className="bg-pink-600 hover:bg-pink-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-all flex items-center gap-1.5"
+                >
+                  {copiadoTipo === 'Instagram' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  {copiadoTipo === 'Instagram' ? 'Copiado!' : 'Copiar Legenda Instagram'}
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={() => handleCopiar(copyInstagram, 'Instagram')}
-                className="bg-pink-600 hover:bg-pink-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
-              >
-                {copiadoTipo === 'Instagram' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                {copiadoTipo === 'Instagram' ? 'Copiado!' : 'Copiar Legenda Instagram'}
-              </button>
+              <div className="bg-white p-4 rounded-xl border border-pink-100 text-xs text-slate-800 font-sans whitespace-pre-wrap leading-relaxed max-h-80 overflow-y-auto">
+                {copyInstagram}
+              </div>
             </div>
-            <div className="bg-white p-3 rounded-lg border border-pink-100 text-xs text-gray-800 font-sans whitespace-pre-wrap max-h-48 overflow-y-auto">
-              {copyInstagram}
-            </div>
-          </div>
+          )}
 
-          {/* Card 3: Descrição Oficial do Anúncio */}
-          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-gray-600" />
-                <span className="text-sm font-bold text-gray-900">Descrição Completa do Anúncio</span>
+          {/* ABA 3: ROTEIRO CANVA / REELS */}
+          {abaAtiva === 'canva' && (
+            <div className="bg-purple-50/60 border border-purple-200 rounded-2xl p-5">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h4 className="font-bold text-purple-950 text-sm flex items-center gap-2">
+                    <Video className="w-4 h-4 text-purple-600" /> Canal 4: Roteiro para Vídeo (Reels/TikTok) & Canva
+                  </h4>
+                  <p className="text-[11px] text-purple-700">Com o que falar na gravação e frases curtas para colar nos templates do Canva.</p>
+                </div>
+                <button
+                  onClick={() => handleCopiar(roteiroCanvaTexto, 'Roteiro Canva')}
+                  className="bg-purple-600 hover:bg-purple-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-all flex items-center gap-1.5"
+                >
+                  {copiadoTipo === 'Roteiro Canva' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  {copiadoTipo === 'Roteiro Canva' ? 'Copiado!' : 'Copiar Roteiro Canva'}
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={() => handleCopiar(copyPortal, 'Descrição')}
-                className="bg-gray-800 hover:bg-gray-900 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
-              >
-                {copiadoTipo === 'Descrição' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                {copiadoTipo === 'Descrição' ? 'Copiado!' : 'Copiar Descrição'}
-              </button>
+              <div className="bg-white p-4 rounded-xl border border-purple-100 text-xs text-slate-800 font-sans whitespace-pre-wrap leading-relaxed max-h-80 overflow-y-auto">
+                {roteiroCanvaTexto}
+              </div>
             </div>
-            <div className="bg-white p-3 rounded-lg border border-gray-200 text-xs text-gray-800 whitespace-pre-wrap max-h-36 overflow-y-auto">
-              {copyPortal}
+          )}
+
+          {/* ABA 4: SITE / PORTAIS */}
+          {abaAtiva === 'portais' && (
+            <div className="bg-blue-50/60 border border-blue-200 rounded-2xl p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-bold text-blue-950 text-sm flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-blue-600" /> Canal 1: Descrição Completa para Portais & Site
+                  </h4>
+                  <p className="text-[11px] text-blue-700">Títulos otimizados e descrição fluida sem clichês.</p>
+                </div>
+                <button
+                  onClick={() => handleCopiar(copyPortais, 'Descrição')}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-all flex items-center gap-1.5"
+                >
+                  {copiadoTipo === 'Descrição' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  {copiadoTipo === 'Descrição' ? 'Copiado!' : 'Copiar Descrição'}
+                </button>
+              </div>
+
+              {canal1?.titulo_curto && (
+                <div className="bg-white p-3 rounded-xl border border-blue-100 text-xs">
+                  <span className="font-bold text-blue-900 block mb-1">TÍTULO CURTO (OLX / Mercado Livre):</span>
+                  <span className="text-slate-800 font-mono">{canal1.titulo_curto}</span>
+                </div>
+              )}
+
+              {canal1?.titulo_comercial && (
+                <div className="bg-white p-3 rounded-xl border border-blue-100 text-xs">
+                  <span className="font-bold text-blue-900 block mb-1">TÍTULO COMERCIAL (ZAP Imóveis / VivaReal):</span>
+                  <span className="text-slate-800 font-mono">{canal1.titulo_comercial}</span>
+                </div>
+              )}
+
+              <div className="bg-white p-4 rounded-xl border border-blue-100 text-xs text-slate-800 whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto">
+                {copyPortais}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* ABA 5: TAGS DE SEO */}
+          {abaAtiva === 'seo' && (
+            <div className="bg-amber-50/60 border border-amber-200 rounded-2xl p-5">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h4 className="font-bold text-amber-950 text-sm flex items-center gap-2">
+                    <Tag className="w-4 h-4 text-amber-600" /> Canal 5: Tags de SEO & Palavras-Chave
+                  </h4>
+                  <p className="text-[11px] text-amber-700">Palavras-chave otimizadas para o Google e buscadores dos portais.</p>
+                </div>
+                <button
+                  onClick={() => handleCopiar(seoTagsTexto, 'Tags SEO')}
+                  className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-all flex items-center gap-1.5"
+                >
+                  {copiadoTipo === 'Tags SEO' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  {copiadoTipo === 'Tags SEO' ? 'Copiado!' : 'Copiar Tags SEO'}
+                </button>
+              </div>
+              <div className="bg-white p-4 rounded-xl border border-amber-100 text-xs text-slate-800 font-mono whitespace-pre-wrap">
+                {seoTagsTexto}
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="mt-6 pt-4 border-t border-gray-100 flex justify-end">
+        {/* Footer Modal */}
+        <div className="p-4 bg-slate-50 border-t border-gray-100 flex justify-end shrink-0">
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2 text-sm font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all"
+            className="px-6 py-2.5 text-xs font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition-all shadow-xs"
           >
             Fechar Media Kit
           </button>
