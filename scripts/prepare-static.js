@@ -4,12 +4,8 @@ const { execSync } = require('child_process');
 
 console.log('Preparing project for static export...');
 
-// 1. Remover a pasta dashboard (não necessária em produção/Netlify)
-const dashboardPath = path.join(__dirname, '..', 'src', 'app', 'dashboard');
-if (fs.existsSync(dashboardPath)) {
-  console.log('Removing dashboard folder for production build...');
-  fs.rmSync(dashboardPath, { recursive: true, force: true });
-}
+// 1. Manter a pasta dashboard para inclusão no build de produção
+console.log('Building dashboard for production...');
 
 // 2. Remover a diretiva 'use server' de imovel-server-actions.ts
 const serverActionsPath = path.join(__dirname, '..', 'src', 'app', 'actions', 'imovel-server-actions.ts');

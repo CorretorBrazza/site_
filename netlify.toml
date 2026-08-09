@@ -1,3 +1,16 @@
 [build]
   command = "node scripts/prepare-static.js"
   publish = "out"
+
+[[redirects]]
+  from = "/*"
+  to = "/:splat.html"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
+
