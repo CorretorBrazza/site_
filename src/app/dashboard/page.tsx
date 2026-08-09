@@ -1,8 +1,7 @@
-import { getImoveis } from '@/app/actions/imovel-server-actions';
+'use client';
+
 import DashboardCorretorClient from './DashboardCorretorClient';
 
-export default async function DashboardPage() {
-  const imoveis = await getImoveis();
-
-  return <DashboardCorretorClient imoveis={imoveis} />;
+export default function DashboardPage() {
+  return <DashboardCorretorClient imoveis={[]} />;
 }
