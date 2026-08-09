@@ -2,7 +2,7 @@ import { getImoveis, getDadosProprietario } from '@/app/actions/imovel-server-ac
 import { notFound } from 'next/navigation';
 import FormEditarImovel from './FormEditarImovel';
 
-export const dynamicParams = true;
+export const dynamicParams = false;
 
 export async function generateStaticParams() {
   const imoveis = await getImoveis();
