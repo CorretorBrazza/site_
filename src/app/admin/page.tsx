@@ -1,0 +1,523 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import {
+  ShieldCheck,
+  Brain,
+  Users,
+  Coins,
+  HardDrive,
+  Sparkles,
+  Plus,
+  Send,
+  CheckCircle2,
+  AlertCircle,
+  MapPin,
+  Building2,
+  RefreshCw,
+  Search,
+} from 'lucide-react';
+import { API_BASE_URL } from '@/lib/api';
+
+interface StatsData {
+  total_corretores: number;
+  total_anuncios: number;
+  anuncios_ativos: number;
+  total_creditos_rede: number;
+  espaco_salvo_gb: string;
+  total_fotos_acervo: number;
+}
+
+interface CorretorData {
+  id: string;
+  nome: string;
+  email: string;
+  telefone?: string;
+  saldo_creditos: number;
+  plano_atual: string;
+  status: string;
+  created_at: string;
+}
+
+interface ConhecimentoItem {
+  id: string;
+  titulo: string;
+  cidade: string;
+  bairro?: string;
+  categoria?: string;
+  descricao: string;
+  pontos_interesse?: string[];
+  vias_acesso?: string[];
+  validado_por_admin?: boolean;
+  created_at?: string;
+}
+
+export default function AdminDashboardPage() {
+  const [abaAtiva, setAbaAtiva] = useState<'conhecimento' | 'corretores' | 'metricas'>('conhecimento');
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<StatsData | null>(null);
+  const [corretores, setCorretores] = useState<CorretorData[]>([]);
+  const [conhecimentoList, setConhecimentoList] = useState<ConhecimentoItem[]>([]);
+
+  // Form de inserção de conhecimento por texto bruto
+  const [textoBruto, setTextoBruto] = useState('');
+  const [cidadeSel, setCidadeSel] = useState('Taboão da Serra');
+  const [bairroSel, setBairroSel] = useState('');
+  const [processandoIa, setProcessandoIa] = useState(false);
+  const [msgSucessoIa, setMsgSucessoIa] = useState<string | null>(null);
+  const [erroIa, setErroIa] = useState<string | null>(null);
+
+  // Modal Ajuste Créditos
+  const [corretorSelecionado, setCorretorSelecionado] = useState<CorretorData | null>(null);
+  const [qtdCreditos, setQtdCreditos] = useState(5);
+  const [motivoAjuste, setMotivoAjuste] = useState('Bônus de Parceiro Admin');
+  const [salvandoCredito, setSalvandoCredito] = useState(false);
+
+  const carregarDadosAdmin = async () => {
+    setLoading(true);
+    try {
+      const [resStats, resCorretores, resConhecimento] = await Promise.all([
+        fetch(`${API_BASE_URL}/admin/stats`).then((r) => r.json()),
+        fetch(`${API_BASE_URL}/admin/corretores`).then((r) => r.json()),
+        fetch(`${API_BASE_URL}/admin/conhecimento`).then((r) => r.json()),
+      ]);
+
+      if (resStats.success) setStats(resStats.data);
+      if (resCorretores.success) setCorretores(resCorretores.data);
+      if (resConhecimento.success) {
+        const regional = resConhecimento.data.regional || [];
+        const conds = (resConhecimento.data.condominios || []).map((c: any) => ({
+          id: c.id,
+          titulo: c.nome,
+          cidade: c.cidade || 'Taboão da Serra',
+          bairro: c.bairro,
+          categoria: 'condominio',
+          descricao: `Condomínio com ${c.caracteristicas_oficiais?.torres || 1} torres e infraestrutura completa.`,
+          pontos_interesse: c.pontos_interesse_proximos || [],
+        }));
+        setConhecimentoList([...regional, ...conds]);
+      }
+    } catch (err) {
+      console.error('Erro ao carregar painel admin:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    carregarDadosAdmin();
+  }, []);
+
+  const handleEnviarTextoBrutoIa = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMsgSucessoIa(null);
+    setErroIa(null);
+    setProcessandoIa(true);
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/admin/conhecimento/texto-bruto`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          texto_bruto: textoBruto,
+          cidade: cidadeSel,
+          bairro: bairroSel,
+        }),
+      });
+
+      const json = await res.json();
+      if (json.success) {
+        setMsgSucessoIa(`✨ Conhecimento extraído e formatado com sucesso pela IA! Cadastrado: "${json.data.conhecimento.titulo}"`);
+        setTextoBruto('');
+        setBairroSel('');
+        carregarDadosAdmin();
+      } else {
+        setErroIa(json.message || 'Falha ao processar texto bruto com IA.');
+      }
+    } catch (err) {
+      setErroIa('Erro de conexão ao servidor.');
+    } finally {
+      setProcessandoIa(false);
+    }
+  };
+
+  const handleSalvarAjusteCreditos = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!corretorSelecionado) return;
+    setSalvandoCredito(true);
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/admin/corretores/creditos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: corretorSelecionado.email,
+          quantidade: Number(qtdCreditos),
+          motivo: motivoAjuste,
+        }),
+      });
+
+      const json = await res.json();
+      if (json.success) {
+        alert(`Créditos ajustados com sucesso para ${corretorSelecionado.email}!`);
+        setCorretorSelecionado(null);
+        carregarDadosAdmin();
+      } else {
+        alert(json.message || 'Erro ao ajustar créditos.');
+      }
+    } catch (err) {
+      alert('Erro de conexão ao servidor.');
+    } finally {
+      setSalvandoCredito(false);
+    }
+  };
+
+  return (
+    <div className="bg-slate-950 min-h-screen text-slate-100 pb-20">
+      {/* Top Header Admin */}
+      <div className="border-b border-slate-800 bg-slate-900/60 sticky top-0 z-30 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-blue-600/20 border border-blue-500/30 rounded-xl text-blue-400">
+              <ShieldCheck className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl font-black tracking-tight text-white">Painel do Desenvolvedor / Admin</h1>
+                <span className="bg-purple-950 text-purple-300 border border-purple-800 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
+                  Gestão RAG Global
+                </span>
+              </div>
+              <p className="text-xs text-slate-400">
+                Base de Conhecimento Ampliada: <strong className="text-slate-200">Taboão da Serra & Embu das Artes</strong>
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={carregarDadosAdmin}
+              className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 transition-all text-xs flex items-center gap-1.5 font-bold"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} /> Atualizar Dados
+            </button>
+            <Link
+              href="/dashboard"
+              className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition-all shadow-md"
+            >
+              Ir para Dashboard Corretor →
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 mt-8">
+        {/* Metric Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+            <div className="flex items-center justify-between text-slate-400 text-xs mb-2 font-bold uppercase tracking-wider">
+              <span>Corretores</span>
+              <Users className="w-4 h-4 text-blue-400" />
+            </div>
+            <div className="text-3xl font-black text-white">{stats?.total_corretores ?? 0}</div>
+            <div className="text-[11px] text-slate-500 mt-1">Contas ativas na rede</div>
+          </div>
+
+          <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+            <div className="flex items-center justify-between text-slate-400 text-xs mb-2 font-bold uppercase tracking-wider">
+              <span>Anúncios no Portal</span>
+              <Building2 className="w-4 h-4 text-green-400" />
+            </div>
+            <div className="text-3xl font-black text-white">{stats?.anuncios_ativos ?? 0}</div>
+            <div className="text-[11px] text-slate-500 mt-1">Total acumulado: {stats?.total_anuncios ?? 0}</div>
+          </div>
+
+          <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+            <div className="flex items-center justify-between text-slate-400 text-xs mb-2 font-bold uppercase tracking-wider">
+              <span>Créditos Circulando</span>
+              <Coins className="w-4 h-4 text-amber-400" />
+            </div>
+            <div className="text-3xl font-black text-white">{stats?.total_creditos_rede ?? 0}</div>
+            <div className="text-[11px] text-slate-500 mt-1">Saldo total dos corretores</div>
+          </div>
+
+          <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+            <div className="flex items-center justify-between text-slate-400 text-xs mb-2 font-bold uppercase tracking-wider">
+              <span>Espaço Salvo R2</span>
+              <HardDrive className="w-4 h-4 text-purple-400" />
+            </div>
+            <div className="text-3xl font-black text-white">{stats?.espaco_salvo_gb || '0.00 GB'}</div>
+            <div className="text-[11px] text-slate-500 mt-1">{stats?.total_fotos_acervo ?? 0} fotos salvas em alta</div>
+          </div>
+        </div>
+
+        {/* NAVEGAÇÃO DE ABAS */}
+        <div className="flex border-b border-slate-800 mb-8 gap-2">
+          <button
+            onClick={() => setAbaAtiva('conhecimento')}
+            className={`py-3 px-5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
+              abaAtiva === 'conhecimento'
+                ? 'border-blue-500 text-blue-400 bg-blue-500/10 rounded-t-xl'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Brain className="w-4 h-4" /> Base de Conhecimento IA ({conhecimentoList.length})
+          </button>
+          <button
+            onClick={() => setAbaAtiva('corretores')}
+            className={`py-3 px-5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
+              abaAtiva === 'corretores'
+                ? 'border-blue-500 text-blue-400 bg-blue-500/10 rounded-t-xl'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Users className="w-4 h-4" /> Corretores & Créditos ({corretores.length})
+          </button>
+        </div>
+
+        {/* ABA 1: BASE DE CONHECIMENTO RAG */}
+        {abaAtiva === 'conhecimento' && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Form de Inserção de Texto Bruto com IA */}
+            <div className="lg:col-span-1 bg-slate-900 border border-slate-800 p-6 rounded-2xl h-fit">
+              <div className="flex items-center gap-2 mb-2 text-blue-400 font-bold text-sm">
+                <Sparkles className="w-5 h-5 text-yellow-400" />
+                <span>Alimentar Conhecimento com IA</span>
+              </div>
+              <p className="text-xs text-slate-400 mb-4 leading-relaxed">
+                Cole qualquer texto solto sobre bairros, comércios ou pontos turísticos de <strong className="text-slate-200">Taboão da Serra ou Embu das Artes</strong>. O Gemini organizará os dados automaticamente.
+              </p>
+
+              {msgSucessoIa && (
+                <div className="bg-emerald-950/80 border border-emerald-800 text-emerald-200 text-xs p-3 rounded-xl mb-4 flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400 mt-0.5" />
+                  <span>{msgSucessoIa}</span>
+                </div>
+              )}
+
+              {erroIa && (
+                <div className="bg-red-950/80 border border-red-800 text-red-200 text-xs p-3 rounded-xl mb-4 flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-red-400 mt-0.5" />
+                  <span>{erroIa}</span>
+                </div>
+              )}
+
+              <form onSubmit={handleEnviarTextoBrutoIa} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+                    Região / Cidade
+                  </label>
+                  <select
+                    value={cidadeSel}
+                    onChange={(e) => setCidadeSel(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 px-3 text-sm text-white focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="Taboão da Serra">Taboão da Serra</option>
+                    <option value="Embu das Artes">Embu das Artes</option>
+                    <option value="São Paulo (Zona Sul / Vila Sônia)">São Paulo (Vila Sônia / Morumbi)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+                    Bairro (Opcional)
+                  </label>
+                  <input
+                    type="text"
+                    value={bairroSel}
+                    onChange={(e) => setBairroSel(e.target.value)}
+                    placeholder="Ex: Parque Assunção, Centro Histórico de Embu..."
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 px-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+                    Texto Bruto / Informações Locais
+                  </label>
+                  <textarea
+                    rows={6}
+                    required
+                    value={textoBruto}
+                    onChange={(e) => setTextoBruto(e.target.value)}
+                    placeholder="Ex: O bairro Jardim Amanda em Embu das Artes possui fácil acesso à Rodovia Régis Bittencourt e fica a 5 min da feirinha de artesanato. Tem o novo supermercado Assaí próximo e feira livre aos domingos..."
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 leading-relaxed"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={processandoIa}
+                  className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {processandoIa ? (
+                    <span>IA Extraindo e Formatando...</span>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4" />
+                      <span>Processar e Inserir na Base</span>
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
+
+            {/* Lista de Conhecimentos Cadastrados */}
+            <div className="lg:col-span-2 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-base font-bold text-white flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-purple-400" />
+                  Base de Conhecimento Ativa na Nuvem ({conhecimentoList.length})
+                </h3>
+              </div>
+
+              {conhecimentoList.length === 0 ? (
+                <div className="bg-slate-900 border border-slate-800 p-8 rounded-2xl text-center text-slate-400 text-sm">
+                  Nenhum conhecimento registrado na base ainda. Cole um texto ao lado para criar o primeiro!
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {conhecimentoList.map((item) => (
+                    <div key={item.id} className="bg-slate-900 border border-slate-800 p-5 rounded-2xl hover:border-slate-700 transition-all">
+                      <div className="flex items-start justify-between gap-4 mb-2">
+                        <div>
+                          <span className="inline-block bg-purple-950 text-purple-300 border border-purple-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider mb-1">
+                            {item.cidade} {item.bairro ? `• ${item.bairro}` : ''}
+                          </span>
+                          <h4 className="text-lg font-bold text-white">{item.titulo}</h4>
+                        </div>
+                        <span className="bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3" /> Validado
+                        </span>
+                      </div>
+
+                      <p className="text-slate-300 text-xs leading-relaxed mb-3">{item.descricao}</p>
+
+                      {item.pontos_interesse && item.pontos_interesse.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          {item.pontos_interesse.map((pi, idx) => (
+                            <span key={idx} className="bg-slate-950 border border-slate-800 text-slate-400 text-[11px] px-2 py-0.5 rounded-md">
+                              📍 {pi}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ABA 2: CORRETORES & GESTÃO DE CRÉDITOS */}
+        {abaAtiva === 'corretores' && (
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+            <div className="p-5 border-b border-slate-800 flex justify-between items-center">
+              <h3 className="font-bold text-white text-base">Rede de Corretores Cadastrados ({corretores.length})</h3>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs text-slate-300">
+                <thead className="bg-slate-950 text-slate-400 uppercase font-bold text-[10px] tracking-wider border-b border-slate-800">
+                  <tr>
+                    <th className="p-4">Corretor / Nome</th>
+                    <th className="p-4">E-mail</th>
+                    <th className="p-4">Saldo Créditos</th>
+                    <th className="p-4">Plano</th>
+                    <th className="p-4 text-right">Ação</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800 font-medium">
+                  {corretores.map((c) => (
+                    <tr key={c.id} className="hover:bg-slate-850 transition-colors">
+                      <td className="p-4 font-bold text-white">{c.nome}</td>
+                      <td className="p-4">{c.email}</td>
+                      <td className="p-4">
+                        <span className="bg-amber-950 text-amber-300 border border-amber-800 font-black px-2.5 py-1 rounded-lg">
+                          🪙 {c.saldo_creditos} Créditos
+                        </span>
+                      </td>
+                      <td className="p-4">
+                        <span className="uppercase text-[10px] font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">
+                          {c.plano_atual}
+                        </span>
+                      </td>
+                      <td className="p-4 text-right">
+                        <button
+                          onClick={() => setCorretorSelecionado(c)}
+                          className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition-all flex items-center gap-1 ml-auto"
+                        >
+                          <Coins className="w-3.5 h-3.5" /> Adicionar Créditos
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* MODAL DE ADICIONAR CRÉDITOS */}
+      {corretorSelecionado && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 max-w-md w-full p-6 rounded-2xl shadow-2xl relative">
+            <h3 className="text-lg font-bold text-white mb-1">Ajustar Créditos do Corretor</h3>
+            <p className="text-xs text-slate-400 mb-4">
+              Corretor: <strong className="text-white">{corretorSelecionado.nome}</strong> ({corretorSelecionado.email})
+            </p>
+
+            <form onSubmit={handleSalvarAjusteCreditos} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+                  Quantidade de Créditos a Adicionar (ou remover com -)
+                </label>
+                <input
+                  type="number"
+                  required
+                  value={qtdCreditos}
+                  onChange={(e) => setQtdCreditos(Number(e.target.value))}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 px-3 text-sm text-white focus:outline-none focus:border-blue-500 font-bold"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+                  Motivo / Observação
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={motivoAjuste}
+                  onChange={(e) => setMotivoAjuste(e.target.value)}
+                  placeholder="Ex: Bonificação de Parceria Admin"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 px-3 text-sm text-white focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="submit"
+                  disabled={salvandoCredito}
+                  className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl text-xs transition-all"
+                >
+                  {salvandoCredito ? 'Salvando...' : 'Confirmar Ajuste'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCorretorSelecionado(null)}
+                  className="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-4 py-3 rounded-xl text-xs transition-all"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
