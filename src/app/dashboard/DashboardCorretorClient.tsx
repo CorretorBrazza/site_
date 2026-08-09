@@ -8,7 +8,7 @@ import HeaderSaldoCreditos from './components/HeaderSaldoCreditos';
 import BannerBackupGamificacao from './components/BannerBackupGamificacao';
 import ModalRecargaCreditos from './components/ModalRecargaCreditos';
 import TabelaImoveis from './TabelaImoveis';
-import { Sparkles, Plus, ShieldCheck, Flame, LogOut, UserCheck } from 'lucide-react';
+import { Sparkles, Mail, ShieldCheck, Flame, LogOut, UserCheck } from 'lucide-react';
 
 import { API_BASE_URL } from '@/lib/api';
 
@@ -96,13 +96,13 @@ export default function DashboardCorretorClient({ imoveis }: DashboardCorretorCl
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          <Link
-            href="/dashboard/novo"
+          <a
+            href="mailto:captacao@imoveistaboao.com.br"
             className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-bold transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 text-sm"
           >
-            <Plus className="w-4 h-4" />
-            Cadastrar Imóvel
-          </Link>
+            <Mail className="w-4 h-4" />
+            Enviar Imóvel por E-mail
+          </a>
 
           <button
             onClick={handleLogout}
