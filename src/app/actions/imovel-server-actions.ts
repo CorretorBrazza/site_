@@ -170,10 +170,3 @@ export async function uploadNovasFotosAction(referencia: string, formData: FormD
     return { success: false, error: 'Falha ao fazer upload das fotos.' };
   }
 }
-
-    return { success: true, fotosUrls };
-  } catch (error) {
-    console.error('Erro no upload de novas fotos:', error);
-    return { success: false, error: 'Falha ao fazer upload das fotos.' };
-  }
-}
