@@ -12,6 +12,8 @@ interface ModalExclusaoInteligenteProps {
   onSuccess: () => void;
 }
 
+import { API_BASE_URL } from '@/lib/api';
+
 export default function ModalExclusaoInteligente({
   isOpen,
   onClose,
@@ -30,8 +32,7 @@ export default function ModalExclusaoInteligente({
   const handleExcluir = async () => {
     setLoading(true);
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://imoveis-taboao-api-production-4cd9.up.railway.app';
-      const res = await fetch(`${apiUrl}/api/v1/anuncios/${adId}/excluir`, {
+      const res = await fetch(`${API_BASE_URL}/anuncios/${adId}/excluir`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

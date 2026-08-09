@@ -10,6 +10,8 @@ interface ModalAcervoFotosProps {
   referencia: string;
 }
 
+import { API_BASE_URL } from '@/lib/api';
+
 export default function ModalAcervoFotos({
   isOpen,
   onClose,
@@ -31,8 +33,7 @@ export default function ModalAcervoFotos({
     if (!isOpen || !adId) return;
 
     setLoading(true);
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://imoveis-taboao-api-production-4cd9.up.railway.app';
-    fetch(`${apiUrl}/api/v1/storage/acervo/${adId}`)
+    fetch(`${API_BASE_URL}/storage/acervo/${adId}`)
       .then((res) => res.json())
       .then((json) => {
         if (json.success && json.data) {
@@ -49,8 +50,7 @@ export default function ModalAcervoFotos({
   const handleSalvarAnotacao = async () => {
     setSalvandoNota(true);
     try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://imoveis-taboao-api-production-4cd9.up.railway.app';
-      const res = await fetch(`${apiUrl}/api/v1/storage/anotacao`, {
+      const res = await fetch(`${API_BASE_URL}/storage/anotacao`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

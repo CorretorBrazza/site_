@@ -10,6 +10,8 @@ import ModalRecargaCreditos from './components/ModalRecargaCreditos';
 import TabelaImoveis from './TabelaImoveis';
 import { Sparkles, Plus, ShieldCheck, Flame, LogOut, UserCheck } from 'lucide-react';
 
+import { API_BASE_URL } from '@/lib/api';
+
 interface DashboardCorretorClientProps {
   imoveis: Imovel[];
 }
@@ -41,8 +43,7 @@ export default function DashboardCorretorClient({ imoveis }: DashboardCorretorCl
     // 2. Valida token com a API
     const token = localStorage.getItem('auth_token');
     if (token) {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://imoveis-taboao-api-production-4cd9.up.railway.app';
-      fetch(`${apiUrl}/api/v1/auth/me`, {
+      fetch(`${API_BASE_URL}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => res.json())

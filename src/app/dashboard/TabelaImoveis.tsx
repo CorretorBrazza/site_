@@ -9,6 +9,8 @@ import ModalAcervoFotos from './components/ModalAcervoFotos';
 import ModalMediaKit from './components/ModalMediaKit';
 import { HardDrive, RefreshCw, Trash2, Edit, Sparkles, Clock } from 'lucide-react';
 
+import { API_BASE_URL } from '@/lib/api';
+
 interface TabelaImoveisProps {
   imoveis: Imovel[];
   userEmail?: string;
@@ -43,8 +45,7 @@ export default function TabelaImoveis({ imoveis, userEmail = 'corretor@taboao.co
 
     setRenovandoId(adId);
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://imoveis-taboao-api-production-4cd9.up.railway.app';
-      const res = await fetch(`${apiUrl}/api/v1/anuncios/renovar`, {
+      const res = await fetch(`${API_BASE_URL}/anuncios/renovar`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ad_id: adId, email: userEmail }),

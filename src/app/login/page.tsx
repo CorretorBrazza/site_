@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Building2, Lock, Mail, User, Phone, ShieldCheck, Eye, EyeOff, Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
 
+import { API_BASE_URL } from '@/lib/api';
+
 export default function LoginPage() {
   const router = useRouter();
   const [modo, setModo] = useState<'login' | 'cadastro'>('login');
@@ -24,8 +26,7 @@ export default function LoginPage() {
     setErro(null);
     setLoading(true);
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://imoveis-taboao-api-production-4cd9.up.railway.app';
-    const endpoint = modo === 'login' ? `${apiUrl}/api/v1/auth/login` : `${apiUrl}/api/v1/auth/register`;
+    const endpoint = modo === 'login' ? `${API_BASE_URL}/auth/login` : `${API_BASE_URL}/auth/register`;
 
     const body = modo === 'login'
       ? { email, senha }
