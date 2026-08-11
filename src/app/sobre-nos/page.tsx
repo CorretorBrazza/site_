@@ -35,20 +35,20 @@ export default function SobreNosPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-gray-600 leading-relaxed text-base text-left">
             <p>
-              Desde a nossa fundação em 2018, nos especializamos em entender o comportamento e o desenvolvimento urbano de Taboão da Serra e região adjacente. Identificamos as melhores oportunidades em lançamentos imobiliários de alto padrão, projetos Minha Casa Minha Vida e imóveis prontos.
+              Nos especializamos em entender o desenvolvimento urbano de Taboão da Serra e região adjacente. Identificamos as melhores oportunidades em lançamentos imobiliários, condomínios e imóveis prontos.
             </p>
             <p>
-              Trabalhamos lado a lado com as principais construtoras do mercado e proprietários independentes, oferecendo assessoria completa desde a primeira visita até a assinatura do contrato e assessoria de financiamento bancário.
+              Oferecemos assessoria completa desde a primeira visita até a assinatura do contrato e suporte ao financiamento bancário, com total transparência e segurança jurídica.
             </p>
           </div>
           <div className="border-t border-gray-100 pt-8 flex justify-center gap-16">
             <div className="text-center">
-              <p className="text-4xl md:text-5xl font-black text-blue-600">8+ Anos</p>
-              <p className="text-sm font-semibold text-gray-500 mt-2">De atuação em Taboão</p>
+              <p className="text-2xl md:text-3xl font-black text-blue-600">100% Digital</p>
+              <p className="text-sm font-semibold text-gray-500 mt-1">Gestão inteligente de imóveis</p>
             </div>
             <div className="text-center">
-              <p className="text-4xl md:text-5xl font-black text-blue-600">1.000+</p>
-              <p className="text-sm font-semibold text-gray-500 mt-2">Famílias atendidas</p>
+              <p className="text-2xl md:text-3xl font-black text-blue-600">CRECI Ativo</p>
+              <p className="text-sm font-semibold text-gray-500 mt-1">Segurança e Ética Jurídica</p>
             </div>
           </div>
         </div>

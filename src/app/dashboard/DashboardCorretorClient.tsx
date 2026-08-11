@@ -70,19 +70,6 @@ export default function DashboardCorretorClient({ imoveis }: DashboardCorretorCl
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Faixa de Informação Real de Carteira */}
-      <div className="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/20 rounded-xl p-3 mb-6 flex items-center justify-between text-xs text-amber-900">
-        <div className="flex items-center gap-2 font-medium">
-          <Flame className="w-4 h-4 text-amber-600 fill-amber-500" />
-          <span>
-            <strong>Gestão de Carteira:</strong> Você possui <strong>{imoveis.length} imóvel(is)</strong> cadastrado(s) e gerenciados em <strong>Taboão da Serra e Região</strong>.
-          </span>
-        </div>
-        <span className="hidden md:inline-block text-[10px] font-bold uppercase tracking-wider bg-amber-200/60 px-2 py-0.5 rounded-md">
-          Região Ativa 🔥
-        </span>
-      </div>
-
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 border-b pb-6 border-gray-200">
         <div>
