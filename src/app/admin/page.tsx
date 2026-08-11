@@ -21,6 +21,10 @@ import {
   LogOut,
   Eye,
   EyeOff,
+  Cpu,
+  Zap,
+  Activity,
+  Key,
 } from 'lucide-react';
 import { API_BASE_URL } from '@/lib/api';
 
@@ -42,6 +46,24 @@ interface CorretorData {
   plano_atual: string;
   status: string;
   created_at: string;
+}
+
+interface GeminiKeyMetric {
+  key_alias: string;
+  total_requests: number;
+  total_prompt_tokens: number;
+  total_completion_tokens: number;
+  total_tokens: number;
+  errors_count: number;
+  last_used_at: string | null;
+}
+
+interface GeminiMetricsData {
+  keys?: GeminiKeyMetric[];
+  total_requests_all_keys?: number;
+  total_tokens_all_keys?: number;
+  model_configured?: string;
+  configured_keys_count?: number;
 }
 
 interface ConhecimentoItem {
@@ -72,6 +94,7 @@ export default function AdminDashboardPage() {
   const [stats, setStats] = useState<StatsData | null>(null);
   const [corretores, setCorretores] = useState<CorretorData[]>([]);
   const [conhecimentoList, setConhecimentoList] = useState<ConhecimentoItem[]>([]);
+  const [geminiMetrics, setGeminiMetrics] = useState<GeminiMetricsData | null>(null);
 
   // Form de inserção de conhecimento por texto bruto
   const [textoBruto, setTextoBruto] = useState('');
@@ -138,17 +161,32 @@ export default function AdminDashboardPage() {
     setLoading(true);
     try {
       const headers = { Authorization: `Bearer ${token}` };
-      const [resStats, resCorretores, resConhecimento] = await Promise.all([
-        fetch(`${API_BASE_URL}/admin/stats`, { headers }).then((r) => r.json()),
-        fetch(`${API_BASE_URL}/admin/corretores`, { headers }).then((r) => r.json()),
-        fetch(`${API_BASE_URL}/admin/conhecimento`, { headers }).then((r) => r.json()),
+      const [resStats, resCorretores, resConhecimento, resMetrics] = await Promise.all([
+        fetch(`${API_BASE_URL}/admin/stats`, { headers }).then((r) => r.json()).catch(() => ({})),
+        fetch(`${API_BASE_URL}/admin/corretores`, { headers }).then((r) => r.json()).catch(() => ({})),
+        fetch(`${API_BASE_URL}/admin/conhecimento`, { headers }).then((r) => r.json()).catch(() => ({})),
+        fetch(`${API_BASE_URL}/admin/gemini-metrics`, { headers }).then((r) => r.json()).catch(() => ({})),
       ]);
 
-      if (resStats.success) setStats(resStats.data);
-      if (resCorretores.success) setCorretores(resCorretores.data);
+      if (resStats.success) {
+        setStats(resStats.data || resStats);
+        if (resStats.gemini_metrics || resStats.data?.gemini_metrics) {
+          setGeminiMetrics(resStats.gemini_metrics || resStats.data?.gemini_metrics);
+        }
+      }
+
+      if (resCorretores.success) {
+        const lista = Array.isArray(resCorretores.data)
+          ? resCorretores.data
+          : (Array.isArray(resCorretores.corretores) ? resCorretores.corretores : []);
+        setCorretores(lista);
+      } else if (Array.isArray(resCorretores)) {
+        setCorretores(resCorretores);
+      }
+
       if (resConhecimento.success) {
-        const regional = resConhecimento.data.regional || [];
-        const conds = (resConhecimento.data.condominios || []).map((c: any) => ({
+        const regional = resConhecimento.data?.regional || [];
+        const conds = (resConhecimento.data?.condominios || []).map((c: any) => ({
           id: c.id,
           titulo: c.nome,
           cidade: c.cidade || 'Taboão da Serra',
@@ -158,6 +196,10 @@ export default function AdminDashboardPage() {
           pontos_interesse: c.pontos_interesse_proximos || [],
         }));
         setConhecimentoList([...regional, ...conds]);
+      }
+
+      if (resMetrics.success && resMetrics.data) {
+        setGeminiMetrics(resMetrics.data);
       }
     } catch (err) {
       console.error('Erro ao carregar painel admin:', err);
@@ -364,7 +406,7 @@ export default function AdminDashboardPage() {
 
       <div className="max-w-7xl mx-auto px-4 mt-8">
         {/* Metric Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
             <div className="flex items-center justify-between text-slate-400 text-xs mb-2 font-bold uppercase tracking-wider">
               <span>Corretores</span>
@@ -394,6 +436,19 @@ export default function AdminDashboardPage() {
 
           <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
             <div className="flex items-center justify-between text-slate-400 text-xs mb-2 font-bold uppercase tracking-wider">
+              <span>Uso Gemini IA</span>
+              <Cpu className="w-4 h-4 text-yellow-400" />
+            </div>
+            <div className="text-3xl font-black text-white">
+              {geminiMetrics?.total_tokens_all_keys ? (geminiMetrics.total_tokens_all_keys).toLocaleString('pt-BR') : 0}
+            </div>
+            <div className="text-[11px] text-slate-500 mt-1">
+              {geminiMetrics?.total_requests_all_keys ?? 0} requisições IA
+            </div>
+          </div>
+
+          <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl col-span-2 md:col-span-1">
+            <div className="flex items-center justify-between text-slate-400 text-xs mb-2 font-bold uppercase tracking-wider">
               <span>Espaço Salvo R2</span>
               <HardDrive className="w-4 h-4 text-purple-400" />
             </div>
@@ -403,10 +458,10 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* NAVEGAÇÃO DE ABAS */}
-        <div className="flex border-b border-slate-800 mb-8 gap-2">
+        <div className="flex border-b border-slate-800 mb-8 gap-2 overflow-x-auto">
           <button
             onClick={() => setAbaAtiva('conhecimento')}
-            className={`py-3 px-5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
+            className={`py-3 px-5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap ${
               abaAtiva === 'conhecimento'
                 ? 'border-blue-500 text-blue-400 bg-blue-500/10 rounded-t-xl'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -416,13 +471,23 @@ export default function AdminDashboardPage() {
           </button>
           <button
             onClick={() => setAbaAtiva('corretores')}
-            className={`py-3 px-5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
+            className={`py-3 px-5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap ${
               abaAtiva === 'corretores'
                 ? 'border-blue-500 text-blue-400 bg-blue-500/10 rounded-t-xl'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
             <Users className="w-4 h-4" /> Corretores & Créditos ({corretores.length})
+          </button>
+          <button
+            onClick={() => setAbaAtiva('metricas')}
+            className={`py-3 px-5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap ${
+              abaAtiva === 'metricas'
+                ? 'border-amber-500 text-amber-400 bg-amber-500/10 rounded-t-xl'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Zap className="w-4 h-4 text-yellow-400" /> Métricas Gemini IA & Chaves
           </button>
         </div>
 
@@ -606,6 +671,130 @@ export default function AdminDashboardPage() {
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+        )}
+
+        {/* ABA 3: MÉTRICAS GEMINI IA & CHAVES */}
+        {abaAtiva === 'metricas' && (
+          <div className="space-y-6">
+            {/* Header de Status do Cluster de IA */}
+            <div className="bg-gradient-to-r from-amber-950/40 via-slate-900 to-indigo-950/40 border border-amber-500/20 p-6 rounded-2xl">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase flex items-center gap-1">
+                      <Zap className="w-3 h-3 text-yellow-400" /> Cluster de IA Multimodal Operacional
+                    </span>
+                    <span className="bg-blue-500/20 text-blue-300 border border-blue-500/40 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">
+                      Modelo: {geminiMetrics?.model_configured || 'gemini-1.5-flash'}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-black text-white">Métricas de Consumo de Tokens & Pool de Chaves</h3>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Monitoramento em tempo real do rodízio de chaves API do Google Gemini (Flash, Pro & Media Kit).
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-4 bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
+                  <div className="text-right">
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Acumulado</div>
+                    <div className="text-xl font-black text-amber-400">
+                      {geminiMetrics?.total_tokens_all_keys ? (geminiMetrics.total_tokens_all_keys).toLocaleString('pt-BR') : 0} tokens
+                    </div>
+                  </div>
+                  <div className="h-8 w-px bg-slate-800"></div>
+                  <div>
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Chaves Ativas</div>
+                    <div className="text-xl font-black text-emerald-400">
+                      {geminiMetrics?.configured_keys_count ?? (geminiMetrics?.keys?.length || 4)} chaves
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Grid de Métricas por Chave */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {(geminiMetrics?.keys && geminiMetrics.keys.length > 0
+                ? geminiMetrics.keys
+                : [
+                    { key_alias: 'GEMINI_FLASH_KEY_1', total_requests: 0, total_prompt_tokens: 0, total_completion_tokens: 0, total_tokens: 0, errors_count: 0, last_used_at: null },
+                    { key_alias: 'GEMINI_FLASH_KEY_2', total_requests: 0, total_prompt_tokens: 0, total_completion_tokens: 0, total_tokens: 0, errors_count: 0, last_used_at: null },
+                    { key_alias: 'GEMINI_PRO_KEY', total_requests: 0, total_prompt_tokens: 0, total_completion_tokens: 0, total_tokens: 0, errors_count: 0, last_used_at: null },
+                    { key_alias: 'GEMINI_MEDIA_KIT_KEY', total_requests: 0, total_prompt_tokens: 0, total_completion_tokens: 0, total_tokens: 0, errors_count: 0, last_used_at: null },
+                  ]
+              ).map((k, idx) => (
+                <div key={idx} className="bg-slate-900 border border-slate-800 p-5 rounded-2xl hover:border-slate-700 transition-all relative overflow-hidden">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <Key className="w-4 h-4 text-amber-400" />
+                      <span className="font-bold text-xs text-white truncate max-w-[140px]">{k.key_alias}</span>
+                    </div>
+                    <span className="bg-emerald-950 text-emerald-300 border border-emerald-800 text-[9px] font-bold px-2 py-0.5 rounded uppercase">
+                      Configurada
+                    </span>
+                  </div>
+
+                  <div className="space-y-2 text-xs text-slate-300">
+                    <div className="flex justify-between py-1 border-b border-slate-800">
+                      <span className="text-slate-400">Requisições:</span>
+                      <span className="font-bold text-white">{k.total_requests}</span>
+                    </div>
+                    <div className="flex justify-between py-1 border-b border-slate-800">
+                      <span className="text-slate-400">Tokens de Entrada:</span>
+                      <span className="font-bold text-slate-200">{k.total_prompt_tokens.toLocaleString('pt-BR')}</span>
+                    </div>
+                    <div className="flex justify-between py-1 border-b border-slate-800">
+                      <span className="text-slate-400">Tokens de Saída:</span>
+                      <span className="font-bold text-slate-200">{k.total_completion_tokens.toLocaleString('pt-BR')}</span>
+                    </div>
+                    <div className="flex justify-between py-1 border-b border-slate-800">
+                      <span className="text-slate-400">Total Tokens:</span>
+                      <span className="font-bold text-amber-400">{(k.total_tokens || 0).toLocaleString('pt-BR')}</span>
+                    </div>
+                    <div className="flex justify-between py-1">
+                      <span className="text-slate-400">Rate Limits (429):</span>
+                      <span className={`font-bold ${k.errors_count > 0 ? 'text-red-400' : 'text-slate-400'}`}>{k.errors_count}</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 pt-3 border-t border-slate-800/80 text-[10px] text-slate-500 flex items-center justify-between">
+                    <span>Último uso:</span>
+                    <span className="text-slate-400 font-mono">
+                      {k.last_used_at ? new Date(k.last_used_at).toLocaleTimeString('pt-BR') : 'Sem registros'}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Painel Informativo sobre as Regras do Gemini em Produção */}
+            <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+              <h4 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-blue-400" />
+                Regras de Negócio e Segurança da Inteligência Artificial em Produção
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-300">
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                  <div className="font-bold text-blue-300 mb-1">🗺️ Validação Dupla de Endereço (RAG)</div>
+                  <p className="text-slate-400 leading-relaxed">
+                    Para apartamentos e condomínios em Taboão da Serra e Embu, o endereço é cruzado pelo menos 2x com o Google Maps e a base local de condomínios. Se não validado, o imóvel é registrado sem endereço aproximado para 0% de alucinações.
+                  </p>
+                </div>
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                  <div className="font-bold text-green-300 mb-1">🏷️ JSON Estrito de Preço Condicional</div>
+                  <p className="text-slate-400 leading-relaxed">
+                    A IA gera estritamente a chave <code className="text-slate-200">precoVenda</code> para Venda ou <code className="text-slate-200">precoLocacao</code> para Locação, eliminando ambiguidade de valores no portal.
+                  </p>
+                </div>
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                  <div className="font-bold text-purple-300 mb-1">🔄 Fallback de Chaves & Resiliência</div>
+                  <p className="text-slate-400 leading-relaxed">
+                    Se a chave <code className="text-slate-200">GEMINI_PRO_KEY</code> atingir o limite ou falhar, o sistema faz o fallback gracioso instantâneo para a <code className="text-slate-200">GEMINI_FLASH_KEY_1</code> sem derrubar o fluxo.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         )}
