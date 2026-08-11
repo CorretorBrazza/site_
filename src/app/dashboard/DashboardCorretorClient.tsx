@@ -64,14 +64,18 @@ export default function DashboardCorretorClient({ imoveis }: DashboardCorretorCl
     router.push('/login');
   };
 
+  const totalFotosReal = (imoveis || []).reduce((acc, item) => acc + (item.fotos?.length || 0), 0);
+  const totalMegas = totalFotosReal * 2.5;
+  const espacoTexto = totalMegas >= 1024 ? `${(totalMegas / 1024).toFixed(1)} GB` : `${totalMegas.toFixed(0)} MB`;
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Faixa de Prova Social Local (Taboão da Serra) */}
+      {/* Faixa de Informação Real de Carteira */}
       <div className="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/20 rounded-xl p-3 mb-6 flex items-center justify-between text-xs text-amber-900">
         <div className="flex items-center gap-2 font-medium">
           <Flame className="w-4 h-4 text-amber-600 fill-amber-500" />
           <span>
-            <strong>Prova Social:</strong> 14 imóveis foram publicados e 3 vendidos em <strong>Taboão da Serra</strong> nesta semana usando nossa plataforma!
+            <strong>Gestão de Carteira:</strong> Você possui <strong>{imoveis.length} imóvel(is)</strong> cadastrado(s) e gerenciados em <strong>Taboão da Serra e Região</strong>.
           </span>
         </div>
         <span className="hidden md:inline-block text-[10px] font-bold uppercase tracking-wider bg-amber-200/60 px-2 py-0.5 rounded-md">
@@ -121,11 +125,10 @@ export default function DashboardCorretorClient({ imoveis }: DashboardCorretorCl
         onAbrirRecarga={() => setModalRecargaAberto(true)}
       />
 
-      {/* Banner de Gamificação da Central de Backups */}
+      {/* Banner da Central de Fotos & Backups */}
       <BannerBackupGamificacao
-        gigabytesEconomizados={4.5}
-        totalFotosBackup={imoveis.length * 5 + 15}
-        onAbrirBackupModal={() => alert('Abrindo Central de Fotos R2 do Corretor...')}
+        totalFotosBackup={totalFotosReal}
+        espacoTexto={espacoTexto}
       />
 
       {/* Tabela de Imóveis Existente */}

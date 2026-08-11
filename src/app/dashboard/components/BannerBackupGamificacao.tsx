@@ -1,18 +1,20 @@
 'use client';
 
-import { HardDrive, ShieldCheck, Download, Sparkles } from 'lucide-react';
+import { ShieldCheck, Download, Sparkles, Image as ImageIcon } from 'lucide-react';
 
 interface BannerBackupGamificacaoProps {
-  gigabytesEconomizados?: number;
-  totalFotosBackup?: number;
+  totalFotosBackup: number;
+  espacoTexto: string;
   onAbrirBackupModal?: () => void;
 }
 
 export default function BannerBackupGamificacao({
-  gigabytesEconomizados = 4.5,
-  totalFotosBackup = 28,
+  totalFotosBackup = 0,
+  espacoTexto = '0 MB',
   onAbrirBackupModal,
 }: BannerBackupGamificacaoProps) {
+  const temFotos = totalFotosBackup > 0;
+
   return (
     <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-6 text-white shadow-xl border border-indigo-900/40 relative overflow-hidden my-6">
       {/* Elementos decorativos */}
@@ -23,32 +25,48 @@ export default function BannerBackupGamificacao({
         <div className="space-y-2 max-w-2xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full text-xs font-semibold uppercase tracking-wider">
             <ShieldCheck className="w-4 h-4 text-indigo-400" />
-            Central de Backups do Corretor (Seguro de Fotos)
+            Central de Fotos R2 & Armazenamento em Nuvem
           </div>
 
           <h2 className="text-xl md:text-2xl font-bold tracking-tight text-white">
-            Você economizou <span className="text-yellow-400 font-extrabold">{gigabytesEconomizados} GB</span> de memória no seu celular hoje!
+            {temFotos ? (
+              <>
+                Sua carteira possui <span className="text-yellow-400 font-extrabold">{totalFotosBackup} fotos</span> em alta resolução ({espacoTexto} salvos na nuvem)
+              </>
+            ) : (
+              <>Sua Central de Fotos R2 está pronta para receber seu acervo</>
+            )}
           </h2>
 
           <p className="text-slate-300 text-xs md:text-sm leading-relaxed">
-            Suas <strong>{totalFotosBackup} fotos de alta resolução</strong> estão armazenadas com segurança no nosso depósito em nuvem Cloudflare R2 sem ocupar espaço no seu aparelho.
+            {temFotos ? (
+              <>
+                Suas <strong>{totalFotosBackup} fotos originais</strong> estão armazenadas com segurança no depósito em nuvem Cloudflare R2, protegendo seu acervo sem ocupar a memória interna do seu celular.
+              </>
+            ) : (
+              <>
+                Envie seus imóveis com até <strong>20 fotos por e-mail</strong>. As imagens em alta resolução ficam salvas no depósito em nuvem sem lotar a galeria do seu aparelho.
+              </>
+            )}
           </p>
         </div>
 
-        <div className="flex flex-wrap md:flex-col items-center gap-3 w-full md:w-auto">
-          <button
-            onClick={onAbrirBackupModal}
-            className="w-full md:w-auto px-5 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-md hover:shadow-indigo-500/25 transition-all text-xs flex items-center justify-center gap-2 whitespace-nowrap"
-          >
-            <Download className="w-4 h-4" />
-            Baixar Fotos em Alta Resolução
-          </button>
+        {temFotos && (
+          <div className="flex flex-wrap md:flex-col items-center gap-3 w-full md:w-auto">
+            <button
+              onClick={onAbrirBackupModal}
+              className="w-full md:w-auto px-5 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-md hover:shadow-indigo-500/25 transition-all text-xs flex items-center justify-center gap-2 whitespace-nowrap"
+            >
+              <Download className="w-4 h-4" />
+              Ver Fotos em Alta Resolução
+            </button>
 
-          <div className="text-[11px] text-slate-400 flex items-center gap-1.5 justify-center w-full">
-            <Sparkles className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
-            Vitrine Web: 5 fotos | Depósito: 25 fotos
+            <div className="text-[11px] text-slate-400 flex items-center gap-1.5 justify-center w-full">
+              <Sparkles className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+              Até 20 fotos por anúncio
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
