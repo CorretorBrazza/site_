@@ -168,6 +168,18 @@ export default function AdminDashboardPage() {
         fetch(`${API_BASE_URL}/admin/gemini-metrics`, { headers }).then((r) => r.json()).catch(() => ({})),
       ]);
 
+      // Se o token estiver expirado ou inválido, limpa localStorage e pede login limpo
+      if (
+        (resCorretores.message && resCorretores.message.includes('expirad')) ||
+        (resCorretores.error && resCorretores.error.includes('expirad')) ||
+        (resStats.message && resStats.message.includes('expirad'))
+      ) {
+        localStorage.removeItem('admin_token');
+        setAdminToken(null);
+        setErroAuth('Sessão expirada. Insira sua senha para reautenticar e carregar o Firebase.');
+        return;
+      }
+
       if (resStats.success) {
         setStats(resStats.data || resStats);
         if (resStats.gemini_metrics || resStats.data?.gemini_metrics) {
