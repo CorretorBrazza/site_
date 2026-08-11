@@ -187,6 +187,7 @@ export default async function Home() {
                 alt="Consultoria Imobiliária"
               />
             </div>
+            <div>
               <h2 className="text-3xl md:text-4xl font-serif text-primary mb-8 tracking-tight leading-snug">
                 Excelência e transparência <span className="font-serif italic font-semibold text-accent">na busca do seu imóvel</span> em Taboão da Serra.
               </h2>
