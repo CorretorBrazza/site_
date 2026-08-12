@@ -3,237 +3,217 @@
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Sparkles, Check, ArrowRight, ShieldCheck, Zap, AlertCircle, Loader2 } from 'lucide-react';
-import { registerCorretor } from '@/lib/api';
+import { Sparkles, Check, ArrowRight, ShieldCheck, AlertCircle, Loader2, Lock, Mail, User, Phone } from 'lucide-react';
+import { API_BASE_URL } from '@/lib/api';
+import Link from 'next/link';
 
 export default function CadastroPage() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
   const [telefone, setTelefone] = useState('');
-  const [plano, setPlano] = useState<'basico' | 'premium'>('basico');
+  const [creci, setCreci] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !nome) return;
+    if (!email || !nome || !senha || !telefone) {
+      setErrorMsg('Nome, e-mail, senha e WhatsApp são obrigatórios.');
+      return;
+    }
 
     setLoading(true);
     setErrorMsg('');
 
     try {
-      const res = await registerCorretor({ nome, email, telefone, plano });
-      if (res.success) {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, email, senha, telefone, creci }),
+      });
+
+      const json = await response.json();
+
+      if (json.success) {
         setSubmitted(true);
+        setSuccessMsg(json.message || 'Cadastro efetuado com sucesso! Em instantes você receberá um e-mail de boas-vindas com todas as informações.');
       } else {
-        setErrorMsg(res.error || res.message || 'Falha ao registrar cadastro na API.');
+        setErrorMsg(json.message || json.error || 'Erro ao realizar cadastro.');
       }
     } catch (err: any) {
-      setErrorMsg(err.message || 'Erro de conexão ao enviar o cadastro.');
+      setErrorMsg('Erro de conexão ao enviar o cadastro. Tente novamente.');
     } finally {
       setLoading(false);
     }
   };
-
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
       <Navbar />
 
       <main className="flex-1">
-
         {/* Hero Banner */}
-        <section className="bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900 text-white py-16 px-4">
-          <div className="max-w-4xl mx-auto text-center space-y-4">
+        <section className="bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900 text-white py-14 px-4">
+          <div className="max-w-4xl mx-auto text-center space-y-3">
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold uppercase tracking-wider">
               <Sparkles className="w-4 h-4 text-yellow-300" />
-              Recarga & Cadastro de Corretores
+              Cadastro de Novo Corretor
             </span>
             <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight">
-              Gere Media Kits Profissionais de Imóveis em Segundos com IA
+              Crie sua Conta Grátis e Ganhe 1 Crédito
             </h1>
-            <p className="text-base text-slate-300 max-w-2xl mx-auto">
-              Envie fotos e texto bruto por e-mail. Nossa inteligência artificial cuida da validação de condomínio, geocodificação e gera 6 variações de copy prontas.
+            <p className="text-sm md:text-base text-slate-300 max-w-2xl mx-auto">
+              Experimente a geração de Media Kits de imóveis com Inteligência Artificial. Cadastre-se em segundos e receba seu crédito inicial.
             </p>
           </div>
         </section>
 
-        {/* Form & Planos */}
-        <section className="max-w-5xl mx-auto px-4 py-12 -mt-8">
+        {/* Formulário Exclusivo de Cadastro */}
+        <section className="max-w-xl mx-auto px-4 py-12 -mt-8">
           {submitted ? (
-            <div className="bg-white border border-emerald-200 rounded-3xl p-8 text-center shadow-xl space-y-4 max-w-xl mx-auto">
+            <div className="bg-white border border-emerald-200 rounded-3xl p-8 text-center shadow-xl space-y-4">
               <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto text-emerald-600">
                 <Check className="w-10 h-10" />
               </div>
-              <h2 className="text-2xl font-extrabold text-slate-900">Solicitação Recebida com Sucesso!</h2>
-              <p className="text-sm text-slate-600">
-                Obrigado, <strong>{nome}</strong>! Sua solicitação de pacote (<strong>{plano === 'premium' ? '30 Créditos Premium' : '10 Créditos Básico'}</strong>) foi registrada para o e-mail <strong>{email}</strong>.
+              <h2 className="text-2xl font-extrabold text-slate-900">Cadastro Concluído!</h2>
+              <p className="text-sm text-slate-700 leading-relaxed font-medium">
+                {successMsg}
               </p>
-              <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-2xl text-xs text-left space-y-1">
-                <strong className="block font-bold">🔒 Esteira Financeira:</strong>
-                <span>Os créditos serão liberados automaticamente em sua conta assim que a confirmação do pagamento for concluída.</span>
+              <div className="bg-blue-50 border border-blue-100 text-blue-900 p-4 rounded-2xl text-xs text-left space-y-1">
+                <strong className="block font-bold">🎁 Seu Bônus:</strong>
+                <span>Você ganhou <strong>1 Crédito Grátis</strong> para publicar seu primeiro imóvel por 90 dias com IA.</span>
               </div>
-              <div className="pt-2">
-                <a
-                  href="/"
-                  className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-md"
+              <div className="pt-4">
+                <Link
+                  href="/login"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-extrabold transition-all shadow-md w-full"
                 >
-                  Voltar ao Portal Imóveis Taboão
-                </a>
+                  <span>Acessar Minha Conta / Login</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-
-              {/* Escolha de Planos */}
-              <div className="lg:col-span-7 space-y-6">
-                <h2 className="text-xl font-extrabold text-slate-900 flex items-center gap-2">
-                  <Zap className="w-5 h-5 text-blue-600" />
-                  <span>Escolha seu Pacote de Créditos</span>
-                </h2>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-                  {/* Plano Básico */}
-                  <div
-                    onClick={() => setPlano('basico')}
-                    className={`cursor-pointer border-2 rounded-2xl p-5 transition-all bg-white relative ${
-                      plano === 'basico'
-                        ? 'border-blue-600 ring-2 ring-blue-500/20 shadow-md'
-                        : 'border-slate-200 hover:border-slate-300'
-                    }`}
-                  >
-                    {plano === 'basico' && (
-                      <span className="absolute -top-3 right-4 bg-blue-600 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full">
-                        SELECIONADO
-                      </span>
-                    )}
-                    <h3 className="text-base font-extrabold text-slate-900">Pacote Básico</h3>
-                    <div className="text-2xl font-black text-blue-600 my-1">
-                      10 Créditos
-                    </div>
-                    <p className="text-xs text-slate-500 mb-4">Ideal para corretores autônomos.</p>
-                    <ul className="text-xs text-slate-600 space-y-2">
-                      <li className="flex items-center gap-1.5"><Check className="w-4 h-4 text-emerald-500" /> 10 Imóveis com Media Kit</li>
-                      <li className="flex items-center gap-1.5"><Check className="w-4 h-4 text-emerald-500" /> RAG & Validação de Condomínios</li>
-                      <li className="flex items-center gap-1.5"><Check className="w-4 h-4 text-emerald-500" /> Otimização Cloudinary</li>
-                    </ul>
-                  </div>
-
-                  {/* Plano Premium */}
-                  <div
-                    onClick={() => setPlano('premium')}
-                    className={`cursor-pointer border-2 rounded-2xl p-5 transition-all bg-white relative ${
-                      plano === 'premium'
-                        ? 'border-blue-600 ring-2 ring-blue-500/20 shadow-md'
-                        : 'border-slate-200 hover:border-slate-300'
-                    }`}
-                  >
-                    {plano === 'premium' && (
-                      <span className="absolute -top-3 right-4 bg-blue-600 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full">
-                        SELECIONADO
-                      </span>
-                    )}
-                    <h3 className="text-base font-extrabold text-slate-900">Pacote Premium</h3>
-                    <div className="text-2xl font-black text-blue-600 my-1">
-                      30 Créditos
-                    </div>
-                    <p className="text-xs text-slate-500 mb-4">Para imobiliárias e corretores de alto volume.</p>
-                    <ul className="text-xs text-slate-600 space-y-2">
-                      <li className="flex items-center gap-1.5"><Check className="w-4 h-4 text-emerald-500" /> 30 Imóveis com Media Kit</li>
-                      <li className="flex items-center gap-1.5"><Check className="w-4 h-4 text-emerald-500" /> Suporte Prioritário</li>
-                      <li className="flex items-center gap-1.5"><Check className="w-4 h-4 text-emerald-500" /> Publicação Automática</li>
-                    </ul>
-                  </div>
-
-                </div>
-
-                {/* Diferenciais */}
-                <div className="bg-slate-100 rounded-2xl p-5 space-y-3 text-xs text-slate-700">
-                  <div className="flex items-center gap-2 font-bold text-slate-900">
-                    <ShieldCheck className="w-4 h-4 text-blue-600" />
-                    <span>Como funciona o consumo de créditos?</span>
-                  </div>
-                  <p>
-                    Um crédito só é debitado quando você <strong>revisa e aprova</strong> o anúncio gerado. Se você rejeitar ou não aprovar, nada é cobrado.
-                  </p>
-                </div>
+            <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-xl space-y-6">
+              <div className="border-b border-slate-100 pb-4">
+                <h2 className="text-xl font-extrabold text-slate-900">Dados do Novo Corretor</h2>
+                <p className="text-xs text-slate-500 mt-1">Preencha seus dados para ativar sua conta no portal.</p>
               </div>
 
-              {/* Form de Cadastro */}
-              <div className="lg:col-span-5 bg-white border border-slate-200 rounded-3xl p-6 shadow-xl space-y-4">
-                <h3 className="text-lg font-extrabold text-slate-900">
-                  Cadastrar ou Solicitar Recarga
-                </h3>
+              {errorMsg && (
+                <div className="bg-red-50 border border-red-200 text-red-700 p-3.5 rounded-xl text-xs flex items-center gap-2 font-medium">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
+                  <span>{errorMsg}</span>
+                </div>
+              )}
 
-                <form onSubmit={handleSubmit} className="space-y-3">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">Nome Completo</label>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Nome Completo *</label>
+                  <div className="relative">
+                    <User className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                     <input
                       type="text"
                       required
                       placeholder="Ex: João Brazza"
                       value={nome}
                       onChange={(e) => setNome(e.target.value)}
-                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      className="w-full px-3.5 py-2.5 pl-10 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     />
                   </div>
+                </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">E-mail Cadastrado</label>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">E-mail / Login *</label>
+                  <div className="relative">
+                    <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                     <input
                       type="email"
                       required
-                      placeholder="corretor@gmail.com"
+                      placeholder="corretor@seuemail.com.br"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      className="w-full px-3.5 py-2.5 pl-10 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Senha de Acesso *</label>
+                    <div className="relative">
+                      <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="password"
+                        required
+                        placeholder="••••••••"
+                        value={senha}
+                        onChange={(e) => setSenha(e.target.value)}
+                        className="w-full px-3.5 py-2.5 pl-10 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      />
+                    </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">WhatsApp</label>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">WhatsApp *</label>
+                    <div className="relative">
+                      <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="tel"
+                        required
+                        placeholder="(11) 99999-9999"
+                        value={telefone}
+                        onChange={(e) => setTelefone(e.target.value)}
+                        className="w-full px-3.5 py-2.5 pl-10 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">CRECI (Opcional)</label>
+                  <div className="relative">
+                    <ShieldCheck className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                     <input
-                      type="tel"
-                      placeholder="(11) 99999-9999"
-                      value={telefone}
-                      onChange={(e) => setTelefone(e.target.value)}
-                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      type="text"
+                      placeholder="Ex: 12345-F"
+                      value={creci}
+                      onChange={(e) => setCreci(e.target.value)}
+                      className="w-full px-3.5 py-2.5 pl-10 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     />
                   </div>
+                </div>
 
-                  {errorMsg && (
-                    <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-xl text-xs flex items-center gap-2">
-                      <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
-                      <span>{errorMsg}</span>
-                    </div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl text-xs font-extrabold transition-all shadow-md mt-2"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Cadastrando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Criar Conta e Ganhar 1 Crédito Grátis</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </>
                   )}
+                </button>
+              </form>
 
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl text-xs font-extrabold transition-all shadow-md mt-2"
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>Enviando cadastro...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>Confirmar Cadastro e Recarga</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </>
-                    )}
-                  </button>
-                </form>
+              <div className="text-center pt-2 border-t border-slate-100">
+                <p className="text-xs text-slate-500">
+                  Já possui conta? <Link href="/login" className="text-blue-600 font-bold hover:underline">Faça login aqui</Link>
+                </p>
               </div>
-
             </div>
           )}
         </section>
-
       </main>
 
       <Footer />

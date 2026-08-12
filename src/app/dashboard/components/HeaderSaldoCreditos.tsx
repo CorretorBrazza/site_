@@ -42,7 +42,7 @@ export default function HeaderSaldoCreditos({
         className="w-full sm:w-auto px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all text-xs flex items-center justify-center gap-2"
       >
         <PlusCircle className="w-4 h-4" />
-        Recarregar Créditos (a partir de R$ 9,99)
+        Recarregar Créditos (a partir de R$ 12,90)
       </button>
     </div>
   );

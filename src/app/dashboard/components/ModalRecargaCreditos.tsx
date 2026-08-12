@@ -149,8 +149,8 @@ export default function ModalRecargaCreditos({ isOpen, onClose, userEmail = 'cor
                 >
                   <div className="text-xs font-bold text-gray-500 uppercase">Start</div>
                   <div className="text-xl font-bold text-gray-900 mt-1">1 Crédito</div>
-                  <div className="text-2xl font-black text-blue-600 mt-2">R$ 9,99</div>
-                  <p className="text-[11px] text-gray-500 mt-2">Ideal para testar 1 anúncio</p>
+                  <div className="text-2xl font-black text-blue-600 mt-2">R$ 12,90</div>
+                  <p className="text-[11px] text-gray-500 mt-2">R$ 12,90 / crédito</p>
                 </div>
 
                 {/* Pacote PRO (Popular) */}
@@ -166,15 +166,15 @@ export default function ModalRecargaCreditos({ isOpen, onClose, userEmail = 'cor
                     Mais Popular
                   </span>
                   <div className="text-xs font-bold text-blue-600 uppercase">Pro</div>
-                  <div className="text-xl font-bold text-gray-900 mt-1">5 Créditos</div>
-                  <div className="text-2xl font-black text-blue-600 mt-2">R$ 39,90</div>
+                  <div className="text-xl font-bold text-gray-900 mt-1">3 Créditos</div>
+                  <div className="text-2xl font-black text-blue-600 mt-2">R$ 33,90</div>
                   <div className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-md inline-block mt-1">
-                    R$ 7,98 / crédito
+                    12% OFF • R$ 11,30 / crédito
                   </div>
-                  <p className="text-[11px] text-gray-500 mt-2">Economize R$ 10,00</p>
+                  <p className="text-[11px] text-gray-500 mt-2">Economize R$ 4,80</p>
                 </div>
 
-                {/* Pacote ELITE */}
+                {/* Pacote ELITE (Melhor Custo-Benefício) */}
                 <div
                   onClick={() => setPacoteSelecionado('elite')}
                   className={`cursor-pointer p-4 rounded-xl border-2 transition-all relative ${
@@ -184,15 +184,15 @@ export default function ModalRecargaCreditos({ isOpen, onClose, userEmail = 'cor
                   }`}
                 >
                   <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-xs">
-                    Melhor Valor
+                    Melhor Custo-Benefício
                   </span>
                   <div className="text-xs font-bold text-amber-600 uppercase">Elite</div>
                   <div className="text-xl font-bold text-gray-900 mt-1">10 Créditos</div>
-                  <div className="text-2xl font-black text-blue-600 mt-2">R$ 69,90</div>
+                  <div className="text-2xl font-black text-blue-600 mt-2">R$ 89,90</div>
                   <div className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-md inline-block mt-1">
-                    R$ 6,99 / crédito
+                    30% OFF • R$ 8,99 / crédito
                   </div>
-                  <p className="text-[11px] text-gray-500 mt-2">Máximo rendimento</p>
+                  <p className="text-[11px] text-gray-500 mt-2">Economize R$ 39,10</p>
                 </div>
               </div>
 
