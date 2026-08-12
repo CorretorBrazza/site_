@@ -1,6 +1,6 @@
 import { Imovel } from '@/types/imovel';
 import Link from 'next/link';
-import { BedDouble, ShowerHead, Car, Maximize } from 'lucide-react';
+import { BedDouble, ShowerHead, Car, Maximize, MapPin } from 'lucide-react';
 
 interface CardImovelProps {
   imovel: Imovel;
@@ -18,59 +18,66 @@ export default function CardImovel({ imovel }: CardImovelProps) {
 
   return (
     <Link href={`/imovel/${imovel.id}`} className="block group">
-      <div className="bg-white rounded-2xl shadow-sm hover:shadow-md hover:shadow-black/5 overflow-hidden transition-all duration-500 border border-black/5 h-full flex flex-col">
-        <div className="relative h-64 w-full overflow-hidden">
+      <div className="bg-slate-900 rounded-3xl overflow-hidden transition-all duration-300 border border-slate-800/90 hover:border-amber-500/50 shadow-xl hover:shadow-2xl hover:shadow-amber-500/10 h-full flex flex-col">
+        
+        {/* Imagem com Overlay de Gradiente */}
+        <div className="relative h-60 w-full overflow-hidden bg-slate-950">
           <img
-            src={imovel.fotos[0]}
+            src={imovel.fotos?.[0] || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=800'}
             alt={imovel.titulo}
-            className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700"
+            className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
           />
+          
           <div className="absolute top-4 left-4 flex gap-2">
-            <div className="bg-primary/90 backdrop-blur-sm text-white text-[10px] uppercase tracking-wider font-semibold px-3 py-1.5 rounded-lg shadow-sm">
+            <div className="bg-slate-950/90 backdrop-blur-sm text-white text-[10px] uppercase tracking-wider font-extrabold px-3 py-1.5 rounded-xl border border-slate-800 shadow-md">
               {imovel.transacao}
             </div>
             {imovel.destaque && (
-              <div className="bg-accent text-white text-[10px] uppercase tracking-wider font-semibold px-3 py-1.5 rounded-lg shadow-sm">
+              <div className="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 text-[10px] uppercase tracking-wider font-black px-3 py-1.5 rounded-xl shadow-md">
                 Destaque
               </div>
             )}
           </div>
-        </div>
 
-        <div className="p-5 flex flex-col flex-grow">
-          <div className="mb-2">
-            <p className="text-xl font-bold text-primary leading-none">
+          <div className="absolute bottom-3 left-4 right-4 flex justify-between items-end">
+            <div className="bg-slate-950/95 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-amber-500/40 text-amber-400 font-black text-lg shadow-lg">
               {preco ? formatCurrency(preco) : 'Consulte'}
               {imovel.transacao === 'Locação' && <span className="text-xs font-semibold text-slate-400"> /mês</span>}
-            </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Informações do Imóvel */}
+        <div className="p-5 flex flex-col flex-grow space-y-3">
+          
+          <div className="flex items-center gap-1.5 text-slate-400 text-xs font-semibold">
+            <MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+            <span className="truncate">{imovel.endereco?.bairro || 'Taboão da Serra'}, Taboão da Serra e imediações</span>
           </div>
 
-          <h3 className="font-serif text-lg font-semibold text-primary line-clamp-2 mb-2 group-hover:text-accent transition-colors leading-tight">
+          <h3 className="text-base font-extrabold text-white line-clamp-2 group-hover:text-amber-400 transition-colors leading-tight">
             {imovel.titulo}
           </h3>
 
-          <p className="text-slate-400 text-xs font-medium mb-6">
-            {imovel.endereco.bairro}, {imovel.endereco.cidade}
-          </p>
-
-          <div className="mt-auto grid grid-cols-4 gap-2 text-slate-600 border-t border-black/5 pt-4">
-            <div className="flex flex-col items-center gap-1" title="Quartos">
-              <BedDouble size={18} className="text-accent" />
-              <span className="text-[10px] font-semibold uppercase text-slate-400">{imovel.caracteristicas.quartos} Qts</span>
+          <div className="mt-auto grid grid-cols-4 gap-2 text-slate-300 border-t border-slate-800/80 pt-3.5">
+            <div className="flex flex-col items-center gap-0.5" title="Quartos">
+              <BedDouble size={16} className="text-amber-500" />
+              <span className="text-[11px] font-bold text-slate-300">{imovel.caracteristicas?.quartos || 0} Qts</span>
             </div>
-            <div className="flex flex-col items-center gap-1" title="Banheiros">
-              <ShowerHead size={18} className="text-accent" />
-              <span className="text-[10px] font-semibold uppercase text-slate-400">{imovel.caracteristicas.banheiros} Ban</span>
+            <div className="flex flex-col items-center gap-0.5" title="Banheiros">
+              <ShowerHead size={16} className="text-amber-500" />
+              <span className="text-[11px] font-bold text-slate-300">{imovel.caracteristicas?.banheiros || 0} Ban</span>
             </div>
-            <div className="flex flex-col items-center gap-1" title="Vagas">
-              <Car size={18} className="text-accent" />
-              <span className="text-[10px] font-semibold uppercase text-slate-400">{imovel.caracteristicas.vagas} Vag</span>
+            <div className="flex flex-col items-center gap-0.5" title="Vagas">
+              <Car size={16} className="text-amber-500" />
+              <span className="text-[11px] font-bold text-slate-300">{imovel.caracteristicas?.vagas || 0} Vag</span>
             </div>
-            <div className="flex flex-col items-center gap-1" title="Área Útil">
-              <Maximize size={18} className="text-accent" />
-              <span className="text-[10px] font-semibold uppercase text-slate-400">{imovel.caracteristicas.areaUtil}m²</span>
+            <div className="flex flex-col items-center gap-0.5" title="Área Útil">
+              <Maximize size={16} className="text-amber-500" />
+              <span className="text-[11px] font-bold text-slate-300">{imovel.caracteristicas?.areaUtil || 0}m²</span>
             </div>
           </div>
+
         </div>
       </div>
     </Link>

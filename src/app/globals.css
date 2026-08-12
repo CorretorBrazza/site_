@@ -1,29 +1,31 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #0f172a;
-  --color-primary-light: #1e293b;
-  --color-accent: #bfa15f;
-  --color-accent-light: #dfcbb5;
-  --color-accent-hover: #ab8e4f;
-  --color-bg-warm: #faf9f6;
+  --color-primary: #0b132b;
+  --color-primary-dark: #070b19;
+  --color-primary-light: #1c2541;
+  --color-accent: #d97706;
+  --color-accent-light: #f59e0b;
+  --color-accent-hover: #b45309;
+  --color-gold: #eab308;
+  --color-bg-dark: #0f172a;
   --font-sans: var(--font-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-serif: var(--font-serif), Georgia, serif;
 }
 
 :root {
-  --background: #faf9f6;
-  --foreground: #0f172a;
+  --background: #0b132b;
+  --foreground: #f8fafc;
 }
 
 body {
-  background-color: var(--color-bg-warm);
-  color: var(--color-primary);
+  background-color: #0b132b;
+  color: #f8fafc;
   font-family: var(--font-sans);
   overflow-x: hidden;
 }
 
 /* Transições padrão suaves */
-a, button, input, textarea {
-  transition: all 0.3s ease;
+a, button, input, textarea, select {
+  transition: all 0.2s ease-in-out;
 }
