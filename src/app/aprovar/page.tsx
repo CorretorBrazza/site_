@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import PhotoReorder, { PhotoItem } from '@/components/PhotoReorder';
 import MediaKitDisplay from '@/components/MediaKitDisplay';
 import {
@@ -16,16 +14,15 @@ import {
 } from '@/lib/api';
 import {
   CheckCircle2,
-  XCircle,
   AlertTriangle,
   Loader2,
   Sparkles,
   Edit3,
   Image as ImageIcon,
   FileText,
-  DollarSign,
   Save,
-  Check,
+  MapPin,
+  Building2,
   Send,
 } from 'lucide-react';
 
@@ -190,7 +187,6 @@ function AprovarContent() {
     }
   };
 
-
   // Ação: Rejeitar
   const handleReject = async () => {
     if (!adData) return;
@@ -211,41 +207,33 @@ function AprovarContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
-        <Navbar />
-        <main className="flex-1 flex items-center justify-center p-6">
-          <div className="text-center space-y-3">
-            <Loader2 className="w-10 h-10 text-blue-600 animate-spin mx-auto" />
-            <p className="text-sm font-medium text-slate-600">Validando token e carregando anúncio...</p>
-          </div>
-        </main>
-        <Footer />
+      <div className="min-h-screen bg-[#0b132b] text-slate-100 flex flex-col justify-center items-center p-6">
+        <div className="text-center space-y-4">
+          <Loader2 className="w-12 h-12 text-amber-500 animate-spin mx-auto" />
+          <p className="text-sm font-bold text-slate-300">Validando token e gerando prévia em Taboão da Serra e imediações...</p>
+        </div>
       </div>
     );
   }
 
   if (errorMsg) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
-        <Navbar />
-        <main className="flex-1 max-w-xl mx-auto w-full p-6 flex items-center justify-center">
-          <div className="bg-white border border-red-200 rounded-3xl p-8 text-center shadow-lg space-y-4">
-            <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto text-red-600">
-              <AlertTriangle className="w-8 h-8" />
-            </div>
-            <h2 className="text-xl font-extrabold text-slate-900">Acesso Não Autorizado</h2>
-            <p className="text-sm text-slate-600">{errorMsg}</p>
-            <div className="pt-2">
-              <a
-                href="/"
-                className="inline-flex items-center justify-center px-5 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition-colors"
-              >
-                Voltar à Página Inicial
-              </a>
-            </div>
+      <div className="min-h-screen bg-[#0b132b] text-slate-100 flex items-center justify-center p-6">
+        <div className="bg-slate-900 border border-red-500/40 rounded-3xl p-8 text-center shadow-2xl space-y-4 max-w-md">
+          <div className="w-14 h-14 bg-red-950/80 rounded-2xl flex items-center justify-center mx-auto text-red-400 border border-red-800">
+            <AlertTriangle className="w-8 h-8" />
           </div>
-        </main>
-        <Footer />
+          <h2 className="text-xl font-black text-white">Acesso Não Autorizado</h2>
+          <p className="text-xs text-slate-300 leading-relaxed">{errorMsg}</p>
+          <div className="pt-2">
+            <a
+              href="/"
+              className="inline-flex items-center justify-center px-6 py-3 bg-amber-500 text-slate-950 rounded-xl text-xs font-black uppercase tracking-wider shadow-md"
+            >
+              Voltar ao Portal
+            </a>
+          </div>
+        </div>
       </div>
     );
   }
@@ -254,60 +242,58 @@ function AprovarContent() {
   const mediaKit = adData?.media_kit || {};
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
-      <Navbar />
-
-      <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-8 space-y-6">
+    <div className="min-h-screen bg-[#0b132b] text-slate-100 py-8 px-4">
+      <main className="max-w-5xl mx-auto space-y-6">
 
         {/* Banner de Status se Aprovado */}
         {(approvalStatus === 'APPROVED' || approvalStatus === 'DELIVERED') && (
-          <div className="bg-emerald-600 text-white rounded-2xl p-6 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="bg-gradient-to-r from-emerald-900 via-emerald-950 to-slate-950 border border-emerald-500/40 text-white rounded-3xl p-6 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <CheckCircle2 className="w-10 h-10 text-emerald-200 shrink-0" />
+              <CheckCircle2 className="w-10 h-10 text-emerald-400 shrink-0" />
               <div>
-                <h3 className="text-lg font-extrabold">Anúncio Aprovado com Sucesso!</h3>
-                <p className="text-xs text-emerald-100 mt-0.5">
-                  1 crédito foi debitado do seu saldo. O Media Kit pronto foi entregue no seu e-mail.
+                <h3 className="text-lg font-black text-white">Anúncio Aprovado com Sucesso!</h3>
+                <p className="text-xs text-emerald-200 mt-0.5">
+                  1 crédito debitado do seu saldo. O Media Kit pronto foi entregue no seu e-mail.
                 </p>
               </div>
             </div>
             <a
-              href={`/imovel?id=${adData.referencia.toLowerCase()}`}
-              className="px-4 py-2 bg-white text-emerald-800 rounded-xl text-xs font-extrabold hover:bg-emerald-50 transition-colors shrink-0"
+              href={`/imovel/${adData.referencia.toLowerCase()}`}
+              className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl text-xs font-black uppercase tracking-wider transition-colors shrink-0 shadow-md"
             >
               Ver Imóvel no Site
             </a>
           </div>
         )}
 
-        {/* Header do Anúncio */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="bg-blue-100 text-blue-800 text-xs font-extrabold px-2.5 py-0.5 rounded-full uppercase">
-                Ref: {adData.referencia}
+        {/* Header do Anúncio em Estilo Dark Luxury */}
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-black px-3 py-1 rounded-xl uppercase">
+                REF: {adData.referencia}
               </span>
-              <span className="text-xs text-slate-500 font-medium">
+              <span className="text-xs text-slate-400 font-semibold">
                 Corretor: {adData.corretor_email}
               </span>
             </div>
-            <h1 className="text-xl font-extrabold text-slate-900">
+            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
               {titulo || 'Anúncio de Imóvel'}
             </h1>
-            <p className="text-xs text-slate-500 mt-1">
-              {refinados.endereco?.rua ? `${refinados.endereco.rua}, ` : ''}
-              {refinados.endereco?.bairro || 'Taboão da Serra'} - SP
-            </p>
+            <div className="flex items-center gap-1.5 text-xs text-slate-400">
+              <MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+              <span>{refinados.endereco?.bairro || 'Taboão da Serra'}, Taboão da Serra e imediações - SP</span>
+            </div>
           </div>
 
           <div className="flex items-center gap-2">
             <span
-              className={`text-xs font-extrabold px-3 py-1 rounded-full uppercase ${
+              className={`text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-wider ${
                 approvalStatus === 'APPROVED' || approvalStatus === 'DELIVERED'
-                  ? 'bg-emerald-100 text-emerald-800'
+                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                   : approvalStatus === 'REJEITADO'
-                  ? 'bg-red-100 text-red-800'
-                  : 'bg-amber-100 text-amber-800'
+                  ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                  : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
               }`}
             >
               {approvalStatus === 'APPROVED' || approvalStatus === 'DELIVERED' ? 'Aprovado & Publicado' : approvalStatus === 'REJEITADO' ? 'Rejeitado' : 'Pendente de Aprovação'}
@@ -316,13 +302,13 @@ function AprovarContent() {
         </div>
 
         {/* Navegação por Abas */}
-        <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
+        <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
           <button
             onClick={() => setActiveTab('preview')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all ${
               activeTab === 'preview'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                ? 'bg-amber-500 text-slate-950 shadow-lg'
+                : 'bg-slate-900 text-slate-300 border border-slate-800 hover:text-white'
             }`}
           >
             <Edit3 className="w-4 h-4" />
@@ -331,10 +317,10 @@ function AprovarContent() {
 
           <button
             onClick={() => setActiveTab('fotos')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all ${
               activeTab === 'fotos'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                ? 'bg-amber-500 text-slate-950 shadow-lg'
+                : 'bg-slate-900 text-slate-300 border border-slate-800 hover:text-white'
             }`}
           >
             <ImageIcon className="w-4 h-4" />
@@ -343,49 +329,49 @@ function AprovarContent() {
 
           <button
             onClick={() => setActiveTab('mediakit')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all ${
               activeTab === 'mediakit'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                ? 'bg-amber-500 text-slate-950 shadow-lg'
+                : 'bg-slate-900 text-slate-300 border border-slate-800 hover:text-white'
             }`}
           >
-            <Sparkles className="w-4 h-4 text-yellow-300" />
+            <Sparkles className="w-4 h-4 text-amber-300" />
             <span>3. Media Kit Gerado</span>
           </button>
         </div>
 
         {/* Conteúdo Aba 1: Preview & Edições */}
         {activeTab === 'preview' && (
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <FileText className="w-5 h-5 text-blue-600" />
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+              <h3 className="text-base font-extrabold text-white flex items-center gap-2">
+                <FileText className="w-5 h-5 text-amber-500" />
                 <span>Editar Dados do Imóvel</span>
               </h3>
               {feedbackMsg && (
-                <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-lg">
+                <span className="text-xs font-bold text-emerald-400 bg-emerald-950/80 px-3 py-1 rounded-xl border border-emerald-800">
                   {feedbackMsg}
                 </span>
               )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
               <div className="md:col-span-2 lg:col-span-4">
-                <label className="block text-xs font-bold text-slate-700 mb-1">Título do Anúncio</label>
+                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Título do Anúncio</label>
                 <input
                   type="text"
                   value={titulo}
                   onChange={(e) => setTitulo(e.target.value)}
-                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Tipo de Imóvel</label>
+                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Tipo de Imóvel</label>
                 <select
                   value={tipoImovel}
                   onChange={(e) => setTipoImovel(e.target.value)}
-                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
                 >
                   <option value="Apartamento">Apartamento</option>
                   <option value="Casa">Casa</option>
@@ -398,11 +384,11 @@ function AprovarContent() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Finalidade / Negócio</label>
+                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Finalidade / Negócio</label>
                 <select
                   value={finalidade}
                   onChange={(e) => setFinalidade(e.target.value)}
-                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
                 >
                   <option value="Venda">Venda</option>
                   <option value="Locação">Locação</option>
@@ -411,123 +397,122 @@ function AprovarContent() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Preço de Venda (R$)</label>
+                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Preço de Venda (R$)</label>
                 <input
                   type="number"
                   value={precoVenda}
                   onChange={(e) => setPrecoVenda(e.target.value ? Number(e.target.value) : '')}
                   placeholder="Ex: 320000"
-                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Preço de Locação (R$)</label>
+                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Preço de Locação (R$)</label>
                 <input
                   type="number"
                   value={precoLocacao}
                   onChange={(e) => setPrecoLocacao(e.target.value ? Number(e.target.value) : '')}
                   placeholder="Ex: 2200"
-                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Condomínio (R$)</label>
+                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Condomínio (R$)</label>
                 <input
                   type="number"
                   value={condominio}
                   onChange={(e) => setCondominio(e.target.value ? Number(e.target.value) : '')}
                   placeholder="Ex: 450"
-                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">IPTU Mensal/Anual (R$)</label>
+                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">IPTU Mensal/Anual (R$)</label>
                 <input
                   type="number"
                   value={iptu}
                   onChange={(e) => setIptu(e.target.value ? Number(e.target.value) : '')}
                   placeholder="Ex: 120"
-                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Área Útil (m²)</label>
+                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Área Útil (m²)</label>
                 <input
                   type="number"
                   value={areaUtil}
                   onChange={(e) => setAreaUtil(e.target.value ? Number(e.target.value) : '')}
                   placeholder="Ex: 68"
-                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Bairro</label>
+                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Bairro em Taboão da Serra e imediações</label>
                 <input
                   type="text"
                   value={bairro}
                   onChange={(e) => setBairro(e.target.value)}
                   placeholder="Ex: Parque das Cigarras"
-                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
-              {/* Características Quantitativas */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">🛏️ Quartos</label>
+                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">🛏️ Quartos</label>
                 <input
                   type="number"
                   value={quartos}
                   onChange={(e) => setQuartos(e.target.value ? Number(e.target.value) : '')}
                   placeholder="Ex: 2"
-                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">🚿 Suítes</label>
+                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">🚿 Suítes</label>
                 <input
                   type="number"
                   value={suites}
                   onChange={(e) => setSuites(e.target.value ? Number(e.target.value) : '')}
                   placeholder="Ex: 1"
-                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">🚽 Banheiros Totais</label>
+                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">🚽 Banheiros Totais</label>
                 <input
                   type="number"
                   value={banheiros}
                   onChange={(e) => setBanheiros(e.target.value ? Number(e.target.value) : '')}
                   placeholder="Ex: 2"
-                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">🚗 Vagas de Garagem</label>
+                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">🚗 Vagas de Garagem</label>
                 <input
                   type="number"
                   value={vagas}
                   onChange={(e) => setVagas(e.target.value ? Number(e.target.value) : '')}
                   placeholder="Ex: 1"
-                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div className="md:col-span-2 lg:col-span-4">
-                <label className="block text-xs font-bold text-slate-700 mb-1">Descrição Comercial</label>
+                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Descrição Comercial</label>
                 <textarea
                   rows={6}
                   value={descricao}
                   onChange={(e) => setDescricao(e.target.value)}
-                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500 resize-none"
                 />
               </div>
             </div>
@@ -537,9 +522,9 @@ function AprovarContent() {
                 type="button"
                 onClick={handleSaveEdits}
                 disabled={isSubmitting}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-sm"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition-all shadow-md"
               >
-                {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 text-amber-500" />}
                 <span>Salvar Edições</span>
               </button>
             </div>
@@ -562,16 +547,16 @@ function AprovarContent() {
 
         {/* Sticky Actions Footer se pendente */}
         {approvalStatus !== 'APPROVED' && approvalStatus !== 'DELIVERED' && (
-          <div className="sticky bottom-4 bg-white border border-slate-200 rounded-2xl p-4 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-3 z-30">
-            <div className="text-xs text-slate-600">
-              Ao aprovar, <strong>1 crédito</strong> será debitado do seu saldo e o kit final será entregue.
+          <div className="sticky bottom-4 bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-5 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-3 z-30">
+            <div className="text-xs text-slate-300">
+              Ao aprovar, <strong>1 crédito</strong> será debitado do seu saldo e o kit final será publicado em Taboão da Serra e imediações.
             </div>
 
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <button
                 onClick={handleReject}
                 disabled={isSubmitting}
-                className="flex-1 sm:flex-none px-4 py-2.5 border border-red-200 hover:bg-red-50 text-red-700 rounded-xl text-xs font-bold transition-colors"
+                className="flex-1 sm:flex-none px-5 py-3 border border-red-500/40 bg-red-950/40 hover:bg-red-950 text-red-300 rounded-xl text-xs font-bold transition-colors"
               >
                 Rejeitar Anúncio
               </button>
@@ -579,25 +564,23 @@ function AprovarContent() {
               <button
                 onClick={handleApprove}
                 disabled={isSubmitting}
-                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl text-xs font-extrabold transition-all shadow-md"
+                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-slate-950 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-xl"
               >
                 {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-                <span>Aprovar & Liberar Anúncio</span>
+                <span>Aprovar & Publicar Anúncio</span>
               </button>
             </div>
           </div>
         )}
 
       </main>
-
-      <Footer />
     </div>
   );
 }
 
 export default function AprovarPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-xs text-slate-500">Carregando tela de aprovação...</div>}>
+    <Suspense fallback={<div className="p-8 text-center text-xs text-slate-400">Carregando tela de aprovação...</div>}>
       <AprovarContent />
     </Suspense>
   );
