@@ -3,6 +3,7 @@ import { Building2, Search, Sparkles, MapPin, CheckCircle2, ArrowRight, Home as 
 import { getImoveis } from '@/app/actions/imovel-server-actions';
 import CardImovel from '@/components/CardImovel';
 import { processarEOrdenarImoveis } from '@/utils/imovelSorting';
+import HomeLiveSection from '@/components/HomeLiveSection';
 
 export default async function Home() {
   const allImoveis = await getImoveis();
@@ -180,28 +181,7 @@ export default async function Home() {
             </Link>
           </div>
 
-          {destaques.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {destaques.map((imovel) => (
-                <CardImovel key={imovel.id} imovel={imovel} />
-              ))}
-            </div>
-          ) : (
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-10 text-center space-y-4 max-w-xl mx-auto">
-              <Building2 className="w-12 h-12 text-amber-500 mx-auto opacity-80" />
-              <h3 className="text-lg font-bold text-white">Nenhum imóvel listado no momento</h3>
-              <p className="text-xs text-slate-400">
-                Seja o primeiro corretor a publicar um imóvel em Taboão da Serra e imediações com Inteligência Artificial!
-              </p>
-              <Link
-                href="/cadastro"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-amber-500 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider shadow-md"
-              >
-                <span>Anunciar Imóvel Agora</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          )}
+          <HomeLiveSection initialImoveis={allImoveis} />
         </div>
       </section>
 

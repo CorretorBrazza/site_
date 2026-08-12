@@ -7,19 +7,21 @@ import { Building2, Filter, MapPin } from 'lucide-react';
 import Link from 'next/link';
 
 import { processarEOrdenarImoveis } from '@/utils/imovelSorting';
+import { useLiveImoveis } from '@/hooks/useLiveImoveis';
 
 interface VendaClientProps {
   allImoveis: Imovel[];
 }
 
 export default function VendaClient({ allImoveis }: VendaClientProps) {
+  const { imoveis: currentImoveis } = useLiveImoveis(allImoveis);
   const searchParams = useSearchParams();
   const bairro = searchParams.get('bairro');
   const tipo = searchParams.get('tipo');
   const precoMax = searchParams.get('precoMax');
   const quartos = searchParams.get('quartos');
 
-  let imoveis = allImoveis.filter(
+  let imoveis = currentImoveis.filter(
     (i) => (i.transacao === 'Venda' || i.transacao === 'Venda e Locação') && i.status === 'Ativo'
   );
 
