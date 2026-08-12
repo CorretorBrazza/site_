@@ -8,7 +8,7 @@ import HeaderSaldoCreditos from './components/HeaderSaldoCreditos';
 import BannerBackupGamificacao from './components/BannerBackupGamificacao';
 import ModalRecargaCreditos from './components/ModalRecargaCreditos';
 import TabelaImoveis from './TabelaImoveis';
-import { Sparkles, Mail, ShieldCheck, Flame, LogOut, UserCheck } from 'lucide-react';
+import { Sparkles, ShieldCheck, Flame, LogOut, UserCheck } from 'lucide-react';
 
 import { API_BASE_URL } from '@/lib/api';
 
@@ -33,8 +33,8 @@ export default function DashboardCorretorClient({ imoveis }: DashboardCorretorCl
       const defaultUser = {
         nome: 'Corretor Brazza',
         email: 'corretorbrazza@gmail.com',
-        saldo_creditos: 5,
-        plano_atual: 'pro',
+        saldo_creditos: 1,
+        plano_atual: 'start',
       };
       setUsuario(defaultUser);
       localStorage.setItem('user_info', JSON.stringify(defaultUser));
@@ -78,7 +78,7 @@ export default function DashboardCorretorClient({ imoveis }: DashboardCorretorCl
               {usuario ? `Olá, ${usuario.nome}` : 'Painel do Corretor'}
             </h1>
             <span className="bg-blue-100 text-blue-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5" /> {usuario?.plano_atual?.toUpperCase() || 'PRO'}
+              <ShieldCheck className="w-3.5 h-3.5" /> {usuario?.plano_atual?.toUpperCase() || 'START'}
             </span>
           </div>
           <p className="text-gray-600 text-sm mt-1">
@@ -86,15 +86,7 @@ export default function DashboardCorretorClient({ imoveis }: DashboardCorretorCl
           </p>
         </div>
 
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          <a
-            href="mailto:captacao@imoveistaboao.com.br"
-            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-bold transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 text-sm"
-          >
-            <Mail className="w-4 h-4" />
-            Enviar Imóvel por E-mail
-          </a>
-
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
           <button
             onClick={handleLogout}
             title="Encerrar Sessão Segura"
@@ -107,8 +99,8 @@ export default function DashboardCorretorClient({ imoveis }: DashboardCorretorCl
 
       {/* Header com Saldo de Créditos */}
       <HeaderSaldoCreditos
-        saldoCreditos={usuario?.saldo_creditos ?? 5}
-        planoAtual={usuario?.plano_atual || 'Pro'}
+        saldoCreditos={usuario?.saldo_creditos ?? 1}
+        planoAtual={usuario?.plano_atual || 'Start'}
         onAbrirRecarga={() => setModalRecargaAberto(true)}
       />
 

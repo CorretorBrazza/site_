@@ -260,7 +260,7 @@ function AprovarContent() {
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-8 space-y-6">
 
         {/* Banner de Status se Aprovado */}
-        {approvalStatus === 'APPROVED' && (
+        {(approvalStatus === 'APPROVED' || approvalStatus === 'DELIVERED') && (
           <div className="bg-emerald-600 text-white rounded-2xl p-6 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <CheckCircle2 className="w-10 h-10 text-emerald-200 shrink-0" />
@@ -303,14 +303,14 @@ function AprovarContent() {
           <div className="flex items-center gap-2">
             <span
               className={`text-xs font-extrabold px-3 py-1 rounded-full uppercase ${
-                approvalStatus === 'APPROVED'
+                approvalStatus === 'APPROVED' || approvalStatus === 'DELIVERED'
                   ? 'bg-emerald-100 text-emerald-800'
                   : approvalStatus === 'REJEITADO'
                   ? 'bg-red-100 text-red-800'
                   : 'bg-amber-100 text-amber-800'
               }`}
             >
-              {approvalStatus === 'APPROVED' ? 'Aprovado' : approvalStatus === 'REJEITADO' ? 'Rejeitado' : 'Pendente de Aprovação'}
+              {approvalStatus === 'APPROVED' || approvalStatus === 'DELIVERED' ? 'Aprovado & Publicado' : approvalStatus === 'REJEITADO' ? 'Rejeitado' : 'Pendente de Aprovação'}
             </span>
           </div>
         </div>
@@ -561,7 +561,7 @@ function AprovarContent() {
         )}
 
         {/* Sticky Actions Footer se pendente */}
-        {approvalStatus !== 'APPROVED' && (
+        {approvalStatus !== 'APPROVED' && approvalStatus !== 'DELIVERED' && (
           <div className="sticky bottom-4 bg-white border border-slate-200 rounded-2xl p-4 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-3 z-30">
             <div className="text-xs text-slate-600">
               Ao aprovar, <strong>1 crédito</strong> será debitado do seu saldo e o kit final será entregue.

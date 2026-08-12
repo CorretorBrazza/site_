@@ -9,8 +9,8 @@ interface HeaderSaldoCreditosProps {
 }
 
 export default function HeaderSaldoCreditos({
-  saldoCreditos = 5,
-  planoAtual = 'Pro',
+  saldoCreditos = 1,
+  planoAtual = 'Start',
   onAbrirRecarga,
 }: HeaderSaldoCreditosProps) {
   return (

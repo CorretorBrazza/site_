@@ -110,6 +110,8 @@ export async function excluirImovelAction(id: string) {
 }
 
 export async function getImoveis(): Promise<Imovel[]> {
+  let apiImoveis: Imovel[] = [];
+
   try {
     const res = await fetch(`${API_BASE_URL}/anuncios?limit=100`, {
       cache: 'no-store',
@@ -117,7 +119,7 @@ export async function getImoveis(): Promise<Imovel[]> {
     const json = await res.json();
 
     if (json.success && Array.isArray(json.data)) {
-      const apiImoveis: Imovel[] = json.data
+      apiImoveis = json.data
         .filter((item: any) => {
           const st = (item.status || '').toUpperCase();
           return st === 'APPROVED' || st === 'DELIVERED' || st === 'PUBLISHED' || st === 'ATIVO';
@@ -131,14 +133,14 @@ export async function getImoveis(): Promise<Imovel[]> {
             referencia: item.referencia || 'BRA0000',
             titulo: ref.titulo || item.media_kit?.titulo_seo || `Imóvel ${item.referencia}`,
             descricao: ref.descricao || item.media_kit?.legenda_social || '',
-            tipo: ref.tipo || 'Apartamento',
-            transacao: ref.transacao || (ref.precoLocacao ? 'Locação' : 'Venda'),
+            tipo: ref.tipo || ref.tipoImovel || 'Apartamento',
+            transacao: ref.transacao || ref.finalidade || (ref.precoLocacao ? 'Locação' : 'Venda'),
             precoVenda: ref.precoVenda || null,
             precoLocacao: ref.precoLocacao || null,
             condominio: ref.condominio || null,
             iptu: ref.iptu || null,
-            bairro: ref.bairro || 'Taboão da Serra',
-            cidade: ref.cidade || 'Taboão da Serra',
+            bairro: ref.bairro || ref.endereco?.bairro || 'Taboão da Serra',
+            cidade: ref.cidade || ref.endereco?.cidade || 'Taboão da Serra',
             fotos: fotosArray.length > 0 ? fotosArray : ['https://images.unsplash.com/photo-1560518883-ce09059eeffa'],
             caracteristicas: {
               quartos: ref.quartos || ref.caracteristicas?.quartos || 0,
@@ -151,23 +153,27 @@ export async function getImoveis(): Promise<Imovel[]> {
             destaque: true,
           };
         });
-
-      if (apiImoveis.length > 0) {
-        return apiImoveis;
-      }
     }
   } catch (err) {
     console.error('Erro ao buscar anúncios da API:', err);
   }
 
-  if (!fs || !path || typeof window !== 'undefined') return [];
-  const contentPath = getContentPath();
-  if (!contentPath || !fs.existsSync(contentPath)) return [];
-  const files = fs.readdirSync(contentPath).filter((f: string) => f.endsWith('.json'));
-  return files.map((file: string) => {
-    const content = fs.readFileSync(path.join(contentPath, file), 'utf-8');
-    return JSON.parse(content) as Imovel;
-  });
+  let localImoveis: Imovel[] = [];
+  if (fs && path && typeof window === 'undefined') {
+    const contentPath = getContentPath();
+    if (contentPath && fs.existsSync(contentPath)) {
+      const files = fs.readdirSync(contentPath).filter((f: string) => f.endsWith('.json'));
+      localImoveis = files.map((file: string) => {
+        const content = fs.readFileSync(path.join(contentPath, file), 'utf-8');
+        return JSON.parse(content) as Imovel;
+      });
+    }
+  }
+
+  const apiRefs = new Set(apiImoveis.map(i => i.referencia.toUpperCase()));
+  const localFiltrados = localImoveis.filter(l => !apiRefs.has(l.referencia.toUpperCase()));
+
+  return [...apiImoveis, ...localFiltrados];
 }
 
 export async function salvarDadosProprietario(imovelId: string, dados: any) {

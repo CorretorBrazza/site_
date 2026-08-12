@@ -234,9 +234,9 @@ export default function TabelaImoveis({ imoveis, userEmail = 'corretor@taboao.co
       ) : (
         <div className="text-center py-20">
           <p className="text-gray-500">Nenhum imóvel encontrado para este filtro.</p>
-          <Link href="/dashboard/novo" className="text-blue-600 font-bold mt-2 inline-block">
-            Cadastre um imóvel
-          </Link>
+          <a href="mailto:anuncios@imoveistaboao.com.br" className="text-blue-600 font-bold mt-2 inline-block hover:underline">
+            Envie seus imóveis por e-mail (anuncios@imoveistaboao.com.br)
+          </a>
         </div>
       )}
 

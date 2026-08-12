@@ -54,7 +54,7 @@ export default function CadastroPage() {
               Gere Media Kits Profissionais de Imóveis em Segundos com IA
             </h1>
             <p className="text-base text-slate-300 max-w-2xl mx-auto">
-              Envie fotos e texto bruto no WhatsApp ou e-mail. Nossa inteligência artificial cuida da validação de condomínio, geocodificação e gera 6 variações de copy prontas.
+              Envie fotos e texto bruto por e-mail. Nossa inteligência artificial cuida da validação de condomínio, geocodificação e gera 6 variações de copy prontas.
             </p>
           </div>
         </section>
