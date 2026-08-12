@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { X, Check, Zap, Sparkles, ShieldCheck, QrCode, CreditCard } from 'lucide-react';
+import { API_BASE_URL } from '@/lib/api';
 
 interface ModalRecargaCreditosProps {
   isOpen: boolean;
@@ -23,8 +24,7 @@ export default function ModalRecargaCreditos({ isOpen, onClose, userEmail = 'cor
     setPixData(null);
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-      const response = await fetch(`${apiUrl}/api/v1/payments/checkout`, {
+      const response = await fetch(`${API_BASE_URL}/payments/checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
