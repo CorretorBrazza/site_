@@ -114,7 +114,7 @@ export async function getImoveis(): Promise<Imovel[]> {
 
   try {
     const res = await fetch(`${API_BASE_URL}/anuncios?limit=100`, {
-      cache: 'no-store',
+      next: { revalidate: 60 },
     });
     const json = await res.json();
 
@@ -141,6 +141,13 @@ export async function getImoveis(): Promise<Imovel[]> {
             iptu: ref.iptu || null,
             bairro: ref.bairro || ref.endereco?.bairro || 'Taboão da Serra',
             cidade: ref.cidade || ref.endereco?.cidade || 'Taboão da Serra',
+            endereco: {
+              rua: ref.rua || ref.endereco?.rua || '',
+              bairro: ref.bairro || ref.endereco?.bairro || 'Taboão da Serra',
+              cidade: ref.cidade || ref.endereco?.cidade || 'Taboão da Serra',
+              estado: ref.estado || ref.endereco?.estado || 'SP',
+              cep: ref.cep || ref.endereco?.cep || '',
+            },
             fotos: fotosArray.length > 0 ? fotosArray : ['https://images.unsplash.com/photo-1560518883-ce09059eeffa'],
             caracteristicas: {
               quartos: ref.quartos || ref.caracteristicas?.quartos || 0,

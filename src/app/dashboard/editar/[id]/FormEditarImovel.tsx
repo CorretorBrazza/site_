@@ -10,7 +10,23 @@ export default function FormEditarImovel({ imovel, proprietarioInicial }: { imov
   const [loading, setLoading] = useState(false);
   const [uploadingFotos, setUploadingFotos] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [formData, setFormData] = useState<Imovel>(imovel);
+  const [formData, setFormData] = useState<Imovel>({
+    ...imovel,
+    endereco: {
+      rua: imovel?.endereco?.rua || '',
+      bairro: imovel?.endereco?.bairro || imovel?.bairro || 'Taboão da Serra',
+      cidade: imovel?.endereco?.cidade || imovel?.cidade || 'Taboão da Serra',
+      estado: imovel?.endereco?.estado || 'SP',
+      cep: imovel?.endereco?.cep || '',
+    },
+    caracteristicas: {
+      quartos: imovel?.caracteristicas?.quartos || 0,
+      suites: imovel?.caracteristicas?.suites || 0,
+      banheiros: imovel?.caracteristicas?.banheiros || 0,
+      vagas: imovel?.caracteristicas?.vagas || 0,
+      areaUtil: imovel?.caracteristicas?.areaUtil || 0,
+    }
+  });
   const [propData, setPropData] = useState({
     nome: proprietarioInicial?.nome || '',
     telefone: proprietarioInicial?.telefone || '',

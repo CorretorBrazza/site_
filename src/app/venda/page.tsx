@@ -4,6 +4,8 @@ import CardImovel from '@/components/CardImovel';
 import { Building2, Filter, MapPin, Search } from 'lucide-react';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Imóveis à Venda em Taboão da Serra e imediações — Imóveis Taboão',
   description: 'Confira as melhores oportunidades de casas, sobrados e apartamentos à venda em Taboão da Serra e imediações com inteligência artificial.',
