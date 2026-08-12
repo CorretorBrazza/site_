@@ -32,9 +32,9 @@ export default function CardImovel({ imovel }: CardImovelProps) {
             <div className="bg-slate-950/90 backdrop-blur-sm text-white text-[10px] uppercase tracking-wider font-extrabold px-3 py-1.5 rounded-xl border border-slate-800 shadow-md">
               {imovel.transacao}
             </div>
-            {imovel.destaque && (
-              <div className="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 text-[10px] uppercase tracking-wider font-black px-3 py-1.5 rounded-xl shadow-md">
-                Destaque
+            {imovel.isNovo && (
+              <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 text-slate-950 text-[10px] uppercase tracking-wider font-black px-3 py-1.5 rounded-xl shadow-md border border-amber-400/40">
+                ✨ NOVO
               </div>
             )}
           </div>

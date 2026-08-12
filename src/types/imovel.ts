@@ -39,6 +39,7 @@ export interface Imovel {
   videoUrl?: string;
   status: StatusImovel;
   destaque: boolean;
+  isNovo?: boolean;
   corretor?: Corretor;
   createdAt: string;
   updatedAt: string;

@@ -2,10 +2,12 @@ import Link from 'next/link';
 import { Building2, Search, Sparkles, MapPin, CheckCircle2, ArrowRight, Home as HomeIcon, Key, ShieldCheck, Zap } from 'lucide-react';
 import { getImoveis } from '@/app/actions/imovel-server-actions';
 import CardImovel from '@/components/CardImovel';
+import { processarEOrdenarImoveis } from '@/utils/imovelSorting';
 
 export default async function Home() {
   const allImoveis = await getImoveis();
-  const destaques = allImoveis.filter(i => i.status === 'Ativo').slice(0, 6);
+  const imoveisAtivos = allImoveis.filter(i => i.status === 'Ativo');
+  const destaques = processarEOrdenarImoveis(imoveisAtivos).slice(0, 6);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -166,7 +168,7 @@ export default async function Home() {
                 Seleção Exclusiva
               </span>
               <h2 className="text-2xl md:text-4xl font-black text-white tracking-tight">
-                Imóveis em Destaque em Taboão da Serra e imediações
+                Novos Anúncios em Taboão da Serra e imediações
               </h2>
             </div>
             <Link

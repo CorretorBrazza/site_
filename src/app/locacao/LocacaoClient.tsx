@@ -6,6 +6,8 @@ import CardImovel from '@/components/CardImovel';
 import { Building2, Filter, MapPin } from 'lucide-react';
 import Link from 'next/link';
 
+import { processarEOrdenarImoveis } from '@/utils/imovelSorting';
+
 interface LocacaoClientProps {
   allImoveis: Imovel[];
 }
@@ -49,7 +51,7 @@ export default function LocacaoClient({ allImoveis }: LocacaoClientProps) {
     );
   }
 
-  imoveis.sort((a, b) => (a.precoLocacao ?? 0) - (b.precoLocacao ?? 0));
+  imoveis = processarEOrdenarImoveis(imoveis);
 
   return (
     <div className="space-y-8">

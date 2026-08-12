@@ -6,6 +6,8 @@ import CardImovel from '@/components/CardImovel';
 import { Building2, Filter, MapPin } from 'lucide-react';
 import Link from 'next/link';
 
+import { processarEOrdenarImoveis } from '@/utils/imovelSorting';
+
 interface VendaClientProps {
   allImoveis: Imovel[];
 }
@@ -49,7 +51,7 @@ export default function VendaClient({ allImoveis }: VendaClientProps) {
     );
   }
 
-  imoveis.sort((a, b) => (a.precoVenda ?? 0) - (b.precoVenda ?? 0));
+  imoveis = processarEOrdenarImoveis(imoveis);
 
   return (
     <div className="space-y-8">
