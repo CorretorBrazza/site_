@@ -1,10 +1,10 @@
 import { Metadata } from 'next';
 import { getImoveis } from '@/app/actions/imovel-server-actions';
 import { notFound } from 'next/navigation';
-
 import ImageCarousel from '@/components/ImageCarousel';
 import ShareButton from '@/components/ShareButton';
-import BannerLocacao from '@/components/BannerLocacao';
+import { BedDouble, ShowerHead, Car, Maximize, MapPin, Mail, ShieldCheck, Phone } from 'lucide-react';
+import Link from 'next/link';
 
 export const dynamicParams = false;
 
@@ -18,7 +18,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
   const imoveis = await getImoveis();
-  const imovel = imoveis.find(i => i.id === id);
+  const imovel = imoveis.find((i) => i.id === id);
 
   if (!imovel) {
     return {
@@ -27,19 +27,13 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   }
 
   return {
-    title: `imoveistaboão, ${imovel.titulo}`,
+    title: `${imovel.titulo} — Taboão da Serra e imediações`,
     description: imovel.descricao.substring(0, 160) + '...',
     openGraph: {
-      title: `imoveistaboão, ${imovel.titulo}`,
+      title: `${imovel.titulo} — Taboão da Serra e imediações`,
       description: imovel.descricao.substring(0, 160) + '...',
       images: imovel.fotos.length > 0 ? [imovel.fotos[0]] : [],
       type: 'website',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: `imoveistaboão, ${imovel.titulo}`,
-      description: imovel.descricao.substring(0, 160) + '...',
-      images: imovel.fotos.length > 0 ? [imovel.fotos[0]] : [],
     },
   };
 }
@@ -47,116 +41,140 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default async function ImovelDetalhes({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const imoveis = await getImoveis();
-  const imovel = imoveis.find(i => i.id === id);
+  const imovel = imoveis.find((i) => i.id === id);
 
   if (!imovel) {
     notFound();
   }
 
-  const isLocacao = imovel.transacao === 'Locação' || imovel.transacao === 'Venda e Locação';
   const preco = imovel.transacao === 'Venda' ? imovel.precoVenda : imovel.precoLocacao;
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };
 
-  const rawPhone = (imovel.corretor?.telefone || '11932785602').replace(/\D/g, '');
-  const corretorTelefone = rawPhone.startsWith('55') ? rawPhone : `55${rawPhone}`;
-  const whatsappMsg = `Olá! Tenho interesse no imóvel REF: [${imovel.referencia}] (${imovel.titulo}) que vi no portal Imóveis Taboão.`;
-  const whatsappUrl = `https://wa.me/${corretorTelefone}?text=${encodeURIComponent(whatsappMsg)}`;
-
+  const mailSubject = encodeURIComponent(`Interesse no Imóvel REF: ${imovel.referencia} (${imovel.titulo})`);
+  const mailBody = encodeURIComponent(`Olá! Gostaria de mais informações sobre o imóvel REF: ${imovel.referencia} em Taboão da Serra e imediações.`);
+  const mailtoUrl = `mailto:contato@imoveistaboao.com.br?subject=${mailSubject}&body=${mailBody}`;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-      {/* Header Info */}
-      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-          <div className="flex flex-wrap items-center gap-2 mb-2 text-sm text-gray-500 font-bold uppercase tracking-wider">
-            <span className="text-blue-600">{imovel.transacao}</span>
-            <span className="text-gray-300">•</span>
-            <span>Ref: {imovel.referencia}</span>
-          </div>
-          <h1 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight mb-2 leading-tight">{imovel.titulo}</h1>
-          <p className="text-gray-500 font-medium">{imovel.endereco.bairro}, {imovel.endereco.cidade} - {imovel.endereco.estado}</p>
-        </div>
-        <div className="flex shrink-0">
-          <ShareButton />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-        {/* Left Column: Images & Description */}
-        <div className="lg:col-span-2 space-y-8">
-          {/* Galeria de Fotos com Carrossel */}
-          <ImageCarousel images={imovel.fotos} alt={imovel.titulo} />
-
-          <div className="bg-white p-6 rounded-xl border border-gray-100 mb-8 shadow-sm">
-            <h2 className="text-xl font-bold mb-4">Descrição</h2>
-            <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
-              {imovel.descricao}
-            </p>
-          </div>
-
-          <div className="bg-white p-6 rounded-xl border border-gray-100">
-            <h2 className="text-xl font-bold mb-6">Características</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-              <div className="text-center p-4 bg-gray-50 rounded-lg">
-                <span className="block text-2xl mb-1">🛏️</span>
-                <span className="block font-bold">{imovel.caracteristicas.quartos}</span>
-                <span className="text-xs text-gray-500 uppercase">Quartos</span>
-              </div>
-              <div className="text-center p-4 bg-gray-50 rounded-lg">
-                <span className="block text-2xl mb-1">🚿</span>
-                <span className="block font-bold">{imovel.caracteristicas.suites}</span>
-                <span className="text-xs text-gray-500 uppercase">Suítes</span>
-              </div>
-              <div className="text-center p-4 bg-gray-50 rounded-lg">
-                <span className="block text-2xl mb-1">🚿</span>
-                <span className="block font-bold">{imovel.caracteristicas.banheiros}</span>
-                <span className="text-xs text-gray-500 uppercase">Banheiros</span>
-              </div>
-              <div className="text-center p-4 bg-gray-50 rounded-lg">
-                <span className="block text-2xl mb-1">📏</span>
-                <span className="block font-bold">{imovel.caracteristicas.areaUtil}m²</span>
-                <span className="text-xs text-gray-500 uppercase">Área Útil</span>
-              </div>
+    <div className="min-h-screen bg-[#0b132b] text-slate-100 py-8 px-4">
+      <div className="max-w-7xl mx-auto space-y-8">
+        
+        {/* Cabeçalho do Imóvel */}
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-wider">
+              <span className="bg-amber-500/20 text-amber-400 px-3 py-1 rounded-xl border border-amber-500/30">
+                {imovel.transacao}
+              </span>
+              <span className="text-slate-500">•</span>
+              <span className="text-slate-300">REF: {imovel.referencia}</span>
+            </div>
+            
+            <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight">
+              {imovel.titulo}
+            </h1>
+            
+            <div className="flex items-center gap-1.5 text-slate-400 text-xs sm:text-sm font-medium">
+              <MapPin className="w-4 h-4 text-amber-500 shrink-0" />
+              <span>{imovel.endereco?.bairro || 'Taboão da Serra'}, Taboão da Serra e imediações - SP</span>
             </div>
           </div>
+
+          <div className="flex shrink-0 items-center gap-3">
+            <ShareButton />
+          </div>
         </div>
 
-        {/* Right Column: Contact & Price */}
-        <div className="lg:col-span-1">
-          <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm sticky top-24">
-            <div className="mb-6 pb-6 border-b">
-              <span className="text-sm text-gray-500 block mb-1">Valor do Imóvel</span>
-              <p className="text-3xl font-bold text-blue-700">
-                {preco ? formatCurrency(preco) : 'Consulte'}
-                {imovel.transacao === 'Locação' && <span className="text-base font-normal text-gray-500">/mês</span>}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          {/* Coluna Principal: Galeria & Descrição */}
+          <div className="lg:col-span-8 space-y-6">
+            
+            {/* Galeria de Fotos */}
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-2 shadow-2xl overflow-hidden">
+              <ImageCarousel images={imovel.fotos} alt={imovel.titulo} />
+            </div>
+
+            {/* Descrição Completa */}
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-4">
+              <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
+                <span>Descrição do Imóvel</span>
+              </h2>
+              <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap font-normal">
+                {imovel.descricao}
               </p>
             </div>
 
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full bg-green-600 hover:bg-green-700 text-white text-center py-4 rounded-xl font-bold text-lg shadow-md transition-all flex items-center justify-center gap-2"
-            >
-              <span>Falar com Corretor</span>
-            </a>
+            {/* Ficha Técnica / Características */}
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-4">
+              <h2 className="text-xl font-extrabold text-white">Especificações do Imóvel</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="bg-slate-950 border border-slate-800 p-4 rounded-2xl text-center space-y-1">
+                  <BedDouble className="w-6 h-6 text-amber-500 mx-auto" />
+                  <span className="block font-black text-lg text-white">{imovel.caracteristicas?.quartos || 0}</span>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Quartos</span>
+                </div>
 
-            <p className="text-[10px] text-gray-400 mt-4 text-center uppercase tracking-wider">
-              Código do Imóvel: {imovel.referencia}
-            </p>
+                <div className="bg-slate-950 border border-slate-800 p-4 rounded-2xl text-center space-y-1">
+                  <ShowerHead className="w-6 h-6 text-amber-500 mx-auto" />
+                  <span className="block font-black text-lg text-white">{imovel.caracteristicas?.suites || 0}</span>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Suítes</span>
+                </div>
+
+                <div className="bg-slate-950 border border-slate-800 p-4 rounded-2xl text-center space-y-1">
+                  <ShowerHead className="w-6 h-6 text-amber-500 mx-auto" />
+                  <span className="block font-black text-lg text-white">{imovel.caracteristicas?.banheiros || 0}</span>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Banheiros</span>
+                </div>
+
+                <div className="bg-slate-950 border border-slate-800 p-4 rounded-2xl text-center space-y-1">
+                  <Maximize className="w-6 h-6 text-amber-500 mx-auto" />
+                  <span className="block font-black text-lg text-white">{imovel.caracteristicas?.areaUtil || 0}m²</span>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Área Útil</span>
+                </div>
+              </div>
+            </div>
+
           </div>
+
+          {/* Coluna Lateral: Card de Contato & Valor */}
+          <div className="lg:col-span-4">
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl sticky top-24">
+              
+              <div className="border-b border-slate-800 pb-6 space-y-1">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Valor do Imóvel</span>
+                <p className="text-3xl font-black text-amber-400">
+                  {preco ? formatCurrency(preco) : 'Consulte'}
+                  {imovel.transacao === 'Locação' && <span className="text-sm font-semibold text-slate-400"> /mês</span>}
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <a
+                  href={mailtoUrl}
+                  className="w-full py-4 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider shadow-lg transition-all flex items-center justify-center gap-2"
+                >
+                  <Mail className="w-4 h-4" />
+                  <span>Solicitar Atendimento por E-mail</span>
+                </a>
+              </div>
+
+              <div className="bg-slate-950 border border-slate-800/80 rounded-2xl p-4 text-xs text-slate-400 space-y-2">
+                <div className="flex items-center gap-2 font-bold text-white">
+                  <ShieldCheck className="w-4 h-4 text-amber-500" />
+                  <span>Atendimento em Taboão da Serra e imediações</span>
+                </div>
+                <p className="text-[11px] leading-relaxed">
+                  Entre em contato diretamente com nossos consultores para agendar uma visita ao imóvel REF: <strong>{imovel.referencia}</strong>.
+                </p>
+              </div>
+
+            </div>
+          </div>
+
         </div>
       </div>
-
-      {/* Banner Promocional - exibido apenas para imóveis de locação */}
-      {isLocacao && (
-        <div className="mt-12">
-          <BannerLocacao />
-        </div>
-      )}
     </div>
   );
 }
-

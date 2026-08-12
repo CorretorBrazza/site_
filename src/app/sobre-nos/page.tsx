@@ -1,119 +1,98 @@
 import { Metadata } from 'next';
-import { Building2, Award, Users2, Target, Heart, ShieldCheck, Mail, Phone, MapPin } from 'lucide-react';
+import { Award, Target, Heart, MapPin } from 'lucide-react';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Sobre Nós | Imóveis Taboão',
-  description: 'Conheça a história dos Imóveis Taboão. Há mais de 8 anos realizando o sonho da casa própria em Taboão da Serra e região com transparência e seriedade.',
+  title: 'Sobre Nós | Imóveis Taboão da Serra e imediações',
+  description: 'Conheça a história dos Imóveis Taboão. Realizando sonhos em Taboão da Serra e imediações com inteligência artificial, transparência e seriedade.',
 };
 
 export default function SobreNosPage() {
   return (
-    <div className="bg-[#F9FAFB] min-h-screen">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-900 to-indigo-950 text-white py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(59,130,246,0.2),transparent)] pointer-events-none" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <span className="text-blue-400 font-bold uppercase tracking-widest text-sm bg-blue-500/10 px-4 py-1.5 rounded-full border border-blue-500/20 mb-4 inline-block">
-            Nossa História
-          </span>
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-6 leading-tight">
-            Mais que imóveis, conectamos <br />
-            <span className="text-blue-400">pessoas aos seus sonhos</span>
-          </h1>
-          <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto font-light leading-relaxed">
-            Fundada em Taboão da Serra, a Imóveis Taboão nasceu do desejo de trazer transparência, tecnologia e proximidade para as negociações imobiliárias locais.
-          </p>
-        </div>
-      </section>
+    <div className="bg-[#0b132b] text-slate-100 min-h-screen py-12 px-4">
+      <div className="max-w-7xl mx-auto space-y-12">
+        
+        {/* Hero Section */}
+        <section className="bg-gradient-to-r from-slate-950 via-[#0b132b] to-slate-950 border border-slate-800 rounded-3xl p-8 sm:p-12 shadow-2xl relative overflow-hidden text-center space-y-4">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="relative z-10 space-y-4 max-w-3xl mx-auto">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-extrabold uppercase tracking-wider">
+              <MapPin className="w-4 h-4 text-amber-500 shrink-0" />
+              <span>Taboão da Serra e imediações</span>
+            </span>
 
-      {/* Main Content & History */}
-      <section className="max-w-4xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
-        <div className="space-y-8 text-center md:text-left">
-          <h2 className="text-3xl md:text-4xl font-black text-gray-900 leading-tight text-center">
-            Uma trajetória de seriedade e liderança no mercado local
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-gray-600 leading-relaxed text-base text-left">
-            <p>
-              Nos especializamos em entender o desenvolvimento urbano de Taboão da Serra e região adjacente. Identificamos as melhores oportunidades em lançamentos imobiliários, condomínios e imóveis prontos.
-            </p>
-            <p>
-              Oferecemos assessoria completa desde a primeira visita até a assinatura do contrato e suporte ao financiamento bancário, com total transparência e segurança jurídica.
+            <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+              Mais que imóveis, conectamos você aos seus sonhos em <span className="text-amber-500">Taboão da Serra e imediações</span>
+            </h1>
+
+            <p className="text-sm sm:text-base text-slate-300 font-medium leading-relaxed">
+              O portal Imóveis Taboão nasceu para revolucionar o mercado imobiliário local, combinando atendimento humanizado com o poder da Inteligência Artificial.
             </p>
           </div>
-          <div className="border-t border-gray-100 pt-8 flex justify-center gap-16">
-            <div className="text-center">
-              <p className="text-2xl md:text-3xl font-black text-blue-600">100% Digital</p>
-              <p className="text-sm font-semibold text-gray-500 mt-1">Gestão inteligente de imóveis</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl md:text-3xl font-black text-blue-600">CRECI Ativo</p>
-              <p className="text-sm font-semibold text-gray-500 mt-1">Segurança e Ética Jurídica</p>
-            </div>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Mission, Vision, Values */}
-      <section className="bg-gray-100/50 border-y border-gray-200/50 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm text-center space-y-4 hover:shadow-md transition-shadow">
-              <div className="inline-flex p-3 bg-blue-50 rounded-xl text-blue-600 mb-2">
-                <Target size={24} />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900">Nossa Missão</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                Facilitar o acesso à moradia de qualidade por meio de uma assessoria imobiliária honesta, desburocratizada e focada na real necessidade de cada cliente.
+        {/* História e Valores */}
+        <section className="max-w-4xl mx-auto space-y-8">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-xl space-y-6">
+            <h2 className="text-2xl font-black text-white text-center">
+              Liderança e Tecnologia no Mercado Imobiliário Local
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-slate-300 text-sm leading-relaxed">
+              <p>
+                Nos especializamos na geografia e no desenvolvimento de <strong>Taboão da Serra e imediações</strong>. Conhecemos cada bairro e cada empreendimento para entregar a você e ao corretor a melhor experiência de compra, venda e locação.
               </p>
-            </div>
-
-            <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm text-center space-y-4 hover:shadow-md transition-shadow">
-              <div className="inline-flex p-3 bg-blue-50 rounded-xl text-blue-600 mb-2">
-                <Award size={24} />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900">Nossa Visão</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                Ser reconhecida como a imobiliária digital mais recomendada e confiável de Taboão da Serra, inovando em tecnologia sem perder o atendimento humanizado.
-              </p>
-            </div>
-
-            <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm text-center space-y-4 hover:shadow-md transition-shadow">
-              <div className="inline-flex p-3 bg-blue-50 rounded-xl text-blue-600 mb-2">
-                <Heart size={24} />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900">Nossos Valores</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                Ética inegociável, transparência total em todas as etapas, responsabilidade social e compromisso inabalável com a satisfação do cliente.
+              <p>
+                Oferecemos assessoria completa, suporte para financiamentos bancários e ferramentas automatizadas de anúncios com inteligência artificial que poupam tempo e garantem a máxima visibilidade dos imóveis.
               </p>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Team / Call to action */}
-      <section className="max-w-7xl mx-auto px-4 py-20 sm:px-6 lg:px-8 text-center space-y-8">
-        <div className="max-w-xl mx-auto space-y-4">
-          <h2 className="text-3xl font-black text-gray-900">Pronto para encontrar seu imóvel?</h2>
-          <p className="text-gray-500">
-            Nossa equipe de consultores credenciados pelo CRECI está à disposição para guiar você nessa jornada com total segurança.
-          </p>
-        </div>
-        <div className="flex flex-wrap justify-center gap-4">
-          <Link
-            href="/contato"
-            className="bg-blue-600 text-white px-8 py-3.5 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200"
-          >
-            Fale Conosco
-          </Link>
+        {/* Missão, Visão e Valores */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          <div className="bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-3 text-center">
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-500 flex items-center justify-center mx-auto">
+              <Target className="w-6 h-6" />
+            </div>
+            <h3 className="text-lg font-bold text-white">Nossa Missão</h3>
+            <p className="text-slate-400 text-xs leading-relaxed">
+              Facilitar o acesso à moradia de qualidade em <strong>Taboão da Serra e imediações</strong> através de um portal rápido, desburocratizado e inteligente.
+            </p>
+          </div>
+
+          <div className="bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-3 text-center">
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-500 flex items-center justify-center mx-auto">
+              <Award className="w-6 h-6" />
+            </div>
+            <h3 className="text-lg font-bold text-white">Nossa Visão</h3>
+            <p className="text-slate-400 text-xs leading-relaxed">
+              Ser o ecossistema imobiliário mais eficiente e respeitado de <strong>Taboão da Serra e imediações</strong>, empoderando compradores e corretores.
+            </p>
+          </div>
+
+          <div className="bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-3 text-center">
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-500 flex items-center justify-center mx-auto">
+              <Heart className="w-6 h-6" />
+            </div>
+            <h3 className="text-lg font-bold text-white">Nossos Valores</h3>
+            <p className="text-slate-400 text-xs leading-relaxed">
+              Ética, transparência inegociável, inovação contínua e foco total no resultado e satisfação do cliente.
+            </p>
+          </div>
+        </section>
+
+        {/* CTA Final */}
+        <section className="text-center space-y-6 pt-4">
           <Link
             href="/venda"
-            className="bg-white text-gray-700 border border-gray-200 px-8 py-3.5 rounded-xl font-bold hover:bg-gray-50 transition-colors"
+            className="px-8 py-4 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider shadow-lg inline-block"
           >
-            Ver Imóveis
+            Ver Imóveis em Taboão da Serra e imediações
           </Link>
-        </div>
-      </section>
+        </section>
+
+      </div>
     </div>
   );
 }

@@ -1,45 +1,131 @@
 import { Metadata } from 'next';
 import { getImoveis } from '@/app/actions/imovel-server-actions';
 import CardImovel from '@/components/CardImovel';
-import BannerLocacao from '@/components/BannerLocacao';
+import { Building2, Filter, MapPin } from 'lucide-react';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'imoveistaboão, Imóveis para Locação',
-  description: 'Encontre as melhores casas e apartamentos para alugar em Taboão da Serra e região.',
+  title: 'Imóveis para Alugar em Taboão da Serra e imediações — Imóveis Taboão',
+  description: 'Encontre as melhores opções de casas, apartamentos e salões para alugar em Taboão da Serra e imediações.',
 };
 
-export default async function LocacaoPage() {
+interface LocacaoPageProps {
+  searchParams: Promise<{
+    bairro?: string;
+    tipo?: string;
+    precoMax?: string;
+    quartos?: string;
+  }>;
+}
+
+export default async function LocacaoPage({ searchParams }: LocacaoPageProps) {
+  const resolvedParams = await searchParams;
+  const { bairro, tipo, precoMax, quartos } = resolvedParams;
+
   const allImoveis = await getImoveis();
-  const imoveis = allImoveis
-    .filter(i =>
-      (i.transacao === 'Locação' || i.transacao === 'Venda e Locação') && i.status === 'Ativo'
-    )
-    .sort((a, b) => (a.precoLocacao ?? 0) - (b.precoLocacao ?? 0));
+
+  // Filtragem Dinâmica dos Imóveis para Locação
+  let imoveis = allImoveis.filter(
+    (i) => (i.transacao === 'Locação' || i.transacao === 'Venda e Locação') && i.status === 'Ativo'
+  );
+
+  if (tipo) {
+    imoveis = imoveis.filter((i) => i.dados_brutos?.tipoImovel?.toLowerCase() === tipo.toLowerCase());
+  }
+
+  if (precoMax) {
+    const max = parseFloat(precoMax);
+    if (!isNaN(max)) {
+      imoveis = imoveis.filter((i) => (i.precoLocacao ?? 0) <= max);
+    }
+  }
+
+  if (quartos) {
+    const minQts = parseInt(quartos, 10);
+    if (!isNaN(minQts)) {
+      imoveis = imoveis.filter((i) => (i.caracteristicas?.quartos ?? 0) >= minQts);
+    }
+  }
+
+  if (bairro && bairro.trim().length > 0 && !bairro.toLowerCase().includes('imediações')) {
+    const term = bairro.toLowerCase().trim();
+    imoveis = imoveis.filter(
+      (i) =>
+        i.endereco?.bairro?.toLowerCase().includes(term) ||
+        i.titulo?.toLowerCase().includes(term) ||
+        i.dados_brutos?.texto_original?.toLowerCase().includes(term)
+    );
+  }
+
+  imoveis.sort((a, b) => (a.precoLocacao ?? 0) - (b.precoLocacao ?? 0));
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-      <header className="mb-10">
-        <h1 className="text-3xl font-bold text-gray-900">Imóveis para Locação</h1>
-        <p className="text-gray-600 mt-2">Encontramos {imoveis.length} opções para você alugar agora.</p>
-      </header>
+    <div className="min-h-screen bg-[#0b132b] text-slate-100 py-12 px-4">
+      <div className="max-w-7xl mx-auto space-y-8">
+        
+        {/* Cabeçalho de Locação em Estilo Dark Luxury */}
+        <header className="bg-gradient-to-r from-slate-950 via-[#0b132b] to-slate-950 border border-slate-800 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="relative z-10 space-y-3">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-extrabold uppercase tracking-wider">
+              <MapPin className="w-4 h-4 text-amber-500 shrink-0" />
+              <span>Taboão da Serra e imediações</span>
+            </div>
 
-      {/* Banner Promocional */}
-      <div className="mb-12">
-        <BannerLocacao />
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">
+              Imóveis para Alugar em <span className="text-amber-500">Taboão da Serra e imediações</span>
+            </h1>
+
+            <p className="text-sm md:text-base text-slate-300 max-w-2xl font-medium">
+              Encontramos <strong className="text-amber-400">{imoveis.length}</strong> opções residenciais e comerciais prontas para locação.
+            </p>
+          </div>
+        </header>
+
+        {/* Filtros Ativos */}
+        {(tipo || precoMax || quartos || (bairro && !bairro.includes('imediações'))) && (
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2 text-slate-300 font-bold">
+              <Filter className="w-4 h-4 text-amber-500" />
+              <span>Filtros Aplicados:</span>
+              {tipo && <span className="bg-amber-500/20 text-amber-400 px-2.5 py-1 rounded-lg border border-amber-500/30">{tipo}</span>}
+              {precoMax && <span className="bg-amber-500/20 text-amber-400 px-2.5 py-1 rounded-lg border border-amber-500/30">Até R$ {parseFloat(precoMax).toLocaleString('pt-BR')}</span>}
+              {quartos && <span className="bg-amber-500/20 text-amber-400 px-2.5 py-1 rounded-lg border border-amber-500/30">{quartos}+ Quartos</span>}
+            </div>
+
+            <Link href="/locacao" className="text-xs font-bold text-amber-400 hover:underline">
+              Limpar Filtros ✕
+            </Link>
+          </div>
+        )}
+
+        {/* Grid de Imóveis para Locação */}
+        {imoveis.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {imoveis.map((imovel) => (
+              <CardImovel key={imovel.id} imovel={imovel} />
+            ))}
+          </div>
+        ) : (
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-12 text-center space-y-4 max-w-lg mx-auto">
+            <Building2 className="w-12 h-12 text-amber-500 mx-auto opacity-70" />
+            <h2 className="text-xl font-bold text-white">Nenhum imóvel encontrado para locação</h2>
+            <p className="text-xs text-slate-400">
+              Tente selecionar outros tipos de imóvel ou consultar imóveis para venda em Taboão da Serra e imediações.
+            </p>
+            <div className="pt-2">
+              <Link
+                href="/locacao"
+                className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl inline-block shadow-md"
+              >
+                Ver Todas as Opções de Locação
+              </Link>
+            </div>
+          </div>
+        )}
+
       </div>
-
-      {imoveis.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {imoveis.map(imovel => (
-            <CardImovel key={imovel.id} imovel={imovel} />
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-20 bg-white rounded-2xl border border-gray-100 shadow-sm">
-          <p className="text-gray-500 text-lg">Nenhum imóvel encontrado para locação no momento.</p>
-        </div>
-      )}
     </div>
   );
 }
-

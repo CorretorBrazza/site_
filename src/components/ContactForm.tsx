@@ -23,12 +23,11 @@ export default function ContactForm() {
     setStatus('submitting');
 
     try {
-      // Envio de formulário assíncrono para o Web3Forms
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Accept': 'application/json',
         },
         body: JSON.stringify({
           access_key: '7d915857-c79e-4ff4-b507-ac4edaa6ce5c',
@@ -53,30 +52,30 @@ export default function ContactForm() {
   };
 
   return (
-    <div className="bg-white p-8 rounded-xl border border-black/5 shadow-sm">
-      <h3 className="text-xl font-serif font-semibold text-primary mb-6">Envie uma mensagem</h3>
+    <div className="bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl space-y-6">
+      <h3 className="text-xl font-black text-white">Envie uma Mensagem</h3>
 
       {status === 'success' ? (
-        <div className="bg-emerald-50 border border-emerald-100 text-emerald-800 p-6 rounded-lg space-y-3">
+        <div className="bg-emerald-950/80 border border-emerald-800 text-emerald-200 p-6 rounded-2xl space-y-3">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="text-emerald-600" size={22} />
-            <span className="font-bold text-base">Mensagem enviada!</span>
+            <CheckCircle2 className="text-emerald-400" size={22} />
+            <span className="font-bold text-base">Mensagem Enviada com Sucesso!</span>
           </div>
           <p className="text-xs leading-relaxed">
-            Agradecemos o seu contato. Um de nossos consultores retornará o seu contato o mais breve possível.
+            Agradecemos o seu contato. Nossa equipe responderá sua mensagem por e-mail o mais breve possível.
           </p>
           <button
             onClick={() => setStatus('idle')}
-            className="text-xs font-semibold text-emerald-700 underline hover:text-emerald-800 pt-2"
+            className="text-xs font-bold text-emerald-400 underline hover:text-emerald-300 pt-2"
           >
             Enviar outra mensagem
           </button>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="nome" className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
-              Nome Completo
+            <label htmlFor="nome" className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+              Nome Completo *
             </label>
             <input
               type="text"
@@ -86,14 +85,14 @@ export default function ContactForm() {
               value={formData.nome}
               onChange={handleChange}
               placeholder="Digite seu nome completo"
-              className="w-full px-4 py-2.5 rounded-lg border border-black/10 focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all placeholder:text-slate-400 text-sm text-primary bg-slate-50/20"
+              className="w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-950 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 text-xs md:text-sm"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="email" className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
-                E-mail
+              <label htmlFor="email" className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                E-mail *
               </label>
               <input
                 type="email"
@@ -103,12 +102,12 @@ export default function ContactForm() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="seu@email.com"
-                className="w-full px-4 py-2.5 rounded-lg border border-black/10 focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all placeholder:text-slate-400 text-sm text-primary bg-slate-50/20"
+                className="w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-950 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 text-xs md:text-sm"
               />
             </div>
             <div>
-              <label htmlFor="telefone" className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
-                WhatsApp
+              <label htmlFor="telefone" className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                Telefone / Celular *
               </label>
               <input
                 type="tel"
@@ -118,14 +117,14 @@ export default function ContactForm() {
                 value={formData.telefone}
                 onChange={handleChange}
                 placeholder="(11) 99999-9999"
-                className="w-full px-4 py-2.5 rounded-lg border border-black/10 focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all placeholder:text-slate-400 text-sm text-primary bg-slate-50/20"
+                className="w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-950 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 text-xs md:text-sm"
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="mensagem" className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
-              Mensagem
+            <label htmlFor="mensagem" className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+              Mensagem *
             </label>
             <textarea
               id="mensagem"
@@ -134,22 +133,22 @@ export default function ContactForm() {
               rows={4}
               value={formData.mensagem}
               onChange={handleChange}
-              placeholder="Olá, gostaria de saber mais informações sobre..."
-              className="w-full px-4 py-2.5 rounded-lg border border-black/10 focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all placeholder:text-slate-400 text-sm text-primary bg-slate-50/20 resize-none"
+              placeholder="Digite sua dúvida ou mensagem..."
+              className="w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-950 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 text-xs md:text-sm resize-none"
             />
           </div>
 
           {status === 'error' && (
-            <div className="flex items-center gap-2 text-xs text-red-650 bg-red-50 p-3 rounded-lg border border-red-100">
+            <div className="flex items-center gap-2 text-xs text-red-200 bg-red-950/80 p-3 rounded-xl border border-red-800">
               <AlertCircle size={16} />
-              <span>Ocorreu um erro ao enviar. Tente novamente ou chame no WhatsApp.</span>
+              <span>Ocorreu um erro ao enviar. Tente novamente ou envie por e-mail.</span>
             </div>
           )}
 
           <button
             type="submit"
             disabled={status === 'submitting'}
-            className="w-full bg-accent hover:bg-accent-hover text-white font-semibold py-3.5 rounded-lg shadow-sm shadow-accent/10 transition-all flex items-center justify-center gap-2 disabled:opacity-55 disabled:cursor-not-allowed"
+            className="w-full bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-slate-950 font-black py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider disabled:opacity-50"
           >
             <Send size={16} />
             {status === 'submitting' ? 'Enviando...' : 'Enviar Mensagem'}
