@@ -65,7 +65,7 @@ function AprovarContent() {
 
   useEffect(() => {
     if (!token) {
-      setErrorMsg('Token de segurança não fornecido no link. Verifique o link recebido no WhatsApp.');
+      setErrorMsg('Token de segurança não fornecido no link. Verifique o link recebido no seu e-mail.');
       setLoading(false);
       return;
     }
@@ -267,7 +267,7 @@ function AprovarContent() {
               <div>
                 <h3 className="text-lg font-extrabold">Anúncio Aprovado com Sucesso!</h3>
                 <p className="text-xs text-emerald-100 mt-0.5">
-                  1 crédito foi debitado do seu saldo. O Media Kit pronto foi entregue no seu e-mail e WhatsApp.
+                  1 crédito foi debitado do seu saldo. O Media Kit pronto foi entregue no seu e-mail.
                 </p>
               </div>
             </div>

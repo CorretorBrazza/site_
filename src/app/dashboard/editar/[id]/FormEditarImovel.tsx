@@ -464,7 +464,7 @@ export default function FormEditarImovel({ imovel, proprietarioInicial }: { imov
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Telefone / WhatsApp</label>
+            <label className="block text-sm font-medium text-gray-700">Telefone de Contato</label>
             <input
               type="text"
               className="mt-1 block w-full border rounded-md p-2 bg-white"

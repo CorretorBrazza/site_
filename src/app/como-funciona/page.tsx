@@ -24,7 +24,7 @@ export default function ComoFuncionaPage() {
           </h1>
           
           <p className="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto font-normal leading-relaxed">
-            Sem formulários chatos! Envie seus imóveis por e-mail, gere Media Kits de IA para o seu Instagram/WhatsApp, libere memória no seu celular e ganhe 90 dias de divulgação no portal.
+            Sem formulários chatos! Envie seus imóveis por e-mail, gere Media Kits de IA para as suas redes sociais, libere memória no seu celular e ganhe 90 dias de divulgação no portal.
           </p>
 
           <div className="mt-8 flex flex-wrap justify-center gap-4">
@@ -85,7 +85,7 @@ export default function ComoFuncionaPage() {
             </div>
             <h3 className="text-xl font-bold text-slate-900 mb-3">Aprove & Venda</h3>
             <p className="text-slate-600 text-sm leading-relaxed">
-              Acesse o Link Mágico de Aprovação, copie o texto do WhatsApp/Instagram em 1 clique e publique o imóvel gratuitamente no portal por 90 dias!
+              Acesse o Link Mágico de Aprovação recebido por e-mail, copie os textos prontos em 1 clique e publique o imóvel gratuitamente no portal por 90 dias!
             </p>
           </div>
         </div>
@@ -120,7 +120,7 @@ export default function ComoFuncionaPage() {
             <div>
               <h4 className="font-bold text-slate-900 text-base mb-1">Copys Prontas em 1 Clique</h4>
               <p className="text-slate-600 text-xs leading-relaxed">
-                Legendas persuasivas com hashtags de Taboão da Serra prontas para copiar e colar no Instagram e grupos de WhatsApp.
+                Legendas persuasivas com hashtags de Taboão da Serra prontas para copiar e colar no Instagram e redes sociais.
               </p>
             </div>
           </div>

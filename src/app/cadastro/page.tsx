@@ -21,7 +21,7 @@ export default function CadastroPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !nome || !senha || !telefone) {
-      setErrorMsg('Nome, e-mail, senha e WhatsApp são obrigatórios.');
+      setErrorMsg('Nome, e-mail, senha e telefone são obrigatórios.');
       return;
     }
 
@@ -158,7 +158,7 @@ export default function CadastroPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">WhatsApp *</label>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Telefone / Celular *</label>
                     <div className="relative">
                       <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                       <input
