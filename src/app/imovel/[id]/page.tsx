@@ -3,7 +3,7 @@ import { getImoveis } from '@/app/actions/imovel-server-actions';
 import { notFound } from 'next/navigation';
 import ImageCarousel from '@/components/ImageCarousel';
 import ShareButton from '@/components/ShareButton';
-import { BedDouble, ShowerHead, Car, Maximize, MapPin, Mail, ShieldCheck, Phone } from 'lucide-react';
+import { BedDouble, ShowerHead, Car, Maximize, MapPin, Mail, ShieldCheck, Phone, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamicParams = false;
@@ -52,9 +52,14 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };
 
-  const mailSubject = encodeURIComponent(`Interesse no Imóvel REF: ${imovel.referencia} (${imovel.titulo})`);
-  const mailBody = encodeURIComponent(`Olá! Gostaria de mais informações sobre o imóvel REF: ${imovel.referencia} em Taboão da Serra e imediações.`);
-  const mailtoUrl = `mailto:contato@imoveistaboao.com.br?subject=${mailSubject}&body=${mailBody}`;
+  const rawPhone = imovel.corretor?.telefone || '5511932785602';
+  const cleanPhone = rawPhone.replace(/\D/g, '') || '5511932785602';
+  const phoneWithCountry = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
+
+  const whatsappMessage = encodeURIComponent(
+    `Olá! Tenho interesse no imóvel REF: ${imovel.referencia} (${imovel.titulo}) anunciado no site Imóveis Taboão da Serra e imediações. Gostaria de agendar uma visita ou receber mais informações!`
+  );
+  const whatsappUrl = `https://wa.me/${phoneWithCountry}?text=${whatsappMessage}`;
 
   return (
     <div className="min-h-screen bg-[#0b132b] text-slate-100 py-8 px-4">
@@ -152,11 +157,13 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
 
               <div className="space-y-3">
                 <a
-                  href={mailtoUrl}
-                  className="w-full py-4 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider shadow-lg transition-all flex items-center justify-center gap-2"
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-4 bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 text-white font-black rounded-2xl text-xs uppercase tracking-wider shadow-lg shadow-emerald-900/30 transition-all flex items-center justify-center gap-2.5"
                 >
-                  <Mail className="w-4 h-4" />
-                  <span>Solicitar Atendimento por E-mail</span>
+                  <MessageCircle className="w-5 h-5" />
+                  <span>Chamar no WhatsApp ({imovel.referencia})</span>
                 </a>
               </div>
 
