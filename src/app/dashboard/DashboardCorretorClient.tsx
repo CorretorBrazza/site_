@@ -8,53 +8,135 @@ import HeaderSaldoCreditos from './components/HeaderSaldoCreditos';
 import BannerBackupGamificacao from './components/BannerBackupGamificacao';
 import ModalRecargaCreditos from './components/ModalRecargaCreditos';
 import TabelaImoveis from './TabelaImoveis';
-import { Sparkles, ShieldCheck, Flame, LogOut, UserCheck } from 'lucide-react';
+import { Sparkles, ShieldCheck, LogOut, RefreshCw, PlusCircle, Building2 } from 'lucide-react';
 
-import { API_BASE_URL } from '@/lib/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://imoveis-taboao-api-production-4cd9.up.railway.app/api/v1';
 
 interface DashboardCorretorClientProps {
-  imoveis: Imovel[];
+  imoveis?: Imovel[];
 }
 
-export default function DashboardCorretorClient({ imoveis }: DashboardCorretorClientProps) {
+export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }: DashboardCorretorClientProps) {
   const router = useRouter();
   const [modalRecargaAberto, setModalRecargaAberto] = useState(false);
   const [usuario, setUsuario] = useState<{ email: string; nome: string; saldo_creditos: number; plano_atual: string } | null>(null);
+  const [listaImoveis, setListaImoveis] = useState<Imovel[]>(initialImoveis);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 1. Carrega dados salvos locais primeiro para ser super veloz
+    // 1. Identifica usuário ativo
+    let emailAtivo = 'corretorbrazza@gmail.com';
     const savedUser = localStorage.getItem('user_info');
     if (savedUser) {
       try {
-        setUsuario(JSON.parse(savedUser));
+        const parsed = JSON.parse(savedUser);
+        if (parsed.email) emailAtivo = parsed.email;
+        setUsuario(parsed);
       } catch {}
     } else {
-      // Usuário padrão de teste se ainda não tiver feito login
       const defaultUser = {
         nome: 'Corretor Brazza',
         email: 'corretorbrazza@gmail.com',
         saldo_creditos: 1,
-        plano_atual: 'start',
+        plano_atual: 'START',
       };
       setUsuario(defaultUser);
       localStorage.setItem('user_info', JSON.stringify(defaultUser));
     }
 
-    // 2. Valida token com a API
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-      fetch(`${API_BASE_URL}/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-        .then((res) => res.json())
-        .then((json) => {
-          if (json.success && json.user) {
-            setUsuario(json.user);
-            localStorage.setItem('user_info', JSON.stringify(json.user));
-          }
-        })
-        .catch(() => {});
+    async function carregarDadosPainel() {
+      setLoading(true);
+      try {
+        // Busca perfil do corretor (para ter saldo real de créditos)
+        const resPerfil = await fetch(`${API_BASE_URL}/corretor/${encodeURIComponent(emailAtivo)}`);
+        const jsonPerfil = await resPerfil.json();
+        if (jsonPerfil.success && jsonPerfil.data) {
+          const perfil = jsonPerfil.data;
+          const userUpdated = {
+            nome: perfil.nome || 'Corretor Brazza',
+            email: perfil.email || emailAtivo,
+            saldo_creditos: perfil.saldo_creditos ?? 1,
+            plano_atual: perfil.plano_atual || 'START',
+          };
+          setUsuario(userUpdated);
+          localStorage.setItem('user_info', JSON.stringify(userUpdated));
+        }
+
+        // Busca anúncios do corretor ao vivo da API
+        const resAnuncios = await fetch(`${API_BASE_URL}/anuncios?corretor_email=${encodeURIComponent(emailAtivo)}`, {
+          cache: 'no-store',
+        });
+        const jsonAnuncios = await resAnuncios.json();
+
+        if (jsonAnuncios.success && Array.isArray(jsonAnuncios.data)) {
+          const mapped: Imovel[] = jsonAnuncios.data.map((item: any) => {
+            const ref = item.dados_refinados || item.dados_brutos || {};
+            const fotosArray = (item.fotos || []).map((f: any) =>
+              typeof f === 'string' ? f : f.url_optimized || f.url || f.url_original
+            );
+
+            // Mapeamento amigável de status para o painel
+            let statusExibicao: any = 'Ativo';
+            const stUpper = (item.status || '').toUpperCase();
+            if (stUpper === 'DELIVERED' || stUpper === 'APPROVED' || stUpper === 'PUBLISHED' || stUpper === 'ATIVO') {
+              statusExibicao = 'Ativo';
+            } else if (stUpper === 'PENDING_APPROVAL' || stUpper === 'INGEST_APPROVED') {
+              statusExibicao = 'Em Análise';
+            } else {
+              statusExibicao = item.status || 'Em Análise';
+            }
+
+            return {
+              id: item.ad_id || item.referencia?.toLowerCase() || `imv_${Math.random()}`,
+              referencia: item.referencia || 'BRA0000',
+              titulo: ref.titulo || item.media_kit?.titulo_seo || `Imóvel ${item.referencia}`,
+              descricao: ref.descricao || item.media_kit?.legenda_social || '',
+              tipo: ref.tipo || ref.tipoImovel || 'Apartamento',
+              transacao: ref.transacao || ref.finalidade || (ref.precoLocacao ? 'Locação' : 'Venda'),
+              precoVenda: ref.precoVenda || null,
+              precoLocacao: ref.precoLocacao || null,
+              condominio: ref.condominio || null,
+              iptu: ref.iptu || null,
+              bairro: ref.bairro || ref.endereco?.bairro || 'Taboão da Serra',
+              cidade: ref.cidade || ref.endereco?.cidade || 'Taboão da Serra',
+              endereco: {
+                rua: ref.rua || ref.endereco?.rua || '',
+                bairro: ref.bairro || ref.endereco?.bairro || 'Taboão da Serra',
+                cidade: ref.cidade || ref.endereco?.cidade || 'Taboão da Serra',
+                estado: ref.estado || ref.endereco?.estado || 'SP',
+                cep: ref.cep || ref.endereco?.cep || '',
+              },
+              fotos: fotosArray.length > 0 ? fotosArray : ['https://images.unsplash.com/photo-1560518883-ce09059eeffa'],
+              caracteristicas: {
+                quartos: ref.quartos || ref.caracteristicas?.quartos || 0,
+                suites: ref.suites || ref.caracteristicas?.suites || 0,
+                banheiros: ref.banheiros || ref.caracteristicas?.banheiros || 0,
+                vagas: ref.vagas || ref.caracteristicas?.vagas || 0,
+                areaUtil: ref.areaUtil || ref.caracteristicas?.areaUtil || 0,
+              },
+              status: statusExibicao,
+              destaque: true,
+              media_kit: item.media_kit || null,
+              approval_url: item.approval_url || null,
+              createdAt: item.created_at?._seconds
+                ? new Date(item.created_at._seconds * 1000).toISOString()
+                : item.created_at || new Date().toISOString(),
+              updatedAt: item.updated_at?._seconds
+                ? new Date(item.updated_at._seconds * 1000).toISOString()
+                : item.updated_at || new Date().toISOString(),
+            };
+          });
+
+          setListaImoveis(mapped);
+        }
+      } catch (err) {
+        console.error('Erro ao carregar dados do painel do corretor:', err);
+      } finally {
+        setLoading(false);
+      }
     }
+
+    carregarDadosPainel();
   }, []);
 
   const handleLogout = () => {
@@ -64,68 +146,83 @@ export default function DashboardCorretorClient({ imoveis }: DashboardCorretorCl
     router.push('/login');
   };
 
-  const totalFotosReal = (imoveis || []).reduce((acc, item) => acc + (item.fotos?.length || 0), 0);
+  const totalFotosReal = (listaImoveis || []).reduce((acc, item) => acc + (item.fotos?.length || 0), 0);
   const totalMegas = totalFotosReal * 2.5;
   const espacoTexto = totalMegas >= 1024 ? `${(totalMegas / 1024).toFixed(1)} GB` : `${totalMegas.toFixed(0)} MB`;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 border-b pb-6 border-gray-200">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-3xl font-black text-gray-900 tracking-tight">
-              {usuario ? `Olá, ${usuario.nome}` : 'Painel do Corretor'}
-            </h1>
-            <span className="bg-blue-100 text-blue-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5" /> {usuario?.plano_atual?.toUpperCase() || 'START'}
-            </span>
+    <div className="min-h-screen bg-[#0b132b] text-slate-100 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto space-y-8">
+        
+        {/* Top Header — Dark Luxury Style */}
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="relative z-10 space-y-2">
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                {usuario ? `Olá, ${usuario.nome}` : 'Painel do Corretor'}
+              </h1>
+              <span className="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 text-xs font-black px-3 py-1 rounded-full flex items-center gap-1 shadow-md uppercase tracking-wider">
+                <ShieldCheck className="w-4 h-4" /> PLANO {usuario?.plano_atual?.toUpperCase() || 'START'}
+              </span>
+            </div>
+            <p className="text-slate-400 text-xs sm:text-sm">
+              {usuario ? `Sessão ativa: ${usuario.email}` : 'Gerencie seus anúncios, Media Kits de IA e backups de fotos em nuvem.'}
+            </p>
           </div>
-          <p className="text-gray-600 text-sm mt-1">
-            {usuario ? `Sessão autenticada: ${usuario.email}` : 'Gerencie seus imóveis, acompanhe seus backups e recarregue créditos via Mercado Pago.'}
-          </p>
+
+          <div className="relative z-10 flex items-center gap-3 w-full sm:w-auto justify-end">
+            <button
+              onClick={() => window.location.reload()}
+              title="Atualizar Dados"
+              className="p-3 bg-slate-950 border border-slate-800 text-slate-300 hover:text-amber-400 hover:border-amber-500/50 rounded-xl transition-all shadow-md"
+            >
+              <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin text-amber-500' : ''}`} />
+            </button>
+
+            <button
+              onClick={handleLogout}
+              title="Encerrar Sessão Segura"
+              className="p-3 bg-slate-950 border border-slate-800 text-slate-400 hover:text-red-400 hover:border-red-500/50 rounded-xl transition-all shadow-md"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
-          <button
-            onClick={handleLogout}
-            title="Encerrar Sessão Segura"
-            className="p-3 text-gray-500 hover:text-red-600 hover:bg-red-50 border border-gray-200 rounded-xl transition-all"
-          >
-            <LogOut className="w-5 h-5" />
-          </button>
+        {/* Saldo de Créditos em Estilo Dourado de Luxo */}
+        <HeaderSaldoCreditos
+          saldoCreditos={usuario?.saldo_creditos ?? 1}
+          planoAtual={usuario?.plano_atual || 'Start'}
+          onAbrirRecarga={() => setModalRecargaAberto(true)}
+        />
+
+        {/* Banner da Central de Fotos & Backups */}
+        <BannerBackupGamificacao
+          totalFotosBackup={totalFotosReal}
+          espacoTexto={espacoTexto}
+        />
+
+        {/* Tabela de Imóveis do Corretor */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
+              <Building2 className="w-5 h-5 text-amber-500" />
+              Seus Imóveis Cadastrados ({listaImoveis.length})
+            </h2>
+          </div>
+
+          <TabelaImoveis imoveis={listaImoveis} userEmail={usuario?.email || 'corretorbrazza@gmail.com'} />
         </div>
+
+        {/* Modal de Recarga Mercado Pago */}
+        <ModalRecargaCreditos
+          isOpen={modalRecargaAberto}
+          onClose={() => setModalRecargaAberto(false)}
+          userEmail={usuario?.email || 'corretorbrazza@gmail.com'}
+        />
       </div>
-
-      {/* Header com Saldo de Créditos */}
-      <HeaderSaldoCreditos
-        saldoCreditos={usuario?.saldo_creditos ?? 1}
-        planoAtual={usuario?.plano_atual || 'Start'}
-        onAbrirRecarga={() => setModalRecargaAberto(true)}
-      />
-
-      {/* Banner da Central de Fotos & Backups */}
-      <BannerBackupGamificacao
-        totalFotosBackup={totalFotosReal}
-        espacoTexto={espacoTexto}
-      />
-
-      {/* Tabela de Imóveis Existente */}
-      <div className="mt-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-blue-600" /> Seus Imóveis Cadastrados
-          </h2>
-        </div>
-        <TabelaImoveis imoveis={imoveis} />
-      </div>
-
-      {/* Modal de Recarga Mercado Pago (3 Planos) */}
-      <ModalRecargaCreditos
-        isOpen={modalRecargaAberto}
-        onClose={() => setModalRecargaAberto(false)}
-        userEmail={usuario?.email || 'corretor@taboao.com.br'}
-      />
     </div>
   );
 }
