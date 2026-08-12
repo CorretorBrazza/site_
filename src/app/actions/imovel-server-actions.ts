@@ -113,9 +113,11 @@ export async function getImoveis(): Promise<Imovel[]> {
   let apiImoveis: Imovel[] = [];
 
   try {
-    const res = await fetch(`${API_BASE_URL}/anuncios?limit=100`, {
-      next: { revalidate: 60 },
-    });
+    const fetchOptions: RequestInit = process.env.NETLIFY === 'true'
+      ? { next: { revalidate: 1 } }
+      : { cache: 'no-store' };
+
+    const res = await fetch(`${API_BASE_URL}/anuncios?limit=100&status=DELIVERED`, fetchOptions);
     const json = await res.json();
 
     if (json.success && Array.isArray(json.data)) {
