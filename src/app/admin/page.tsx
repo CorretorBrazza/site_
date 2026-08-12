@@ -727,16 +727,9 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* Grid de Métricas por Chave */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {(geminiMetrics?.keys && geminiMetrics.keys.length > 0
-                ? geminiMetrics.keys
-                : [
-                    { key_alias: 'GEMINI_FLASH_KEY_1', total_requests: 0, total_prompt_tokens: 0, total_completion_tokens: 0, total_tokens: 0, errors_count: 0, last_used_at: null },
-                    { key_alias: 'GEMINI_FLASH_KEY_2', total_requests: 0, total_prompt_tokens: 0, total_completion_tokens: 0, total_tokens: 0, errors_count: 0, last_used_at: null },
-                    { key_alias: 'GEMINI_PRO_KEY', total_requests: 0, total_prompt_tokens: 0, total_completion_tokens: 0, total_tokens: 0, errors_count: 0, last_used_at: null },
-                    { key_alias: 'GEMINI_MEDIA_KIT_KEY', total_requests: 0, total_prompt_tokens: 0, total_completion_tokens: 0, total_tokens: 0, errors_count: 0, last_used_at: null },
-                  ]
-              ).map((k, idx) => (
+            {geminiMetrics?.keys && geminiMetrics.keys.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {geminiMetrics.keys.map((k, idx) => (
                 <div key={idx} className="bg-slate-900 border border-slate-800 p-5 rounded-2xl hover:border-slate-700 transition-all relative overflow-hidden">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
@@ -780,6 +773,11 @@ export default function AdminDashboardPage() {
                 </div>
               ))}
             </div>
+            ) : (
+              <div className="bg-slate-900 border border-slate-800 p-8 rounded-2xl text-center text-slate-400 text-xs font-medium">
+                Nenhuma chave de API Gemini foi detectada nas variáveis de ambiente do Railway.
+              </div>
+            )}
 
             {/* Painel Informativo sobre as Regras do Gemini em Produção */}
             <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
