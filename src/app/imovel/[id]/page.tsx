@@ -10,6 +10,9 @@ export const dynamicParams = false;
 
 export async function generateStaticParams() {
   const imoveis = await getImoveis();
+  if (!imoveis || imoveis.length === 0) {
+    return [{ id: 'demo' }];
+  }
   return imoveis.map((imovel) => ({
     id: imovel.id,
   }));
