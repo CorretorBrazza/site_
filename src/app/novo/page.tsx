@@ -1,6 +1,18 @@
+import { Metadata } from 'next';
 import { getImoveis } from '@/app/actions/imovel-server-actions';
 import CardImovel from '@/components/CardImovel';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Imóveis Novos e Lançamentos em Taboão da Serra e imediações — Imóveis Taboão',
+  description: 'Confira lançamentos e novos imóveis prontos para morar em Taboão da Serra e imediações.',
+  openGraph: {
+    title: 'Imóveis Novos e Lançamentos em Taboão da Serra e imediações — Imóveis Taboão',
+    description: 'Confira lançamentos e novos imóveis prontos para morar em Taboão da Serra e imediações.',
+    url: 'https://imoveistaboao.com.br/novo',
+    type: 'website',
+  },
+};
 
 export default async function HomeNovo() {
   const imoveis = await getImoveis();

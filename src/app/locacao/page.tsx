@@ -6,6 +6,12 @@ import LocacaoClient from './LocacaoClient';
 export const metadata: Metadata = {
   title: 'Imóveis para Alugar em Taboão da Serra e imediações — Imóveis Taboão',
   description: 'Encontre as melhores opções de casas, apartamentos e salões para alugar em Taboão da Serra e imediações.',
+  openGraph: {
+    title: 'Imóveis para Alugar em Taboão da Serra e imediações — Imóveis Taboão',
+    description: 'Encontre as melhores opções de casas, apartamentos e salões para alugar em Taboão da Serra e imediações.',
+    url: 'https://imoveistaboao.com.br/locacao',
+    type: 'website',
+  },
 };
 
 export default async function LocacaoPage() {

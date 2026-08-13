@@ -6,6 +6,12 @@ import VendaClient from './VendaClient';
 export const metadata: Metadata = {
   title: 'Imóveis à Venda em Taboão da Serra e imediações — Imóveis Taboão',
   description: 'Confira as melhores oportunidades de casas, sobrados e apartamentos à venda em Taboão da Serra e imediações.',
+  openGraph: {
+    title: 'Imóveis à Venda em Taboão da Serra e imediações — Imóveis Taboão',
+    description: 'Confira as melhores oportunidades de casas, sobrados e apartamentos à venda em Taboão da Serra e imediações.',
+    url: 'https://imoveistaboao.com.br/venda',
+    type: 'website',
+  },
 };
 
 export default async function VendaPage() {
