@@ -5,6 +5,8 @@ import CardImovel from '@/components/CardImovel';
 import { processarEOrdenarImoveis } from '@/utils/imovelSorting';
 import HomeLiveSection from '@/components/HomeLiveSection';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const allImoveis = await getImoveis();
   const imoveisAtivos = allImoveis.filter(i => i.status === 'Ativo');
