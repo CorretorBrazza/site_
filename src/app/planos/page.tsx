@@ -85,7 +85,7 @@ export default function PlanosPage() {
 
               <div className="pt-8">
                 <Link
-                  href="/cadastro"
+                  href="/login?recarga=start"
                   className="w-full py-3.5 px-4 bg-slate-800 hover:bg-slate-700 text-white font-extrabold rounded-xl text-xs transition-all flex items-center justify-center gap-2 border border-slate-700"
                 >
                   <span>Cadastrar e Testar Grátis</span>
@@ -143,7 +143,7 @@ export default function PlanosPage() {
 
               <div className="pt-8">
                 <Link
-                  href="/login"
+                  href="/login?recarga=pro"
                   className="w-full py-4 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-lg"
                 >
                   <Zap className="w-4 h-4 fill-white" />
@@ -193,7 +193,7 @@ export default function PlanosPage() {
 
               <div className="pt-8">
                 <Link
-                  href="/login"
+                  href="/login?recarga=elite"
                   className="w-full py-3.5 px-4 bg-slate-800 hover:bg-slate-700 text-white font-extrabold rounded-xl text-xs transition-all flex items-center justify-center gap-2 border border-slate-700"
                 >
                   <span>Comprar Pacote Elite</span>

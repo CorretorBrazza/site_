@@ -1,14 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Building2, Lock, Mail, User, Phone, ShieldCheck, Eye, EyeOff, Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 import { API_BASE_URL } from '@/lib/api';
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const recargaParam = searchParams.get('recarga');
+
   const [modo, setModo] = useState<'login' | 'cadastro'>('login');
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -53,8 +56,9 @@ export default function LoginPage() {
         document.cookie = `auth_token=${json.data.token}; path=/; max-age=86400; SameSite=Lax`;
       }
 
-      // Redireciona para o Dashboard do Corretor
-      router.push('/dashboard');
+      // Redireciona para o Dashboard preservando o parâmetro de recarga se houver
+      const targetUrl = recargaParam ? `/dashboard?recarga=${encodeURIComponent(recargaParam)}` : '/dashboard';
+      router.push(targetUrl);
     } catch (err: any) {
       setErro('Não foi possível conectar ao servidor. Verifique sua conexão.');
     } finally {
@@ -254,5 +258,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400">Carregando...</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }

@@ -1,6 +1,4 @@
-'use client';
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Check, Zap, Sparkles, ShieldCheck, QrCode, CreditCard } from 'lucide-react';
 import { API_BASE_URL } from '@/lib/api';
 
@@ -8,14 +6,21 @@ interface ModalRecargaCreditosProps {
   isOpen: boolean;
   onClose: () => void;
   userEmail?: string;
+  pacoteInicial?: 'start' | 'pro' | 'elite';
 }
 
-export default function ModalRecargaCreditos({ isOpen, onClose, userEmail = 'corretor@taboao.com.br' }: ModalRecargaCreditosProps) {
-  const [pacoteSelecionado, setPacoteSelecionado] = useState<'start' | 'pro' | 'elite'>('pro');
+export default function ModalRecargaCreditos({ isOpen, onClose, userEmail = 'corretor@taboao.com.br', pacoteInicial = 'pro' }: ModalRecargaCreditosProps) {
+  const [pacoteSelecionado, setPacoteSelecionado] = useState<'start' | 'pro' | 'elite'>(pacoteInicial);
   const [metodoPagamento, setMetodoPagamento] = useState<'pix' | 'checkout'>('pix');
   const [loading, setLoading] = useState(false);
   const [pixData, setPixData] = useState<{ qr_code: string; qr_code_base64: string; ticket_url: string } | null>(null);
   const [copiado, setCopiado] = useState(false);
+
+  useEffect(() => {
+    if (pacoteInicial && (pacoteInicial === 'start' || pacoteInicial === 'pro' || pacoteInicial === 'elite')) {
+      setPacoteSelecionado(pacoteInicial);
+    }
+  }, [pacoteInicial]);
 
   if (!isOpen) return null;
 

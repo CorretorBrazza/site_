@@ -18,12 +18,19 @@ interface DashboardCorretorClientProps {
 
 export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }: DashboardCorretorClientProps) {
   const router = useRouter();
-  const [modalRecargaAberto, setModalRecargaAberto] = useState(false);
-  const [usuario, setUsuario] = useState<{ email: string; nome: string; saldo_creditos: number; plano_atual: string } | null>(null);
-  const [listaImoveis, setListaImoveis] = useState<Imovel[]>(initialImoveis);
-  const [loading, setLoading] = useState(true);
+  const [pacoteInicialModal, setPacoteInicialModal] = useState<'start' | 'pro' | 'elite'>('pro');
 
   useEffect(() => {
+    // Checa se há um parâmetro recarga na URL (ex: ?recarga=pro) vindo da página /planos
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const recargaParam = urlParams.get('recarga');
+      if (recargaParam === 'start' || recargaParam === 'pro' || recargaParam === 'elite') {
+        setPacoteInicialModal(recargaParam);
+        setModalRecargaAberto(true);
+      }
+    }
+
     // 1. Identifica usuário ativo
     let emailAtivo = '';
     const savedUser = localStorage.getItem('user_info');
@@ -224,6 +231,7 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
           isOpen={modalRecargaAberto}
           onClose={() => setModalRecargaAberto(false)}
           userEmail={usuario?.email || 'corretorbrazza@gmail.com'}
+          pacoteInicial={pacoteInicialModal}
         />
       </div>
     </div>
