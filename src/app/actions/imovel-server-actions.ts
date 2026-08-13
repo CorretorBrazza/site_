@@ -114,7 +114,7 @@ export async function getImoveis(): Promise<Imovel[]> {
 
   try {
     const fetchOptions: RequestInit = process.env.NETLIFY === 'true'
-      ? { next: { revalidate: 1 } }
+      ? { next: { revalidate: 3600 } }
       : { cache: 'no-store' };
 
     const res = await fetch(`${API_BASE_URL}/anuncios?limit=100&status=DELIVERED`, fetchOptions);

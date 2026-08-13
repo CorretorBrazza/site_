@@ -2,8 +2,6 @@ import { getImoveis } from '@/app/actions/imovel-server-actions';
 import CardImovel from '@/components/CardImovel';
 import Link from 'next/link';
 
-export const dynamic = 'force-dynamic';
-
 export default async function HomeNovo() {
   const imoveis = await getImoveis();
   const destaques = imoveis.filter(imovel => imovel.destaque && imovel.status === 'Ativo');

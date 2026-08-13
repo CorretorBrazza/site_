@@ -3,8 +3,6 @@ import { Suspense } from 'react';
 import { getImoveis } from '@/app/actions/imovel-server-actions';
 import LocacaoClient from './LocacaoClient';
 
-export const dynamic = 'force-dynamic';
-
 export const metadata: Metadata = {
   title: 'Imóveis para Alugar em Taboão da Serra e imediações — Imóveis Taboão',
   description: 'Encontre as melhores opções de casas, apartamentos e salões para alugar em Taboão da Serra e imediações.',

@@ -3,8 +3,6 @@ import { Suspense } from 'react';
 import { getImoveis } from '@/app/actions/imovel-server-actions';
 import VendaClient from './VendaClient';
 
-export const dynamic = 'force-dynamic';
-
 export const metadata: Metadata = {
   title: 'Imóveis à Venda em Taboão da Serra e imediações — Imóveis Taboão',
   description: 'Confira as melhores oportunidades de casas, sobrados e apartamentos à venda em Taboão da Serra e imediações.',
