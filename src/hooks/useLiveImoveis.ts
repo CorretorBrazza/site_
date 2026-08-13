@@ -71,9 +71,7 @@ export function useLiveImoveis(initialImoveis: Imovel[]) {
               };
             });
 
-          if (liveList.length > 0) {
-            setImoveis(liveList);
-          }
+          setImoveis(liveList);
         }
       } catch (err) {
         console.error('Erro ao buscar imóveis em tempo real:', err);
