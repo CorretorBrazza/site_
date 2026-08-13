@@ -1,8 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import { Sparkles, Check, ArrowRight, ShieldCheck, AlertCircle, Loader2, Lock, Mail, User, Phone } from 'lucide-react';
 import { API_BASE_URL } from '@/lib/api';
 import Link from 'next/link';
@@ -52,8 +50,6 @@ export default function CadastroPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
-      <Navbar />
-
       <main className="flex-1">
         {/* Hero Banner */}
         <section className="bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900 text-white py-14 px-4">
@@ -215,8 +211,6 @@ export default function CadastroPage() {
           )}
         </section>
       </main>
-
-      <Footer />
     </div>
   );
 }
