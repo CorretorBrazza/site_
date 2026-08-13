@@ -167,22 +167,7 @@ export async function getImoveis(): Promise<Imovel[]> {
     console.error('Erro ao buscar anúncios da API:', err);
   }
 
-  let localImoveis: Imovel[] = [];
-  if (fs && path && typeof window === 'undefined') {
-    const contentPath = getContentPath();
-    if (contentPath && fs.existsSync(contentPath)) {
-      const files = fs.readdirSync(contentPath).filter((f: string) => f.endsWith('.json'));
-      localImoveis = files.map((file: string) => {
-        const content = fs.readFileSync(path.join(contentPath, file), 'utf-8');
-        return JSON.parse(content) as Imovel;
-      });
-    }
-  }
-
-  const apiRefs = new Set(apiImoveis.map(i => i.referencia.toUpperCase()));
-  const localFiltrados = localImoveis.filter(l => !apiRefs.has(l.referencia.toUpperCase()));
-
-  return [...apiImoveis, ...localFiltrados];
+  return apiImoveis;
 }
 
 export async function salvarDadosProprietario(imovelId: string, dados: any) {
