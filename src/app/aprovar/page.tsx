@@ -147,8 +147,14 @@ function AprovarContent() {
     setIsSubmitting(false);
 
     if (result.success) {
-      setFeedbackMsg('Edições salvas com sucesso!');
-      setTimeout(() => setFeedbackMsg(null), 3000);
+      if (result.media_kit) {
+        setAdData((prev: any) => ({
+          ...prev,
+          media_kit: result.media_kit,
+        }));
+      }
+      setFeedbackMsg('Edições salvas e Media Kit recalibrado com sucesso!');
+      setTimeout(() => setFeedbackMsg(null), 4000);
     } else {
       alert(`Erro ao salvar edições: ${result.error}`);
     }
@@ -542,7 +548,30 @@ function AprovarContent() {
 
         {/* Conteúdo Aba 3: Media Kit */}
         {activeTab === 'mediakit' && (
-          <MediaKitDisplay mediaKit={mediaKit} referencia={adData.referencia} />
+          approvalStatus === 'APPROVED' || approvalStatus === 'DELIVERED' ? (
+            <MediaKitDisplay mediaKit={adData.media_kit || mediaKit} referencia={adData.referencia} />
+          ) : (
+            <div className="bg-slate-900 border border-amber-500/30 rounded-3xl p-8 text-center space-y-4 shadow-2xl">
+              <div className="w-16 h-16 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex items-center justify-center mx-auto text-amber-400">
+                <Sparkles className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-black text-white">🔒 Media Kit & Mídias Bloqueadas para Download</h3>
+              <p className="text-xs text-slate-300 max-w-lg mx-auto leading-relaxed">
+                O Media Kit profissional (legendas otimizadas por IA para Instagram e WhatsApp, tags de SEO e arquivos em alta resolução na nuvem) será **liberado instantaneamente** assim que você conferir os dados e clicar em <strong>"Aprovar & Publicar Anúncio"</strong>.
+              </p>
+              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 max-w-md mx-auto text-xs text-amber-400 font-bold">
+                💳 O débito de 1 crédito do seu saldo só ocorre no momento da aprovação!
+              </div>
+              <button
+                onClick={handleApprove}
+                disabled={isSubmitting}
+                className="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 rounded-xl text-xs font-black uppercase tracking-wider shadow-lg transition-all"
+              >
+                {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+                <span>Aprovar Anúncio Agora & Liberar Kit</span>
+              </button>
+            </div>
+          )
         )}
 
         {/* Sticky Actions Footer se pendente */}
