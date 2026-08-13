@@ -18,6 +18,10 @@ interface DashboardCorretorClientProps {
 
 export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }: DashboardCorretorClientProps) {
   const router = useRouter();
+  const [modalRecargaAberto, setModalRecargaAberto] = useState(false);
+  const [usuario, setUsuario] = useState<{ email: string; nome: string; saldo_creditos: number; plano_atual: string } | null>(null);
+  const [listaImoveis, setListaImoveis] = useState<Imovel[]>(initialImoveis);
+  const [loading, setLoading] = useState(true);
   const [pacoteInicialModal, setPacoteInicialModal] = useState<'start' | 'pro' | 'elite'>('pro');
 
   useEffect(() => {
