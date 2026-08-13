@@ -112,8 +112,11 @@ export default function PlanosPage() {
                     <span className="text-4xl font-black text-amber-400">R$ 33,90</span>
                     <span className="text-xs text-slate-400 font-medium">/ total</span>
                   </div>
-                  <div className="inline-block bg-emerald-950 text-emerald-300 border border-emerald-800 text-[11px] font-bold px-2.5 py-0.5 rounded-md mt-1">
-                    12% OFF • R$ 11,30 por crédito
+                  <div className="inline-flex items-center gap-1.5 bg-emerald-950 text-emerald-300 border border-emerald-800 text-[11px] font-bold px-2.5 py-0.5 rounded-md mt-1">
+                    <span>12% OFF • R$ 11,30 por crédito</span>
+                  </div>
+                  <div className="mt-2 text-[11px] font-bold text-amber-300 bg-amber-950/60 border border-amber-800/60 px-2.5 py-1 rounded-lg">
+                    ☕ Custo por anúncio menor que um café por dia!
                   </div>
                 </div>
 
@@ -141,7 +144,7 @@ export default function PlanosPage() {
                 </div>
               </div>
 
-              <div className="pt-8">
+              <div className="pt-8 space-y-3">
                 <Link
                   href="/login?recarga=pro"
                   className="w-full py-4 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-lg"
@@ -149,6 +152,11 @@ export default function PlanosPage() {
                   <Zap className="w-4 h-4 fill-white" />
                   <span>Adquirir Pacote Pro</span>
                 </Link>
+
+                <div className="flex items-center justify-center gap-2 text-[10px] text-slate-400 font-semibold">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Liberação Instantânea via Pix / Cartão • Mercado Pago</span>
+                </div>
               </div>
             </div>
 
@@ -191,7 +199,7 @@ export default function PlanosPage() {
                 </div>
               </div>
 
-              <div className="pt-8">
+              <div className="pt-8 space-y-3">
                 <Link
                   href="/login?recarga=elite"
                   className="w-full py-3.5 px-4 bg-slate-800 hover:bg-slate-700 text-white font-extrabold rounded-xl text-xs transition-all flex items-center justify-center gap-2 border border-slate-700"
@@ -199,6 +207,10 @@ export default function PlanosPage() {
                   <span>Comprar Pacote Elite</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
+                <div className="flex items-center justify-center gap-2 text-[10px] text-slate-400 font-semibold">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Liberação Instantânea via Pix / Cartão • Mercado Pago</span>
+                </div>
               </div>
             </div>
 
@@ -220,7 +232,7 @@ export default function PlanosPage() {
                 </div>
                 <h3 className="text-base font-bold text-white">Envio 100% por WhatsApp</h3>
                 <p className="text-slate-400 leading-relaxed">
-                  Envie fotos e um texto simples pelo WhatsApp. Nossa IA compõe o anúncio comercial completo em segundos.
+                  Envie fotos e um texto simples pelo WhatsApp Oficial (11) 98916-1897. Nossa IA compõe o anúncio comercial completo em segundos.
                 </p>
               </div>
 
@@ -230,7 +242,7 @@ export default function PlanosPage() {
                 </div>
                 <h3 className="text-base font-bold text-white">Acervo de Fotos na Nuvem</h3>
                 <p className="text-slate-400 leading-relaxed">
-                  Suas fotos originais ficam armazenadas em nuvem de alta velocidade por 1 ano para você baixar quando quiser.
+                  Suas fotos originais ficam armazenadas na Nuvem Imóveis Taboão por 1 ano (365 dias) para você baixar quando quiser.
                 </p>
               </div>
 
@@ -238,9 +250,9 @@ export default function PlanosPage() {
                 <div className="w-10 h-10 bg-emerald-600/20 border border-emerald-500/30 rounded-xl flex items-center justify-center text-emerald-400">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
-                <h3 className="text-base font-bold text-white">Sem Mensalidades Fixas</h3>
+                <h3 className="text-base font-bold text-white">Créditos NUNCA Expiram</h3>
                 <p className="text-slate-400 leading-relaxed">
-                  Pague apenas pelos créditos que usar via Pix ou Cartão pelo Mercado Pago. Créditos não expiram se não utilizados.
+                  Pague apenas pelos créditos que usar via Pix ou Cartão pelo Mercado Pago. Seus créditos comprados <strong>nunca expiram no saldo</strong> e ficam salvos para uso futuro.
                 </p>
               </div>
             </div>
@@ -258,23 +270,30 @@ export default function PlanosPage() {
 
           <div className="space-y-4 text-xs text-slate-300">
             <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-2">
+              <strong className="block text-sm font-bold text-white">Os créditos que eu comprar têm prazo de validade para uso?</strong>
+              <p className="text-slate-400 leading-relaxed">
+                <strong>Não! Os créditos NUNCA expiram na sua conta.</strong> Se você adquirir o Pacote Pro (3 créditos) e usar apenas 1 hoje, os outros 2 créditos continuarão disponíveis no seu saldo no Dashboard por tempo indeterminado até você decidir publicar novos imóveis.
+              </p>
+            </div>
+
+            <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-2">
               <strong className="block text-sm font-bold text-white">Como funciona o crédito grátis de boas-vindas?</strong>
               <p className="text-slate-400 leading-relaxed">
-                Ao criar sua conta no portal via <Link href="/cadastro" className="text-blue-400 underline">página de cadastro</Link>, você recebe **1 crédito bônus** imediatamente em seu saldo para publicar seu primeiro imóvel por 90 dias sem nenhum custo.
+                Ao criar sua conta no portal via <Link href="/cadastro" className="text-blue-400 underline">página de cadastro</Link>, você recebe <strong>1 crédito bônus</strong> imediatamente em seu saldo para publicar seu primeiro imóvel por 90 dias sem nenhum custo.
               </p>
             </div>
 
             <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-2">
               <strong className="block text-sm font-bold text-white">Quanto tempo dura a publicação de um imóvel?</strong>
               <p className="text-slate-400 leading-relaxed">
-                Cada crédito mantém o imóvel ativo e publicado no portal durante **90 dias consecutivos**. Se o imóvel for vendido antes, você pode desativá-lo pelo painel.
+                Cada crédito ativado mantém o imóvel publicado no portal durante <strong>90 dias consecutivos</strong>. Se o imóvel for vendido ou alugado antes, você pode marcá-lo no painel.
               </p>
             </div>
 
             <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-2">
-              <strong className="block text-sm font-bold text-white">Quais as formas de pagamento aceitas?</strong>
+              <strong className="block text-sm font-bold text-white">Quais as formas de pagamento aceitas no Checkout?</strong>
               <p className="text-slate-400 leading-relaxed">
-                Aceitamos **Pix com aprovação instantânea em segundos** e **Cartão de Crédito/Débito** via Mercado Pago de forma 100% segura.
+                Processamos pagamentos com <strong>liberação instantânea via Pix</strong> (QR Code e Copia e Cola) e <strong>Cartão de Crédito/Débito</strong> em ambiente criptografado e certificado pelo Mercado Pago.
               </p>
             </div>
           </div>
