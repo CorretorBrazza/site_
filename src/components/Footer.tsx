@@ -36,6 +36,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/planos" className="hover:text-amber-400 transition-colors">
+                  Planos & Preços
+                </Link>
+              </li>
+              <li>
                 <Link href="/cadastro" className="hover:text-amber-400 transition-colors flex items-center gap-1.5 text-amber-400">
                   <Sparkles className="w-4 h-4" />
                   <span>Anunciar Imóvel com IA</span>

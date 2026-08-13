@@ -44,6 +44,12 @@ export default function Navbar() {
               Alugar
             </Link>
             <Link
+              href="/planos"
+              className="text-slate-300 hover:text-amber-400 font-semibold text-sm transition-colors py-2"
+            >
+              Planos & Preços
+            </Link>
+            <Link
               href="/cadastro"
               className="text-slate-300 hover:text-amber-400 font-semibold text-sm transition-colors py-2 flex items-center gap-1.5"
             >
@@ -101,6 +107,14 @@ export default function Navbar() {
               className="block text-base font-bold text-slate-200 hover:text-amber-400 py-3 px-3 rounded-xl hover:bg-slate-900 border-b border-slate-900 transition-colors"
             >
               🔑 Alugar Imóveis
+            </Link>
+
+            <Link
+              href="/planos"
+              onClick={() => setIsOpen(false)}
+              className="block text-base font-bold text-slate-200 hover:text-amber-400 py-3 px-3 rounded-xl hover:bg-slate-900 border-b border-slate-900 transition-colors"
+            >
+              🏷️ Planos & Preços
             </Link>
 
             <Link
