@@ -25,7 +25,7 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
 
   useEffect(() => {
     // 1. Identifica usuário ativo
-    let emailAtivo = 'corretorbrazza@gmail.com';
+    let emailAtivo = '';
     const savedUser = localStorage.getItem('user_info');
     if (savedUser) {
       try {
@@ -33,15 +33,13 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
         if (parsed.email) emailAtivo = parsed.email;
         setUsuario(parsed);
       } catch {}
-    } else {
-      const defaultUser = {
-        nome: 'Corretor Brazza',
-        email: 'corretorbrazza@gmail.com',
-        saldo_creditos: 1,
-        plano_atual: 'START',
-      };
-      setUsuario(defaultUser);
-      localStorage.setItem('user_info', JSON.stringify(defaultUser));
+    }
+
+    if (!emailAtivo) {
+      setUsuario(null);
+      setListaImoveis([]);
+      setLoading(false);
+      return;
     }
 
     async function carregarDadosPainel() {
@@ -53,13 +51,18 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
         if (jsonPerfil.success && jsonPerfil.data) {
           const perfil = jsonPerfil.data;
           const userUpdated = {
-            nome: perfil.nome || 'Corretor Brazza',
+            nome: perfil.nome || perfil.nome_guerra || 'Corretor',
             email: perfil.email || emailAtivo,
-            saldo_creditos: perfil.saldo_creditos ?? 1,
+            saldo_creditos: perfil.saldo_creditos ?? 0,
             plano_atual: perfil.plano_atual || 'START',
           };
           setUsuario(userUpdated);
           localStorage.setItem('user_info', JSON.stringify(userUpdated));
+        } else {
+          // Se o corretor não existe na API (banco limpo), remove o cache antigo do navegador
+          localStorage.removeItem('user_info');
+          setUsuario(null);
+          setListaImoveis([]);
         }
 
         // Busca anúncios do corretor ao vivo da API
