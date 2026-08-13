@@ -91,7 +91,7 @@ export default function ModalAcervoFotos({
             <div className="flex items-center gap-2">
               <h3 className="text-xl font-black text-gray-900">Acervo do Imóvel {referencia}</h3>
               <span className="bg-green-100 text-green-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                Backup Salvo na Nuvem ☁️
+                Nuvem Imóveis Taboão ☁️
               </span>
             </div>
             <p className="text-xs text-gray-500 mt-0.5">

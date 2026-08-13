@@ -511,7 +511,7 @@ export default function AdminDashboardPage() {
 
           <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl col-span-2 md:col-span-1">
             <div className="flex items-center justify-between text-slate-400 text-xs mb-2 font-bold uppercase tracking-wider">
-              <span>Espaço Salvo R2</span>
+              <span>Nuvem Imóveis Taboão</span>
               <HardDrive className="w-4 h-4 text-purple-400" />
             </div>
             <div className="text-3xl font-black text-white">{stats?.espaco_salvo_gb || '0.00 GB'}</div>

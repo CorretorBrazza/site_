@@ -186,7 +186,7 @@ export default function PlanosPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>Backup ilimitado no acervo R2</span>
+                    <span>Backup ilimitado na Nuvem Imóveis Taboão</span>
                   </div>
                 </div>
               </div>

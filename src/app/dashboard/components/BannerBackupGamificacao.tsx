@@ -25,7 +25,7 @@ export default function BannerBackupGamificacao({
         <div className="space-y-2 max-w-2xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full text-xs font-semibold uppercase tracking-wider">
             <ShieldCheck className="w-4 h-4 text-indigo-400" />
-            Central de Fotos R2 & Armazenamento em Nuvem
+            Central de Fotos & Armazenamento na Nuvem Imóveis Taboão
           </div>
 
           <h2 className="text-xl md:text-2xl font-bold tracking-tight text-white">
@@ -34,18 +34,18 @@ export default function BannerBackupGamificacao({
                 Sua carteira possui <span className="text-yellow-400 font-extrabold">{totalFotosBackup} fotos</span> em alta resolução ({espacoTexto} salvos na nuvem)
               </>
             ) : (
-              <>Sua Central de Fotos R2 está pronta para receber seu acervo</>
+              <>Sua Central de Fotos na Nuvem Imóveis Taboão está pronta para receber seu acervo</>
             )}
           </h2>
 
           <p className="text-slate-300 text-xs md:text-sm leading-relaxed">
             {temFotos ? (
               <>
-                Suas <strong>{totalFotosBackup} fotos originais</strong> estão armazenadas com segurança no depósito em nuvem Cloudflare R2, protegendo seu acervo sem ocupar a memória interna do seu celular.
+                Suas <strong>{totalFotosBackup} fotos originais</strong> estão armazenadas com segurança na <strong>Nuvem Imóveis Taboão</strong>, protegendo seu acervo sem ocupar a memória interna do seu celular.
               </>
             ) : (
               <>
-                Envie seus imóveis com até <strong>20 fotos por e-mail</strong>. As imagens em alta resolução ficam salvas no depósito em nuvem sem lotar a galeria do seu aparelho.
+                Envie seus imóveis com até <strong>20 fotos por anúncio</strong>. As imagens em alta resolução ficam salvas com segurança na <strong>Nuvem Imóveis Taboão</strong> sem lotar a galeria do seu aparelho.
               </>
             )}
           </p>
