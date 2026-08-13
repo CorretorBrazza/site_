@@ -25,18 +25,42 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
   if (!imovel) {
     return {
-      title: 'Imóvel não encontrado | Imóveis Taboão',
+      title: 'Imóvel não encontrado | Imóveis Taboão da Serra e imediações',
     };
   }
 
+  const tituloSeo = `${imovel.titulo} — Taboão da Serra e imediações`;
+  const descricaoSeo = imovel.descricao
+    ? `${imovel.descricao.substring(0, 155)}...`
+    : `Confira este imóvel (${imovel.tipo}) para ${imovel.transacao} em Taboão da Serra e imediações.`;
+  const fotoCapa = imovel.fotos && imovel.fotos.length > 0 ? imovel.fotos[0] : 'https://images.unsplash.com/photo-1560518883-ce09059eeffa';
+  const urlPagina = `https://imoveistaboao.com.br/imovel/${imovel.id}`;
+
   return {
-    title: `${imovel.titulo} — Taboão da Serra e imediações`,
-    description: imovel.descricao.substring(0, 160) + '...',
+    title: tituloSeo,
+    description: descricaoSeo,
+    alternates: {
+      canonical: urlPagina,
+    },
     openGraph: {
-      title: `${imovel.titulo} — Taboão da Serra e imediações`,
-      description: imovel.descricao.substring(0, 160) + '...',
-      images: imovel.fotos.length > 0 ? [imovel.fotos[0]] : [],
+      title: tituloSeo,
+      description: descricaoSeo,
+      url: urlPagina,
+      images: [
+        {
+          url: fotoCapa,
+          width: 1200,
+          height: 630,
+          alt: imovel.titulo,
+        },
+      ],
       type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: tituloSeo,
+      description: descricaoSeo,
+      images: [fotoCapa],
     },
   };
 }
