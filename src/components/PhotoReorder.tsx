@@ -9,6 +9,8 @@ export interface PhotoItem {
   url_optimized?: string;
   ordem: number;
   eh_capa: boolean;
+  /** Índice da foto no array original do anúncio; não muda ao mover a foto na interface. */
+  source_index?: number;
 }
 
 interface PhotoReorderProps {
@@ -18,7 +20,10 @@ interface PhotoReorderProps {
 }
 
 export default function PhotoReorder({ initialPhotos, onSaveOrder, isLoading = false }: PhotoReorderProps) {
-  const [photos, setPhotos] = useState<PhotoItem[]>(initialPhotos || []);
+  const [photos, setPhotos] = useState<PhotoItem[]>(() => (initialPhotos || []).map((photo, index) => ({
+    ...photo,
+    source_index: photo.source_index ?? index,
+  })));
   const [isSaved, setIsSaved] = useState(false);
 
   const movePhoto = (fromIndex: number, toIndex: number) => {

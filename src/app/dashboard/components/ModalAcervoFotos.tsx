@@ -24,8 +24,9 @@ export default function ModalAcervoFotos({
     titulo: string;
     anotacoes_privadas: string;
     total_fotos: number;
+    fotos_no_r2: number;
     espaco_salvo_mb: string;
-    fotos: { id: string; original_url: string; download_url: string }[];
+    fotos: { id: string; r2_key?: string | null; storage?: 'R2' | 'LEGACY_SOURCE'; download_url: string }[];
   } | null>(null);
   const [textoAnotacao, setTextoAnotacao] = useState('');
 
@@ -108,7 +109,7 @@ export default function ModalAcervoFotos({
                 <ImageIcon className="w-5 h-5 text-blue-600" />
                 <div>
                   <span className="text-xs font-bold text-blue-900 block">
-                    {dadosAcervo.total_fotos} fotos armazenadas no acervo
+                    {dadosAcervo.fotos_no_r2} de {dadosAcervo.total_fotos} fotos com backup confirmado no Cloudflare R2
                   </span>
                   <span className="text-[11px] text-blue-700">
                     Você economizou aproximadamente <strong>{dadosAcervo.espaco_salvo_mb}</strong> de espaço no celular!
@@ -142,6 +143,9 @@ export default function ModalAcervoFotos({
                       alt={`Foto ${idx + 1}`}
                       className="w-full h-32 object-cover transition-transform group-hover:scale-105"
                     />
+                    <span className={`absolute top-1.5 left-1.5 rounded px-1.5 py-0.5 text-[9px] font-bold ${foto.storage === 'R2' ? 'bg-emerald-600 text-white' : 'bg-amber-500 text-amber-950'}`}>
+                      {foto.storage === 'R2' ? 'BACKUP R2' : 'LEGADO'}
+                    </span>
                     <a
                       href={foto.download_url}
                       download
