@@ -21,6 +21,7 @@ const workflowMeta: Record<string, { label: string; tone: string; nextAction: st
   KNOWLEDGE_DONE: { label: 'Criando Media Kit', tone: 'text-violet-300 border-violet-800 bg-violet-950/60', nextAction: 'A copy e os materiais comerciais estão sendo gerados.' },
   PENDING_APPROVAL: { label: 'Aguardando sua aprovação', tone: 'text-amber-300 border-amber-800 bg-amber-950/60', nextAction: 'Abra o link enviado no WhatsApp, revise e aprove.' },
   QUEUED_FOR_REVIEW: { label: 'Atualização em revisão', tone: 'text-amber-300 border-amber-800 bg-amber-950/60', nextAction: 'Aguarde a nova versão de aprovação.' },
+  AWAITING_CREDITS: { label: 'Aguardando crédito', tone: 'text-rose-300 border-rose-800 bg-rose-950/60', nextAction: 'Recarregue créditos para gerar o link de aprovação.' },
   APPROVED: { label: 'Finalizando publicação', tone: 'text-emerald-300 border-emerald-800 bg-emerald-950/60', nextAction: 'Estamos concluindo a entrega do anúncio.' },
   DELIVERED: { label: 'Publicado', tone: 'text-emerald-300 border-emerald-800 bg-emerald-950/60', nextAction: 'Use seu Media Kit e divulgue o imóvel.' },
   PUBLISHED: { label: 'Publicado', tone: 'text-emerald-300 border-emerald-800 bg-emerald-950/60', nextAction: 'Use seu Media Kit e divulgue o imóvel.' },
@@ -109,11 +110,11 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
             );
 
             // Mapeamento amigável de status para o painel
-            let statusExibicao: any = 'Ativo';
+            let statusExibicao: any = 'Em Análise';
             const stUpper = (item.status || '').toUpperCase();
-            if (stUpper === 'DELIVERED' || stUpper === 'APPROVED' || stUpper === 'PUBLISHED' || stUpper === 'ATIVO') {
+            if (stUpper === 'DELIVERED' || stUpper === 'PUBLISHED' || stUpper === 'ATIVO') {
               statusExibicao = 'Ativo';
-            } else if (stUpper === 'PENDING_APPROVAL' || stUpper === 'INGEST_APPROVED') {
+            } else if (stUpper === 'PENDING_APPROVAL' || stUpper === 'INGEST_APPROVED' || stUpper === 'APPROVED') {
               statusExibicao = 'Em Análise';
             } else {
               statusExibicao = item.status || 'Em Análise';
@@ -198,7 +199,7 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
     else summary.processando += 1;
     return summary;
   }, { publicados: 0, aprovacao: 0, processando: 0, atencao: 0 });
-  const nextItem = listaImoveis.find((item) => ['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW', 'REJECTED', 'EXPIRED'].includes(String(item.workflow_status || '').toUpperCase()))
+  const nextItem = listaImoveis.find((item) => ['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW', 'AWAITING_CREDITS', 'REJECTED', 'EXPIRED'].includes(String(item.workflow_status || '').toUpperCase()))
     || listaImoveis.find((item) => !['DELIVERED', 'PUBLISHED'].includes(String(item.workflow_status || '').toUpperCase()));
   const nextItemMeta = nextItem ? getWorkflowMeta(nextItem.workflow_status) : null;
 
