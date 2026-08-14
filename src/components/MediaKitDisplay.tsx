@@ -38,7 +38,7 @@ export default function MediaKitDisplay({ mediaKit, referencia }: MediaKitProps)
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="w-5 h-5 text-yellow-300 animate-pulse" />
             <span className="text-xs uppercase tracking-wider font-bold bg-white/20 px-2.5 py-0.5 rounded-full">
-              Media Kit IAGerado • Ref: {referencia}
+              Media Kit gerado por IA • Ref.: {referencia}
             </span>
           </div>
           <h3 className="text-xl font-extrabold">Copie e Publique nos seus Canais</h3>
@@ -67,7 +67,7 @@ export default function MediaKitDisplay({ mediaKit, referencia }: MediaKitProps)
             </button>
           </div>
           <div className="bg-white border border-emerald-100 rounded-xl p-3.5 text-xs font-mono text-slate-800 whitespace-pre-line max-h-48 overflow-y-auto">
-            {mediaKit.mensagem_whatsapp || 'Gera mensagem formatada para disparo de WhatsApp...'}
+            {mediaKit.mensagem_whatsapp || 'A mensagem para WhatsApp será exibida aqui após o processamento.'}
           </div>
         </div>
 
@@ -110,7 +110,7 @@ export default function MediaKitDisplay({ mediaKit, referencia }: MediaKitProps)
             </button>
           </div>
           <div className="bg-white border border-amber-100 rounded-xl p-3.5 text-xs text-slate-800 whitespace-pre-line max-h-48 overflow-y-auto">
-            {mediaKit.descricao_media || 'Descrição média intermediária para integração de portais...'}
+            {mediaKit.descricao_media || 'A descrição para portais será exibida aqui após o processamento.'}
           </div>
         </div>
 
@@ -130,7 +130,7 @@ export default function MediaKitDisplay({ mediaKit, referencia }: MediaKitProps)
             </button>
           </div>
           <div className="bg-white border border-blue-100 rounded-xl p-3.5 text-xs text-slate-800 whitespace-pre-line max-h-48 overflow-y-auto">
-            {mediaKit.descricao_completa || 'Descrição longa detalhada para o site...'}
+            {mediaKit.descricao_completa || 'A descrição completa para o site será exibida aqui após o processamento.'}
           </div>
         </div>
 

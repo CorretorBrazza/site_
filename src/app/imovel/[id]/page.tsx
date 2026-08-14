@@ -5,8 +5,10 @@ import ImageCarousel from '@/components/ImageCarousel';
 import ShareButton from '@/components/ShareButton';
 import { BedDouble, ShowerHead, Car, Maximize, MapPin, Mail, ShieldCheck, Phone, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
+import TrackedWhatsAppLink from '@/components/TrackedWhatsAppLink';
 
-export const dynamicParams = false;
+export const dynamicParams = true;
+export const revalidate = 60;
 
 export async function generateStaticParams() {
   const imoveis = await getImoveis();
@@ -75,6 +77,10 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
   }
 
   const preco = imovel.transacao === 'Venda' ? imovel.precoVenda : imovel.precoLocacao;
+  const urlPagina = `https://imoveistaboao.com.br/imovel/${imovel.id}/`;
+  const fotoCapa = imovel.fotos && imovel.fotos.length > 0
+    ? imovel.fotos[0]
+    : 'https://images.unsplash.com/photo-1560518883-ce09059eeffa';
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };
@@ -88,8 +94,36 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
   );
   const whatsappUrl = `https://wa.me/${phoneWithCountry}?text=${whatsappMessage}`;
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'RealEstateListing',
+    'name': imovel.titulo,
+    'description': imovel.descricao,
+    'url': urlPagina,
+    'image': fotoCapa,
+    'datePosted': imovel.createdAt,
+    'address': {
+      '@type': 'PostalAddress',
+      'addressLocality': imovel.endereco?.bairro || 'Taboão da Serra',
+      'addressRegion': 'SP',
+      'addressCountry': 'BR'
+    },
+    ...(preco ? {
+      'offers': {
+        '@type': 'Offer',
+        'price': preco,
+        'priceCurrency': 'BRL',
+        'availability': 'https://schema.org/InStock'
+      }
+    } : {})
+  };
+
   return (
     <div className="min-h-screen bg-[#0b132b] text-slate-100 py-8 px-4">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Cabeçalho do Imóvel */}
@@ -144,25 +178,25 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div className="bg-slate-950 border border-slate-800 p-4 rounded-2xl text-center space-y-1">
                   <BedDouble className="w-6 h-6 text-amber-500 mx-auto" />
-                  <span className="block font-black text-lg text-white">{imovel.caracteristicas?.quartos || 0}</span>
+                  <span className="block font-black text-lg text-white">{imovel.caracteristicas?.quartos ?? '—'}</span>
                   <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Quartos</span>
                 </div>
 
                 <div className="bg-slate-950 border border-slate-800 p-4 rounded-2xl text-center space-y-1">
                   <ShowerHead className="w-6 h-6 text-amber-500 mx-auto" />
-                  <span className="block font-black text-lg text-white">{imovel.caracteristicas?.suites || 0}</span>
+                  <span className="block font-black text-lg text-white">{imovel.caracteristicas?.suites ?? '—'}</span>
                   <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Suítes</span>
                 </div>
 
                 <div className="bg-slate-950 border border-slate-800 p-4 rounded-2xl text-center space-y-1">
                   <ShowerHead className="w-6 h-6 text-amber-500 mx-auto" />
-                  <span className="block font-black text-lg text-white">{imovel.caracteristicas?.banheiros || 0}</span>
+                  <span className="block font-black text-lg text-white">{imovel.caracteristicas?.banheiros ?? '—'}</span>
                   <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Banheiros</span>
                 </div>
 
                 <div className="bg-slate-950 border border-slate-800 p-4 rounded-2xl text-center space-y-1">
                   <Maximize className="w-6 h-6 text-amber-500 mx-auto" />
-                  <span className="block font-black text-lg text-white">{imovel.caracteristicas?.areaUtil || 0}m²</span>
+                  <span className="block font-black text-lg text-white">{imovel.caracteristicas?.areaUtil ? `${imovel.caracteristicas.areaUtil}m²` : '—'}</span>
                   <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Área Útil</span>
                 </div>
               </div>
@@ -183,15 +217,14 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
               </div>
 
               <div className="space-y-3">
-                <a
+                <TrackedWhatsAppLink
                   href={whatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  source="property_detail"
                   className="w-full py-4 bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 text-white font-black rounded-2xl text-xs uppercase tracking-wider shadow-lg shadow-emerald-900/30 transition-all flex items-center justify-center gap-2.5"
                 >
                   <MessageCircle className="w-5 h-5" />
                   <span>Chamar no WhatsApp ({imovel.referencia})</span>
-                </a>
+                </TrackedWhatsAppLink>
               </div>
 
               <div className="bg-slate-950 border border-slate-800/80 rounded-2xl p-4 text-xs text-slate-400 space-y-2">

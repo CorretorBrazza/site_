@@ -2,12 +2,12 @@ export type TipoTransacao = 'Venda' | 'Locação' | 'Venda e Locação';
 export type StatusImovel = 'Ativo' | 'Inativo' | 'Expirado' | 'Em Análise' | 'ativo' | 'expirado' | 'em_analise';
 
 export interface Caracteristicas {
-  quartos: number;
-  suites: number;
-  banheiros: number;
-  vagas: number;
-  areaUtil: number;
-  areaTotal: number;
+  quartos?: number | null;
+  suites?: number | null;
+  banheiros?: number | null;
+  vagas?: number | null;
+  areaUtil?: number | null;
+  areaTotal?: number | null;
 }
 
 export interface Endereco {
