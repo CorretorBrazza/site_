@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react';
 import { X, Check, Zap, Sparkles, ShieldCheck, QrCode, CreditCard } from 'lucide-react';
-import { API_BASE_URL } from '@/lib/api';
+import { fetchBrokerApi } from '@/lib/api';
 
 interface ModalRecargaCreditosProps {
   isOpen: boolean;
   onClose: () => void;
-  userEmail?: string;
   pacoteInicial?: 'start' | 'pro' | 'elite';
 }
 
-export default function ModalRecargaCreditos({ isOpen, onClose, userEmail = 'corretor@taboao.com.br', pacoteInicial = 'pro' }: ModalRecargaCreditosProps) {
+export default function ModalRecargaCreditos({ isOpen, onClose, pacoteInicial = 'pro' }: ModalRecargaCreditosProps) {
   const [pacoteSelecionado, setPacoteSelecionado] = useState<'start' | 'pro' | 'elite'>(pacoteInicial);
   const [metodoPagamento, setMetodoPagamento] = useState<'pix' | 'checkout'>('pix');
   const [loading, setLoading] = useState(false);
@@ -29,17 +28,13 @@ export default function ModalRecargaCreditos({ isOpen, onClose, userEmail = 'cor
     setPixData(null);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/payments/checkout`, {
+      const json = await fetchBrokerApi('/payments/checkout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: userEmail,
           pacote_id: pacoteSelecionado,
           method: metodoPagamento,
         }),
       });
-
-      const json = await response.json();
 
       if (!json.success) {
         alert(json.message || 'Erro ao gerar checkout. Tente novamente.');

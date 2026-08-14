@@ -31,6 +31,10 @@ export interface Imovel {
   descricao: string;
   transacao: TipoTransacao;
   tipoImovel: string;
+  // Aliases legados de leitura; novos fluxos devem usar tipoImovel e endereco.
+  tipo?: string;
+  bairro?: string;
+  cidade?: string;
   endereco: Endereco;
   caracteristicas: Caracteristicas;
   precoVenda?: number;

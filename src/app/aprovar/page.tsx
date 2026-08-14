@@ -147,10 +147,11 @@ function AprovarContent() {
     setIsSubmitting(false);
 
     if (result.success) {
-      if (result.media_kit) {
+      const responseData: any = result.data;
+      if (responseData?.media_kit) {
         setAdData((prev: any) => ({
           ...prev,
-          media_kit: result.media_kit,
+          media_kit: responseData.media_kit,
         }));
       }
       setFeedbackMsg('Edições salvas e Media Kit recalibrado com sucesso!');
