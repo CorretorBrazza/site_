@@ -161,10 +161,10 @@ export default function ModalExclusaoInteligente({
               <div>
                 <span className="font-bold text-amber-900 flex items-center gap-1">
                   <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
-                  Excluir fotos do seu Acervo de Backup?
+                  Excluir permanentemente as fotos na nuvem?
                 </span>
                 <p className="text-amber-800 mt-0.5">
-                  Marcação recomendada para liberar espaço no seu acervo de fotos da nuvem.
+                  Esta opção remove as cópias de backup do Cloudflare R2 e as imagens de vitrine gerenciadas pelo sistema. A exclusão só é concluída após confirmação da nuvem.
                 </p>
               </div>
             </label>

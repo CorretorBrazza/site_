@@ -166,7 +166,8 @@ function AprovarContent() {
     if (!adData) return;
     setFotos(newPhotos);
 
-    const novaOrdem = newPhotos.map((p) => p.ordem);
+    // A API recebe os índices do array original; `ordem` muda na interface e não identifica a foto.
+    const novaOrdem = newPhotos.map((photo, index) => photo.source_index ?? index);
     const result = await reorderPhotos(token, adData.ad_id, novaOrdem);
 
     if (!result.success) {
