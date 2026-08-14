@@ -17,18 +17,18 @@ const playfairDisplay = Playfair_Display({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://imoveistaboao.com.br'),
-  title: "imoveistaboão, Sua casa em Taboão da Serra",
-  description: "Encontre os melhores imóveis para venda e locação em Taboão da Serra e região.",
+  title: "Imóveis Taboão | Sua casa em Taboão da Serra",
+  description: "Encontre imóveis para comprar, alugar ou anunciar em Taboão da Serra e imediações.",
   openGraph: {
-    title: "imoveistaboão, Sua casa em Taboão da Serra",
-    description: "Encontre os melhores imóveis para venda e locação em Taboão da Serra e região.",
+    title: "Imóveis Taboão | Sua casa em Taboão da Serra",
+    description: "Encontre imóveis para comprar, alugar ou anunciar em Taboão da Serra e imediações.",
     images: ['https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=1200'],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: "imoveistaboão, Sua casa em Taboão da Serra",
-    description: "Encontre os melhores imóveis para venda e locação em Taboão da Serra e região.",
+    title: "Imóveis Taboão | Sua casa em Taboão da Serra",
+    description: "Encontre imóveis para comprar, alugar ou anunciar em Taboão da Serra e imediações.",
     images: ['https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=1200'],
   },
   verification: {

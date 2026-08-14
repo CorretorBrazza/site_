@@ -201,7 +201,7 @@ export default async function Home() {
                 Anuncie seus imóveis em Taboão da Serra e imediações com Inteligência Artificial
               </h3>
               <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">
-                Envie fotos e descrição bruta por e-mail. Nossa IA cuida do enriquecimento dos dados, fotos em HD e gera o Media Kit completo para publicação em 1 clique.
+                Envie fotos e a descrição bruta pelo WhatsApp oficial. Nossa IA organiza os dados, prepara as imagens e gera um Media Kit completo para você revisar e publicar.
               </p>
 
               <div className="flex flex-wrap gap-4 pt-2 text-xs font-bold text-slate-300">

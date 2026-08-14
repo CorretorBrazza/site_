@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         };
     }
 
-    const title = emp.seoTitle || `imoveistaboão, ${emp.name}`;
+    const title = emp.seoTitle || `${emp.name} | Imóveis Taboão`;
     const description = emp.seoDescription || emp.description.substring(0, 160) + '...';
     const canonical = `https://imoveistaboao.com.br/empreendimento/${emp.slug}/`;
 
