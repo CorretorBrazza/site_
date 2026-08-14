@@ -30,6 +30,7 @@ import {
   PhoneCall,
 } from 'lucide-react';
 import { API_BASE_URL } from '@/lib/api';
+import CuradoriaRegionalAdmin from './CuradoriaRegionalAdmin';
 
 interface OperationItem {
   ad_id: string;
@@ -619,6 +620,7 @@ export default function AdminDashboardPage() {
 
         {/* ABA 1: BASE DE CONHECIMENTO RAG */}
         {abaAtiva === 'conhecimento' && (
+          <>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Form de Inserção de Texto Bruto com IA */}
             <div className="lg:col-span-1 bg-slate-900 border border-slate-800 p-6 rounded-2xl h-fit">
@@ -750,6 +752,8 @@ export default function AdminDashboardPage() {
               )}
             </div>
           </div>
+          <CuradoriaRegionalAdmin adminToken={adminToken} />
+          </>
         )}
 
         {/* ABA 2: CORRETORES & GESTÃO DE CRÉDITOS */}
