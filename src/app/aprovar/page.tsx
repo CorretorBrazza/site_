@@ -188,8 +188,37 @@ function AprovarContent() {
     setIsSubmitting(false);
 
     if (result.success) {
-      setApprovalStatus('APPROVED');
-      setFeedbackMsg('Anúncio Aprovado com sucesso!');
+      const refreshed = await getApprovalDetails(adData.ad_id, token);
+      if (refreshed.success && refreshed.data) {
+        const nextData: any = refreshed.data;
+        const nextRefinados = nextData.dados_refinados || {};
+        const nextCarac = nextRefinados.caracteristicas || {};
+        setAdData(nextData);
+        setApprovalStatus(nextData.status || result.data?.status || 'DELIVERED');
+        setFotos(nextData.fotos || []);
+        setTitulo(nextRefinados.titulo || '');
+        setTipoImovel(nextRefinados.tipoImovel || 'Apartamento');
+        setFinalidade(nextRefinados.finalidade || (nextRefinados.precoLocacao ? 'Locação' : 'Venda'));
+        setDescricao(nextRefinados.descricao || '');
+        setPrecoVenda(nextRefinados.precoVenda ?? '');
+        setPrecoLocacao(nextRefinados.precoLocacao ?? '');
+        setCondominio(nextRefinados.condominio ?? '');
+        setIptu(nextRefinados.iptu ?? '');
+        setQuartos(nextCarac.quartos ?? '');
+        setSuites(nextCarac.suites ?? '');
+        setBanheiros(nextCarac.banheiros ?? '');
+        setVagas(nextCarac.vagas ?? '');
+        setAreaUtil(nextCarac.areaUtil ?? nextCarac.areaTotal ?? '');
+        setBairro(nextRefinados.endereco?.bairro || '');
+      } else {
+        setApprovalStatus(result.data?.status || 'DELIVERED');
+        setAdData((prev: any) => ({
+          ...prev,
+          status: result.data?.status || 'DELIVERED',
+          media_kit: result.data?.media_kit || prev.media_kit,
+        }));
+      }
+      setFeedbackMsg('Anúncio Aprovado com sucesso! Fotos e Media Kit foram liberados.');
     } else {
       alert(`Erro ao aprovar anúncio: ${result.error}`);
     }
@@ -266,7 +295,7 @@ function AprovarContent() {
               </div>
             </div>
             <a
-              href={`/imovel/${adData.referencia.toLowerCase()}`}
+              href={`/imovel/${adData.ad_id}`}
               className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl text-xs font-black uppercase tracking-wider transition-colors shrink-0 shadow-md"
             >
               Ver Imóvel no Site
