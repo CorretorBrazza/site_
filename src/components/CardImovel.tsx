@@ -1,6 +1,9 @@
+'use client';
+
 import { Imovel } from '@/types/imovel';
 import Link from 'next/link';
 import { BedDouble, ShowerHead, Car, Maximize, MapPin } from 'lucide-react';
+import { trackEvent } from '@/lib/analytics';
 
 interface CardImovelProps {
   imovel: Imovel;
@@ -17,7 +20,11 @@ export default function CardImovel({ imovel }: CardImovelProps) {
   const preco = imovel.transacao === 'Venda' ? imovel.precoVenda : imovel.precoLocacao;
 
   return (
-    <Link href={`/imovel/${imovel.id}`} className="block group">
+    <Link
+      href={`/imovel/${imovel.id}`}
+      className="block group"
+      onClick={() => trackEvent('view_property', { transaction: imovel.transacao })}
+    >
       <div className="bg-slate-900 rounded-3xl overflow-hidden transition-all duration-300 border border-slate-800/90 hover:border-amber-500/50 shadow-xl hover:shadow-2xl hover:shadow-amber-500/10 h-full flex flex-col">
         
         {/* Imagem com Overlay de Gradiente */}
@@ -62,19 +69,19 @@ export default function CardImovel({ imovel }: CardImovelProps) {
           <div className="mt-auto grid grid-cols-4 gap-2 text-slate-300 border-t border-slate-800/80 pt-3.5">
             <div className="flex flex-col items-center gap-0.5" title="Quartos">
               <BedDouble size={16} className="text-amber-500" />
-              <span className="text-[11px] font-bold text-slate-300">{imovel.caracteristicas?.quartos || 0} Qts</span>
+              <span className="text-[11px] font-bold text-slate-300">{imovel.caracteristicas?.quartos ?? '—'} Qts</span>
             </div>
             <div className="flex flex-col items-center gap-0.5" title="Banheiros">
               <ShowerHead size={16} className="text-amber-500" />
-              <span className="text-[11px] font-bold text-slate-300">{imovel.caracteristicas?.banheiros || 0} Ban</span>
+              <span className="text-[11px] font-bold text-slate-300">{imovel.caracteristicas?.banheiros ?? '—'} Ban</span>
             </div>
             <div className="flex flex-col items-center gap-0.5" title="Vagas">
               <Car size={16} className="text-amber-500" />
-              <span className="text-[11px] font-bold text-slate-300">{imovel.caracteristicas?.vagas || 0} Vag</span>
+              <span className="text-[11px] font-bold text-slate-300">{imovel.caracteristicas?.vagas ?? '—'} Vag</span>
             </div>
             <div className="flex flex-col items-center gap-0.5" title="Área Útil">
               <Maximize size={16} className="text-amber-500" />
-              <span className="text-[11px] font-bold text-slate-300">{imovel.caracteristicas?.areaUtil || 0}m²</span>
+              <span className="text-[11px] font-bold text-slate-300">{imovel.caracteristicas?.areaUtil ? `${imovel.caracteristicas.areaUtil}m²` : '—'}</span>
             </div>
           </div>
 

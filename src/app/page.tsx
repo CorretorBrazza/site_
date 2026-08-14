@@ -207,7 +207,7 @@ export default async function Home() {
               <div className="flex flex-wrap gap-4 pt-2 text-xs font-bold text-slate-300">
                 <div className="flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span>1 Crédito Grátis ao se cadastrar</span>
+                  <span>Publicação com aprovação e segurança</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400" />

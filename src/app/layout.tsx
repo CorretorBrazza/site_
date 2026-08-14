@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
-import Script from "next/script";
-
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import BannerAutoResponder from "@/components/BannerAutoResponder";
+import AnalyticsConsent from "@/components/AnalyticsConsent";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -47,49 +45,12 @@ export default function RootLayout({
     <html lang="pt-BR" suppressHydrationWarning>
       <head />
       <body className={`${plusJakartaSans.variable} ${playfairDisplay.variable} antialiased bg-[#faf9f6] text-slate-800 flex flex-col min-h-screen`}>
-        {/* Google Tag Manager (noscript) */}
-        <noscript>
-          <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-M3S6MFXN"
-            height="0"
-            width="0"
-            style={{ display: 'none', visibility: 'hidden' }}
-          />
-        </noscript>
-        {/* Google Tag Manager */}
-        <Script id="google-tag-manager" strategy="afterInteractive">
-          {`
-            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','GTM-M3S6MFXN');
-          `}
-        </Script>
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2483076017143821"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-PYS517T5RR"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-PYS517T5RR');
-          `}
-        </Script>
         <Navbar />
         <main className="flex-grow">
           {children}
         </main>
         <Footer />
-        <BannerAutoResponder />
+        <AnalyticsConsent />
       </body>
     </html>
   );

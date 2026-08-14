@@ -5,6 +5,7 @@ import { MapPin, Calendar, CheckCircle2, Ruler, BedDouble, Car, PlayCircle, Mess
 import Link from 'next/link';
 import PropertyHeroBanner from '@/components/PropertyHeroBanner';
 import PropertyTabsSection from '@/components/PropertyTabsSection';
+import TrackedWhatsAppLink from '@/components/TrackedWhatsAppLink';
 import AmenitiesGrid from '@/components/AmenitiesGrid';
 import DormitoriosSection from '@/components/DormitoriosSection';
 import BuildingProgressSection from '@/components/BuildingProgressSection';
@@ -29,13 +30,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
     const title = emp.seoTitle || `imoveistaboão, ${emp.name}`;
     const description = emp.seoDescription || emp.description.substring(0, 160) + '...';
+    const canonical = `https://imoveistaboao.com.br/empreendimento/${emp.slug}/`;
 
     return {
         title,
         description,
+        alternates: {
+            canonical,
+        },
         openGraph: {
             title,
             description,
+            url: canonical,
             images: [emp.heroImage],
             type: 'website',
         },
@@ -62,9 +68,29 @@ export default async function EmpreendimentoPage({
 
     const whatsappMessage = `Olá! Tenho interesse no empreendimento ${emp.name}. Poderia me enviar mais informações?`;
     const whatsappUrl = `https://wa.me/5511970988512?text=${encodeURIComponent(whatsappMessage)}`;
+    const canonical = `https://imoveistaboao.com.br/empreendimento/${emp.slug}/`;
+    const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'Residence',
+        name: emp.name,
+        description: emp.description,
+        url: canonical,
+        image: emp.heroImage,
+        address: {
+            '@type': 'PostalAddress',
+            streetAddress: emp.address,
+            addressLocality: 'Taboão da Serra',
+            addressRegion: 'SP',
+            addressCountry: 'BR',
+        },
+    };
 
     return (
         <div className="min-h-screen bg-[#F9FAFB]">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             {/* Navigation */}
             <div className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100">
                 <div className="max-w-7xl mx-auto px-4 h-16 flex items-center">
@@ -246,14 +272,14 @@ export default async function EmpreendimentoPage({
                                     <h3 className="text-2xl font-bold leading-tight mb-6">Condições Especiais</h3>
                                     <p className="text-gray-400 mb-8">Solicite agora a tabela de preços e as melhores condições.</p>
 
-                                    <Link
+                                    <TrackedWhatsAppLink
                                         href={whatsappUrl}
-                                        target="_blank"
+                                        source="development_detail"
                                         className="w-full bg-blue-600 text-white py-4 rounded-lg font-bold transition-all hover:bg-blue-700 flex items-center justify-center gap-2 mb-4"
                                     >
                                         <MessageCircle size={20} />
                                         Falar com Corretor
-                                    </Link>
+                                    </TrackedWhatsAppLink>
 
                                     <div className="mt-6 flex items-center gap-3 bg-white/5 p-3 rounded-lg border border-white/10">
                                         <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
@@ -268,14 +294,14 @@ export default async function EmpreendimentoPage({
 
             {/* Sticky Mobile CTA */}
             <div className="lg:hidden fixed bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur-lg border-t border-gray-200 z-50">
-                <Link
+                <TrackedWhatsAppLink
                     href={whatsappUrl}
-                    target="_blank"
+                    source="development_detail_mobile"
                     className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"
                 >
                     <MessageCircle size={20} />
                     Falar com Consultor
-                </Link>
+                </TrackedWhatsAppLink>
             </div>
 
             {/* Padding for mobile CTA */}

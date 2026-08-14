@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import { Send, CheckCircle2, AlertCircle } from 'lucide-react';
+import { trackEvent } from '@/lib/analytics';
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://imoveis-taboao-api-production-4cd9.up.railway.app/api/v1';
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -12,6 +15,7 @@ export default function ContactForm() {
   });
 
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [consentimento, setConsentimento] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -20,28 +24,30 @@ export default function ContactForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!consentimento) return;
     setStatus('submitting');
 
     try {
-      const response = await fetch('https://api.web3forms.com/submit', {
+      const response = await fetch(`${API_BASE_URL}/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
         body: JSON.stringify({
-          access_key: '7d915857-c79e-4ff4-b507-ac4edaa6ce5c',
-          subject: `Novo Contato: ${formData.nome}`,
           nome: formData.nome,
           email: formData.email,
           telefone: formData.telefone,
           mensagem: formData.mensagem,
+          website: '',
         }),
       });
 
       if (response.ok) {
+        trackEvent('contact_form_submitted', { form: 'public_contact' });
         setStatus('success');
         setFormData({ nome: '', email: '', telefone: '', mensagem: '' });
+        setConsentimento(false);
       } else {
         setStatus('error');
       }
@@ -73,6 +79,14 @@ export default function ContactForm() {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="text"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+            className="absolute -left-[9999px] h-px w-px opacity-0"
+          />
           <div>
             <label htmlFor="nome" className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
               Nome Completo *
@@ -138,6 +152,20 @@ export default function ContactForm() {
             />
           </div>
 
+          <label className="flex items-start gap-2 text-[11px] leading-relaxed text-slate-400">
+            <input
+              type="checkbox"
+              checked={consentimento}
+              onChange={(event) => setConsentimento(event.target.checked)}
+              className="mt-0.5 accent-amber-500"
+              required
+            />
+            <span>
+              Autorizo o uso dos meus dados para receber resposta sobre esta mensagem, conforme a{' '}
+              <a href="/politica-de-privacidade" className="font-bold text-amber-400 underline">Política de Privacidade</a>.
+            </span>
+          </label>
+
           {status === 'error' && (
             <div className="flex items-center gap-2 text-xs text-red-200 bg-red-950/80 p-3 rounded-xl border border-red-800">
               <AlertCircle size={16} />
@@ -147,7 +175,7 @@ export default function ContactForm() {
 
           <button
             type="submit"
-            disabled={status === 'submitting'}
+            disabled={status === 'submitting' || !consentimento}
             className="w-full bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-slate-950 font-black py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider disabled:opacity-50"
           >
             <Send size={16} />

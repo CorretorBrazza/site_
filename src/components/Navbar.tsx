@@ -123,9 +123,6 @@ export default function Navbar() {
               className="block text-base font-bold text-slate-200 hover:text-amber-400 py-3 px-3 rounded-xl hover:bg-slate-900 border-b border-slate-900 transition-colors flex items-center justify-between"
             >
               <span>✨ Anunciar Imóvel com IA</span>
-              <span className="bg-amber-500/20 text-amber-400 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-amber-500/30">
-                1 Crédito Grátis
-              </span>
             </Link>
 
             <div className="pt-4">

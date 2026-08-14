@@ -308,7 +308,11 @@ export default function SimuladorClient() {
             });
 
             if (typeof window !== 'undefined' && (window as any).dataLayer) {
-                (window as any).dataLayer.push({ 'event': 'lead_consentido', 'lead_data': lead });
+                (window as any).dataLayer.push({
+                    'event': 'lead_consentido',
+                    'lead_type': 'simulacao_financiamento',
+                    'has_consent': true
+                });
             }
 
             setIsTyping(true);
