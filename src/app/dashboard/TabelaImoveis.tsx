@@ -17,6 +17,7 @@ const statusMeta = (rawStatus?: string) => {
   const status = String(rawStatus || '').toUpperCase();
   if (['DELIVERED', 'PUBLISHED', 'ATIVO'].includes(status)) return { label: 'Publicado', note: 'Pronto para divulgação', tone: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' };
   if (['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW'].includes(status)) return { label: 'Aguardando aprovação', note: 'Confira o link enviado no WhatsApp', tone: 'bg-amber-500/20 text-amber-300 border-amber-500/30' };
+  if (['AWAITING_CREDITS', 'SEM_SALDO'].includes(status)) return { label: 'Aguardando crédito', note: 'Recarregue para liberar a aprovação', tone: 'bg-rose-500/20 text-rose-300 border-rose-500/30' };
   if (['REJECTED'].includes(status)) return { label: 'Precisa de ajuste', note: 'Revise e gere uma nova versão', tone: 'bg-rose-500/20 text-rose-300 border-rose-500/30' };
   if (['EXPIRED', 'EXPIRADO'].includes(status)) return { label: 'Expirado', note: 'Reative usando 1 crédito', tone: 'bg-rose-500/20 text-rose-400 border-rose-500/30' };
   return { label: 'Em processamento', note: 'Estamos preparando seu anúncio', tone: 'bg-blue-500/20 text-blue-300 border-blue-500/30' };
@@ -200,25 +201,31 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                       </div>
                     </td>
 
-                    {/* Media Kit IA & Acervo Cloudinary */}
+                    {/* Media Kit e acervo só são liberados depois de crédito debitado e publicação concluída. */}
                     <td className="px-6 py-4">
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-                        <button
-                          onClick={() => setMediaKitModal({ isOpen: true, referencia: imovel.referencia, mediaKit: (imovel as any).media_kit || null })}
-                          className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 px-3 py-1.5 rounded-xl text-xs font-black transition-all shadow-md flex items-center gap-1.5 whitespace-nowrap"
-                        >
-                          <Sparkles className="w-3.5 h-3.5" />
-                          Media Kit IA ✨
-                        </button>
+                      {isAtivo ? (
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                          <button
+                            onClick={() => setMediaKitModal({ isOpen: true, referencia: imovel.referencia, mediaKit: (imovel as any).media_kit || null })}
+                            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 px-3 py-1.5 rounded-xl text-xs font-black transition-all shadow-md flex items-center gap-1.5 whitespace-nowrap"
+                          >
+                            <Sparkles className="w-3.5 h-3.5" />
+                            Media Kit IA
+                          </button>
 
-                        <button
-                          onClick={() => setAcervoModal({ isOpen: true, adId: imovel.id, referencia: imovel.referencia })}
-                          className="bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap"
-                        >
-                          <HardDrive className="w-3.5 h-3.5 text-amber-500" />
-                          Fotos Cloud ({imovel.fotos?.length || 0})
-                        </button>
-                      </div>
+                          <button
+                            onClick={() => setAcervoModal({ isOpen: true, adId: imovel.id, referencia: imovel.referencia })}
+                            className="bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap"
+                          >
+                            <HardDrive className="w-3.5 h-3.5 text-amber-500" />
+                            Fotos Cloud ({imovel.fotos?.length || 0})
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="text-[11px] text-slate-500 max-w-44 leading-relaxed">
+                          Media Kit e fotos em nuvem serão liberados após a aprovação e o débito de 1 crédito.
+                        </div>
+                      )}
                     </td>
 
                     {/* Ações */}
