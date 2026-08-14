@@ -10,7 +10,7 @@ interface ModalAcervoFotosProps {
   referencia: string;
 }
 
-import { API_BASE_URL } from '@/lib/api';
+import { fetchBrokerApi } from '@/lib/api';
 
 export default function ModalAcervoFotos({
   isOpen,
@@ -33,8 +33,7 @@ export default function ModalAcervoFotos({
     if (!isOpen || !adId) return;
 
     setLoading(true);
-    fetch(`${API_BASE_URL}/storage/acervo/${adId}`)
-      .then((res) => res.json())
+    fetchBrokerApi(`/storage/acervo/${encodeURIComponent(adId)}`)
       .then((json) => {
         if (json.success && json.data) {
           setDadosAcervo(json.data);
@@ -50,16 +49,13 @@ export default function ModalAcervoFotos({
   const handleSalvarAnotacao = async () => {
     setSalvandoNota(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/storage/anotacao`, {
+      const json = await fetchBrokerApi('/storage/anotacao', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ad_id: adId,
           anotacao: textoAnotacao,
         }),
       });
-
-      const json = await res.json();
       if (json.success) {
         alert('Anotações salvas no seu acervo!');
       } else {

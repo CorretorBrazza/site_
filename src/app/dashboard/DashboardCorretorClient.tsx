@@ -4,13 +4,12 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Imovel } from '@/types/imovel';
+import { fetchBrokerApi } from '@/lib/api';
 import HeaderSaldoCreditos from './components/HeaderSaldoCreditos';
 import BannerBackupGamificacao from './components/BannerBackupGamificacao';
 import ModalRecargaCreditos from './components/ModalRecargaCreditos';
 import TabelaImoveis from './TabelaImoveis';
 import { Sparkles, ShieldCheck, LogOut, RefreshCw, PlusCircle, Building2 } from 'lucide-react';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://imoveis-taboao-api-production-4cd9.up.railway.app/api/v1';
 
 interface DashboardCorretorClientProps {
   imoveis?: Imovel[];
@@ -35,35 +34,35 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
       }
     }
 
-    // 1. Identifica usuário ativo
-    let emailAtivo = '';
+    // A sessão JWT é a única fonte de identidade; user_info serve apenas para exibição provisória.
+    const token = localStorage.getItem('auth_token');
     const savedUser = localStorage.getItem('user_info');
     if (savedUser) {
       try {
-        const parsed = JSON.parse(savedUser);
-        if (parsed.email) emailAtivo = parsed.email;
-        setUsuario(parsed);
-      } catch {}
+        setUsuario(JSON.parse(savedUser));
+      } catch {
+        localStorage.removeItem('user_info');
+      }
     }
 
-    if (!emailAtivo) {
+    if (!token) {
       setUsuario(null);
       setListaImoveis([]);
       setLoading(false);
+      router.replace('/login');
       return;
     }
 
     async function carregarDadosPainel() {
       setLoading(true);
       try {
-        // Busca perfil do corretor (para ter saldo real de créditos)
-        const resPerfil = await fetch(`${API_BASE_URL}/corretor/${encodeURIComponent(emailAtivo)}`);
-        const jsonPerfil = await resPerfil.json();
+        // Busca perfil pela sessão autenticada para ter saldo real de créditos.
+        const jsonPerfil = await fetchBrokerApi('/corretor/me');
         if (jsonPerfil.success && jsonPerfil.data) {
           const perfil = jsonPerfil.data;
           const userUpdated = {
             nome: perfil.nome || perfil.nome_guerra || 'Corretor',
-            email: perfil.email || emailAtivo,
+            email: perfil.email || '',
             saldo_creditos: perfil.saldo_creditos ?? 0,
             plano_atual: perfil.plano_atual || 'START',
           };
@@ -72,15 +71,14 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
         } else {
           // Se o corretor não existe na API (banco limpo), remove o cache antigo do navegador
           localStorage.removeItem('user_info');
+          localStorage.removeItem('auth_token');
           setUsuario(null);
           setListaImoveis([]);
+          router.replace('/login');
         }
 
-        // Busca anúncios do corretor ao vivo da API
-        const resAnuncios = await fetch(`${API_BASE_URL}/anuncios?corretor_email=${encodeURIComponent(emailAtivo)}`, {
-          cache: 'no-store',
-        });
-        const jsonAnuncios = await resAnuncios.json();
+        // Busca anúncios do corretor autenticado; não há e-mail controlável na requisição.
+        const jsonAnuncios = await fetchBrokerApi('/me/anuncios?limit=100', { cache: 'no-store' });
 
         if (jsonAnuncios.success && Array.isArray(jsonAnuncios.data)) {
           const mapped: Imovel[] = jsonAnuncios.data.map((item: any) => {
@@ -105,7 +103,9 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
               referencia: item.referencia || 'BRA0000',
               titulo: ref.titulo || item.media_kit?.titulo_seo || `Imóvel ${item.referencia}`,
               descricao: ref.descricao || item.media_kit?.legenda_social || '',
-              tipo: ref.tipo || ref.tipoImovel || 'Apartamento',
+                              tipoImovel: ref.tipoImovel || ref.tipo || 'Apartamento',
+                tipo: ref.tipo || ref.tipoImovel || 'Apartamento',
+
               transacao: ref.transacao || ref.finalidade || (ref.precoLocacao ? 'Locação' : 'Venda'),
               precoVenda: ref.precoVenda || null,
               precoLocacao: ref.precoLocacao || null,
@@ -114,20 +114,24 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
               bairro: ref.bairro || ref.endereco?.bairro || 'Taboão da Serra',
               cidade: ref.cidade || ref.endereco?.cidade || 'Taboão da Serra',
               endereco: {
-                rua: ref.rua || ref.endereco?.rua || '',
-                bairro: ref.bairro || ref.endereco?.bairro || 'Taboão da Serra',
+                                  rua: ref.rua || ref.endereco?.rua || '',
+                  numero: ref.numero || ref.endereco?.numero || '',
+                  bairro: ref.bairro || ref.endereco?.bairro || 'Taboão da Serra',
+
                 cidade: ref.cidade || ref.endereco?.cidade || 'Taboão da Serra',
                 estado: ref.estado || ref.endereco?.estado || 'SP',
                 cep: ref.cep || ref.endereco?.cep || '',
               },
               fotos: fotosArray.length > 0 ? fotosArray : ['https://images.unsplash.com/photo-1560518883-ce09059eeffa'],
-              caracteristicas: {
-                quartos: ref.quartos || ref.caracteristicas?.quartos || 0,
-                suites: ref.suites || ref.caracteristicas?.suites || 0,
-                banheiros: ref.banheiros || ref.caracteristicas?.banheiros || 0,
-                vagas: ref.vagas || ref.caracteristicas?.vagas || 0,
-                areaUtil: ref.areaUtil || ref.caracteristicas?.areaUtil || 0,
-              },
+                              caracteristicas: {
+                  quartos: ref.quartos || ref.caracteristicas?.quartos || 0,
+                  suites: ref.suites || ref.caracteristicas?.suites || 0,
+                  banheiros: ref.banheiros || ref.caracteristicas?.banheiros || 0,
+                  vagas: ref.vagas || ref.caracteristicas?.vagas || 0,
+                  areaUtil: ref.areaUtil || ref.caracteristicas?.areaUtil || 0,
+                  areaTotal: ref.areaTotal || ref.caracteristicas?.areaTotal || 0,
+                },
+
               status: statusExibicao,
               destaque: true,
               media_kit: item.media_kit || null,
@@ -227,14 +231,13 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
             </h2>
           </div>
 
-          <TabelaImoveis imoveis={listaImoveis} userEmail={usuario?.email || 'corretorbrazza@gmail.com'} />
+          <TabelaImoveis imoveis={listaImoveis} />
         </div>
 
         {/* Modal de Recarga Mercado Pago */}
         <ModalRecargaCreditos
           isOpen={modalRecargaAberto}
           onClose={() => setModalRecargaAberto(false)}
-          userEmail={usuario?.email || 'corretorbrazza@gmail.com'}
           pacoteInicial={pacoteInicialModal}
         />
       </div>

@@ -4,19 +4,17 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Imovel } from '@/types/imovel';
+import { fetchBrokerApi } from '@/lib/api';
 import ModalExclusaoInteligente from './components/ModalExclusaoInteligente';
 import ModalAcervoFotos from './components/ModalAcervoFotos';
 import ModalMediaKit from './components/ModalMediaKit';
 import { HardDrive, RefreshCw, Trash2, Edit, Sparkles, Clock, Eye, ExternalLink } from 'lucide-react';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://imoveis-taboao-api-production-4cd9.up.railway.app/api/v1';
-
 interface TabelaImoveisProps {
   imoveis: Imovel[];
-  userEmail?: string;
 }
 
-export default function TabelaImoveis({ imoveis, userEmail = 'corretorbrazza@gmail.com' }: TabelaImoveisProps) {
+export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
   const router = useRouter();
   const [filtroTransacao, setFiltroTransacao] = useState<'Todos' | 'Venda' | 'Locação'>('Todos');
   const [renovandoId, setRenovandoId] = useState<string | null>(null);
@@ -45,13 +43,10 @@ export default function TabelaImoveis({ imoveis, userEmail = 'corretorbrazza@gma
 
     setRenovandoId(adId);
     try {
-      const res = await fetch(`${API_BASE_URL}/anuncios/renovar`, {
+      const json = await fetchBrokerApi('/anuncios/renovar', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ad_id: adId, email: userEmail }),
+        body: JSON.stringify({ ad_id: adId }),
       });
-
-      const json = await res.json();
       if (json.success) {
         alert(json.message || 'Anúncio renovado por mais 90 dias!');
         window.location.reload();
@@ -286,7 +281,6 @@ export default function TabelaImoveis({ imoveis, userEmail = 'corretorbrazza@gma
         onClose={() => setExclusaoModal({ isOpen: false, adId: '', referencia: '' })}
         adId={exclusaoModal.adId}
         referencia={exclusaoModal.referencia}
-        userEmail={userEmail}
         onSuccess={() => window.location.reload()}
       />
 

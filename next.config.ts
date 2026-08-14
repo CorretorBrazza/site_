@@ -9,12 +9,7 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   typescript: {
-    ignoreBuildErrors: true,
-  },
-  experimental: {
-    serverActions: {
-      bodySizeLimit: '5mb',
-    },
+    ignoreBuildErrors: false,
   },
 };
 
