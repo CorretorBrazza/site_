@@ -75,9 +75,12 @@ export default function PainelConhecimentoRegional() {
       });
       if (!response.success) throw new Error(response.message || 'Não foi possível registrar a contribuição.');
       const result = response.data;
-      setMessage(result.promoted
+      const quotaNote = result.quota
+        ? ` Limites: ${result.quota.proposals_this_week}/3 propostas na semana e ${result.quota.confirmations_today}/10 confirmações hoje.`
+        : '';
+      setMessage((result.promoted
         ? 'Informação promovida para conhecimento comunitário verificado.'
-        : `Contribuição registrada. Consenso atual: ${result.consensus_count || 1} de 3 confirmações.`);
+        : `Contribuição registrada. Consenso atual: ${result.consensus_count || 1} de 3 confirmações.`) + quotaNote);
       await refresh();
     } catch (error: any) {
       setMessage(error?.message || 'Não foi possível enviar a contribuição.');
