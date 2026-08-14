@@ -128,11 +128,14 @@ export async function getImoveis(): Promise<Imovel[]> {
           const ref = item.dados_refinados || item.dados_brutos || {};
           const fotosArray = (item.fotos || []).map((f: any) => (typeof f === 'string' ? f : f.url_optimized || f.url || f.url_original));
 
+          const mediaKit = item.media_kit || item.conteudo_gerado || {};
+          const canalPortais = mediaKit.canal_1_portais || {};
+
           return {
             id: item.ad_id || item.referencia?.toLowerCase() || `imv_${Math.random()}`,
             referencia: item.referencia || 'BRA0000',
-            titulo: ref.titulo || item.media_kit?.titulo_seo || `Imóvel ${item.referencia}`,
-            descricao: ref.descricao || item.media_kit?.legenda_social || '',
+            titulo: ref.titulo || canalPortais.titulo_comercial || mediaKit.titulo_seo || `Imóvel ${item.referencia}`,
+            descricao: ref.descricao || canalPortais.descricao_completa || mediaKit.descricao_completa || mediaKit.descricao_media || mediaKit.legenda_social || '',
             tipo: ref.tipo || ref.tipoImovel || 'Apartamento',
             transacao: ref.transacao || ref.finalidade || (ref.precoLocacao ? 'Locação' : 'Venda'),
             precoVenda: ref.precoVenda || null,
