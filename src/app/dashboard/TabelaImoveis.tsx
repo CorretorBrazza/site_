@@ -2,22 +2,28 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Imovel } from '@/types/imovel';
+import { fetchBrokerApi } from '@/lib/api';
 import ModalExclusaoInteligente from './components/ModalExclusaoInteligente';
 import ModalAcervoFotos from './components/ModalAcervoFotos';
 import ModalMediaKit from './components/ModalMediaKit';
-import { HardDrive, RefreshCw, Trash2, Edit, Sparkles, Clock, Eye, ExternalLink } from 'lucide-react';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://imoveis-taboao-api-production-4cd9.up.railway.app/api/v1';
+import { HardDrive, RefreshCw, Trash2, Edit, Sparkles, Clock, ExternalLink, CircleAlert } from 'lucide-react';
 
 interface TabelaImoveisProps {
   imoveis: Imovel[];
-  userEmail?: string;
 }
 
-export default function TabelaImoveis({ imoveis, userEmail = 'corretorbrazza@gmail.com' }: TabelaImoveisProps) {
-  const router = useRouter();
+const statusMeta = (rawStatus?: string) => {
+  const status = String(rawStatus || '').toUpperCase();
+  if (['DELIVERED', 'PUBLISHED', 'ATIVO'].includes(status)) return { label: 'Publicado', note: 'Pronto para divulgação', tone: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' };
+  if (['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW'].includes(status)) return { label: 'Aguardando aprovação', note: 'Confira o link enviado no WhatsApp', tone: 'bg-amber-500/20 text-amber-300 border-amber-500/30' };
+  if (['AWAITING_CREDITS', 'SEM_SALDO'].includes(status)) return { label: 'Aguardando crédito', note: 'Recarregue para liberar a aprovação', tone: 'bg-rose-500/20 text-rose-300 border-rose-500/30' };
+  if (['REJECTED'].includes(status)) return { label: 'Precisa de ajuste', note: 'Revise e gere uma nova versão', tone: 'bg-rose-500/20 text-rose-300 border-rose-500/30' };
+  if (['EXPIRED', 'EXPIRADO'].includes(status)) return { label: 'Expirado', note: 'Reative usando 1 crédito', tone: 'bg-rose-500/20 text-rose-400 border-rose-500/30' };
+  return { label: 'Em processamento', note: 'Estamos preparando seu anúncio', tone: 'bg-blue-500/20 text-blue-300 border-blue-500/30' };
+};
+
+export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
   const [filtroTransacao, setFiltroTransacao] = useState<'Todos' | 'Venda' | 'Locação'>('Todos');
   const [renovandoId, setRenovandoId] = useState<string | null>(null);
 
@@ -45,13 +51,10 @@ export default function TabelaImoveis({ imoveis, userEmail = 'corretorbrazza@gma
 
     setRenovandoId(adId);
     try {
-      const res = await fetch(`${API_BASE_URL}/anuncios/renovar`, {
+      const json = await fetchBrokerApi('/anuncios/renovar', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ad_id: adId, email: userEmail }),
+        body: JSON.stringify({ ad_id: adId }),
       });
-
-      const json = await res.json();
       if (json.success) {
         alert(json.message || 'Anúncio renovado por mais 90 dias!');
         window.location.reload();
@@ -139,8 +142,10 @@ export default function TabelaImoveis({ imoveis, userEmail = 'corretorbrazza@gma
             <tbody className="divide-y divide-slate-800/80 text-slate-200 text-xs">
               {imoveisFiltrados.map((imovel) => {
                 const fotoCapa = imovel.fotos && imovel.fotos.length > 0 ? imovel.fotos[0] : null;
-                const isExpirado = imovel.status === 'Expirado' || (imovel.status as string) === 'expirado';
-                const isAtivo = imovel.status === 'Ativo';
+                const rawStatus = String(imovel.workflow_status || imovel.status || '').toUpperCase();
+                const isExpirado = ['EXPIRED', 'EXPIRADO'].includes(rawStatus);
+                const isAtivo = ['DELIVERED', 'PUBLISHED', 'ATIVO'].includes(rawStatus);
+                const status = statusMeta(rawStatus);
                 const valorExibicao = imovel.transacao === 'Locação' ? formatCurrency(imovel.precoLocacao) : formatCurrency(imovel.precoVenda);
 
                 return (
@@ -187,42 +192,40 @@ export default function TabelaImoveis({ imoveis, userEmail = 'corretorbrazza@gma
                     {/* Status / Validade */}
                     <td className="px-5 py-4">
                       <div className="flex flex-col gap-1 items-start">
-                        <span
-                          className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider shadow-sm ${
-                            isAtivo
-                              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                              : isExpirado
-                              ? 'bg-red-500/20 text-red-400 border border-red-500/30'
-                              : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                          }`}
-                        >
-                          {imovel.status}
+                        <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider shadow-sm border ${status.tone}`}>
+                          {status.label}
                         </span>
-                        <span className="text-[10px] text-slate-400 flex items-center gap-1">
-                          <Clock className="w-3 h-3 text-slate-500" /> 90 dias válidos
+                        <span className="text-[10px] text-slate-400 flex items-center gap-1 max-w-40">
+                          {isAtivo ? <Clock className="w-3 h-3 text-slate-500" /> : <CircleAlert className="w-3 h-3 text-slate-500" />} {isAtivo ? '90 dias de validade' : status.note}
                         </span>
                       </div>
                     </td>
 
-                    {/* Media Kit IA & Acervo Cloudinary */}
+                    {/* Media Kit e acervo só são liberados depois de crédito debitado e publicação concluída. */}
                     <td className="px-6 py-4">
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-                        <button
-                          onClick={() => setMediaKitModal({ isOpen: true, referencia: imovel.referencia, mediaKit: (imovel as any).media_kit || null })}
-                          className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 px-3 py-1.5 rounded-xl text-xs font-black transition-all shadow-md flex items-center gap-1.5 whitespace-nowrap"
-                        >
-                          <Sparkles className="w-3.5 h-3.5" />
-                          Media Kit IA ✨
-                        </button>
+                      {isAtivo ? (
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                          <button
+                            onClick={() => setMediaKitModal({ isOpen: true, referencia: imovel.referencia, mediaKit: (imovel as any).media_kit || null })}
+                            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 px-3 py-1.5 rounded-xl text-xs font-black transition-all shadow-md flex items-center gap-1.5 whitespace-nowrap"
+                          >
+                            <Sparkles className="w-3.5 h-3.5" />
+                            Media Kit IA
+                          </button>
 
-                        <button
-                          onClick={() => setAcervoModal({ isOpen: true, adId: imovel.id, referencia: imovel.referencia })}
-                          className="bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap"
-                        >
-                          <HardDrive className="w-3.5 h-3.5 text-amber-500" />
-                          Fotos Cloud ({imovel.fotos?.length || 0})
-                        </button>
-                      </div>
+                          <button
+                            onClick={() => setAcervoModal({ isOpen: true, adId: imovel.id, referencia: imovel.referencia })}
+                            className="bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap"
+                          >
+                            <HardDrive className="w-3.5 h-3.5 text-amber-500" />
+                            Fotos Cloud ({imovel.fotos?.length || 0})
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="text-[11px] text-slate-500 max-w-44 leading-relaxed">
+                          Media Kit e fotos em nuvem serão liberados após a aprovação e o débito de 1 crédito.
+                        </div>
+                      )}
                     </td>
 
                     {/* Ações */}
@@ -272,11 +275,12 @@ export default function TabelaImoveis({ imoveis, userEmail = 'corretorbrazza@gma
           </table>
         </div>
       ) : (
-        <div className="text-center py-16 space-y-3">
-          <p className="text-slate-400 font-semibold text-sm">Nenhum imóvel encontrado no seu painel.</p>
-          <a href="mailto:anuncios@imoveistaboao.com.br" className="text-amber-400 font-black text-xs uppercase tracking-wider inline-block hover:underline">
-            Envie novos imóveis por e-mail para cadastrar com IA (anuncios@imoveistaboao.com.br)
-          </a>
+        <div className="text-center py-16 space-y-3 px-6">
+          <p className="text-slate-200 font-bold text-sm">Seu painel ainda não tem imóveis.</p>
+          <p className="text-slate-400 text-xs max-w-md mx-auto">Envie fotos e os dados principais pelo WhatsApp para iniciar a captação, gerar o Media Kit e receber o link de aprovação.</p>
+          <Link href="/como-funciona" className="text-amber-400 font-black text-xs uppercase tracking-wider inline-block hover:underline">
+            Ver como criar meu primeiro anúncio
+          </Link>
         </div>
       )}
 
@@ -286,7 +290,6 @@ export default function TabelaImoveis({ imoveis, userEmail = 'corretorbrazza@gma
         onClose={() => setExclusaoModal({ isOpen: false, adId: '', referencia: '' })}
         adId={exclusaoModal.adId}
         referencia={exclusaoModal.referencia}
-        userEmail={userEmail}
         onSuccess={() => window.location.reload()}
       />
 

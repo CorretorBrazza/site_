@@ -1,19 +1,41 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Imovel } from '@/types/imovel';
+import { fetchBrokerApi } from '@/lib/api';
 import HeaderSaldoCreditos from './components/HeaderSaldoCreditos';
 import BannerBackupGamificacao from './components/BannerBackupGamificacao';
 import ModalRecargaCreditos from './components/ModalRecargaCreditos';
 import TabelaImoveis from './TabelaImoveis';
-import { Sparkles, ShieldCheck, LogOut, RefreshCw, PlusCircle, Building2 } from 'lucide-react';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://imoveis-taboao-api-production-4cd9.up.railway.app/api/v1';
+import PainelConhecimentoRegional from './components/PainelConhecimentoRegional';
+import { ShieldCheck, LogOut, RefreshCw, Building2, CheckCircle2, Clock3, CircleAlert, MessageCircle } from 'lucide-react';
 
 interface DashboardCorretorClientProps {
   imoveis?: Imovel[];
+}
+
+const workflowMeta: Record<string, { label: string; tone: string; nextAction: string }> = {
+  RECEIVED: { label: 'Recebido', tone: 'text-blue-300 border-blue-800 bg-blue-950/60', nextAction: 'Aguarde o início do processamento.' },
+  INGESTED: { label: 'Organizando dados', tone: 'text-blue-300 border-blue-800 bg-blue-950/60', nextAction: 'Estamos preparando fotos e informações.' },
+  EXTRACTION_DONE: { label: 'Analisando imóvel', tone: 'text-indigo-300 border-indigo-800 bg-indigo-950/60', nextAction: 'A IA está estruturando os dados do imóvel.' },
+  KNOWLEDGE_DONE: { label: 'Criando Media Kit', tone: 'text-violet-300 border-violet-800 bg-violet-950/60', nextAction: 'A copy e os materiais comerciais estão sendo gerados.' },
+  PENDING_APPROVAL: { label: 'Aguardando sua aprovação', tone: 'text-amber-300 border-amber-800 bg-amber-950/60', nextAction: 'Abra o link enviado no WhatsApp, revise e aprove.' },
+  QUEUED_FOR_REVIEW: { label: 'Atualização em revisão', tone: 'text-amber-300 border-amber-800 bg-amber-950/60', nextAction: 'Aguarde a nova versão de aprovação.' },
+  AWAITING_CREDITS: { label: 'Aguardando crédito', tone: 'text-rose-300 border-rose-800 bg-rose-950/60', nextAction: 'Recarregue créditos para gerar o link de aprovação.' },
+  APPROVED: { label: 'Finalizando publicação', tone: 'text-emerald-300 border-emerald-800 bg-emerald-950/60', nextAction: 'Estamos concluindo a entrega do anúncio.' },
+  DELIVERED: { label: 'Publicado', tone: 'text-emerald-300 border-emerald-800 bg-emerald-950/60', nextAction: 'Use seu Media Kit e divulgue o imóvel.' },
+  PUBLISHED: { label: 'Publicado', tone: 'text-emerald-300 border-emerald-800 bg-emerald-950/60', nextAction: 'Use seu Media Kit e divulgue o imóvel.' },
+  REJECTED: { label: 'Precisa de ajuste', tone: 'text-rose-300 border-rose-800 bg-rose-950/60', nextAction: 'Revise os dados e solicite uma nova aprovação.' },
+  EXPIRED: { label: 'Anúncio expirado', tone: 'text-rose-300 border-rose-800 bg-rose-950/60', nextAction: 'Reative o anúncio com um crédito.' },
+};
+
+function getWorkflowMeta(status?: string) {
+  return workflowMeta[String(status || '').toUpperCase()] || {
+    label: 'Em processamento',
+    tone: 'text-slate-300 border-slate-700 bg-slate-900',
+    nextAction: 'Acompanhe o processamento; se demorar, atualize a página.',
+  };
 }
 
 export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }: DashboardCorretorClientProps) {
@@ -35,35 +57,35 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
       }
     }
 
-    // 1. Identifica usuário ativo
-    let emailAtivo = '';
+    // A sessão JWT é a única fonte de identidade; user_info serve apenas para exibição provisória.
+    const token = localStorage.getItem('auth_token');
     const savedUser = localStorage.getItem('user_info');
     if (savedUser) {
       try {
-        const parsed = JSON.parse(savedUser);
-        if (parsed.email) emailAtivo = parsed.email;
-        setUsuario(parsed);
-      } catch {}
+        setUsuario(JSON.parse(savedUser));
+      } catch {
+        localStorage.removeItem('user_info');
+      }
     }
 
-    if (!emailAtivo) {
+    if (!token) {
       setUsuario(null);
       setListaImoveis([]);
       setLoading(false);
+      router.replace('/login');
       return;
     }
 
     async function carregarDadosPainel() {
       setLoading(true);
       try {
-        // Busca perfil do corretor (para ter saldo real de créditos)
-        const resPerfil = await fetch(`${API_BASE_URL}/corretor/${encodeURIComponent(emailAtivo)}`);
-        const jsonPerfil = await resPerfil.json();
+        // Busca perfil pela sessão autenticada para ter saldo real de créditos.
+        const jsonPerfil = await fetchBrokerApi('/corretor/me');
         if (jsonPerfil.success && jsonPerfil.data) {
           const perfil = jsonPerfil.data;
           const userUpdated = {
             nome: perfil.nome || perfil.nome_guerra || 'Corretor',
-            email: perfil.email || emailAtivo,
+            email: perfil.email || '',
             saldo_creditos: perfil.saldo_creditos ?? 0,
             plano_atual: perfil.plano_atual || 'START',
           };
@@ -72,15 +94,14 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
         } else {
           // Se o corretor não existe na API (banco limpo), remove o cache antigo do navegador
           localStorage.removeItem('user_info');
+          localStorage.removeItem('auth_token');
           setUsuario(null);
           setListaImoveis([]);
+          router.replace('/login');
         }
 
-        // Busca anúncios do corretor ao vivo da API
-        const resAnuncios = await fetch(`${API_BASE_URL}/anuncios?corretor_email=${encodeURIComponent(emailAtivo)}`, {
-          cache: 'no-store',
-        });
-        const jsonAnuncios = await resAnuncios.json();
+        // Busca anúncios do corretor autenticado; não há e-mail controlável na requisição.
+        const jsonAnuncios = await fetchBrokerApi('/me/anuncios?limit=100', { cache: 'no-store' });
 
         if (jsonAnuncios.success && Array.isArray(jsonAnuncios.data)) {
           const mapped: Imovel[] = jsonAnuncios.data.map((item: any) => {
@@ -90,22 +111,24 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
             );
 
             // Mapeamento amigável de status para o painel
-            let statusExibicao: any = 'Ativo';
+            let statusExibicao: any = 'Em Análise';
             const stUpper = (item.status || '').toUpperCase();
-            if (stUpper === 'DELIVERED' || stUpper === 'APPROVED' || stUpper === 'PUBLISHED' || stUpper === 'ATIVO') {
+            if (stUpper === 'DELIVERED' || stUpper === 'PUBLISHED' || stUpper === 'ATIVO') {
               statusExibicao = 'Ativo';
-            } else if (stUpper === 'PENDING_APPROVAL' || stUpper === 'INGEST_APPROVED') {
+            } else if (stUpper === 'PENDING_APPROVAL' || stUpper === 'INGEST_APPROVED' || stUpper === 'APPROVED') {
               statusExibicao = 'Em Análise';
             } else {
               statusExibicao = item.status || 'Em Análise';
             }
 
             return {
-              id: item.ad_id || item.referencia?.toLowerCase() || `imv_${Math.random()}`,
+              id: item.ad_id || item.id || item.referencia?.toLowerCase() || 'anuncio-sem-id',
               referencia: item.referencia || 'BRA0000',
               titulo: ref.titulo || item.media_kit?.titulo_seo || `Imóvel ${item.referencia}`,
               descricao: ref.descricao || item.media_kit?.legenda_social || '',
-              tipo: ref.tipo || ref.tipoImovel || 'Apartamento',
+                              tipoImovel: ref.tipoImovel || ref.tipo || 'Apartamento',
+                tipo: ref.tipo || ref.tipoImovel || 'Apartamento',
+
               transacao: ref.transacao || ref.finalidade || (ref.precoLocacao ? 'Locação' : 'Venda'),
               precoVenda: ref.precoVenda || null,
               precoLocacao: ref.precoLocacao || null,
@@ -114,21 +137,27 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
               bairro: ref.bairro || ref.endereco?.bairro || 'Taboão da Serra',
               cidade: ref.cidade || ref.endereco?.cidade || 'Taboão da Serra',
               endereco: {
-                rua: ref.rua || ref.endereco?.rua || '',
-                bairro: ref.bairro || ref.endereco?.bairro || 'Taboão da Serra',
+                                  rua: ref.rua || ref.endereco?.rua || '',
+                  numero: ref.numero || ref.endereco?.numero || '',
+                  bairro: ref.bairro || ref.endereco?.bairro || 'Taboão da Serra',
+
                 cidade: ref.cidade || ref.endereco?.cidade || 'Taboão da Serra',
                 estado: ref.estado || ref.endereco?.estado || 'SP',
                 cep: ref.cep || ref.endereco?.cep || '',
               },
               fotos: fotosArray.length > 0 ? fotosArray : ['https://images.unsplash.com/photo-1560518883-ce09059eeffa'],
-              caracteristicas: {
-                quartos: ref.quartos || ref.caracteristicas?.quartos || 0,
-                suites: ref.suites || ref.caracteristicas?.suites || 0,
-                banheiros: ref.banheiros || ref.caracteristicas?.banheiros || 0,
-                vagas: ref.vagas || ref.caracteristicas?.vagas || 0,
-                areaUtil: ref.areaUtil || ref.caracteristicas?.areaUtil || 0,
-              },
+                              caracteristicas: {
+                  quartos: ref.quartos || ref.caracteristicas?.quartos || 0,
+                  suites: ref.suites || ref.caracteristicas?.suites || 0,
+                  banheiros: ref.banheiros || ref.caracteristicas?.banheiros || 0,
+                  vagas: ref.vagas || ref.caracteristicas?.vagas || 0,
+                  areaUtil: ref.areaUtil || ref.caracteristicas?.areaUtil || 0,
+                  areaTotal: ref.areaTotal || ref.caracteristicas?.areaTotal || 0,
+                },
+
               status: statusExibicao,
+              workflow_status: stUpper || 'RECEIVED',
+              estagio: Number(item.estagio || 0),
               destaque: true,
               media_kit: item.media_kit || null,
               approval_url: item.approval_url || null,
@@ -163,6 +192,17 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
   const totalFotosReal = (listaImoveis || []).reduce((acc, item) => acc + (item.fotos?.length || 0), 0);
   const totalMegas = totalFotosReal * 2.5;
   const espacoTexto = totalMegas >= 1024 ? `${(totalMegas / 1024).toFixed(1)} GB` : `${totalMegas.toFixed(0)} MB`;
+  const workSummary = listaImoveis.reduce((summary, item) => {
+    const status = String(item.workflow_status || '').toUpperCase();
+    if (status === 'DELIVERED' || status === 'PUBLISHED') summary.publicados += 1;
+    else if (status === 'PENDING_APPROVAL' || status === 'QUEUED_FOR_REVIEW') summary.aprovacao += 1;
+    else if (status === 'REJECTED' || status === 'EXPIRED') summary.atencao += 1;
+    else summary.processando += 1;
+    return summary;
+  }, { publicados: 0, aprovacao: 0, processando: 0, atencao: 0 });
+  const nextItem = listaImoveis.find((item) => ['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW', 'AWAITING_CREDITS', 'REJECTED', 'EXPIRED'].includes(String(item.workflow_status || '').toUpperCase()))
+    || listaImoveis.find((item) => !['DELIVERED', 'PUBLISHED'].includes(String(item.workflow_status || '').toUpperCase()));
+  const nextItemMeta = nextItem ? getWorkflowMeta(nextItem.workflow_status) : null;
 
   return (
     <div className="min-h-screen bg-[#0b132b] text-slate-100 py-8 px-4 sm:px-6 lg:px-8">
@@ -212,6 +252,38 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
           onAbrirRecarga={() => setModalRecargaAberto(true)}
         />
 
+        {/* Central de trabalho: fila, exceções e próxima ação */}
+        <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+            <div className="text-[10px] font-black uppercase tracking-wider text-emerald-400 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5" /> Publicados</div>
+            <div className="text-2xl font-black text-white mt-2">{workSummary.publicados}</div>
+          </div>
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+            <div className="text-[10px] font-black uppercase tracking-wider text-amber-400 flex items-center gap-1.5"><Clock3 className="w-3.5 h-3.5" /> Aprovação</div>
+            <div className="text-2xl font-black text-white mt-2">{workSummary.aprovacao}</div>
+          </div>
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+            <div className="text-[10px] font-black uppercase tracking-wider text-blue-400 flex items-center gap-1.5"><RefreshCw className="w-3.5 h-3.5" /> Processando</div>
+            <div className="text-2xl font-black text-white mt-2">{workSummary.processando}</div>
+          </div>
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+            <div className="text-[10px] font-black uppercase tracking-wider text-rose-400 flex items-center gap-1.5"><CircleAlert className="w-3.5 h-3.5" /> Sua atenção</div>
+            <div className="text-2xl font-black text-white mt-2">{workSummary.atencao}</div>
+          </div>
+        </section>
+
+        <section className="bg-gradient-to-r from-slate-900 to-slate-900/70 border border-slate-800 rounded-2xl p-5 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
+          <div className="flex gap-3">
+            <div className="shrink-0 p-2.5 h-fit rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400"><MessageCircle className="w-5 h-5" /></div>
+            <div>
+              <p className="text-[10px] uppercase tracking-wider font-black text-amber-400">Próxima ação</p>
+              <h2 className="text-base font-extrabold text-white mt-1">{nextItem ? `${nextItem.referencia} — ${nextItemMeta?.label}` : 'Envie seu primeiro imóvel pelo WhatsApp'}</h2>
+              <p className="text-sm text-slate-400 mt-1">{nextItem ? nextItemMeta?.nextAction : 'Envie fotos e as informações principais do imóvel para iniciarmos seu Media Kit.'}</p>
+            </div>
+          </div>
+          <button onClick={() => window.location.reload()} className="text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700 text-slate-200 hover:border-amber-500/60 hover:text-amber-300 transition-colors">Atualizar status</button>
+        </section>
+
         {/* Banner da Central de Fotos & Backups */}
         <BannerBackupGamificacao
           totalFotosBackup={totalFotosReal}
@@ -227,14 +299,14 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
             </h2>
           </div>
 
-          <TabelaImoveis imoveis={listaImoveis} userEmail={usuario?.email || 'corretorbrazza@gmail.com'} />
+          <PainelConhecimentoRegional />
+          <TabelaImoveis imoveis={listaImoveis} />
         </div>
 
         {/* Modal de Recarga Mercado Pago */}
         <ModalRecargaCreditos
           isOpen={modalRecargaAberto}
           onClose={() => setModalRecargaAberto(false)}
-          userEmail={usuario?.email || 'corretorbrazza@gmail.com'}
           pacoteInicial={pacoteInicialModal}
         />
       </div>

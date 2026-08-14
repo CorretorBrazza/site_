@@ -1,18 +1,9 @@
 [build]
   command = "npm run build"
-  publish = "out"
+  publish = ".next"
 
 [build.environment]
-  NETLIFY_NEXT_PLUGIN_SKIP = "true"
+  NODE_VERSION = "20"
 
-[[redirects]]
-  from = "/*"
-  to = "/:splat.html"
-  status = 200
-  force = false
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-  force = false
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

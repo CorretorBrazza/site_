@@ -147,10 +147,11 @@ function AprovarContent() {
     setIsSubmitting(false);
 
     if (result.success) {
-      if (result.media_kit) {
+      const responseData: any = result.data;
+      if (responseData?.media_kit) {
         setAdData((prev: any) => ({
           ...prev,
-          media_kit: result.media_kit,
+          media_kit: responseData.media_kit,
         }));
       }
       setFeedbackMsg('Edições salvas e Media Kit recalibrado com sucesso!');
@@ -165,7 +166,8 @@ function AprovarContent() {
     if (!adData) return;
     setFotos(newPhotos);
 
-    const novaOrdem = newPhotos.map((p) => p.ordem);
+    // A API recebe os índices do array original; `ordem` muda na interface e não identifica a foto.
+    const novaOrdem = newPhotos.map((photo, index) => photo.source_index ?? index);
     const result = await reorderPhotos(token, adData.ad_id, novaOrdem);
 
     if (!result.success) {

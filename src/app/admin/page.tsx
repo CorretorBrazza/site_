@@ -30,6 +30,17 @@ import {
   PhoneCall,
 } from 'lucide-react';
 import { API_BASE_URL } from '@/lib/api';
+import CuradoriaRegionalAdmin from './CuradoriaRegionalAdmin';
+
+interface OperationItem {
+  ad_id: string;
+  referencia: string;
+  titulo: string;
+  status: string;
+  corretor_email: string;
+  updated_at: string | null;
+  next_action: string;
+}
 
 interface StatsData {
   total_corretores: number;
@@ -38,6 +49,15 @@ interface StatsData {
   total_creditos_rede: number;
   espaco_salvo_gb: string;
   total_fotos_acervo: number;
+  operacao?: {
+    status_counts: Record<string, number>;
+    em_processamento: number;
+    aguardando_aprovacao: number;
+    exigem_atencao: number;
+    corretores_sem_credito: number;
+    corretores_saldo_baixo: number;
+    itens_atencao: OperationItem[];
+  };
 }
 
 interface CorretorData {
@@ -103,7 +123,7 @@ interface ConhecimentoItem {
 export default function AdminDashboardPage() {
   // Autenticação Admin
   const [adminToken, setAdminToken] = useState<string | null>(null);
-  const [emailLogin, setEmailLogin] = useState('corretorbrazza@gmail.com');
+  const [emailLogin, setEmailLogin] = useState('');
   const [senhaLogin, setSenhaLogin] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [erroAuth, setErroAuth] = useState<string | null>(null);
@@ -519,6 +539,41 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
+        {/* Central de operação: transforma contagens em ações priorizadas */}
+        <section className="mb-8 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+          <div className="p-5 border-b border-slate-800 flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-wider text-blue-400">Central operacional</p>
+              <h2 className="text-lg font-black text-white mt-1">O que exige atenção agora</h2>
+              <p className="text-xs text-slate-400 mt-1">Fila de aprovação, exceções e saúde de créditos calculadas a partir dos anúncios e corretores atuais.</p>
+            </div>
+            <span className={`text-xs font-black px-3 py-1.5 rounded-lg border ${(stats?.operacao?.exigem_atencao || 0) > 0 ? 'text-rose-300 border-rose-800 bg-rose-950/60' : 'text-emerald-300 border-emerald-800 bg-emerald-950/60'}`}>
+              {(stats?.operacao?.exigem_atencao || 0) > 0 ? `${stats?.operacao?.exigem_atencao} anúncio(s) precisam de ação` : 'Nenhuma exceção crítica agora'}
+            </span>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-px bg-slate-800">
+            <div className="bg-slate-900 p-4"><div className="text-[10px] uppercase font-black tracking-wider text-blue-400">Processando</div><div className="text-2xl font-black text-white mt-1">{stats?.operacao?.em_processamento ?? 0}</div><div className="text-[11px] text-slate-500 mt-1">Pipeline de IA</div></div>
+            <div className="bg-slate-900 p-4"><div className="text-[10px] uppercase font-black tracking-wider text-amber-400">Aprovação</div><div className="text-2xl font-black text-white mt-1">{stats?.operacao?.aguardando_aprovacao ?? 0}</div><div className="text-[11px] text-slate-500 mt-1">Aguardando corretor</div></div>
+            <div className="bg-slate-900 p-4"><div className="text-[10px] uppercase font-black tracking-wider text-rose-400">Exceções</div><div className="text-2xl font-black text-white mt-1">{stats?.operacao?.exigem_atencao ?? 0}</div><div className="text-[11px] text-slate-500 mt-1">Rejeitados ou expirados</div></div>
+            <div className="bg-slate-900 p-4"><div className="text-[10px] uppercase font-black tracking-wider text-rose-400">Sem saldo</div><div className="text-2xl font-black text-white mt-1">{stats?.operacao?.corretores_sem_credito ?? 0}</div><div className="text-[11px] text-slate-500 mt-1">Corretores bloqueados</div></div>
+            <div className="bg-slate-900 p-4"><div className="text-[10px] uppercase font-black tracking-wider text-amber-400">Saldo baixo</div><div className="text-2xl font-black text-white mt-1">{stats?.operacao?.corretores_saldo_baixo ?? 0}</div><div className="text-[11px] text-slate-500 mt-1">1 ou 2 créditos</div></div>
+          </div>
+          <div className="p-5">
+            {(stats?.operacao?.itens_atencao || []).length === 0 ? (
+              <div className="text-sm text-slate-400 flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Nenhum anúncio aguardando ação administrativa no momento.</div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                {(stats?.operacao?.itens_atencao || []).map((item) => (
+                  <div key={item.ad_id} className="border border-slate-800 bg-slate-950/60 rounded-xl p-4 flex items-start justify-between gap-4">
+                    <div className="min-w-0"><div className="text-[10px] uppercase font-black text-amber-400">{item.referencia} · {item.status}</div><div className="font-bold text-white text-sm truncate mt-1">{item.titulo}</div><div className="text-xs text-slate-400 truncate mt-1">{item.corretor_email}</div><div className="text-xs text-slate-300 mt-2">{item.next_action}</div></div>
+                    <button onClick={() => { setAbaAtiva('anuncios'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="shrink-0 text-xs font-bold px-3 py-2 border border-slate-700 rounded-lg text-slate-200 hover:border-blue-500 hover:text-blue-300">Ver</button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
         {/* NAVEGAÇÃO DE ABAS */}
         <div className="flex border-b border-slate-800 mb-8 gap-2 overflow-x-auto">
           <button
@@ -565,6 +620,7 @@ export default function AdminDashboardPage() {
 
         {/* ABA 1: BASE DE CONHECIMENTO RAG */}
         {abaAtiva === 'conhecimento' && (
+          <>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Form de Inserção de Texto Bruto com IA */}
             <div className="lg:col-span-1 bg-slate-900 border border-slate-800 p-6 rounded-2xl h-fit">
@@ -696,6 +752,8 @@ export default function AdminDashboardPage() {
               )}
             </div>
           </div>
+          <CuradoriaRegionalAdmin adminToken={adminToken} />
+          </>
         )}
 
         {/* ABA 2: CORRETORES & GESTÃO DE CRÉDITOS */}

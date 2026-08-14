@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { salvarEPublicarImovelAction } from '@/app/actions/imovel-server-actions';
 
 export default function NovoImovel() {
   const router = useRouter();
@@ -82,39 +81,9 @@ export default function NovoImovel() {
     setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-
-    try {
-      const data = new FormData();
-
-      // Prepara o objeto do imóvel (sem as fotos ainda, elas serão processadas no server)
-      const imovelCompleto = {
-        ...formData,
-        fotos: [], // O servidor preencherá isso com os caminhos dos arquivos salvos
-      };
-
-      data.append('imovel', JSON.stringify(imovelCompleto));
-      data.append('proprietario', JSON.stringify(propData));
-
-      // Adiciona cada arquivo de foto ao FormData
-      selectedFiles.forEach(file => {
-        data.append('fotos', file);
-      });
-
-      const result = await salvarEPublicarImovelAction(data);
-
-      if (result.success) {
-        alert('Imóvel e fotos publicados com sucesso!');
-        router.push('/dashboard');
-      }
-    } catch (error) {
-      console.error(error);
-      alert('Erro ao publicar. Verifique se o tamanho das imagens não é excessivo.');
-    } finally {
-      setLoading(false);
-    }
+    alert('O cadastro manual está sendo migrado para o fluxo seguro da API. Por enquanto, envie fotos e detalhes pelo WhatsApp para gerar e aprovar o anúncio.');
   };
 
   return (

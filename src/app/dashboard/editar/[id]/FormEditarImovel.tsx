@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { salvarEPublicarImovelAction, uploadNovasFotosAction } from '@/app/actions/imovel-server-actions';
 import { Imovel } from '@/types/imovel';
 
 export default function FormEditarImovel({ imovel, proprietarioInicial }: { imovel: Imovel, proprietarioInicial: any }) {
@@ -14,6 +13,7 @@ export default function FormEditarImovel({ imovel, proprietarioInicial }: { imov
     ...imovel,
     endereco: {
       rua: imovel?.endereco?.rua || '',
+      numero: imovel?.endereco?.numero || '',
       bairro: imovel?.endereco?.bairro || imovel?.bairro || 'Taboão da Serra',
       cidade: imovel?.endereco?.cidade || imovel?.cidade || 'Taboão da Serra',
       estado: imovel?.endereco?.estado || 'SP',
@@ -25,6 +25,7 @@ export default function FormEditarImovel({ imovel, proprietarioInicial }: { imov
       banheiros: imovel?.caracteristicas?.banheiros || 0,
       vagas: imovel?.caracteristicas?.vagas || 0,
       areaUtil: imovel?.caracteristicas?.areaUtil || 0,
+      areaTotal: imovel?.caracteristicas?.areaTotal || 0,
     }
   });
   const [propData, setPropData] = useState({
@@ -93,55 +94,13 @@ export default function FormEditarImovel({ imovel, proprietarioInicial }: { imov
     setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
   };
 
-  const handleFazerUploadFotos = async () => {
-    if (selectedFiles.length === 0) return;
-    setUploadingFotos(true);
-    try {
-      const data = new FormData();
-      selectedFiles.forEach(file => {
-        data.append('fotos', file);
-      });
-      const result = await uploadNovasFotosAction(formData.referencia, data);
-      if (result.success && result.fotosUrls) {
-        const fotosAtuais = formData.fotos || [];
-        setFormData({ ...formData, fotos: [...fotosAtuais, ...result.fotosUrls] });
-        setSelectedFiles([]);
-        alert(`${result.fotosUrls.length} foto(s) enviada(s) com sucesso e adicionada(s) à galeria abaixo! Agora você pode reordená-las.`);
-      } else {
-        alert(result.error || 'Erro ao enviar novas fotos.');
-      }
-    } catch (err) {
-      alert('Erro ao enviar fotos.');
-    } finally {
-      setUploadingFotos(false);
-    }
+  const handleFazerUploadFotos = () => {
+    alert('O upload manual está em migração para a API autenticada. Use o fluxo de captação pelo WhatsApp para incluir novas fotos com segurança.');
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-
-    try {
-      const data = new FormData();
-      data.append('imovel', JSON.stringify(formData));
-      data.append('proprietario', JSON.stringify(propData));
-
-      selectedFiles.forEach(file => {
-        data.append('fotos', file);
-      });
-
-      const result = await salvarEPublicarImovelAction(data);
-
-      if (result.success) {
-        alert('Imóvel atualizado com sucesso!');
-        router.push('/dashboard');
-        router.refresh();
-      }
-    } catch (error) {
-      alert('Erro ao atualizar o imóvel.');
-    } finally {
-      setLoading(false);
-    }
+    alert('A edição manual está em migração para a API autenticada. Nenhuma alteração foi gravada localmente.');
   };
 
   return (
@@ -417,27 +376,27 @@ export default function FormEditarImovel({ imovel, proprietarioInicial }: { imov
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
           <div>
             <label className="block text-xs font-medium text-gray-500 mb-1">Quartos</label>
-            <input type="number" placeholder="Quartos" className="w-full border rounded-md p-2" value={formData.caracteristicas.quartos} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, quartos: Number(e.target.value) } })} />
+            <input type="number" placeholder="Quartos" className="w-full border rounded-md p-2" value={formData.caracteristicas.quartos ?? ''} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, quartos: Number(e.target.value) } })} />
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-500 mb-1">Suítes</label>
-            <input type="number" placeholder="Suítes" className="w-full border rounded-md p-2" value={formData.caracteristicas.suites} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, suites: Number(e.target.value) } })} />
+            <input type="number" placeholder="Suítes" className="w-full border rounded-md p-2" value={formData.caracteristicas.suites ?? ''} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, suites: Number(e.target.value) } })} />
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-500 mb-1">Banheiros</label>
-            <input type="number" placeholder="Banheiros" className="w-full border rounded-md p-2" value={formData.caracteristicas.banheiros} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, banheiros: Number(e.target.value) } })} />
+            <input type="number" placeholder="Banheiros" className="w-full border rounded-md p-2" value={formData.caracteristicas.banheiros ?? ''} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, banheiros: Number(e.target.value) } })} />
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-500 mb-1">Vagas</label>
-            <input type="number" placeholder="Vagas" className="w-full border rounded-md p-2" value={formData.caracteristicas.vagas} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, vagas: Number(e.target.value) } })} />
+            <input type="number" placeholder="Vagas" className="w-full border rounded-md p-2" value={formData.caracteristicas.vagas ?? ''} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, vagas: Number(e.target.value) } })} />
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-500 mb-1">Área Útil (m²)</label>
-            <input type="number" placeholder="Área Útil" className="w-full border rounded-md p-2" value={formData.caracteristicas.areaUtil} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, areaUtil: Number(e.target.value) } })} />
+            <input type="number" placeholder="Área Útil" className="w-full border rounded-md p-2" value={formData.caracteristicas.areaUtil ?? ''} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, areaUtil: Number(e.target.value) } })} />
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-500 mb-1">Área Total (m²)</label>
-            <input type="number" placeholder="Área Total" className="w-full border rounded-md p-2" value={formData.caracteristicas.areaTotal} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, areaTotal: Number(e.target.value) } })} />
+            <input type="number" placeholder="Área Total" className="w-full border rounded-md p-2" value={formData.caracteristicas.areaTotal ?? ''} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, areaTotal: Number(e.target.value) } })} />
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">

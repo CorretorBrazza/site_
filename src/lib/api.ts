@@ -5,6 +5,29 @@ export const API_BASE_URL = `${cleanBaseUrl}/api/v1`;
 
 
 
+function getBrokerToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return window.localStorage.getItem('auth_token');
+}
+
+export async function fetchBrokerApi<T = any>(
+  endpoint: string,
+  options: RequestInit = {}
+): Promise<{ success: boolean; data?: T; error?: string; message?: string }> {
+  const token = getBrokerToken();
+  if (!token) {
+    return { success: false, error: 'Sessão expirada. Faça login novamente.' };
+  }
+
+  return fetchApi<T>(endpoint, {
+    ...options,
+    headers: {
+      ...options.headers,
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
 export async function fetchApi<T = any>(
   endpoint: string,
   options: RequestInit = {}
@@ -126,10 +149,8 @@ export async function reorderPhotos(token: string, adId: string, novaOrdem: numb
   });
 }
 
-export async function getCorretorProfile(email: string) {
-  return fetchApi(`/corretor/${encodeURIComponent(email)}`, {
-    method: 'GET',
-  });
+export async function getCorretorProfile() {
+  return fetchBrokerApi('/corretor/me', { method: 'GET' });
 }
 
 export async function registerCorretor(dados: { nome: string; email: string; telefone?: string; plano?: string }) {
@@ -139,13 +160,11 @@ export async function registerCorretor(dados: { nome: string; email: string; tel
   });
 }
 
-export async function getAnuncios(corretorEmail?: string, status?: string) {
-  const query = new URLSearchParams();
-  if (corretorEmail) query.append('corretor_email', corretorEmail);
-  if (status) query.append('status', status);
+export async function getAnunciosPublicos(limit = 20) {
+  return fetchApi(`/anuncios?limit=${limit}`, { method: 'GET' });
+}
 
-  return fetchApi(`/anuncios?${query.toString()}`, {
-    method: 'GET',
-  });
+export async function getMeusAnuncios(limit = 100) {
+  return fetchBrokerApi(`/me/anuncios?limit=${limit}`, { method: 'GET' });
 }
 

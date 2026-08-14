@@ -8,18 +8,16 @@ interface ModalExclusaoInteligenteProps {
   onClose: () => void;
   adId: string;
   referencia: string;
-  userEmail: string;
   onSuccess: () => void;
 }
 
-import { API_BASE_URL } from '@/lib/api';
+import { fetchBrokerApi } from '@/lib/api';
 
 export default function ModalExclusaoInteligente({
   isOpen,
   onClose,
   adId,
   referencia,
-  userEmail,
   onSuccess,
 }: ModalExclusaoInteligenteProps) {
   const [motivo, setMotivo] = useState<'vendido' | 'alugado' | 'desativado'>('vendido');
@@ -32,18 +30,14 @@ export default function ModalExclusaoInteligente({
   const handleExcluir = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/anuncios/${adId}/excluir`, {
+      const json = await fetchBrokerApi(`/anuncios/${encodeURIComponent(adId)}/excluir`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: userEmail,
           motivo,
           foi_pelo_portal: foiPeloPortal,
           deletar_fotos_r2: deletarFotosR2,
         }),
       });
-
-      const json = await res.json();
 
       if (json.success) {
         alert(json.message || 'Imóvel removido com sucesso!');
@@ -167,10 +161,10 @@ export default function ModalExclusaoInteligente({
               <div>
                 <span className="font-bold text-amber-900 flex items-center gap-1">
                   <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
-                  Excluir fotos do seu Acervo de Backup?
+                  Excluir permanentemente as fotos na nuvem?
                 </span>
                 <p className="text-amber-800 mt-0.5">
-                  Marcação recomendada para liberar espaço no seu acervo de fotos da nuvem.
+                  Esta opção remove as cópias de backup do Cloudflare R2 e as imagens de vitrine gerenciadas pelo sistema. A exclusão só é concluída após confirmação da nuvem.
                 </p>
               </div>
             </label>
