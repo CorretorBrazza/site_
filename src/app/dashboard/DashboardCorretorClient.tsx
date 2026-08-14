@@ -8,6 +8,7 @@ import HeaderSaldoCreditos from './components/HeaderSaldoCreditos';
 import BannerBackupGamificacao from './components/BannerBackupGamificacao';
 import ModalRecargaCreditos from './components/ModalRecargaCreditos';
 import TabelaImoveis from './TabelaImoveis';
+import PainelConhecimentoRegional from './components/PainelConhecimentoRegional';
 import { ShieldCheck, LogOut, RefreshCw, Building2, CheckCircle2, Clock3, CircleAlert, MessageCircle } from 'lucide-react';
 
 interface DashboardCorretorClientProps {
@@ -298,6 +299,7 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
             </h2>
           </div>
 
+          <PainelConhecimentoRegional />
           <TabelaImoveis imoveis={listaImoveis} />
         </div>
 
