@@ -47,5 +47,10 @@ export interface Imovel {
   corretor?: Corretor;
   createdAt: string;
   updatedAt: string;
+  // Metadados operacionais do pipeline; preservam o status canônico retornado pela API.
+  workflow_status?: string;
+  estagio?: number;
+  media_kit?: unknown;
+  approval_url?: string | null;
 }
 

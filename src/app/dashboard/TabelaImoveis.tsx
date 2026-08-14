@@ -2,20 +2,27 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Imovel } from '@/types/imovel';
 import { fetchBrokerApi } from '@/lib/api';
 import ModalExclusaoInteligente from './components/ModalExclusaoInteligente';
 import ModalAcervoFotos from './components/ModalAcervoFotos';
 import ModalMediaKit from './components/ModalMediaKit';
-import { HardDrive, RefreshCw, Trash2, Edit, Sparkles, Clock, Eye, ExternalLink } from 'lucide-react';
+import { HardDrive, RefreshCw, Trash2, Edit, Sparkles, Clock, ExternalLink, CircleAlert } from 'lucide-react';
 
 interface TabelaImoveisProps {
   imoveis: Imovel[];
 }
 
+const statusMeta = (rawStatus?: string) => {
+  const status = String(rawStatus || '').toUpperCase();
+  if (['DELIVERED', 'PUBLISHED', 'ATIVO'].includes(status)) return { label: 'Publicado', note: 'Pronto para divulgação', tone: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' };
+  if (['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW'].includes(status)) return { label: 'Aguardando aprovação', note: 'Confira o link enviado no WhatsApp', tone: 'bg-amber-500/20 text-amber-300 border-amber-500/30' };
+  if (['REJECTED'].includes(status)) return { label: 'Precisa de ajuste', note: 'Revise e gere uma nova versão', tone: 'bg-rose-500/20 text-rose-300 border-rose-500/30' };
+  if (['EXPIRED', 'EXPIRADO'].includes(status)) return { label: 'Expirado', note: 'Reative usando 1 crédito', tone: 'bg-rose-500/20 text-rose-400 border-rose-500/30' };
+  return { label: 'Em processamento', note: 'Estamos preparando seu anúncio', tone: 'bg-blue-500/20 text-blue-300 border-blue-500/30' };
+};
+
 export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
-  const router = useRouter();
   const [filtroTransacao, setFiltroTransacao] = useState<'Todos' | 'Venda' | 'Locação'>('Todos');
   const [renovandoId, setRenovandoId] = useState<string | null>(null);
 
@@ -134,8 +141,10 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
             <tbody className="divide-y divide-slate-800/80 text-slate-200 text-xs">
               {imoveisFiltrados.map((imovel) => {
                 const fotoCapa = imovel.fotos && imovel.fotos.length > 0 ? imovel.fotos[0] : null;
-                const isExpirado = imovel.status === 'Expirado' || (imovel.status as string) === 'expirado';
-                const isAtivo = imovel.status === 'Ativo';
+                const rawStatus = String(imovel.workflow_status || imovel.status || '').toUpperCase();
+                const isExpirado = ['EXPIRED', 'EXPIRADO'].includes(rawStatus);
+                const isAtivo = ['DELIVERED', 'PUBLISHED', 'ATIVO'].includes(rawStatus);
+                const status = statusMeta(rawStatus);
                 const valorExibicao = imovel.transacao === 'Locação' ? formatCurrency(imovel.precoLocacao) : formatCurrency(imovel.precoVenda);
 
                 return (
@@ -182,19 +191,11 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                     {/* Status / Validade */}
                     <td className="px-5 py-4">
                       <div className="flex flex-col gap-1 items-start">
-                        <span
-                          className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider shadow-sm ${
-                            isAtivo
-                              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                              : isExpirado
-                              ? 'bg-red-500/20 text-red-400 border border-red-500/30'
-                              : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                          }`}
-                        >
-                          {imovel.status}
+                        <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider shadow-sm border ${status.tone}`}>
+                          {status.label}
                         </span>
-                        <span className="text-[10px] text-slate-400 flex items-center gap-1">
-                          <Clock className="w-3 h-3 text-slate-500" /> 90 dias válidos
+                        <span className="text-[10px] text-slate-400 flex items-center gap-1 max-w-40">
+                          {isAtivo ? <Clock className="w-3 h-3 text-slate-500" /> : <CircleAlert className="w-3 h-3 text-slate-500" />} {isAtivo ? '90 dias de validade' : status.note}
                         </span>
                       </div>
                     </td>
@@ -267,11 +268,12 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
           </table>
         </div>
       ) : (
-        <div className="text-center py-16 space-y-3">
-          <p className="text-slate-400 font-semibold text-sm">Nenhum imóvel encontrado no seu painel.</p>
-          <a href="mailto:anuncios@imoveistaboao.com.br" className="text-amber-400 font-black text-xs uppercase tracking-wider inline-block hover:underline">
-            Envie novos imóveis por e-mail para cadastrar com IA (anuncios@imoveistaboao.com.br)
-          </a>
+        <div className="text-center py-16 space-y-3 px-6">
+          <p className="text-slate-200 font-bold text-sm">Seu painel ainda não tem imóveis.</p>
+          <p className="text-slate-400 text-xs max-w-md mx-auto">Envie fotos e os dados principais pelo WhatsApp para iniciar a captação, gerar o Media Kit e receber o link de aprovação.</p>
+          <Link href="/como-funciona" className="text-amber-400 font-black text-xs uppercase tracking-wider inline-block hover:underline">
+            Ver como criar meu primeiro anúncio
+          </Link>
         </div>
       )}
 
