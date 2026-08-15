@@ -90,25 +90,40 @@ export async function fetchApi<T = any>(
 
 // Métodos de API específicos para o ecossistema V2 Imóveis Taboão
 
+type ApiResult<T = any> = { success: boolean; data?: T; error?: string; message?: string };
+
+function missingMagicLinkCredentials(token: string | undefined | null, adId?: string | null): ApiResult | null {
+  if (!String(token || '').trim()) return { success: false, error: 'Magic Link sem token de segurança. Abra o link completo recebido por e-mail ou WhatsApp.' };
+  if (adId !== undefined && adId !== null && !String(adId).trim()) return { success: false, error: 'Magic Link sem identificação do anúncio.' };
+  return null;
+}
+
 export async function validateMagicToken(token: string, adId?: string) {
+  const invalid = missingMagicLinkCredentials(token, adId);
+  if (invalid) return invalid;
   return fetchApi('/validate-token', {
     method: 'POST',
-    body: JSON.stringify({ token, ad_id: adId }),
+    body: JSON.stringify({ token: token.trim(), ad_id: adId?.trim() || undefined }),
   });
 }
 
 export async function getApprovalDetails(adId: string, token: string) {
-  return fetchApi(`/approval?ad_id=${encodeURIComponent(adId)}&token=${encodeURIComponent(token)}`, {
+  const invalid = missingMagicLinkCredentials(token, adId);
+  if (invalid) return invalid;
+  const params = new URLSearchParams({ ad_id: adId.trim(), token: token.trim() });
+  return fetchApi(`/approval?${params.toString()}`, {
     method: 'GET',
   });
 }
 
 export async function approveAd(token: string, adId: string, dadosEditados?: any) {
+  const invalid = missingMagicLinkCredentials(token, adId);
+  if (invalid) return invalid;
   return fetchApi('/approve', {
     method: 'POST',
     body: JSON.stringify({
-      token,
-      ad_id: adId,
+      token: token.trim(),
+      ad_id: adId.trim(),
       acao: 'APROVAR',
       dados_editados: dadosEditados,
     }),
@@ -116,11 +131,13 @@ export async function approveAd(token: string, adId: string, dadosEditados?: any
 }
 
 export async function rejectAd(token: string, adId: string, motivo?: string) {
+  const invalid = missingMagicLinkCredentials(token, adId);
+  if (invalid) return invalid;
   return fetchApi('/approve', {
     method: 'POST',
     body: JSON.stringify({
-      token,
-      ad_id: adId,
+      token: token.trim(),
+      ad_id: adId.trim(),
       acao: 'REJEITAR',
       motivo_rejeicao: motivo || 'Rejeitado na tela de aprovação do site',
     }),
@@ -128,22 +145,26 @@ export async function rejectAd(token: string, adId: string, motivo?: string) {
 }
 
 export async function editAd(token: string, adId: string, camposEditados: any) {
+  const invalid = missingMagicLinkCredentials(token, adId);
+  if (invalid) return invalid;
   return fetchApi('/edit', {
     method: 'POST',
     body: JSON.stringify({
-      token,
-      ad_id: adId,
+      token: token.trim(),
+      ad_id: adId.trim(),
       campos_editados: camposEditados,
     }),
   });
 }
 
 export async function reorderPhotos(token: string, adId: string, novaOrdem: number[]) {
+  const invalid = missingMagicLinkCredentials(token, adId);
+  if (invalid) return invalid;
   return fetchApi('/reorder-photos', {
     method: 'POST',
     body: JSON.stringify({
-      token,
-      ad_id: adId,
+      token: token.trim(),
+      ad_id: adId.trim(),
       nova_ordem: novaOrdem,
     }),
   });
