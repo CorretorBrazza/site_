@@ -12,6 +12,7 @@ import {
   editAd,
   reorderPhotos,
 } from '@/lib/api';
+import { normalizeApprovalFinalidade } from '@/lib/approval-form';
 import {
   CheckCircle2,
   AlertTriangle,
@@ -97,7 +98,7 @@ function AprovarContent() {
       const carac = refinados.caracteristicas || {};
       setTitulo(refinados.titulo || '');
       setTipoImovel(refinados.tipoImovel || 'Apartamento');
-      setFinalidade(refinados.finalidade || (refinados.precoLocacao ? 'Locação' : 'Venda'));
+      setFinalidade(normalizeApprovalFinalidade(refinados));
       setDescricao(refinados.descricao || '');
       setPrecoVenda(refinados.precoVenda ?? '');
       setPrecoLocacao(refinados.precoLocacao ?? '');
@@ -198,7 +199,7 @@ function AprovarContent() {
         setFotos(nextData.fotos || []);
         setTitulo(nextRefinados.titulo || '');
         setTipoImovel(nextRefinados.tipoImovel || 'Apartamento');
-        setFinalidade(nextRefinados.finalidade || (nextRefinados.precoLocacao ? 'Locação' : 'Venda'));
+        setFinalidade(normalizeApprovalFinalidade(nextRefinados));
         setDescricao(nextRefinados.descricao || '');
         setPrecoVenda(nextRefinados.precoVenda ?? '');
         setPrecoLocacao(nextRefinados.precoLocacao ?? '');
