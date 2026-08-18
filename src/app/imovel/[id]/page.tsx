@@ -23,19 +23,25 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
   const imoveis = await getImoveis();
-  const imovel = imoveis.find((i) => i.id === id);
+  const searchKey = id.toLowerCase().trim();
+  const imovel = imoveis.find((i) =>
+    i.id?.toLowerCase() === searchKey ||
+    i.referencia?.toLowerCase() === searchKey
+  );
 
   if (!imovel) {
     return {
-      title: 'Imóvel não encontrado | Imóveis Taboão da Serra e imediações',
+      title: 'Imóvel não encontrado | Imóveis Taboão',
     };
   }
 
-  const tituloSeo = `${imovel.titulo} — Taboão da Serra e imediações`;
+  const tituloSeo = `${imovel.titulo} — Taboão da Serra e região | REF: ${imovel.referencia}`;
   const descricaoSeo = imovel.descricao
     ? `${imovel.descricao.substring(0, 155)}...`
     : `Confira este imóvel (${imovel.tipo}) para ${imovel.transacao} em Taboão da Serra e imediações.`;
-  const fotoCapa = imovel.fotos && imovel.fotos.length > 0 ? imovel.fotos[0] : 'https://images.unsplash.com/photo-1560518883-ce09059eeffa';
+  
+  const rawFoto = imovel.fotos && imovel.fotos.length > 0 ? imovel.fotos[0] : 'https://images.unsplash.com/photo-1560518883-ce09059eeffa';
+  const fotoCapa = rawFoto.startsWith('http') ? rawFoto : `https://imoveistaboao.com.br${rawFoto}`;
   const urlPagina = `https://imoveistaboao.com.br/imovel/${imovel.id}`;
 
   return {
@@ -48,6 +54,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       title: tituloSeo,
       description: descricaoSeo,
       url: urlPagina,
+      siteName: 'Imóveis Taboão',
+      locale: 'pt_BR',
       images: [
         {
           url: fotoCapa,
@@ -70,17 +78,22 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default async function ImovelDetalhes({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const imoveis = await getImoveis();
-  const imovel = imoveis.find((i) => i.id === id);
+  const searchKey = id.toLowerCase().trim();
+  const imovel = imoveis.find((i) =>
+    i.id?.toLowerCase() === searchKey ||
+    i.referencia?.toLowerCase() === searchKey
+  );
 
   if (!imovel) {
     notFound();
   }
 
-  const preco = imovel.transacao === 'Venda' ? imovel.precoVenda : imovel.precoLocacao;
+  const preco = imovel.transacao === 'Locação' ? imovel.precoLocacao : imovel.precoVenda;
   const urlPagina = `https://imoveistaboao.com.br/imovel/${imovel.id}/`;
-  const fotoCapa = imovel.fotos && imovel.fotos.length > 0
+  const rawFoto = imovel.fotos && imovel.fotos.length > 0
     ? imovel.fotos[0]
     : 'https://images.unsplash.com/photo-1560518883-ce09059eeffa';
+  const fotoCapa = rawFoto.startsWith('http') ? rawFoto : `https://imoveistaboao.com.br${rawFoto}`;
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };
