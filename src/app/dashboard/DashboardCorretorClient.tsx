@@ -205,23 +205,21 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
   const nextItemMeta = nextItem ? getWorkflowMeta(nextItem.workflow_status) : null;
 
   return (
-    <div className="min-h-screen bg-[#0b132b] text-slate-100 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50 text-slate-900 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-8">
         
-        {/* Top Header — Dark Luxury Style */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-
+        {/* Top Header — Clean Light Style */}
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 relative overflow-hidden">
           <div className="relative z-10 space-y-2">
             <div className="flex flex-wrap items-center gap-3">
-              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
                 {usuario ? `Olá, ${usuario.nome}` : 'Painel do Corretor'}
               </h1>
-              <span className="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 text-xs font-black px-3 py-1 rounded-full flex items-center gap-1 shadow-md uppercase tracking-wider">
+              <span className="bg-blue-50 text-blue-700 border border-blue-200 text-xs font-black px-3 py-1 rounded-full flex items-center gap-1 shadow-xs uppercase tracking-wider">
                 <ShieldCheck className="w-4 h-4" /> PLANO {usuario?.plano_atual?.toUpperCase() || 'START'}
               </span>
             </div>
-            <p className="text-slate-400 text-xs sm:text-sm">
+            <p className="text-slate-500 text-xs sm:text-sm font-medium">
               {usuario ? `Sessão ativa: ${usuario.email}` : 'Gerencie seus anúncios, Media Kits de IA e backups de fotos em nuvem.'}
             </p>
           </div>
@@ -230,22 +228,22 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
             <button
               onClick={() => window.location.reload()}
               title="Atualizar Dados"
-              className="p-3 bg-slate-950 border border-slate-800 text-slate-300 hover:text-amber-400 hover:border-amber-500/50 rounded-xl transition-all shadow-md"
+              className="p-3 bg-slate-50 border border-slate-200 text-slate-600 hover:text-blue-600 hover:border-blue-300 rounded-xl transition-all shadow-xs"
             >
-              <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin text-amber-500' : ''}`} />
+              <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin text-blue-600' : ''}`} />
             </button>
 
             <button
               onClick={handleLogout}
               title="Encerrar Sessão Segura"
-              className="p-3 bg-slate-950 border border-slate-800 text-slate-400 hover:text-red-400 hover:border-red-500/50 rounded-xl transition-all shadow-md"
+              className="p-3 bg-slate-50 border border-slate-200 text-slate-500 hover:text-red-600 hover:border-red-300 rounded-xl transition-all shadow-xs"
             >
               <LogOut className="w-5 h-5" />
             </button>
           </div>
         </div>
 
-        {/* Saldo de Créditos em Estilo Dourado de Luxo */}
+        {/* Saldo de Créditos */}
         <HeaderSaldoCreditos
           saldoCreditos={usuario?.saldo_creditos ?? 1}
           planoAtual={usuario?.plano_atual || 'Start'}
@@ -254,34 +252,34 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
 
         {/* Central de trabalho: fila, exceções e próxima ação */}
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-            <div className="text-[10px] font-black uppercase tracking-wider text-emerald-400 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5" /> Publicados</div>
-            <div className="text-2xl font-black text-white mt-2">{workSummary.publicados}</div>
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+            <div className="text-[10px] font-black uppercase tracking-wider text-emerald-700 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Publicados</div>
+            <div className="text-2xl font-black text-slate-900 mt-2">{workSummary.publicados}</div>
           </div>
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-            <div className="text-[10px] font-black uppercase tracking-wider text-amber-400 flex items-center gap-1.5"><Clock3 className="w-3.5 h-3.5" /> Aprovação</div>
-            <div className="text-2xl font-black text-white mt-2">{workSummary.aprovacao}</div>
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+            <div className="text-[10px] font-black uppercase tracking-wider text-amber-700 flex items-center gap-1.5"><Clock3 className="w-3.5 h-3.5 text-amber-600" /> Aprovação</div>
+            <div className="text-2xl font-black text-slate-900 mt-2">{workSummary.aprovacao}</div>
           </div>
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-            <div className="text-[10px] font-black uppercase tracking-wider text-blue-400 flex items-center gap-1.5"><RefreshCw className="w-3.5 h-3.5" /> Processando</div>
-            <div className="text-2xl font-black text-white mt-2">{workSummary.processando}</div>
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+            <div className="text-[10px] font-black uppercase tracking-wider text-blue-700 flex items-center gap-1.5"><RefreshCw className="w-3.5 h-3.5 text-blue-600" /> Processando</div>
+            <div className="text-2xl font-black text-slate-900 mt-2">{workSummary.processando}</div>
           </div>
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-            <div className="text-[10px] font-black uppercase tracking-wider text-rose-400 flex items-center gap-1.5"><CircleAlert className="w-3.5 h-3.5" /> Sua atenção</div>
-            <div className="text-2xl font-black text-white mt-2">{workSummary.atencao}</div>
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+            <div className="text-[10px] font-black uppercase tracking-wider text-rose-700 flex items-center gap-1.5"><CircleAlert className="w-3.5 h-3.5 text-rose-600" /> Sua atenção</div>
+            <div className="text-2xl font-black text-slate-900 mt-2">{workSummary.atencao}</div>
           </div>
         </section>
 
-        <section className="bg-gradient-to-r from-slate-900 to-slate-900/70 border border-slate-800 rounded-2xl p-5 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
+        <section className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col md:flex-row gap-4 md:items-center md:justify-between shadow-sm">
           <div className="flex gap-3">
-            <div className="shrink-0 p-2.5 h-fit rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400"><MessageCircle className="w-5 h-5" /></div>
+            <div className="shrink-0 p-2.5 h-fit rounded-xl bg-blue-50 border border-blue-200 text-blue-600"><MessageCircle className="w-5 h-5" /></div>
             <div>
-              <p className="text-[10px] uppercase tracking-wider font-black text-amber-400">Próxima ação</p>
-              <h2 className="text-base font-extrabold text-white mt-1">{nextItem ? `${nextItem.referencia} — ${nextItemMeta?.label}` : 'Envie seu primeiro imóvel pelo WhatsApp'}</h2>
-              <p className="text-sm text-slate-400 mt-1">{nextItem ? nextItemMeta?.nextAction : 'Envie fotos e as informações principais do imóvel para iniciarmos seu Media Kit.'}</p>
+              <p className="text-[10px] uppercase tracking-wider font-black text-blue-600">Próxima ação</p>
+              <h2 className="text-base font-bold text-slate-900 mt-1">{nextItem ? `${nextItem.referencia} — ${nextItemMeta?.label}` : 'Envie seu primeiro imóvel pelo WhatsApp'}</h2>
+              <p className="text-sm text-slate-600 mt-1">{nextItem ? nextItemMeta?.nextAction : 'Envie fotos e as informações principais do imóvel para iniciarmos seu Media Kit.'}</p>
             </div>
           </div>
-          <button onClick={() => window.location.reload()} className="text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700 text-slate-200 hover:border-amber-500/60 hover:text-amber-300 transition-colors">Atualizar status</button>
+          <button onClick={() => window.location.reload()} className="text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:border-blue-500 hover:text-blue-600 transition-colors">Atualizar status</button>
         </section>
 
         {/* Banner da Central de Fotos & Backups */}
@@ -293,8 +291,8 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
         {/* Tabela de Imóveis do Corretor */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-amber-500" />
+            <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <Building2 className="w-5 h-5 text-blue-600" />
               Seus Imóveis Cadastrados ({listaImoveis.length})
             </h2>
           </div>
