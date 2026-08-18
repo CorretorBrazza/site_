@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Building2, Lock, Mail, User, Phone, ShieldCheck, Eye, EyeOff, Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Building2, Lock, Mail, User, Phone, ShieldCheck, Eye, EyeOff, Sparkles, ArrowRight, Loader2 } from 'lucide-react';
 
 import { API_BASE_URL } from '@/lib/api';
 
@@ -11,11 +11,13 @@ function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const recargaParam = searchParams.get('recarga');
+  const tokenDinamico = searchParams.get('token') || searchParams.get('auth_token');
 
   const [modo, setModo] = useState<'login' | 'cadastro'>('login');
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [validandoSessao, setValidandoSessao] = useState(true);
 
   // Form states
   const [email, setEmail] = useState('');
@@ -23,6 +25,42 @@ function LoginContent() {
   const [nome, setNome] = useState('');
   const [telefone, setTelefone] = useState('');
   const [creci, setCreci] = useState('');
+
+  // 1. Validação de Login Dinâmico / Sessão Ativa
+  useEffect(() => {
+    // Se veio com token na URL (login dinâmico / magic link)
+    if (tokenDinamico) {
+      localStorage.setItem('auth_token', tokenDinamico);
+      document.cookie = `auth_token=${tokenDinamico}; path=/; max-age=2592000; SameSite=Lax`;
+
+      fetch(`${API_BASE_URL}/corretor/me`, {
+        headers: { Authorization: `Bearer ${tokenDinamico}` },
+      })
+        .then((r) => r.json())
+        .then((json) => {
+          if (json.success && json.data) {
+            localStorage.setItem('user_info', JSON.stringify(json.data));
+          }
+        })
+        .catch(() => {})
+        .finally(() => {
+          const targetUrl = recargaParam ? `/dashboard?recarga=${encodeURIComponent(recargaParam)}` : '/dashboard';
+          router.replace(targetUrl);
+        });
+      return;
+    }
+
+    // Se já possui sessão ativa no navegador
+    const existingToken = localStorage.getItem('auth_token');
+    if (existingToken) {
+      const targetUrl = recargaParam ? `/dashboard?recarga=${encodeURIComponent(recargaParam)}` : '/dashboard';
+      router.replace(targetUrl);
+      return;
+    }
+
+    // Não há login dinâmico nem sessão prévia: exibe formulário
+    setValidandoSessao(false);
+  }, [tokenDinamico, recargaParam, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,7 +91,7 @@ function LoginContent() {
       if (json.data?.token) {
         localStorage.setItem('auth_token', json.data.token);
         localStorage.setItem('user_info', JSON.stringify(json.data.user));
-        document.cookie = `auth_token=${json.data.token}; path=/; max-age=86400; SameSite=Lax`;
+        document.cookie = `auth_token=${json.data.token}; path=/; max-age=2592000; SameSite=Lax`;
       }
 
       // Redireciona para o Dashboard preservando o parâmetro de recarga se houver
@@ -65,6 +103,21 @@ function LoginContent() {
       setLoading(false);
     }
   };
+
+  // Se estiver validando o token dinâmico ou sessão ativa, oculta formulários de login/senha
+  if (validandoSessao) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="bg-white border border-slate-200 py-10 px-8 shadow-xl rounded-3xl text-center space-y-4 max-w-sm w-full">
+          <Loader2 className="w-10 h-10 text-blue-600 animate-spin mx-auto" />
+          <h2 className="text-lg font-black text-slate-900">Acessando Painel do Corretor</h2>
+          <p className="text-xs text-slate-500 font-medium leading-relaxed">
+            Identificamos sua sessão dinâmica. Redirecionando para o seu dashboard com segurança...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">

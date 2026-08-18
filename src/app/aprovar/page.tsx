@@ -80,6 +80,15 @@ function AprovarContent() {
         return;
       }
 
+      // Salva sessão dinâmica para que a Navbar e o Painel reconheçam o corretor automaticamente
+      if (valResult.data?.session_token) {
+        localStorage.setItem('auth_token', valResult.data.session_token);
+        document.cookie = `auth_token=${valResult.data.session_token}; path=/; max-age=2592000; SameSite=Lax`;
+      }
+      if (valResult.data?.user) {
+        localStorage.setItem('user_info', JSON.stringify(valResult.data.user));
+      }
+
       const adId = valResult.data?.ad_id || adIdParam;
       const detailsResult = await getApprovalDetails(adId, token);
 
