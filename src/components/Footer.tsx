@@ -72,9 +72,10 @@ export default function Footer() {
 
         <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-400 text-xs text-center md:text-left">
           <p>&copy; {new Date().getFullYear()} Imóveis Taboão — Taboão da Serra e imediações. Todos os direitos reservados.</p>
-          <div className="flex gap-6">
+          <div className="flex flex-wrap justify-center gap-6">
             <Link href="/politica-de-privacidade" className="hover:text-white transition-colors">Política de Privacidade</Link>
             <Link href="/termos-de-uso" className="hover:text-white transition-colors">Termos de Uso</Link>
+            <Link href="/exclusao-de-dados" className="hover:text-white transition-colors">Exclusão de Dados</Link>
           </div>
         </div>
       </div>
