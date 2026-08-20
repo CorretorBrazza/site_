@@ -28,8 +28,51 @@ export const metadata = {
 export default function ComoFuncionaPage() {
   const whatsappUrl = 'https://wa.me/5511989161897?text=Ol%C3%A1%2C%20quero%20enviar%20um%20im%C3%B3vel%20para%20anunciar';
 
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'Preciso pagar para testar a plataforma?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Não! Ao iniciar seu cadastro no WhatsApp, você ganha 1 crédito de cortesia para processar seu primeiro imóvel completo, receber o Media Kit e testar toda a tecnologia sem pagar nada.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Preciso baixar algum aplicativo no celular?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Não! O portal funciona 100% via WhatsApp Oficial (11) 98916-1897 e Painel Web leve acessível pelo navegador do celular ou computador.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'E se a IA errar algum dado ou valor?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Você tem controle soberano total (Hierarquia 1)! Antes de qualquer publicação, você confere o resumo no WhatsApp ou no Link Mágico e pode corrigir qualquer dado antes de aprovar. Zero alucinações.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'E se eu apagar as fotos do meu celular por falta de espaço?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Sem problemas! Suas fotos em alta resolução ficam salvas com segurança na Nuvem Imóveis Taboão por 1 ano (365 dias). Você pode baixá-las novamente a qualquer momento no seu acervo.',
+        },
+      },
+    ],
+  };
+
   return (
     <div className="bg-slate-950 min-h-screen text-slate-100 pb-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       {/* Hero Section */}
       <div className="bg-gradient-to-b from-slate-950 via-blue-950/60 to-slate-950 text-white pt-16 pb-20 px-4 relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-600/20 via-transparent to-transparent pointer-events-none" />

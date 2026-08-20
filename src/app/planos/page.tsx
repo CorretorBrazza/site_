@@ -33,8 +33,59 @@ export default function PlanosPage() {
   const economiaReais = Math.max(0, custoAvulso - custoComPacote);
   const horasEconomizadas = captacoesMensais * 2.5; // ~2.5 horas por imóvel economizadas com redação, fotos e mídias
 
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'Os créditos que eu comprar têm prazo de validade para uso?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Não! Os créditos NUNCA expiram na sua conta. Ficam disponíveis no seu saldo no Dashboard por tempo indeterminado até você decidir publicar novos imóveis.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'E se eu descartar ou cancelar um imóvel na tela de aprovação?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Nenhum crédito é debitado! O crédito só é consumido no momento em que você clica em "Aprovar & Publicar". Se descartar o anúncio, seu saldo permanece 100% intacto.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Como funciona o crédito grátis de boas-vindas?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Ao criar sua conta no portal ou ao iniciar conversa no WhatsApp Oficial, você recebe 1 crédito cortesia imediatamente em seu saldo para publicar seu primeiro imóvel por 90 dias sem nenhum custo.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Quanto tempo dura a publicação de um imóvel?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Cada crédito ativado mantém o imóvel publicado no portal durante 90 dias consecutivos.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Quais as formas de pagamento aceitas no Checkout?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Processamos pagamentos com liberação instantânea via Pix (QR Code e Copia e Cola) e Cartão de Crédito/Débito em ambiente criptografado e certificado pelo Mercado Pago.',
+        },
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <main className="flex-1">
 
         {/* Hero Section */}
