@@ -152,6 +152,14 @@ export default function AdminDashboardPage() {
   const [motivoAjuste, setMotivoAjuste] = useState('Bônus de Parceiro Admin');
   const [salvandoCredito, setSalvandoCredito] = useState(false);
 
+  // Convite de Novos Corretores com Bônus
+  const [telefoneConvite, setTelefoneConvite] = useState('');
+  const [creditosConvite, setCreditosConvite] = useState(3);
+  const [nomeConvite, setNomeConvite] = useState('');
+  const [enviandoConvite, setEnviandoConvite] = useState(false);
+  const [msgSucessoConvite, setMsgSucessoConvite] = useState<string | null>(null);
+  const [erroConvite, setErroConvite] = useState<string | null>(null);
+
   // Verifica token ao carregar
   useEffect(() => {
     const savedToken = localStorage.getItem('admin_token');
@@ -358,6 +366,44 @@ export default function AdminDashboardPage() {
       alert('Erro de conexão ao servidor.');
     } finally {
       setSalvandoCredito(false);
+    }
+  };
+
+  const handleEnviarConvite = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!adminToken) return;
+    setMsgSucessoConvite(null);
+    setErroConvite(null);
+    setEnviandoConvite(true);
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/admin/convidar-corretor`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${adminToken}`,
+        },
+        body: JSON.stringify({
+          telefone: telefoneConvite,
+          creditos_bonus: Number(creditosConvite),
+          nome_sugerido: nomeConvite,
+        }),
+      });
+
+      const json = await res.json();
+      if (json.success) {
+        setMsgSucessoConvite(json.message || `Convite enviado com sucesso para ${telefoneConvite}!`);
+        setTelefoneConvite('');
+        setNomeConvite('');
+        setCreditosConvite(3);
+        carregarDadosAdmin(adminToken);
+      } else {
+        setErroConvite(json.message || 'Falha ao enviar convite.');
+      }
+    } catch (err) {
+      setErroConvite('Erro de conexão ao servidor no Railway.');
+    } finally {
+      setEnviandoConvite(false);
     }
   };
 
@@ -758,13 +804,107 @@ export default function AdminDashboardPage() {
 
         {/* ABA 2: CORRETORES & GESTÃO DE CRÉDITOS */}
         {abaAtiva === 'corretores' && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
-            <div className="p-5 border-b border-slate-800 flex justify-between items-center bg-slate-900">
-              <div>
-                <h3 className="font-bold text-white text-base">Rede de Corretores Cadastrados ({corretores.length})</h3>
-                <p className="text-xs text-slate-400 mt-0.5">Visão executiva de saldo de créditos, WhatsApp e contagem de anúncios ativos por corretor.</p>
+          <div className="space-y-8">
+            {/* Card de Convite de Novos Corretores */}
+            <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/40 border border-slate-800 p-6 rounded-2xl shadow-xl relative overflow-hidden">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                <div>
+                  <div className="inline-flex items-center gap-1.5 bg-emerald-950 text-emerald-300 border border-emerald-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider mb-1">
+                    <Sparkles className="w-3 h-3 text-emerald-400" /> Prospecção & Expansão de Corretores
+                  </div>
+                  <h3 className="text-lg font-black text-white">Convidar Novo Corretor via WhatsApp com Créditos Bônus</h3>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Envie um convite oficial para o WhatsApp do corretor. Quando ele responder, a IA assumirá o cadastro e liberará os créditos bônus + 1 de boas-vindas.
+                  </p>
+                </div>
               </div>
+
+              {msgSucessoConvite && (
+                <div className="bg-emerald-950/90 border border-emerald-800 text-emerald-200 text-xs p-3.5 rounded-xl mb-4 flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <span>{msgSucessoConvite}</span>
+                </div>
+              )}
+
+              {erroConvite && (
+                <div className="bg-red-950/90 border border-red-800 text-red-200 text-xs p-3.5 rounded-xl mb-4 flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                  <span>{erroConvite}</span>
+                </div>
+              )}
+
+              <form onSubmit={handleEnviarConvite} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+                    Telefone WhatsApp *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={telefoneConvite}
+                    onChange={(e) => setTelefoneConvite(e.target.value)}
+                    placeholder="Ex: 11989161897 ou (11) 98916-1897"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 px-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 font-medium"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+                    Créditos Bônus
+                  </label>
+                  <select
+                    value={creditosConvite}
+                    onChange={(e) => setCreditosConvite(Number(e.target.value))}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 px-3 text-sm text-white focus:outline-none focus:border-blue-500 font-medium"
+                  >
+                    <option value={1}>1 Crédito Bônus (+1 grátis = 2 total)</option>
+                    <option value={2}>2 Créditos Bônus (+1 grátis = 3 total)</option>
+                    <option value={3}>3 Créditos Bônus (+1 grátis = 4 total)</option>
+                    <option value={5}>5 Créditos Bônus (+1 grátis = 6 total)</option>
+                    <option value={10}>10 Créditos Bônus (+1 grátis = 11 total)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+                    Nome / Apelido (Opcional)
+                  </label>
+                  <input
+                    type="text"
+                    value={nomeConvite}
+                    onChange={(e) => setNomeConvite(e.target.value)}
+                    placeholder="Ex: Carlos Corretor"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 px-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 font-medium"
+                  />
+                </div>
+
+                <div>
+                  <button
+                    type="submit"
+                    disabled={enviandoConvite || !telefoneConvite}
+                    className="w-full py-2.5 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl shadow-lg transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-50 h-[42px]"
+                  >
+                    {enviandoConvite ? (
+                      <span>Disparando Convite...</span>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        <span>Enviar Convite WhatsApp</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
             </div>
+
+            {/* Tabela de Corretores */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
+              <div className="p-5 border-b border-slate-800 flex justify-between items-center bg-slate-900">
+                <div>
+                  <h3 className="font-bold text-white text-base">Rede de Corretores Cadastrados ({corretores.length})</h3>
+                  <p className="text-xs text-slate-400 mt-0.5">Visão executiva de saldo de créditos, WhatsApp e contagem de anúncios ativos por corretor.</p>
+                </div>
+              </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs text-slate-300">
@@ -828,6 +968,7 @@ export default function AdminDashboardPage() {
               </table>
             </div>
           </div>
+        </div>
         )}
 
         {/* ABA 3: GESTÃO & EXCLUSÃO DE ANÚNCIOS DO PORTAL */}
