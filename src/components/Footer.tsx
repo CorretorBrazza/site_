@@ -68,7 +68,9 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail size={18} className="text-blue-400 shrink-0" />
-                <span>contato@imoveistaboao.com.br</span>
+                <a href="mailto:contato@colegacorretor.com.br" className="hover:text-white transition-colors">
+                  contato@colegacorretor.com.br
+                </a>
               </li>
             </ul>
           </div>
@@ -76,7 +78,10 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-400 text-xs text-center md:text-left">
-          <p>&copy; {new Date().getFullYear()} Imóveis Taboão — Taboão da Serra e imediações. Todos os direitos reservados.</p>
+          <div className="space-y-1">
+            <p>&copy; {new Date().getFullYear()} Imóveis Taboão • Uma solução <strong>Colega Corretor Estratégia Imobiliária</strong></p>
+            <p className="text-[11px] text-slate-500">CNPJ: 63.188.894/0001-05 • Atendimento e Ouvidoria: contato@colegacorretor.com.br</p>
+          </div>
           <div className="flex flex-wrap justify-center gap-6">
             <Link href="/politica-de-privacidade" className="hover:text-white transition-colors">Política de Privacidade</Link>
             <Link href="/termos-de-uso" className="hover:text-white transition-colors">Termos de Uso</Link>

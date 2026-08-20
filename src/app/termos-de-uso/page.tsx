@@ -80,7 +80,10 @@ export default function TermosUsoPage() {
               Reservamo-nos o direito de revisar estes Termos de Uso a qualquer momento, sem aviso prévio. Ao continuar a utilizar este site após a publicação de modificações, você concorda em estar vinculado à versão mais recente deste documento.
             </p>
             <p className="text-gray-600 leading-relaxed">
-              Em caso de dúvidas relacionadas aos Termos de Uso, entre em contato pelo e-mail <span className="font-semibold text-blue-600">contato@imoveistaboao.com.br</span>.
+              O portal <span className="font-semibold text-gray-900">Imóveis Taboão</span> é mantido e operado por <span className="font-semibold text-gray-900">Colega Corretor Estratégia Imobiliária</span> (CNPJ: 63.188.894/0001-05).
+            </p>
+            <p className="text-gray-600 leading-relaxed">
+              Em caso de dúvidas, sugestões ou solicitações relacionadas a estes Termos de Uso, entre em contato através do nosso canal oficial de atendimento: <a href="mailto:contato@colegacorretor.com.br" className="font-semibold text-blue-600 hover:underline">contato@colegacorretor.com.br</a>.
             </p>
           </section>
         </div>

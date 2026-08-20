@@ -106,7 +106,10 @@ export default function PoliticaPrivacidadePage() {
               <li>Requerer a exclusão definitiva dos seus dados de nossa base de dados (revogação de consentimento).</li>
             </ul>
             <p className="text-gray-600 leading-relaxed pt-2">
-              Para exercer qualquer um desses direitos, entre em contato conosco através do e-mail <span className="font-semibold text-blue-600">contato@imoveistaboao.com.br</span>.
+              A entidade controladora responsável pelo tratamento dos dados pessoais neste portal é <span className="font-semibold text-gray-900">Colega Corretor Estratégia Imobiliária</span> (CNPJ: 63.188.894/0001-05).
+            </p>
+            <p className="text-gray-600 leading-relaxed">
+              Para exercer qualquer um dos seus direitos previstos na LGPD ou enviar dúvidas, sugestões e reclamações, entre em contato diretamente pelo e-mail do nosso canal de atendimento: <a href="mailto:contato@colegacorretor.com.br" className="font-semibold text-blue-600 hover:underline">contato@colegacorretor.com.br</a>.
             </p>
           </section>
         </div>

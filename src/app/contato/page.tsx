@@ -42,8 +42,10 @@ export default function ContatoPage() {
                     <Mail size={20} />
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">E-mail Oficial</span>
-                    <span className="font-semibold text-white">contato@imoveistaboao.com.br</span>
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">E-mail de Atendimento & Ouvidoria</span>
+                    <a href="mailto:contato@colegacorretor.com.br" className="font-semibold text-white hover:text-amber-400 transition-colors">
+                      contato@colegacorretor.com.br
+                    </a>
                   </div>
                 </li>
 
@@ -52,8 +54,9 @@ export default function ContatoPage() {
                     <MapPin size={20} />
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Região de Atuação</span>
-                    <span className="font-semibold text-white">Taboão da Serra e imediações - SP</span>
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Empresa Mantenedora</span>
+                    <span className="font-semibold text-white block">Colega Corretor Estratégia Imobiliária</span>
+                    <span className="text-[11px] text-slate-400">CNPJ: 63.188.894/0001-05</span>
                   </div>
                 </li>
               </ul>
