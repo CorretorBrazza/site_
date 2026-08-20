@@ -153,7 +153,7 @@ export default function ComoFuncionaPage() {
             </div>
             <h3 className="text-xl font-black text-white mb-3">Aprovação com 1 Clique & Divulgação</h3>
             <p className="text-slate-400 text-xs leading-relaxed">
-              Você recebe o Link Mágico no WhatsApp. Revisa, ajusta se quiser e aprova. O anúncio entra no ar e seu Media Kit fica liberado no painel!
+              Você recebe o Link Mágico no WhatsApp. Revisa no celular ou no computador/notebook com tela maior, ajusta se quiser e aprova. O anúncio entra no ar e seu Media Kit fica liberado!
             </p>
           </div>
         </div>

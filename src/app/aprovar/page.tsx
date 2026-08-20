@@ -333,6 +333,16 @@ function AprovarContent() {
           </div>
         )}
 
+        {/* Dica de Tela Maior / Desktop */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/80 rounded-2xl p-4 flex items-center justify-between gap-3 text-xs text-blue-900 shadow-xs">
+          <div className="flex items-center gap-2.5">
+            <span className="text-base shrink-0">💻</span>
+            <span>
+              <strong>Dica de Produtividade:</strong> Esta tela funciona perfeitamente no celular, mas para revisar até 20 fotos em alta resolução, selecionar a capa e copiar seus textos de Media Kit com máximo conforto, você também pode abrir este mesmo link no seu <strong>computador ou notebook</strong>.
+            </span>
+          </div>
+        </div>
+
         {/* Header do Anúncio */}
         <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="space-y-1">
