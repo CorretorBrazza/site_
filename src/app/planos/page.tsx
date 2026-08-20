@@ -180,15 +180,26 @@ export default function PlanosPage() {
           </div>
         </section>
 
+        {/* BANNER CLARIFICADOR DE RECURSOS IGUAIS */}
+        <section className="max-w-4xl mx-auto px-4 mt-8">
+          <div className="bg-gradient-to-r from-blue-950/80 via-slate-900 to-indigo-950/80 border border-blue-800/60 rounded-2xl p-4 sm:p-5 flex items-center gap-3.5 shadow-lg text-xs text-slate-200">
+            <span className="text-2xl shrink-0">💎</span>
+            <div>
+              <strong className="text-white font-extrabold block text-sm mb-0.5">Todos os planos entregam 100% dos recursos da plataforma</strong>
+              <span>Não há ferramentas bloqueadas nem recursos limitados por pacote. A única diferença é que comprando mais créditos de uma vez, você ganha <strong>desconto progressivo no valor por imóvel</strong> (de R$ 12,90 até R$ 8,99 por anúncio).</span>
+            </div>
+          </div>
+        </section>
+
         {/* Tabela de 3 Pacotes Principais */}
-        <section className="max-w-6xl mx-auto px-4 py-16">
+        <section className="max-w-6xl mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
 
             {/* PACOTE START */}
             <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 flex flex-col justify-between hover:border-slate-700 transition-all relative">
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Pacote Individual</span>
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Pacote Unitário</span>
                   <span className="bg-slate-800 text-slate-300 text-[10px] font-bold px-2.5 py-1 rounded-full">START</span>
                 </div>
 
@@ -198,37 +209,53 @@ export default function PlanosPage() {
                     <span className="text-4xl font-black text-white">R$ 12,90</span>
                     <span className="text-xs text-slate-400 font-medium">/ pagamento único</span>
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">Ideal para experimentar ou publicar 1 imóvel específico por 90 dias.</p>
+                  <p className="text-xs text-slate-400 mt-1">R$ 12,90 por imóvel • Ideal para publicar 1 imóvel avulso por 90 dias.</p>
                 </div>
 
                 <div className="border-t border-slate-800 pt-6 space-y-3 text-xs text-slate-300 font-medium">
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>1 Anúncio Ativo por 90 Dias</span>
+                    <span><strong>1 Anúncio Ativo por 90 Dias</strong></span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>Redação Comercial com IA (Gemini Pro)</span>
+                    <span>Redação Comercial Completa com IA</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>Aprovação Mágica via WhatsApp</span>
+                    <span>Media Kit para 5 Canais (Insta, Whats, Portais)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>1 Ano de Backup de até 20 Fotos em Alta</span>
+                    <span>Até 20 Fotos em Alta Resolução</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>1 Ano (365 Dias) de Backup na Nuvem</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>Contatos de Clientes Direto no seu WhatsApp</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>Créditos NUNCA Expiram no Saldo</span>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-8">
+              <div className="pt-8 space-y-3">
                 <Link
                   href="/login?recarga=start"
                   className="w-full py-3.5 px-4 bg-slate-800 hover:bg-slate-700 text-white font-extrabold rounded-xl text-xs transition-all flex items-center justify-center gap-2 border border-slate-700"
                 >
-                  <span>Cadastrar e Testar Grátis</span>
+                  <span>Comprar Pacote Start (R$ 12,90)</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
+                <div className="flex items-center justify-center gap-1.5 text-[10px] text-slate-400 font-semibold">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Pix ou Cartão • Mercado Pago</span>
+                </div>
               </div>
             </div>
 
@@ -240,7 +267,7 @@ export default function PlanosPage() {
 
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">Pacote Recomendado</span>
+                  <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">Mais Popular (12% OFF)</span>
                   <span className="bg-blue-600/30 text-blue-300 border border-blue-500/40 text-[10px] font-bold px-2.5 py-1 rounded-full">PRO</span>
                 </div>
 
@@ -248,36 +275,42 @@ export default function PlanosPage() {
                   <h3 className="text-2xl font-black text-white">3 Créditos</h3>
                   <div className="flex items-baseline gap-1 mt-2">
                     <span className="text-4xl font-black text-amber-400">R$ 33,90</span>
-                    <span className="text-xs text-slate-400 font-medium">/ total</span>
+                    <span className="text-xs text-slate-400 font-medium">/ pagamento único</span>
                   </div>
                   <div className="inline-flex items-center gap-1.5 bg-emerald-950 text-emerald-300 border border-emerald-800 text-[11px] font-bold px-2.5 py-0.5 rounded-md mt-1">
                     <span>12% OFF • R$ 11,30 por crédito</span>
                   </div>
-                  <div className="mt-2 text-[11px] font-bold text-amber-300 bg-amber-950/60 border border-amber-800/60 px-2.5 py-1 rounded-lg">
-                    ☕ Custo por anúncio menor que um café por dia!
-                  </div>
+                  <p className="text-xs text-slate-400 mt-1">Economize R$ 4,80 • Custo por anúncio menor que um café!</p>
                 </div>
 
                 <div className="border-t border-slate-800/80 pt-6 space-y-3 text-xs text-slate-200 font-medium">
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span><strong>3 Anúncios Ativos</strong> por 90 dias cada</span>
+                    <span><strong>3 Anúncios Ativos por 90 Dias Cada</strong></span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>Media Kit de IA (Legendas + Stories)</span>
+                    <span>Redação Comercial Completa com IA</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>Receba Contatos de Clientes no WhatsApp</span>
+                    <span>Media Kit para 5 Canais (Insta, Whats, Portais)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>1 Ano de Armazenamento de Mídias</span>
+                    <span>Até 20 Fotos em Alta Resolução por Imóvel</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>Painel do Corretor Completo</span>
+                    <span>1 Ano (365 Dias) de Backup na Nuvem</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>Contatos de Clientes Direto no seu WhatsApp</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>Créditos NUNCA Expiram no Saldo</span>
                   </div>
                 </div>
               </div>
@@ -288,12 +321,12 @@ export default function PlanosPage() {
                   className="w-full py-4 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-lg"
                 >
                   <Zap className="w-4 h-4 fill-white" />
-                  <span>Adquirir Pacote Pro</span>
+                  <span>Comprar Pacote Pro (R$ 33,90)</span>
                 </Link>
 
-                <div className="flex items-center justify-center gap-2 text-[10px] text-slate-400 font-semibold">
+                <div className="flex items-center justify-center gap-1.5 text-[10px] text-slate-400 font-semibold">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Liberação Instantânea via Pix / Cartão • Mercado Pago</span>
+                  <span>Pix ou Cartão • Mercado Pago</span>
                 </div>
               </div>
             </div>
@@ -302,7 +335,7 @@ export default function PlanosPage() {
             <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 flex flex-col justify-between hover:border-slate-700 transition-all relative">
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">Alta Frequência</span>
+                  <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">Melhor Custo-Benefício (30% OFF)</span>
                   <span className="bg-amber-950 text-amber-300 border border-amber-800 text-[10px] font-bold px-2.5 py-1 rounded-full">ELITE</span>
                 </div>
 
@@ -310,29 +343,42 @@ export default function PlanosPage() {
                   <h3 className="text-2xl font-black text-white">10 Créditos</h3>
                   <div className="flex items-baseline gap-1 mt-2">
                     <span className="text-4xl font-black text-white">R$ 89,90</span>
-                    <span className="text-xs text-slate-400 font-medium">/ total</span>
+                    <span className="text-xs text-slate-400 font-medium">/ pagamento único</span>
                   </div>
                   <div className="inline-block bg-emerald-950 text-emerald-300 border border-emerald-800 text-[11px] font-bold px-2.5 py-0.5 rounded-md mt-1">
                     30% OFF • R$ 8,99 por crédito
                   </div>
+                  <p className="text-xs text-slate-400 mt-1">Economia Máxima de R$ 39,10 • Ideal para corretores ativos.</p>
                 </div>
 
                 <div className="border-t border-slate-800 pt-6 space-y-3 text-xs text-slate-300 font-medium">
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span><strong>10 Anúncios Ativos</strong> no Portal</span>
+                    <span><strong>10 Anúncios Ativos por 90 Dias Cada</strong></span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>Economia Máxima de R$ 39,10</span>
+                    <span>Redação Comercial Completa com IA</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>Prioridade na Indexação SEO no Google</span>
+                    <span>Media Kit para 5 Canais (Insta, Whats, Portais)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>Backup ilimitado na Nuvem Imóveis Taboão</span>
+                    <span>Até 20 Fotos em Alta Resolução por Imóvel</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>1 Ano (365 Dias) de Backup na Nuvem</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>Contatos de Clientes Direto no seu WhatsApp</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>Créditos NUNCA Expiram no Saldo</span>
                   </div>
                 </div>
               </div>
@@ -342,12 +388,12 @@ export default function PlanosPage() {
                   href="/login?recarga=elite"
                   className="w-full py-3.5 px-4 bg-slate-800 hover:bg-slate-700 text-white font-extrabold rounded-xl text-xs transition-all flex items-center justify-center gap-2 border border-slate-700"
                 >
-                  <span>Comprar Pacote Elite</span>
+                  <span>Comprar Pacote Elite (R$ 89,90)</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
-                <div className="flex items-center justify-center gap-2 text-[10px] text-slate-400 font-semibold">
+                <div className="flex items-center justify-center gap-1.5 text-[10px] text-slate-400 font-semibold">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Liberação Instantânea via Pix / Cartão • Mercado Pago</span>
+                  <span>Pix ou Cartão • Mercado Pago</span>
                 </div>
               </div>
             </div>
