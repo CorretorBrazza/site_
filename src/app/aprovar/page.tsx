@@ -234,21 +234,20 @@ function AprovarContent() {
     }
   };
 
-  // Ação: Rejeitar
+  // Ação: Rejeitar / Descartar
   const handleReject = async () => {
     if (!adData) return;
-    const motivo = prompt('Por favor, informe o motivo da rejeição (opcional):');
-    if (motivo === null) return;
+    const confirmou = window.confirm('Deseja realmente DESCARTAR este imóvel?\n\n🛡️ Nenhum crédito será debitado do seu saldo e o processamento será cancelado.');
+    if (!confirmou) return;
 
     setIsSubmitting(true);
-
-    const result = await rejectAd(token, adData.ad_id, motivo);
+    const result = await rejectAd(token, adData.ad_id, 'Descartado pelo corretor');
     setIsSubmitting(false);
 
     if (result.success) {
       setApprovalStatus('REJEITADO');
     } else {
-      alert(`Erro ao rejeitar anúncio: ${result.error}`);
+      alert(`Erro ao descartar imóvel: ${result.error}`);
     }
   };
 
@@ -291,6 +290,27 @@ function AprovarContent() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 py-8 px-4">
       <main className="max-w-5xl mx-auto space-y-6">
+
+        {/* Banner de Status se Descartado */}
+        {approvalStatus === 'REJEITADO' && (
+          <div className="bg-amber-50 border border-amber-200 text-amber-950 rounded-3xl p-6 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <AlertTriangle className="w-10 h-10 text-amber-600 shrink-0" />
+              <div>
+                <h3 className="text-lg font-black text-amber-900">Imóvel Descartado com Sucesso</h3>
+                <p className="text-xs text-amber-700 mt-0.5">
+                  Nenhum crédito foi consumido do seu saldo. As fotos temporárias foram removidas da nuvem.
+                </p>
+              </div>
+            </div>
+            <a
+              href="/painel"
+              className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-colors shrink-0 shadow-md"
+            >
+              Ir para o Painel
+            </a>
+          </div>
+        )}
 
         {/* Banner de Status se Aprovado */}
         {(approvalStatus === 'APPROVED' || approvalStatus === 'DELIVERED') && (
@@ -626,9 +646,9 @@ function AprovarContent() {
               <button
                 onClick={handleReject}
                 disabled={isSubmitting}
-                className="flex-1 sm:flex-none px-5 py-3.5 border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 rounded-xl text-xs font-bold transition-colors"
+                className="flex-1 sm:flex-none px-5 py-3.5 border border-slate-300 bg-slate-100 hover:bg-red-50 hover:text-red-700 hover:border-red-300 text-slate-700 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
               >
-                Rejeitar Anúncio
+                <span>🗑️ Descartar Imóvel (0 Créditos)</span>
               </button>
 
               <button
