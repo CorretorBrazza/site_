@@ -57,7 +57,7 @@ export default function Navbar() {
           </div>
 
           {/* Navegação Desktop */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-6">
             <Link
               href="/venda"
               className="text-slate-700 hover:text-blue-600 font-bold text-sm transition-colors py-2"
@@ -71,17 +71,23 @@ export default function Navbar() {
               Alugar
             </Link>
             <Link
+              href="/como-funciona"
+              className="text-slate-700 hover:text-blue-600 font-bold text-sm transition-colors py-2"
+            >
+              Como Funciona
+            </Link>
+            <Link
+              href="/demo"
+              className="text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg font-bold text-xs transition-colors flex items-center gap-1 border border-blue-200"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Testar IA Demo</span>
+            </Link>
+            <Link
               href="/planos"
               className="text-slate-700 hover:text-blue-600 font-bold text-sm transition-colors py-2"
             >
               Planos & Preços
-            </Link>
-            <Link
-              href="/cadastro"
-              className="text-slate-700 hover:text-blue-600 font-bold text-sm transition-colors py-2 flex items-center gap-1.5"
-            >
-              <Sparkles className="w-4 h-4 text-blue-600" />
-              <span>Anunciar Imóvel</span>
             </Link>
 
             {usuario ? (
@@ -168,19 +174,28 @@ export default function Navbar() {
             </Link>
 
             <Link
+              href="/como-funciona"
+              onClick={() => setIsOpen(false)}
+              className="block text-base font-bold text-slate-800 hover:text-blue-600 py-3 px-3 rounded-xl hover:bg-slate-50 border-b border-slate-100 transition-colors"
+            >
+              💡 Como Funciona
+            </Link>
+
+            <Link
+              href="/demo"
+              onClick={() => setIsOpen(false)}
+              className="block text-base font-bold text-blue-600 bg-blue-50 py-3 px-3 rounded-xl border-b border-blue-100 transition-colors flex items-center justify-between"
+            >
+              <span>✨ Testar IA Demo (Interativo)</span>
+              <Sparkles className="w-4 h-4 text-blue-600" />
+            </Link>
+
+            <Link
               href="/planos"
               onClick={() => setIsOpen(false)}
               className="block text-base font-bold text-slate-800 hover:text-blue-600 py-3 px-3 rounded-xl hover:bg-slate-50 border-b border-slate-100 transition-colors"
             >
               🏷️ Planos & Preços
-            </Link>
-
-            <Link
-              href="/cadastro"
-              onClick={() => setIsOpen(false)}
-              className="block text-base font-bold text-slate-800 hover:text-blue-600 py-3 px-3 rounded-xl hover:bg-slate-50 border-b border-slate-100 transition-colors flex items-center justify-between"
-            >
-              <span>✨ Anunciar Imóvel com IA</span>
             </Link>
 
             <div className="pt-4">

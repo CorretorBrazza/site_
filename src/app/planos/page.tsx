@@ -1,23 +1,42 @@
-import { Metadata } from 'next';
-import Link from 'next/link';
-import { Sparkles, Check, Zap, ShieldCheck, ArrowRight, Building2, HardDrive, MessageSquare, HelpCircle } from 'lucide-react';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Planos e Créditos de Anúncios — Imóveis Taboão',
-  description: 'Confira nossos pacotes de créditos para publicar e destacar seus imóveis em Taboão da Serra e região com IA e backup de mídias.',
-  openGraph: {
-    title: 'Planos e Créditos de Anúncios — Imóveis Taboão',
-    description: 'Confira nossos pacotes de créditos para publicar e destacar seus imóveis em Taboão da Serra e região com IA e backup de mídias.',
-    url: 'https://imoveistaboao.com.br/planos',
-    type: 'website',
-  },
-};
+import React, { useState } from 'react';
+import Link from 'next/link';
+import {
+  Sparkles,
+  Check,
+  Zap,
+  ShieldCheck,
+  ArrowRight,
+  Building2,
+  HardDrive,
+  MessageSquare,
+  HelpCircle,
+  Calculator,
+  Coins,
+  Clock,
+} from 'lucide-react';
 
 export default function PlanosPage() {
+  const [captacoesMensais, setCaptacoesMensais] = useState(5);
+
+  // Cálculos da Calculadora de Economia
+  // Preço avulso base: R$ 12,90
+  // Para 5 imóveis: Pacote Elite (R$ 89,90 = R$ 8,99/unidade) ou Pro (R$ 33,90 para 3)
+  const custoAvulso = captacoesMensais * 12.9;
+  const custoComPacote = captacoesMensais >= 10
+    ? (captacoesMensais * 8.99)
+    : captacoesMensais >= 3
+    ? ((Math.floor(captacoesMensais / 3) * 33.9) + ((captacoesMensais % 3) * 12.9))
+    : (captacoesMensais * 12.9);
+
+  const economiaReais = Math.max(0, custoAvulso - custoComPacote);
+  const horasEconomizadas = captacoesMensais * 2.5; // ~2.5 horas por imóvel economizadas com redação, fotos e mídias
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between">
       <main className="flex-1">
-        
+
         {/* Hero Section */}
         <section className="relative bg-gradient-to-b from-slate-900 via-blue-950 to-slate-950 py-16 px-4 text-center overflow-hidden border-b border-slate-800">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
@@ -31,13 +50,81 @@ export default function PlanosPage() {
               Anuncie com Inteligência Artificial e Alta Visibilidade
             </h1>
             <p className="text-sm md:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed">
-              Cada crédito permite publicar ou reativar 1 imóvel por 90 dias com legenda comercial enriquecida via IA, Media Kit automático e 1 ano de backup de fotos na nuvem.
+              Cada crédito permite publicar 1 imóvel por 90 dias com legenda comercial enriquecida via IA, Media Kit de 5 canais e 1 ano de backup de fotos na nuvem.
             </p>
 
-            <div className="pt-2 flex justify-center">
+            <div className="pt-2 flex flex-wrap justify-center gap-3">
               <span className="bg-emerald-950 text-emerald-300 border border-emerald-800 text-xs font-extrabold px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-md">
                 🎁 Novos Corretores Ganham 1 Crédito Grátis ao se cadastrar!
               </span>
+
+              <Link
+                href="/demo"
+                className="bg-blue-950/80 text-blue-300 border border-blue-800 text-xs font-bold px-4 py-1.5 rounded-full flex items-center gap-1.5 hover:bg-blue-900 transition-colors"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>Testar Simulador de IA sem compromisso</span>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* CALCULADORA INTERATIVA DE ECONOMIA */}
+        <section className="max-w-4xl mx-auto px-4 -mt-6 relative z-20">
+          <div className="bg-gradient-to-r from-slate-900 via-blue-950/70 to-slate-900 border border-blue-800/60 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+            <div className="flex items-center gap-3 border-b border-slate-800 pb-4">
+              <div className="w-10 h-10 rounded-2xl bg-blue-600/20 border border-blue-500/30 text-blue-400 flex items-center justify-center font-black">
+                <Calculator className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-lg sm:text-xl font-black text-white">Calculadora de Produtividade & Economia</h3>
+                <p className="text-xs text-slate-300">Descubra quanto você economiza em tempo e dinheiro anunciando com IA</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex justify-between items-center text-xs font-bold">
+                <span className="text-slate-300 uppercase tracking-wider">Quantos imóveis você capta por mês?</span>
+                <span className="text-base font-black text-amber-400 bg-amber-950/60 border border-amber-800/80 px-3 py-1 rounded-xl">
+                  {captacoesMensais} {captacoesMensais === 1 ? 'imóvel' : 'imóveis'} / mês
+                </span>
+              </div>
+
+              <input
+                type="range"
+                min="1"
+                max="20"
+                value={captacoesMensais}
+                onChange={(e) => setCaptacoesMensais(Number(e.target.value))}
+                className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500"
+              />
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 text-center">
+                <div className="bg-slate-950/80 border border-slate-800 p-4 rounded-2xl space-y-1">
+                  <span className="text-[11px] text-slate-400 font-bold uppercase block">Custo Médio por Imóvel</span>
+                  <div className="text-xl font-black text-white">
+                    R$ {(custoComPacote / captacoesMensais).toFixed(2).replace('.', ',')}
+                  </div>
+                  <span className="text-[10px] text-emerald-400 font-semibold">Menor que 1 cafezinho</span>
+                </div>
+
+                <div className="bg-slate-950/80 border border-slate-800 p-4 rounded-2xl space-y-1">
+                  <span className="text-[11px] text-slate-400 font-bold uppercase block">Economia em Pacotes</span>
+                  <div className="text-xl font-black text-emerald-400">
+                    {economiaReais > 0 ? `R$ ${economiaReais.toFixed(2).replace('.', ',')}` : 'Plano Individual'}
+                  </div>
+                  <span className="text-[10px] text-slate-400 font-semibold">com descontos progressivos</span>
+                </div>
+
+                <div className="bg-slate-950/80 border border-slate-800 p-4 rounded-2xl space-y-1">
+                  <span className="text-[11px] text-slate-400 font-bold uppercase block">Tempo Poupado com a IA</span>
+                  <div className="text-xl font-black text-amber-400 flex items-center justify-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    <span>~{horasEconomizadas.toFixed(0)} horas</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 font-semibold">livres para fechar visitas</span>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -45,7 +132,7 @@ export default function PlanosPage() {
         {/* Tabela de 3 Pacotes Principais */}
         <section className="max-w-6xl mx-auto px-4 py-16">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-            
+
             {/* PACOTE START */}
             <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 flex flex-col justify-between hover:border-slate-700 transition-all relative">
               <div className="space-y-4">
@@ -70,7 +157,7 @@ export default function PlanosPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>Redação Comercial com IA (Gemini)</span>
+                    <span>Redação Comercial com IA (Gemini Pro)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-400 shrink-0" />
@@ -78,7 +165,7 @@ export default function PlanosPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>1 Anos de Backup de Fotos em Alta</span>
+                    <span>1 Ano de Backup de até 20 Fotos em Alta</span>
                   </div>
                 </div>
               </div>
@@ -259,7 +346,7 @@ export default function PlanosPage() {
           </div>
         </section>
 
-        {/* FAQ - Perguntas Frequentes */}
+        {/* FAQ - Perguntas Frequentes sobre Créditos */}
         <section className="max-w-4xl mx-auto px-4 py-16 space-y-8">
           <div className="text-center space-y-2">
             <h2 className="text-2xl font-black text-white flex items-center justify-center gap-2">
@@ -277,9 +364,16 @@ export default function PlanosPage() {
             </div>
 
             <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-2">
+              <strong className="block text-sm font-bold text-white">E se eu descartar ou cancelar um imóvel na tela de aprovação?</strong>
+              <p className="text-slate-400 leading-relaxed">
+                <strong>Nenhum crédito é debitado!</strong> O crédito só é consumido no momento em que você clica em &quot;Aprovar &amp; Publicar&quot;. Se descartar o anúncio, seu saldo permanece 100% intacto.
+              </p>
+            </div>
+
+            <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-2">
               <strong className="block text-sm font-bold text-white">Como funciona o crédito grátis de boas-vindas?</strong>
               <p className="text-slate-400 leading-relaxed">
-                Ao criar sua conta no portal via <Link href="/cadastro" className="text-blue-400 underline">página de cadastro</Link>, você recebe <strong>1 crédito bônus</strong> imediatamente em seu saldo para publicar seu primeiro imóvel por 90 dias sem nenhum custo.
+                Ao criar sua conta no portal via <Link href="/cadastro" className="text-blue-400 underline">página de cadastro</Link> ou ao iniciar conversa no WhatsApp Oficial, você recebe <strong>1 crédito cortesia</strong> imediatamente em seu saldo para publicar seu primeiro imóvel por 90 dias sem nenhum custo.
               </p>
             </div>
 
