@@ -12,6 +12,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         { path: '', priority: 1.0, changeFrequency: 'daily' as const },
         { path: '/venda', priority: 0.8, changeFrequency: 'daily' as const },
         { path: '/locacao', priority: 0.8, changeFrequency: 'daily' as const },
+        { path: '/como-funciona', priority: 0.7, changeFrequency: 'monthly' as const },
+        { path: '/planos', priority: 0.7, changeFrequency: 'monthly' as const },
         { path: '/sobre-nos', priority: 0.6, changeFrequency: 'monthly' as const },
         { path: '/contato', priority: 0.6, changeFrequency: 'monthly' as const },
         { path: '/politica-de-privacidade', priority: 0.4, changeFrequency: 'monthly' as const },
@@ -19,7 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ];
 
     const routes = staticRoutes.map((route) => ({
-        url: `${baseUrl}${route.path}`,
+        url: route.path ? `${baseUrl}${route.path}/` : `${baseUrl}`,
         lastModified: new Date(),
         changeFrequency: route.changeFrequency,
         priority: route.priority,
@@ -27,7 +29,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // Empreendimentos dinâmicos
     const empreendimentoRoutes = empreendimentos.map((emp) => ({
-        url: `${baseUrl}/empreendimento/${emp.slug}`,
+        url: `${baseUrl}/empreendimento/${emp.slug}/`,
         lastModified: new Date(),
         changeFrequency: 'weekly' as const,
         priority: 0.7,
@@ -36,7 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Imóveis dinâmicos
     const imoveis = await getImoveis();
     const imovelRoutes = imoveis.map((imovel) => ({
-        url: `${baseUrl}/imovel/${imovel.id}`,
+        url: `${baseUrl}/imovel/${imovel.id}/`,
         lastModified: new Date(imovel.updatedAt || new Date()),
         changeFrequency: 'weekly' as const,
         priority: 0.6,
