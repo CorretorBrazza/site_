@@ -8,13 +8,9 @@ import {
   Copy,
   Check,
   Smartphone,
-  Share2,
   Cpu,
-  Layers,
   ArrowRight,
   RefreshCw,
-  HardDrive,
-  ShieldCheck,
   Instagram,
   FileText,
   Video,
@@ -77,14 +73,16 @@ const PRESETS = [
 
 export default function DemoPage() {
   const [selectedPreset, setSelectedPreset] = useState(PRESETS[0]);
-  const [customText, setCustomText] = useState(PRESETS[0].rawText);
   const [isSimulating, setIsSimulating] = useState(false);
   const [activeTab, setActiveTab] = useState<'instagram' | 'whatsapp' | 'portal' | 'roteiro' | 'tags'>('instagram');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const handleSelectPreset = (preset: typeof PRESETS[0]) => {
     setSelectedPreset(preset);
-    setCustomText(preset.rawText);
+    setIsSimulating(true);
+    setTimeout(() => {
+      setIsSimulating(false);
+    }, 450);
   };
 
   const handleSimulate = () => {
@@ -117,7 +115,7 @@ export default function DemoPage() {
           </h1>
 
           <p className="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            Selecione uma captação real de exemplo abaixo ou digite seu próprio texto bruto para ver o conteúdo de 5 canais que nosso robô gera instantaneamente.
+            Selecione uma captação de exemplo abaixo para ver o que o corretor enviou e o conteúdo completo de 5 canais que nosso robô gera instantaneamente.
           </p>
         </div>
       </div>
@@ -126,7 +124,7 @@ export default function DemoPage() {
         {/* Seletor de Exemplos */}
         <div className="space-y-3">
           <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-400">
-            1. Escolha uma Captação de Exemplo:
+            1. Escolha uma Captação de Exemplo para Simular:
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {PRESETS.map((preset) => (
@@ -145,38 +143,35 @@ export default function DemoPage() {
           </div>
         </div>
 
-        {/* Input Box + Ação */}
+        {/* Input Box / Preview do Texto do WhatsApp (Apenas Visualização) */}
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs font-bold text-slate-300 uppercase tracking-wider">
               <Smartphone className="w-4 h-4 text-emerald-400" />
-              <span>O que o corretor manda no WhatsApp (Texto Bruto):</span>
+              <span>O que o corretor mandou no WhatsApp (Texto Bruto):</span>
             </div>
             <span className="text-[10px] bg-slate-800 text-slate-400 px-2.5 py-0.5 rounded font-mono">
-              {customText.length} caracteres
+              Exemplo Real
             </span>
           </div>
 
-          <textarea
-            rows={3}
-            value={customText}
-            onChange={(e) => setCustomText(e.target.value)}
-            className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-xs sm:text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono resize-none leading-relaxed"
-          />
+          <div className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-5 text-xs sm:text-sm text-slate-200 font-mono leading-relaxed select-text shadow-inner">
+            {selectedPreset.rawText}
+          </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
             <span className="text-xs text-slate-400 flex items-center gap-1.5">
               <Cpu className="w-4 h-4 text-blue-400" />
-              Extração Visual + RAG Regional (Taboão & Embu)
+              Extração Visual + RAG Regional (Taboão da Serra & Região)
             </span>
 
             <button
               onClick={handleSimulate}
               disabled={isSimulating}
-              className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 transition-all"
+              className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
               {isSimulating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-              <span>{isSimulating ? 'Gerando Media Kit...' : '🚀 Simular Media Kit Agora'}</span>
+              <span>{isSimulating ? 'Gerando Media Kit...' : '🚀 Simular Media Kit Deste Imóvel'}</span>
             </button>
           </div>
         </div>
