@@ -1,0 +1,29 @@
+# Imóveis Taboão — Portal Imobiliário & IA para Corretores
+
+> O portal imobiliário de referência com Inteligência Artificial especializado em Taboão da Serra, Embu das Artes e região metropolitana de São Paulo.
+
+## Sobre a Plataforma
+O Imóveis Taboão (https://imoveistaboao.com.br) é uma plataforma imobiliária de ponta que conecta compradores, proprietários e corretores.
+Oferece tecnologia proprietária de Visão Computacional e RAG Regional que permite a corretores anunciarem imóveis e gerarem Media Kits completos para 5 canais em 15 segundos enviando fotos e textos diretamente pelo WhatsApp oficial: +55 (11) 98916-1897.
+
+## Solução SaaS para Corretores e Imobiliárias
+- **Cadastro 100% via WhatsApp**: Envie até 20 fotos soltas e descrição bruta no número oficial (11) 98916-1897 sem preencher formulários manuais.
+- **Media Kit Multi-Canal em 15s**: Geração instantânea de legendas para Instagram com emojis e hashtags regionais, mensagens estruturadas para WhatsApp, fichas técnicas para portais, roteiros para Stories/Reels e tags de SEO.
+- **Cofre de Fotos por 365 Dias**: Armazenamento na nuvem (Cloudflare R2) de fotos originais em alta resolução.
+- **Créditos sem Validade**: Créditos pré-pagos que nunca expiram no saldo (a partir de R$ 8,99 por imóvel no Pacote Elite).
+- **1 Crédito Grátis de Boas-Vindas**: Novos corretores testam a tecnologia gratuitamente.
+- **Soberania do Corretor (Hierarquia 1)**: O corretor revisa e aprova os dados antes da publicação, garantindo zero alucinações. Se descartar, 0 créditos são consumidos.
+
+## Cobertura Regional
+- **Municípios**: Taboão da Serra, Embu das Artes, Itapecerica da Serra e imediações da Zona Sul/Oeste de São Paulo (Butantã, Vila Sônia, Morumbi, Campo Limpo).
+- **Empreendimentos Populares**: Condomínio Residencial Pitangueiras 1 e 2, Parque Firenze (Vida Nova), Condomínio Cerejeiras, Castanheiras, Bosque do Taboão, Ecos Natureza Clube.
+- **Bairros Principais**: Jardim Maria Rosa, Parque Pinheiros, Chácara Agrindus, Centro de Taboão, Cidade Intercap, Jardim Clementino, Jardim América, Parque Monte Alegre.
+
+## URLs Estruturadas
+- Imóveis à Venda: https://imoveistaboao.com.br/venda
+- Imóveis para Alugar: https://imoveistaboao.com.br/locacao
+- Tecnologia & Como Funciona a IA: https://imoveistaboao.com.br/como-funciona
+- Simulador Interativo Demo: https://imoveistaboao.com.br/demo
+- Planos e Créditos de Publicação: https://imoveistaboao.com.br/planos
+- Sobre a Plataforma e Equipe: https://imoveistaboao.com.br/sobre-nos
+- Contato e Atendimento WhatsApp: https://wa.me/5511989161897
