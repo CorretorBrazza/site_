@@ -32,7 +32,7 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
     titulo: imovel.titulo || '',
     descricao: imovel.descricao || '',
     tipoImovel: imovel.tipoImovel || '',
-    transacao: imovel.transacao || 'Venda',
+    transacao: imovel.transacao || '',
     condominio: imovel.condominio || '',
     endereco: {
       rua: imovel.endereco?.rua || '',
@@ -176,11 +176,13 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
             <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Transação</label>
             <select
               className="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-white font-medium"
-              value={formData.transacao}
+              value={formData.transacao || ''}
               onChange={e => setFormData({ ...formData, transacao: e.target.value as any })}
             >
+              {!formData.transacao && <option value="">Não informado</option>}
               <option value="Venda">Venda</option>
               <option value="Locação">Locação</option>
+              {formData.transacao === 'Venda e Locação' && <option value="Venda e Locação">Venda e Locação</option>}
             </select>
           </div>
 
