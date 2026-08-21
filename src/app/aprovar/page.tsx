@@ -40,7 +40,7 @@ function AprovarContent() {
   // Formulário de Edição Completo
   const [titulo, setTitulo] = useState('');
   const [tipoImovel, setTipoImovel] = useState('Apartamento');
-  const [finalidade, setFinalidade] = useState('Venda');
+  const [finalidade, setFinalidade] = useState('Não informado');
   const [descricao, setDescricao] = useState('');
   const [precoVenda, setPrecoVenda] = useState<number | ''>('');
   const [precoLocacao, setPrecoLocacao] = useState<number | ''>('');
@@ -467,6 +467,7 @@ function AprovarContent() {
                   onChange={(e) => setFinalidade(e.target.value)}
                   className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium"
                 >
+                  <option value="Não informado">Selecione / Não informado</option>
                   <option value="Venda">Venda</option>
                   <option value="Locação">Locação</option>
                   <option value="Venda e Locação">Venda e Locação</option>

@@ -1,4 +1,4 @@
-export function normalizeApprovalFinalidade(refinados: Record<string, any> | null | undefined): 'Venda' | 'Locação' | 'Venda e Locação' {
+export function normalizeApprovalFinalidade(refinados: Record<string, any> | null | undefined): 'Venda' | 'Locação' | 'Venda e Locação' | 'Não informado' {
   const raw = String(refinados?.finalidade || refinados?.transacao || '').trim();
   const normalized = raw
     .normalize('NFD')
@@ -11,10 +11,12 @@ export function normalizeApprovalFinalidade(refinados: Record<string, any> | nul
 
   const precoVenda = refinados?.precoVenda;
   const precoLocacao = refinados?.precoLocacao;
-  if ((precoVenda === null || precoVenda === undefined || precoVenda === '')
-    && precoLocacao !== null && precoLocacao !== undefined && precoLocacao !== '') {
-    return 'Locação';
-  }
+  const hasPrecoVenda = precoVenda !== null && precoVenda !== undefined && precoVenda !== '' && Number(precoVenda) > 0;
+  const hasPrecoLocacao = precoLocacao !== null && precoLocacao !== undefined && precoLocacao !== '' && Number(precoLocacao) > 0;
 
-  return 'Venda';
+  if (hasPrecoVenda && hasPrecoLocacao) return 'Venda e Locação';
+  if (hasPrecoLocacao) return 'Locação';
+  if (hasPrecoVenda) return 'Venda';
+
+  return 'Não informado';
 }
