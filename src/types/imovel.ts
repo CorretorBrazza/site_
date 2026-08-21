@@ -39,14 +39,20 @@ export interface Imovel {
   caracteristicas: Caracteristicas;
   precoVenda?: number;
   precoLocacao?: number;
+  precoPacote?: number;
+  valorCondominio?: number;
+  iptuMensal?: number;
+  condominio?: string;
   fotos: string[];
   videoUrl?: string;
   status: StatusImovel;
   destaque: boolean;
   isNovo?: boolean;
   corretor?: Corretor;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
+  created_at?: string;
+  updated_at?: string;
   // Metadados operacionais do pipeline; preservam o status canônico retornado pela API.
   workflow_status?: string;
   estagio?: number;
