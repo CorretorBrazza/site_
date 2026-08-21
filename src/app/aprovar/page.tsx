@@ -610,11 +610,34 @@ function AprovarContent() {
 
         {/* Conteúdo Aba 2: Fotos */}
         {activeTab === 'fotos' && (
-          <PhotoReorder
-            initialPhotos={fotos}
-            onSaveOrder={handleReorderPhotos}
-            isLoading={isSubmitting}
-          />
+          approvalStatus === 'APPROVED' || approvalStatus === 'DELIVERED' ? (
+            <PhotoReorder
+              initialPhotos={fotos}
+              onSaveOrder={handleReorderPhotos}
+              isLoading={isSubmitting}
+            />
+          ) : (
+            <div className="bg-white border border-blue-200 rounded-3xl p-8 text-center space-y-4 shadow-sm">
+              <div className="w-16 h-16 bg-blue-50 border border-blue-200 rounded-2xl flex items-center justify-center mx-auto text-blue-600">
+                <ImageIcon className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-black text-slate-900">🔒 Galeria de Fotos Bloqueada para Download</h3>
+              <p className="text-xs text-slate-600 max-w-lg mx-auto leading-relaxed">
+                A galeria completa de fotos em alta resolução otimizadas para publicação será <strong>liberada instantaneamente</strong> assim que você conferir os dados e clicar em <strong>&quot;Aprovar & Publicar Anúncio&quot;</strong>.
+              </p>
+              <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 max-w-md mx-auto text-xs text-blue-800 font-bold">
+                💳 O débito de 1 crédito do seu saldo só ocorre no momento da aprovação!
+              </div>
+              <button
+                onClick={handleApprove}
+                disabled={isSubmitting}
+                className="inline-flex items-center gap-2 px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-lg transition-all"
+              >
+                {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+                <span>Aprovar Anúncio Agora & Liberar Fotos</span>
+              </button>
+            </div>
+          )
         )}
 
         {/* Conteúdo Aba 3: Media Kit */}
