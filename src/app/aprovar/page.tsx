@@ -29,8 +29,9 @@ import {
 
 function AprovarContent() {
   const searchParams = useSearchParams();
-  const token = searchParams.get('token') || '';
+  const rawToken = searchParams.get('token') || '';
   const adIdParam = searchParams.get('ad_id') || searchParams.get('adId') || '';
+  const [token, setToken] = useState<string>(rawToken);
 
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -62,8 +63,11 @@ function AprovarContent() {
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!token) {
-      setErrorMsg('Token de segurança não fornecido no link. Verifique o link recebido no seu e-mail.');
+    const effectiveToken = rawToken || (typeof window !== 'undefined' ? localStorage.getItem('auth_token') : '') || '';
+    setToken(effectiveToken);
+
+    if (!effectiveToken) {
+      setErrorMsg('Token de segurança não fornecido. Acesse pelo link enviado no WhatsApp/e-mail ou faça login no seu Painel.');
       setLoading(false);
       return;
     }
@@ -73,9 +77,9 @@ function AprovarContent() {
       setErrorMsg(null);
 
       // Valida token
-      const valResult = await validateMagicToken(token, adIdParam || undefined);
+      const valResult = await validateMagicToken(effectiveToken, adIdParam || undefined);
       if (!valResult.success) {
-        setErrorMsg(valResult.error || 'Magic Link inválido ou expirado.');
+        setErrorMsg(valResult.error || 'Magic Link ou sessão inválida.');
         setLoading(false);
         return;
       }

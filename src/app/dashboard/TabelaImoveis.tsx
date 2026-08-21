@@ -244,8 +244,8 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                         )}
 
                         <Link
-                          href={`/dashboard/editar/${imovel.id}`}
-                          title="Editar Anúncio"
+                          href={`/aprovar?ad_id=${imovel.id}`}
+                          title="Editar Anúncio e Recalibrar Media Kit"
                           className="p-2 text-slate-500 hover:text-blue-600 hover:bg-slate-100 rounded-xl transition-colors"
                         >
                           <Edit className="w-4 h-4" />
