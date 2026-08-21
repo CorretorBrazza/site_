@@ -138,11 +138,11 @@ function AprovarContent() {
     iptu: iptu === '' ? null : Number(iptu),
     bairro,
     caracteristicas: {
-      quartos: quartos === '' ? 0 : Number(quartos),
-      suites: suites === '' ? 0 : Number(suites),
-      banheiros: banheiros === '' ? 0 : Number(banheiros),
-      vagas: vagas === '' ? 0 : Number(vagas),
-      areaUtil: areaUtil === '' ? 0 : Number(areaUtil),
+      quartos: quartos === '' ? null : Number(quartos),
+      suites: suites === '' ? null : Number(suites),
+      banheiros: banheiros === '' ? null : Number(banheiros),
+      vagas: vagas === '' ? null : Number(vagas),
+      areaUtil: areaUtil === '' ? null : Number(areaUtil),
     },
   });
 
