@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState, use } from 'react';
-import { useRouter } from 'next/navigation';
 import { getAnuncioForBroker } from '@/lib/api';
 import FormEditarImovel from './FormEditarImovel';
 import { Imovel } from '@/types/imovel';
@@ -10,7 +9,6 @@ import Link from 'next/link';
 
 export default function EditarImovelPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const router = useRouter();
   const [imovel, setImovel] = useState<Imovel | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -32,30 +30,31 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
           const imovelFormatado: Imovel = {
             id: ad.ad_id || id,
             referencia: ad.referencia || 'BRA',
-            titulo: refinados.titulo || `Imóvel ${ad.referencia || id}`,
+            titulo: refinados.titulo || '',
             descricao: refinados.descricao || '',
-            tipoImovel: refinados.tipoImovel || 'Apartamento',
-            transacao: ad.transacao === 'Locacao' || refinados.transacao === 'Locacao' ? 'Locação' : (refinados.transacao || 'Venda'),
-            precoVenda: refinados.precoVenda || undefined,
-            precoLocacao: refinados.precoLocacao || undefined,
-            valorCondominio: refinados.valorCondominio || undefined,
-            iptuMensal: refinados.iptuMensal || undefined,
+            tipoImovel: refinados.tipoImovel || '',
+            transacao: (ad.transacao === 'Locacao' || refinados.transacao === 'Locacao' ? 'Locação' : (refinados.transacao || ad.transacao || '')) as any,
+            precoVenda: refinados.precoVenda !== undefined && refinados.precoVenda !== null ? Number(refinados.precoVenda) : undefined,
+            precoLocacao: refinados.precoLocacao !== undefined && refinados.precoLocacao !== null ? Number(refinados.precoLocacao) : undefined,
+            precoPacote: refinados.precoPacote !== undefined && refinados.precoPacote !== null ? Number(refinados.precoPacote) : undefined,
+            valorCondominio: refinados.valorCondominio !== undefined && refinados.valorCondominio !== null ? Number(refinados.valorCondominio) : undefined,
+            iptuMensal: refinados.iptuMensal !== undefined && refinados.iptuMensal !== null ? Number(refinados.iptuMensal) : undefined,
             condominio: refinados.condominio || '',
             endereco: {
               rua: end.rua || '',
               numero: end.numero || '',
-              bairro: end.bairro || 'Taboão da Serra',
-              cidade: end.cidade || 'Taboão da Serra',
-              estado: end.estado || 'SP',
+              bairro: end.bairro || '',
+              cidade: end.cidade || '',
+              estado: end.estado || '',
               cep: end.cep || '',
             },
             caracteristicas: {
-              quartos: carac.quartos ?? 0,
-              suites: carac.suites ?? 0,
-              banheiros: carac.banheiros ?? 0,
-              vagas: carac.vagas ?? 0,
-              areaUtil: carac.areaUtil ?? 0,
-              areaTotal: carac.areaTotal ?? 0,
+              quartos: carac.quartos !== undefined && carac.quartos !== null ? Number(carac.quartos) : null,
+              suites: carac.suites !== undefined && carac.suites !== null ? Number(carac.suites) : null,
+              banheiros: carac.banheiros !== undefined && carac.banheiros !== null ? Number(carac.banheiros) : null,
+              vagas: carac.vagas !== undefined && carac.vagas !== null ? Number(carac.vagas) : null,
+              areaUtil: carac.areaUtil !== undefined && carac.areaUtil !== null ? Number(carac.areaUtil) : null,
+              areaTotal: carac.areaTotal !== undefined && carac.areaTotal !== null ? Number(carac.areaTotal) : null,
             },
             fotos: fotosUrls,
             destaque: false,

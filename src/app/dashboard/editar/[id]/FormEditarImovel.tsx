@@ -4,76 +4,64 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Imovel } from '@/types/imovel';
 import { updateAnuncioForBroker } from '@/lib/api';
+import { Sparkles, ArrowLeft, Save, Trash2, ArrowLeftRight, Star, Info } from 'lucide-react';
+import Link from 'next/link';
 
-export default function FormEditarImovel({ imovel, proprietarioInicial }: { imovel: Imovel, proprietarioInicial?: any }) {
+interface FormEditarImovelProps {
+  imovel: Imovel;
+  proprietarioInicial?: any;
+}
+
+const parseOptionalNumber = (val: any): number | null => {
+  if (val === '' || val === null || val === undefined) return null;
+  const num = Number(val);
+  return isNaN(num) ? null : num;
+};
+
+const parseOptionalString = (val: any): string | null => {
+  if (val === '' || val === null || val === undefined) return null;
+  const str = String(val).trim();
+  return str.length > 0 ? str : null;
+};
+
+export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [uploadingFotos, setUploadingFotos] = useState(false);
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [formData, setFormData] = useState<Imovel>({
     ...imovel,
+    titulo: imovel.titulo || '',
+    descricao: imovel.descricao || '',
+    tipoImovel: imovel.tipoImovel || '',
+    transacao: imovel.transacao || 'Venda',
+    condominio: imovel.condominio || '',
     endereco: {
-      rua: imovel?.endereco?.rua || '',
-      numero: imovel?.endereco?.numero || '',
-      bairro: imovel?.endereco?.bairro || imovel?.bairro || 'Taboão da Serra',
-      cidade: imovel?.endereco?.cidade || imovel?.cidade || 'Taboão da Serra',
-      estado: imovel?.endereco?.estado || 'SP',
-      cep: imovel?.endereco?.cep || '',
+      rua: imovel.endereco?.rua || '',
+      numero: imovel.endereco?.numero || '',
+      bairro: imovel.endereco?.bairro || '',
+      cidade: imovel.endereco?.cidade || '',
+      estado: imovel.endereco?.estado || '',
+      cep: imovel.endereco?.cep || '',
     },
     caracteristicas: {
-      quartos: imovel?.caracteristicas?.quartos || 0,
-      suites: imovel?.caracteristicas?.suites || 0,
-      banheiros: imovel?.caracteristicas?.banheiros || 0,
-      vagas: imovel?.caracteristicas?.vagas || 0,
-      areaUtil: imovel?.caracteristicas?.areaUtil || 0,
-      areaTotal: imovel?.caracteristicas?.areaTotal || 0,
-    }
-  });
-  const [propData, setPropData] = useState({
-    nome: proprietarioInicial?.nome || '',
-    telefone: proprietarioInicial?.telefone || '',
-    email: proprietarioInicial?.email || '',
-    observacoes: proprietarioInicial?.observacoes || ''
+      quartos: imovel.caracteristicas?.quartos ?? null,
+      suites: imovel.caracteristicas?.suites ?? null,
+      banheiros: imovel.caracteristicas?.banheiros ?? null,
+      vagas: imovel.caracteristicas?.vagas ?? null,
+      areaUtil: imovel.caracteristicas?.areaUtil ?? null,
+      areaTotal: imovel.caracteristicas?.areaTotal ?? null,
+    },
+    fotos: imovel.fotos || [],
   });
 
-  const CORRETORES = [
-    { nome: 'BRAZZA', telefone: '5511932785602' },
-    { nome: 'MARIA', telefone: '5511970988512' }
-  ];
+  const moverFoto = (index: number, direcao: 'esquerda' | 'direita') => {
+    const novasFotos = [...(formData.fotos || [])];
+    const targetIndex = direcao === 'esquerda' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= novasFotos.length) return;
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const newFiles = Array.from(e.target.files);
-      const combined = [...selectedFiles, ...newFiles];
-      const totalSize = combined.reduce((acc, file) => acc + file.size, 0);
-      const maxSize = 20 * 1024 * 1024; // 20MB
-
-      if (totalSize > maxSize) {
-        alert(`O tamanho total das novas fotos (${(totalSize / 1024 / 1024).toFixed(2)}MB) excede 20MB. Por favor, selecione fotos menores.`);
-        return;
-      }
-
-      setSelectedFiles(combined);
-      e.target.value = ''; // Limpa para poder adicionar mais
-    }
-  };
-
-  const moverFotoEsquerda = (index: number) => {
-    if (index <= 0) return;
-    const fotos = [...(formData.fotos || [])];
-    const temp = fotos[index - 1];
-    fotos[index - 1] = fotos[index];
-    fotos[index] = temp;
-    setFormData({ ...formData, fotos });
-  };
-
-  const moverFotoDireita = (index: number) => {
-    const fotos = [...(formData.fotos || [])];
-    if (index >= fotos.length - 1) return;
-    const temp = fotos[index + 1];
-    fotos[index + 1] = fotos[index];
-    fotos[index] = temp;
-    setFormData({ ...formData, fotos });
+    const temp = novasFotos[targetIndex];
+    novasFotos[targetIndex] = novasFotos[index];
+    novasFotos[index] = temp;
+    setFormData({ ...formData, fotos: novasFotos });
   };
 
   const definirComoCapa = (index: number) => {
@@ -84,19 +72,11 @@ export default function FormEditarImovel({ imovel, proprietarioInicial }: { imov
     setFormData({ ...formData, fotos: [fotoSelecionada, ...fotosFiltradas] });
   };
 
-  const removerFotoExistente = (index: number) => {
-    if (confirm('Deseja remover esta foto do imóvel?')) {
+  const removerFoto = (index: number) => {
+    if (confirm('Deseja remover esta foto do anúncio?')) {
       const fotos = (formData.fotos || []).filter((_, i) => i !== index);
       setFormData({ ...formData, fotos });
     }
-  };
-
-  const removerNovaFoto = (index: number) => {
-    setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
-  };
-
-  const handleFazerUploadFotos = () => {
-    alert('O upload manual está em migração para a API autenticada. Use o fluxo de captação pelo WhatsApp para incluir novas fotos com segurança.');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -104,31 +84,33 @@ export default function FormEditarImovel({ imovel, proprietarioInicial }: { imov
     setLoading(true);
     try {
       const payload: Record<string, any> = {
-        titulo: formData.titulo,
-        descricao: formData.descricao,
-        tipoImovel: formData.tipoImovel,
-        transacao: formData.transacao === 'Locação' ? 'Locacao' : (formData.transacao === 'Venda' ? 'Venda' : formData.transacao),
-        precoVenda: formData.precoVenda ? Number(formData.precoVenda) : null,
-        precoLocacao: formData.precoLocacao ? Number(formData.precoLocacao) : null,
-        valorCondominio: formData.valorCondominio ? Number(formData.valorCondominio) : null,
-        iptuMensal: formData.iptuMensal ? Number(formData.iptuMensal) : null,
-        condominio: formData.condominio || null,
+        titulo: parseOptionalString(formData.titulo) || formData.titulo,
+        descricao: parseOptionalString(formData.descricao) || '',
+        tipoImovel: parseOptionalString(formData.tipoImovel) || undefined,
+        transacao: formData.transacao === 'Locação' ? 'Locacao' : (formData.transacao === 'Venda' ? 'Venda' : (parseOptionalString(formData.transacao) || undefined)),
+        precoVenda: parseOptionalNumber(formData.precoVenda),
+        precoLocacao: parseOptionalNumber(formData.precoLocacao),
+        precoPacote: parseOptionalNumber(formData.precoPacote),
+        valorCondominio: parseOptionalNumber(formData.valorCondominio),
+        iptuMensal: parseOptionalNumber(formData.iptuMensal),
+        condominio: parseOptionalString(formData.condominio),
         endereco: {
-          rua: formData.endereco?.rua || null,
-          numero: formData.endereco?.numero || null,
-          bairro: formData.endereco?.bairro || null,
-          cidade: formData.endereco?.cidade || null,
-          estado: formData.endereco?.estado || null,
-          cep: formData.endereco?.cep || null,
+          rua: parseOptionalString(formData.endereco?.rua),
+          numero: parseOptionalString(formData.endereco?.numero),
+          bairro: parseOptionalString(formData.endereco?.bairro),
+          cidade: parseOptionalString(formData.endereco?.cidade),
+          estado: parseOptionalString(formData.endereco?.estado),
+          cep: parseOptionalString(formData.endereco?.cep),
         },
         caracteristicas: {
-          quartos: formData.caracteristicas?.quartos !== undefined && formData.caracteristicas?.quartos !== null ? Number(formData.caracteristicas.quartos) : null,
-          suites: formData.caracteristicas?.suites !== undefined && formData.caracteristicas?.suites !== null ? Number(formData.caracteristicas.suites) : null,
-          banheiros: formData.caracteristicas?.banheiros !== undefined && formData.caracteristicas?.banheiros !== null ? Number(formData.caracteristicas.banheiros) : null,
-          vagas: formData.caracteristicas?.vagas !== undefined && formData.caracteristicas?.vagas !== null ? Number(formData.caracteristicas.vagas) : null,
-          areaUtil: formData.caracteristicas?.areaUtil !== undefined && formData.caracteristicas?.areaUtil !== null ? Number(formData.caracteristicas.areaUtil) : null,
-          areaTotal: formData.caracteristicas?.areaTotal !== undefined && formData.caracteristicas?.areaTotal !== null ? Number(formData.caracteristicas.areaTotal) : null,
+          quartos: parseOptionalNumber(formData.caracteristicas?.quartos),
+          suites: parseOptionalNumber(formData.caracteristicas?.suites),
+          banheiros: parseOptionalNumber(formData.caracteristicas?.banheiros),
+          vagas: parseOptionalNumber(formData.caracteristicas?.vagas),
+          areaUtil: parseOptionalNumber(formData.caracteristicas?.areaUtil),
+          areaTotal: parseOptionalNumber(formData.caracteristicas?.areaTotal),
         },
+        fotos: formData.fotos || [],
       };
 
       const res = await updateAnuncioForBroker(imovel.id, payload);
@@ -147,384 +129,423 @@ export default function FormEditarImovel({ imovel, proprietarioInicial }: { imov
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      {/* Seção 1: Informações Básicas */}
-      <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
-        <h2 className="text-lg font-bold border-b pb-2">Informações Básicas</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="md:col-span-1">
-            <label className="block text-sm font-medium text-gray-700">Referência (Não alterável)</label>
+      {/* Seção 1: Informações Principais */}
+      <section className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
+        <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+          Informações Principais
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Referência</label>
             <input
-              type="text" disabled
-              className="mt-1 block w-full border bg-gray-50 rounded-md p-2 font-mono"
+              type="text"
+              disabled
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-mono text-sm font-bold text-slate-700 cursor-not-allowed"
               value={formData.referencia}
             />
           </div>
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700">Título do Imóvel</label>
+
+          <div className="md:col-span-3">
+            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Título do Anúncio *</label>
             <input
-              type="text" required
-              className="mt-1 block w-full border rounded-md p-2"
+              type="text"
+              required
+              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               value={formData.titulo}
               onChange={e => setFormData({ ...formData, titulo: e.target.value })}
+              placeholder="Ex: Apartamento 2 Dormitórios no Condomínio Pitangueiras 2"
             />
           </div>
         </div>
+
         <div>
-          <label className="block text-sm font-medium text-gray-700">Descrição Detalhada</label>
+          <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Descrição Comercial</label>
           <textarea
-            rows={4} required
-            className="mt-1 block w-full border rounded-md p-2"
+            rows={4}
+            className="w-full border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent leading-relaxed"
             value={formData.descricao}
             onChange={e => setFormData({ ...formData, descricao: e.target.value })}
+            placeholder="Descreva os diferenciais, acabamento, vista e condições do imóvel..."
           />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Transação</label>
+            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Transação</label>
             <select
-              className="mt-1 block w-full border rounded-md p-2"
+              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-white font-medium"
               value={formData.transacao}
               onChange={e => setFormData({ ...formData, transacao: e.target.value as any })}
             >
               <option value="Venda">Venda</option>
               <option value="Locação">Locação</option>
-              <option value="Venda e Locação">Venda e Locação</option>
             </select>
           </div>
+
           <div>
-            <label className="block text-sm font-medium text-gray-700">Tipo do Imóvel</label>
+            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Tipo de Imóvel</label>
             <input
               type="text"
-              className="mt-1 block w-full border rounded-md p-2"
+              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
               value={formData.tipoImovel}
               onChange={e => setFormData({ ...formData, tipoImovel: e.target.value })}
+              placeholder="Ex: Apartamento, Casa, Terreno, Galpão"
             />
           </div>
+
           <div>
-            <label className="block text-sm font-medium text-gray-700">Corretor Responsável</label>
-            <select
-              className="mt-1 block w-full border rounded-md p-2 bg-blue-50/50"
-              value={formData.corretor?.nome || 'BRAZZA'}
-              onChange={e => {
-                const selectCorretor = CORRETORES.find(c => c.nome === e.target.value);
-                if (selectCorretor) {
-                  setFormData({ ...formData, corretor: selectCorretor });
-                }
-              }}
-            >
-              {CORRETORES.map(c => (
-                <option key={c.nome} value={c.nome}>{c.nome}</option>
-              ))}
-            </select>
+            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Nome do Condomínio / Edifício</label>
+            <input
+              type="text"
+              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              value={formData.condominio || ''}
+              onChange={e => setFormData({ ...formData, condominio: e.target.value })}
+              placeholder="Ex: Condomínio Pitangueiras 2"
+            />
           </div>
         </div>
       </section>
 
-      {/* Seção: Mídia */}
-      <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6">
-        <div className="border-b pb-2">
-          <h2 className="text-lg font-bold">Mídia e Gerenciamento de Fotos</h2>
-          <p className="text-xs text-gray-500 mt-1">
-            A <strong>1ª foto (destacada como Capa)</strong> é a imagem principal usada nas buscas, cards do site e compartilhamentos SEO. Reordene as fotos para alterar a capa.
-          </p>
+      {/* Seção 2: Características e Valores */}
+      <section className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
+        <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
+          Características e Valores
+        </h2>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+          <div>
+            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Quartos</label>
+            <input
+              type="number"
+              min={0}
+              placeholder="Não informado"
+              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              value={formData.caracteristicas.quartos ?? ''}
+              onChange={e => setFormData({
+                ...formData,
+                caracteristicas: { ...formData.caracteristicas, quartos: e.target.value === '' ? null : Number(e.target.value) }
+              })}
+            />
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Suítes</label>
+            <input
+              type="number"
+              min={0}
+              placeholder="Não informado"
+              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              value={formData.caracteristicas.suites ?? ''}
+              onChange={e => setFormData({
+                ...formData,
+                caracteristicas: { ...formData.caracteristicas, suites: e.target.value === '' ? null : Number(e.target.value) }
+              })}
+            />
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Banheiros</label>
+            <input
+              type="number"
+              min={0}
+              placeholder="Não informado"
+              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              value={formData.caracteristicas.banheiros ?? ''}
+              onChange={e => setFormData({
+                ...formData,
+                caracteristicas: { ...formData.caracteristicas, banheiros: e.target.value === '' ? null : Number(e.target.value) }
+              })}
+            />
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Vagas</label>
+            <input
+              type="number"
+              min={0}
+              placeholder="Não informado"
+              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              value={formData.caracteristicas.vagas ?? ''}
+              onChange={e => setFormData({
+                ...formData,
+                caracteristicas: { ...formData.caracteristicas, vagas: e.target.value === '' ? null : Number(e.target.value) }
+              })}
+            />
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Área Útil (m²)</label>
+            <input
+              type="number"
+              min={0}
+              placeholder="Não informado"
+              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              value={formData.caracteristicas.areaUtil ?? ''}
+              onChange={e => setFormData({
+                ...formData,
+                caracteristicas: { ...formData.caracteristicas, areaUtil: e.target.value === '' ? null : Number(e.target.value) }
+              })}
+            />
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Área Total (m²)</label>
+            <input
+              type="number"
+              min={0}
+              placeholder="Não informado"
+              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              value={formData.caracteristicas.areaTotal ?? ''}
+              onChange={e => setFormData({
+                ...formData,
+                caracteristicas: { ...formData.caracteristicas, areaTotal: e.target.value === '' ? null : Number(e.target.value) }
+              })}
+            />
+          </div>
         </div>
 
-        {/* Fotos Existentes */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-3">
-            Fotos Salvas ({formData.fotos?.length || 0})
-          </label>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-slate-100">
+          <div>
+            <label className="block text-xs font-bold text-blue-700 uppercase tracking-wider mb-1">Preço de Venda (R$)</label>
+            <input
+              type="number"
+              min={0}
+              placeholder="Não informado"
+              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm font-bold text-blue-900"
+              value={formData.precoVenda ?? ''}
+              onChange={e => setFormData({ ...formData, precoVenda: e.target.value === '' ? undefined : Number(e.target.value) })}
+            />
+          </div>
 
-          {(!formData.fotos || formData.fotos.length === 0) ? (
-            <p className="text-sm text-gray-400 italic">Nenhuma foto cadastrada para este imóvel.</p>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {formData.fotos.map((foto, idx) => (
-                <div
-                  key={`${foto}-${idx}`}
-                  className={`relative group bg-gray-50 rounded-lg border-2 p-2 flex flex-col justify-between transition-all ${
-                    idx === 0 ? 'border-amber-500 shadow-md ring-2 ring-amber-300/50' : 'border-gray-200 hover:border-blue-400'
-                  }`}
-                >
-                  {/* Badge de Capa */}
-                  {idx === 0 && (
-                    <span className="absolute top-1 left-1 bg-amber-500 text-white font-bold text-[10px] uppercase px-2 py-0.5 rounded shadow z-10">
-                      ⭐ Capa / SEO
-                    </span>
-                  )}
+          <div>
+            <label className="block text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">Preço de Locação (R$)</label>
+            <input
+              type="number"
+              min={0}
+              placeholder="Não informado"
+              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm font-bold text-emerald-900"
+              value={formData.precoLocacao ?? ''}
+              onChange={e => setFormData({ ...formData, precoLocacao: e.target.value === '' ? undefined : Number(e.target.value) })}
+            />
+          </div>
 
-                  {/* Imagem */}
-                  <div className="relative aspect-square w-full overflow-hidden rounded mb-2">
-                    <img src={foto} alt={`Foto ${idx + 1}`} className="w-full h-full object-cover" />
-                  </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Condomínio Mensal (R$)</label>
+            <input
+              type="number"
+              min={0}
+              placeholder="Não informado"
+              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              value={formData.valorCondominio ?? ''}
+              onChange={e => setFormData({ ...formData, valorCondominio: e.target.value === '' ? undefined : Number(e.target.value) })}
+            />
+          </div>
 
-                  {/* Botões de Ação */}
-                  <div className="flex flex-col gap-1 text-xs">
-                    <div className="flex justify-between items-center bg-gray-100 p-1 rounded">
-                      <button
-                        type="button"
-                        onClick={() => moverFotoEsquerda(idx)}
-                        disabled={idx === 0}
-                        title="Mover para esquerda"
-                        className="p-1 text-gray-600 hover:text-blue-600 disabled:opacity-30 disabled:hover:text-gray-600"
-                      >
-                        ⬅️
-                      </button>
-                      <span className="font-bold text-[11px] text-gray-500">#{idx + 1}</span>
-                      <button
-                        type="button"
-                        onClick={() => moverFotoDireita(idx)}
-                        disabled={idx === (formData.fotos?.length || 0) - 1}
-                        title="Mover para direita"
-                        className="p-1 text-gray-600 hover:text-blue-600 disabled:opacity-30 disabled:hover:text-gray-600"
-                      >
-                        ➡️
-                      </button>
-                    </div>
-
-                    {idx !== 0 && (
-                      <button
-                        type="button"
-                        onClick={() => definirComoCapa(idx)}
-                        className="w-full text-[10px] bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200 font-semibold py-1 rounded transition-colors"
-                      >
-                        Tornar Capa
-                      </button>
-                    )}
-
-                    <button
-                      type="button"
-                      onClick={() => removerFotoExistente(idx)}
-                      className="w-full text-[10px] text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 py-0.5 rounded font-medium transition-colors"
-                    >
-                      🗑️ Excluir
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Upload de Novas Fotos */}
-        <div className="pt-4 border-t border-gray-100">
-          <label className="block text-sm font-semibold text-gray-800 mb-1">
-            Incluir Novas Fotos (Adiciona sem apagar as fotos acima)
-          </label>
-          <p className="text-xs text-gray-500 mb-3">
-            Você pode selecionar vários arquivos de imagem. Eles serão adicionados à lista de fotos do imóvel ao salvar.
-          </p>
-
-          <input
-            type="file" multiple accept="image/*"
-            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
-            onChange={handleFileChange}
-          />
-
-          {/* Previews de Novas Fotos a Incluir */}
-          {selectedFiles.length > 0 && (
-            <div className="mt-4 bg-blue-50/50 p-4 rounded-xl border border-blue-100">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold text-blue-800 uppercase tracking-wide">
-                  Novas Fotos Selecionadas para Adicionar ({selectedFiles.length})
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setSelectedFiles([])}
-                  className="text-xs text-red-600 hover:underline"
-                >
-                  Limpar Seleção
-                </button>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
-                {selectedFiles.map((file, idx) => (
-                  <div key={idx} className="relative bg-white rounded border p-1 shadow-sm flex flex-col items-center">
-                    <img
-                      src={URL.createObjectURL(file)}
-                      alt={`Preview ${idx + 1}`}
-                      className="h-16 w-full object-cover rounded"
-                    />
-                    <span className="text-[9px] text-gray-500 truncate w-full text-center mt-1">
-                      {file.name}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => removerNovaFoto(idx)}
-                      className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold shadow hover:bg-red-700"
-                      title="Remover este arquivo da lista a ser enviada"
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              {/* Botão de Upload Imediato */}
-              <button
-                type="button"
-                onClick={handleFazerUploadFotos}
-                disabled={uploadingFotos}
-                className={`w-full mt-4 py-3 px-4 rounded-xl font-bold text-sm text-white shadow-md flex items-center justify-center gap-2 transition-all ${
-                  uploadingFotos ? 'bg-blue-300 cursor-wait' : 'bg-blue-600 hover:bg-blue-700 active:scale-[0.99]'
-                }`}
-              >
-                {uploadingFotos ? (
-                  <>
-                    <span className="animate-spin text-base">⏳</span> Fazendo Upload e Adicionando à Galeria...
-                  </>
-                ) : (
-                  <>
-                    <span>⬆️</span> Fazer Upload das {selectedFiles.length} Nova(s) Foto(s) Agora
-                  </>
-                )}
-              </button>
-            </div>
-          )}
-        </div>
-
-        <div className="pt-4 border-t border-gray-100">
-          <label className="block text-sm font-medium text-gray-700">Link do Vídeo (YouTube/Vimeo)</label>
-          <input
-            type="url"
-            className="mt-1 block w-full border rounded-md p-2"
-            value={formData.videoUrl || ''}
-            onChange={e => setFormData({ ...formData, videoUrl: e.target.value })}
-          />
+          <div>
+            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">IPTU Mensal (R$)</label>
+            <input
+              type="number"
+              min={0}
+              placeholder="Não informado"
+              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              value={formData.iptuMensal ?? ''}
+              onChange={e => setFormData({ ...formData, iptuMensal: e.target.value === '' ? undefined : Number(e.target.value) })}
+            />
+          </div>
         </div>
       </section>
 
-      {/* Seção: Localização */}
-      <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
-        <h2 className="text-lg font-bold border-b pb-2">Localização</h2>
+      {/* Seção 3: Localização */}
+      <section className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
+        <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-violet-600"></span>
+          Localização e Endereço
+        </h2>
+
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="md:col-span-3">
-            <input type="text" placeholder="Rua" className="block w-full border rounded-md p-2" value={formData.endereco.rua} onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, rua: e.target.value } })} />
-          </div>
-          <div>
-            <input type="text" placeholder="Nº" className="block w-full border rounded-md p-2" value={formData.endereco.numero} onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, numero: e.target.value } })} />
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <input type="text" placeholder="Bairro" className="border rounded-md p-2" value={formData.endereco.bairro} onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, bairro: e.target.value } })} />
-          <input type="text" placeholder="Cidade" className="border rounded-md p-2" value={formData.endereco.cidade} onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, cidade: e.target.value } })} />
-          <input type="text" placeholder="Estado" className="border rounded-md p-2" value={formData.endereco.estado} onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, estado: e.target.value } })} />
-        </div>
-      </section>
-
-      {/* Seção: Características e Preço */}
-      <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
-        <h2 className="text-lg font-bold border-b pb-2">Características e Valores</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-          <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Quartos</label>
-            <input type="number" placeholder="Quartos" className="w-full border rounded-md p-2" value={formData.caracteristicas.quartos ?? ''} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, quartos: Number(e.target.value) } })} />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Suítes</label>
-            <input type="number" placeholder="Suítes" className="w-full border rounded-md p-2" value={formData.caracteristicas.suites ?? ''} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, suites: Number(e.target.value) } })} />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Banheiros</label>
-            <input type="number" placeholder="Banheiros" className="w-full border rounded-md p-2" value={formData.caracteristicas.banheiros ?? ''} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, banheiros: Number(e.target.value) } })} />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Vagas</label>
-            <input type="number" placeholder="Vagas" className="w-full border rounded-md p-2" value={formData.caracteristicas.vagas ?? ''} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, vagas: Number(e.target.value) } })} />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Área Útil (m²)</label>
-            <input type="number" placeholder="Área Útil" className="w-full border rounded-md p-2" value={formData.caracteristicas.areaUtil ?? ''} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, areaUtil: Number(e.target.value) } })} />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Área Total (m²)</label>
-            <input type="number" placeholder="Área Total" className="w-full border rounded-md p-2" value={formData.caracteristicas.areaTotal ?? ''} onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, areaTotal: Number(e.target.value) } })} />
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
-          <div>
-            <label className="text-blue-700 font-bold text-sm">Preço Venda</label>
-            <input type="number" className="block w-full border rounded-md p-2" value={formData.precoVenda || ''} onChange={e => setFormData({ ...formData, precoVenda: Number(e.target.value) })} />
-          </div>
-          <div>
-            <label className="text-green-700 font-bold text-sm">Preço Locação</label>
-            <input type="number" className="block w-full border rounded-md p-2" value={formData.precoLocacao || ''} onChange={e => setFormData({ ...formData, precoLocacao: Number(e.target.value) })} />
-          </div>
-        </div>
-        <div className="flex gap-6 pt-2">
-          <label className="flex items-center gap-2">
-            <input type="checkbox" checked={formData.destaque} onChange={e => setFormData({ ...formData, destaque: e.target.checked })} />
-            <span>Destaque</span>
-          </label>
-          <label className="flex items-center gap-2">
-            <input type="checkbox" checked={formData.status === 'Ativo'} onChange={e => setFormData({ ...formData, status: e.target.checked ? 'Ativo' : 'Inativo' })} />
-            <span>Ativo</span>
-          </label>
-        </div>
-      </section>
-
-      {/* Seção 4: Dados do Proprietário (Apenas Local) */}
-      <section className="bg-gray-50 p-6 rounded-xl border-2 border-dashed border-gray-300 space-y-4">
-        <div className="flex items-center justify-between border-b border-gray-200 pb-2">
-          <h2 className="text-lg font-bold text-gray-800">Dados Privados do Proprietário</h2>
-          <span className="text-[10px] font-black uppercase bg-gray-200 px-2 py-1 rounded text-gray-600 tracking-tighter">Apenas Local</span>
-        </div>
-        <p className="text-xs text-gray-500 italic">Estes dados NÃO são salvos no site online e não ficam visíveis para o público. São apenas para seu controle interno.</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Nome do Proprietário</label>
+            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Logradouro / Rua</label>
             <input
               type="text"
-              className="mt-1 block w-full border rounded-md p-2 bg-white"
-              value={propData.nome}
-              onChange={e => setPropData({ ...propData, nome: e.target.value })}
+              placeholder="Ex: Estrada das Olarias"
+              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              value={formData.endereco.rua}
+              onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, rua: e.target.value } })}
             />
           </div>
+
           <div>
-            <label className="block text-sm font-medium text-gray-700">Telefone de Contato</label>
+            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Número</label>
             <input
               type="text"
-              className="mt-1 block w-full border rounded-md p-2 bg-white"
-              value={propData.telefone}
-              onChange={e => setPropData({ ...propData, telefone: e.target.value })}
+              placeholder="Ex: 500"
+              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              value={formData.endereco.numero}
+              onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, numero: e.target.value } })}
             />
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">E-mail</label>
+            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Bairro</label>
             <input
-              type="email"
-              className="mt-1 block w-full border rounded-md p-2 bg-white"
-              value={propData.email}
-              onChange={e => setPropData({ ...propData, email: e.target.value })}
+              type="text"
+              placeholder="Ex: Jardim Guida"
+              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              value={formData.endereco.bairro}
+              onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, bairro: e.target.value } })}
             />
           </div>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Observações Internas (Ex: Onde retirar chaves, horários, etc)</label>
-          <textarea
-            rows={3}
-            className="mt-1 block w-full border rounded-md p-2 bg-white"
-            value={propData.observacoes}
-            onChange={e => setPropData({ ...propData, observacoes: e.target.value })}
-          />
+
+          <div>
+            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Cidade</label>
+            <input
+              type="text"
+              placeholder="Ex: Taboão da Serra"
+              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              value={formData.endereco.cidade}
+              onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, cidade: e.target.value } })}
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Estado (UF)</label>
+            <input
+              type="text"
+              placeholder="Ex: SP"
+              maxLength={2}
+              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm uppercase"
+              value={formData.endereco.estado}
+              onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, estado: e.target.value } })}
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">CEP</label>
+            <input
+              type="text"
+              placeholder="Ex: 06765-000"
+              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              value={formData.endereco.cep}
+              onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, cep: e.target.value } })}
+            />
+          </div>
         </div>
       </section>
 
-      <div className="flex gap-4">
+      {/* Seção 4: Gerenciamento de Fotos */}
+      <section className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
+        <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
+          <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+            Galeria e Fotos ({formData.fotos?.length || 0})
+          </h2>
+          <span className="text-xs text-slate-500 font-medium">A primeira foto é a Capa principal</span>
+        </div>
+
+        {(!formData.fotos || formData.fotos.length === 0) ? (
+          <div className="p-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
+            <p className="text-sm font-semibold text-slate-600">Nenhuma foto anexada a este anúncio no momento.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            {formData.fotos.map((foto, idx) => (
+              <div
+                key={`${foto}-${idx}`}
+                className={`relative group bg-slate-50 rounded-xl border-2 p-2 flex flex-col justify-between transition-all ${
+                  idx === 0 ? 'border-amber-500 shadow-xs ring-2 ring-amber-300/40' : 'border-slate-200 hover:border-blue-300'
+                }`}
+              >
+                {idx === 0 && (
+                  <span className="absolute top-1.5 left-1.5 bg-amber-500 text-white font-black text-[9px] uppercase px-2 py-0.5 rounded-md shadow-xs z-10 flex items-center gap-1">
+                    <Star className="w-3 h-3 fill-white" /> Capa
+                  </span>
+                )}
+
+                <div className="relative aspect-square w-full overflow-hidden rounded-lg mb-2">
+                  <img src={foto} alt={`Foto ${idx + 1}`} className="w-full h-full object-cover" />
+                </div>
+
+                <div className="flex flex-col gap-1.5 text-xs">
+                  <div className="flex justify-between items-center bg-slate-100 p-1 rounded-lg">
+                    <button
+                      type="button"
+                      onClick={() => moverFoto(idx, 'esquerda')}
+                      disabled={idx === 0}
+                      title="Mover para esquerda"
+                      className="p-1 text-slate-600 hover:text-blue-600 disabled:opacity-30"
+                    >
+                      ◀
+                    </button>
+                    <span className="font-bold text-[11px] text-slate-500">#{idx + 1}</span>
+                    <button
+                      type="button"
+                      onClick={() => moverFoto(idx, 'direita')}
+                      disabled={idx === (formData.fotos?.length || 0) - 1}
+                      title="Mover para direita"
+                      className="p-1 text-slate-600 hover:text-blue-600 disabled:opacity-30"
+                    >
+                      ▶
+                    </button>
+                  </div>
+
+                  {idx !== 0 && (
+                    <button
+                      type="button"
+                      onClick={() => definirComoCapa(idx)}
+                      className="w-full text-[10px] bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200 font-bold py-1 rounded-lg transition-colors"
+                    >
+                      Definir como Capa
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => removerFoto(idx)}
+                    className="w-full text-[10px] text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 py-1 rounded-lg font-bold transition-colors flex items-center justify-center gap-1"
+                  >
+                    <Trash2 className="w-3 h-3" /> Excluir
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-start gap-3 mt-4">
+          <Info className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+          <div className="text-xs text-blue-900 space-y-1">
+            <p className="font-bold">Como adicionar novas fotos?</p>
+            <p className="text-blue-700 leading-relaxed">
+              Para incluir fotos em alta resolução com otimização automática e geração do Media Kit por IA, envie as imagens pelo fluxo de captação no WhatsApp informando a referência <strong>{formData.referencia}</strong>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Botões de Ação */}
+      <div className="flex flex-col sm:flex-row gap-4 pt-4">
         <button
-          type="submit" disabled={loading}
-          className={`flex-1 text-white py-4 rounded-xl font-bold text-lg shadow-lg ${loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
+          type="submit"
+          disabled={loading}
+          className={`flex-1 text-white py-3.5 px-6 rounded-xl font-black text-sm uppercase tracking-wider shadow-sm flex items-center justify-center gap-2 transition-all ${
+            loading ? 'bg-slate-400 cursor-wait' : 'bg-blue-600 hover:bg-blue-700 active:scale-[0.99]'
+          }`}
         >
+          <Save className="w-4 h-4" />
           {loading ? 'Salvando Alterações...' : 'Salvar Alterações'}
         </button>
-        <button
-          type="button" onClick={() => router.push('/dashboard')}
-          className="px-8 bg-gray-200 text-gray-700 py-4 rounded-xl font-bold hover:bg-gray-300"
+
+        <Link
+          href="/dashboard"
+          className="px-6 py-3.5 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl font-bold text-sm text-center transition-colors"
         >
           Cancelar
-        </button>
+        </Link>
       </div>
     </form>
   );
