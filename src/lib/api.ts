@@ -189,3 +189,14 @@ export async function getMeusAnuncios(limit = 100) {
   return fetchBrokerApi(`/me/anuncios?limit=${limit}`, { method: 'GET' });
 }
 
+export async function getAnuncioForBroker(adId: string) {
+  return fetchBrokerApi(`/me/anuncios/${encodeURIComponent(adId)}`, { method: 'GET' });
+}
+
+export async function updateAnuncioForBroker(adId: string, data: Record<string, any>) {
+  return fetchBrokerApi(`/me/anuncios/${encodeURIComponent(adId)}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });
+}
+

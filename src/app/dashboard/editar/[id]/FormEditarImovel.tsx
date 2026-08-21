@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Imovel } from '@/types/imovel';
+import { updateAnuncioForBroker } from '@/lib/api';
 
-export default function FormEditarImovel({ imovel, proprietarioInicial }: { imovel: Imovel, proprietarioInicial: any }) {
+export default function FormEditarImovel({ imovel, proprietarioInicial }: { imovel: Imovel, proprietarioInicial?: any }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [uploadingFotos, setUploadingFotos] = useState(false);
@@ -98,9 +99,50 @@ export default function FormEditarImovel({ imovel, proprietarioInicial }: { imov
     alert('O upload manual está em migração para a API autenticada. Use o fluxo de captação pelo WhatsApp para incluir novas fotos com segurança.');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert('A edição manual está em migração para a API autenticada. Nenhuma alteração foi gravada localmente.');
+    setLoading(true);
+    try {
+      const payload: Record<string, any> = {
+        titulo: formData.titulo,
+        descricao: formData.descricao,
+        tipoImovel: formData.tipoImovel,
+        transacao: formData.transacao === 'Locação' ? 'Locacao' : (formData.transacao === 'Venda' ? 'Venda' : formData.transacao),
+        precoVenda: formData.precoVenda ? Number(formData.precoVenda) : null,
+        precoLocacao: formData.precoLocacao ? Number(formData.precoLocacao) : null,
+        valorCondominio: formData.valorCondominio ? Number(formData.valorCondominio) : null,
+        iptuMensal: formData.iptuMensal ? Number(formData.iptuMensal) : null,
+        condominio: formData.condominio || null,
+        endereco: {
+          rua: formData.endereco?.rua || null,
+          numero: formData.endereco?.numero || null,
+          bairro: formData.endereco?.bairro || null,
+          cidade: formData.endereco?.cidade || null,
+          estado: formData.endereco?.estado || null,
+          cep: formData.endereco?.cep || null,
+        },
+        caracteristicas: {
+          quartos: formData.caracteristicas?.quartos !== undefined && formData.caracteristicas?.quartos !== null ? Number(formData.caracteristicas.quartos) : null,
+          suites: formData.caracteristicas?.suites !== undefined && formData.caracteristicas?.suites !== null ? Number(formData.caracteristicas.suites) : null,
+          banheiros: formData.caracteristicas?.banheiros !== undefined && formData.caracteristicas?.banheiros !== null ? Number(formData.caracteristicas.banheiros) : null,
+          vagas: formData.caracteristicas?.vagas !== undefined && formData.caracteristicas?.vagas !== null ? Number(formData.caracteristicas.vagas) : null,
+          areaUtil: formData.caracteristicas?.areaUtil !== undefined && formData.caracteristicas?.areaUtil !== null ? Number(formData.caracteristicas.areaUtil) : null,
+          areaTotal: formData.caracteristicas?.areaTotal !== undefined && formData.caracteristicas?.areaTotal !== null ? Number(formData.caracteristicas.areaTotal) : null,
+        },
+      };
+
+      const res = await updateAnuncioForBroker(imovel.id, payload);
+      if (res.success) {
+        alert('Anúncio atualizado com sucesso no portal!');
+        router.push('/dashboard');
+      } else {
+        alert(res.error || res.message || 'Erro ao atualizar anúncio.');
+      }
+    } catch (err: any) {
+      alert(`Erro ao salvar: ${err.message || 'Falha na conexão'}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
