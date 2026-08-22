@@ -98,16 +98,18 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };
 
-  const rawPhone = imovel.corretor?.telefone || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '';
+  const rawPhone = imovel.corretor?.telefone || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || process.env.NEXT_PUBLIC_DEFAULT_WHATSAPP || '';
   const cleanPhone = rawPhone.replace(/\D/g, '');
   const phoneWithCountry = cleanPhone.length >= 10
     ? (cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`)
-    : (process.env.NEXT_PUBLIC_DEFAULT_WHATSAPP || '5511932785602');
+    : '';
 
   const whatsappMessage = encodeURIComponent(
     `Olá! Tenho interesse no imóvel REF: ${imovel.referencia} (${imovel.titulo}) anunciado no site Imóveis Taboão da Serra e imediações. Gostaria de agendar uma visita ou receber mais informações!`
   );
-  const whatsappUrl = `https://wa.me/${phoneWithCountry}?text=${whatsappMessage}`;
+  const whatsappUrl = phoneWithCountry
+    ? `https://wa.me/${phoneWithCountry}?text=${whatsappMessage}`
+    : `/contato?ref=${encodeURIComponent(imovel.referencia)}`;
 
   const jsonLd = {
     '@context': 'https://schema.org',
