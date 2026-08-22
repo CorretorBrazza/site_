@@ -98,9 +98,11 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };
 
-  const rawPhone = imovel.corretor?.telefone || '5511932785602';
-  const cleanPhone = rawPhone.replace(/\D/g, '') || '5511932785602';
-  const phoneWithCountry = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
+  const rawPhone = imovel.corretor?.telefone || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '';
+  const cleanPhone = rawPhone.replace(/\D/g, '');
+  const phoneWithCountry = cleanPhone.length >= 10
+    ? (cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`)
+    : (process.env.NEXT_PUBLIC_DEFAULT_WHATSAPP || '5511932785602');
 
   const whatsappMessage = encodeURIComponent(
     `Olá! Tenho interesse no imóvel REF: ${imovel.referencia} (${imovel.titulo}) anunciado no site Imóveis Taboão da Serra e imediações. Gostaria de agendar uma visita ou receber mais informações!`
@@ -246,7 +248,10 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
                   <span>Atendimento em Taboão da Serra e imediações</span>
                 </div>
                 <p className="text-[11px] leading-relaxed">
-                  Entre em contato diretamente com nossos consultores para agendar uma visita ao imóvel REF: <strong>{imovel.referencia}</strong>.
+                  {imovel.corretor?.nome && imovel.corretor.nome !== 'Corretor'
+                    ? `Fale com o corretor responsável ${imovel.corretor.nome} para agendar uma visita ao imóvel REF: `
+                    : 'Entre em contato diretamente para agendar uma visita ao imóvel REF: '}
+                  <strong>{imovel.referencia}</strong>.
                 </p>
               </div>
 

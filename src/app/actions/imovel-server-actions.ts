@@ -159,6 +159,10 @@ export async function getImoveis(): Promise<Imovel[]> {
               vagas: ref.vagas ?? ref.caracteristicas?.vagas ?? null,
               areaUtil: ref.areaUtil ?? ref.caracteristicas?.areaUtil ?? null,
             },
+            corretor: item.corretor || {
+              nome: item.corretor_nome || 'Corretor',
+              telefone: item.corretor_telefone || '',
+            },
             status: 'Ativo',
             destaque: true,
           };
