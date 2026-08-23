@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Imovel } from '@/types/imovel';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://imoveis-taboao-api-production-4cd9.up.railway.app/api/v1';
+import { API_BASE_URL } from '@/lib/api';
 
 export function useLiveImoveis(initialImoveis: Imovel[]) {
   const [imoveis, setImoveis] = useState<Imovel[]>(initialImoveis);
@@ -32,15 +32,28 @@ export function useLiveImoveis(initialImoveis: Imovel[]) {
                 typeof f === 'string' ? f : f.url_optimized || f.url || f.url_original
               );
 
+              const rawTransacao = String(ref.transacao || item.transacao || ref.finalidade || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+              const isLoc = rawTransacao.includes('loca') || rawTransacao.includes('alug');
+              const isVen = rawTransacao.includes('venda') || rawTransacao.includes('compra');
+              const finalTransacao = isLoc && isVen ? 'Venda e Locação' : (isLoc ? 'Locação' : (isVen ? 'Venda' : (ref.precoLocacao || item.precoLocacao ? 'Locação' : 'Venda')));
+
+              const finalPrecoLocacao = ref.precoLocacao !== undefined && ref.precoLocacao !== null && ref.precoLocacao !== ''
+                ? Number(ref.precoLocacao)
+                : (item.precoLocacao || ref.precoPacote || item.precoPacote || (isLoc ? (ref.preco || item.preco) : null) || null);
+
+              const finalPrecoVenda = ref.precoVenda !== undefined && ref.precoVenda !== null && ref.precoVenda !== ''
+                ? Number(ref.precoVenda)
+                : (item.precoVenda || (isVen ? (ref.preco || item.preco) : null) || null);
+
               return {
                 id: item.ad_id || item.referencia?.toLowerCase() || `imv_${Math.random()}`,
                 referencia: item.referencia || 'BRA0000',
                 titulo: ref.titulo || item.media_kit?.titulo_seo || `Imóvel ${item.referencia}`,
                 descricao: ref.descricao || item.media_kit?.legenda_social || '',
                 tipo: ref.tipo || ref.tipoImovel || 'Imóvel',
-                transacao: ref.transacao || ref.finalidade || (ref.precoLocacao ? 'Locação' : (ref.precoVenda ? 'Venda' : 'Não informado')),
-                precoVenda: ref.precoVenda || null,
-                precoLocacao: ref.precoLocacao || null,
+                transacao: finalTransacao,
+                precoVenda: finalPrecoVenda ? Number(finalPrecoVenda) : null,
+                precoLocacao: finalPrecoLocacao ? Number(finalPrecoLocacao) : null,
                 condominio: ref.condominio || null,
                 iptu: ref.iptu || null,
                 bairro: ref.bairro || ref.endereco?.bairro || '',

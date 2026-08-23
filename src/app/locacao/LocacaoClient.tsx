@@ -21,9 +21,11 @@ export default function LocacaoClient({ allImoveis }: LocacaoClientProps) {
   const precoMax = searchParams.get('precoMax');
   const quartos = searchParams.get('quartos');
 
-  let imoveis = currentImoveis.filter(
-    (i) => (i.transacao === 'Locação' || i.transacao === 'Venda e Locação') && i.status === 'Ativo'
-  );
+  let imoveis = currentImoveis.filter((i) => {
+    const raw = String(i.transacao || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const isLoc = raw.includes('loca') || raw.includes('alug') || Boolean(i.precoLocacao);
+    return isLoc && (i.status === 'Ativo' || !i.status);
+  });
 
   if (tipo) {
     imoveis = imoveis.filter((i) => i.tipo?.toLowerCase() === tipo.toLowerCase());

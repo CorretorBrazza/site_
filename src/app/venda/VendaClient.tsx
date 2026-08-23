@@ -21,9 +21,11 @@ export default function VendaClient({ allImoveis }: VendaClientProps) {
   const precoMax = searchParams.get('precoMax');
   const quartos = searchParams.get('quartos');
 
-  let imoveis = currentImoveis.filter(
-    (i) => (i.transacao === 'Venda' || i.transacao === 'Venda e Locação') && i.status === 'Ativo'
-  );
+  let imoveis = currentImoveis.filter((i) => {
+    const raw = String(i.transacao || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const isVen = raw.includes('venda') || raw.includes('compra') || Boolean(i.precoVenda);
+    return isVen && (i.status === 'Ativo' || !i.status);
+  });
 
   if (tipo) {
     imoveis = imoveis.filter((i) => i.tipo?.toLowerCase() === tipo.toLowerCase());

@@ -37,12 +37,12 @@ export interface Imovel {
   cidade?: string;
   endereco: Endereco;
   caracteristicas: Caracteristicas;
-  precoVenda?: number;
-  precoLocacao?: number;
-  precoPacote?: number;
-  valorCondominio?: number;
-  iptuMensal?: number;
-  condominio?: string;
+  precoVenda?: number | null;
+  precoLocacao?: number | null;
+  precoPacote?: number | null;
+  valorCondominio?: number | null;
+  iptuMensal?: number | null;
+  condominio?: string | null;
   fotos: string[];
   videoUrl?: string;
   status: StatusImovel;

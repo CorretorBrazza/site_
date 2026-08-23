@@ -18,9 +18,11 @@ export const metadata: Metadata = {
 
 export default async function LocacaoPage() {
   const allImoveis = await getImoveis();
-  const imoveisLocacao = allImoveis.filter(
-    (i) => (i.transacao === 'Locação' || i.transacao === 'Venda e Locação') && i.status === 'Ativo'
-  );
+  const imoveisLocacao = allImoveis.filter((i) => {
+    const raw = String(i.transacao || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const isLoc = raw.includes('loca') || raw.includes('alug') || Boolean(i.precoLocacao);
+    return isLoc && (i.status === 'Ativo' || !i.status);
+  });
 
   const itemListJsonLd = {
     '@context': 'https://schema.org',

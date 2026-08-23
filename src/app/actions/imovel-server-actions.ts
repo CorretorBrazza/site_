@@ -131,15 +131,28 @@ export async function getImoveis(): Promise<Imovel[]> {
           const mediaKit = item.media_kit || item.conteudo_gerado || {};
           const canalPortais = mediaKit.canal_1_portais || {};
 
+          const rawTransacao = String(ref.transacao || item.transacao || ref.finalidade || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+          const isLoc = rawTransacao.includes('loca') || rawTransacao.includes('alug');
+          const isVen = rawTransacao.includes('venda') || rawTransacao.includes('compra');
+          const finalTransacao = isLoc && isVen ? 'Venda e Locação' : (isLoc ? 'Locação' : (isVen ? 'Venda' : (ref.precoLocacao || item.precoLocacao ? 'Locação' : 'Venda')));
+
+          const finalPrecoLocacao = ref.precoLocacao !== undefined && ref.precoLocacao !== null && ref.precoLocacao !== ''
+            ? Number(ref.precoLocacao)
+            : (item.precoLocacao || ref.precoPacote || item.precoPacote || (isLoc ? (ref.preco || item.preco) : null) || null);
+
+          const finalPrecoVenda = ref.precoVenda !== undefined && ref.precoVenda !== null && ref.precoVenda !== ''
+            ? Number(ref.precoVenda)
+            : (item.precoVenda || (isVen ? (ref.preco || item.preco) : null) || null);
+
           return {
             id: item.ad_id || item.referencia?.toLowerCase() || `imv_${Math.random()}`,
             referencia: item.referencia || 'BRA0000',
             titulo: ref.titulo || canalPortais.titulo_comercial || mediaKit.titulo_seo || `Imóvel ${item.referencia}`,
             descricao: ref.descricao || canalPortais.descricao_completa || mediaKit.descricao_completa || mediaKit.descricao_media || mediaKit.legenda_social || '',
             tipo: ref.tipo || ref.tipoImovel || 'Imóvel',
-            transacao: ref.transacao || ref.finalidade || (ref.precoLocacao ? 'Locação' : (ref.precoVenda ? 'Venda' : 'Não informado')),
-            precoVenda: ref.precoVenda || null,
-            precoLocacao: ref.precoLocacao || null,
+            transacao: finalTransacao,
+            precoVenda: finalPrecoVenda ? Number(finalPrecoVenda) : null,
+            precoLocacao: finalPrecoLocacao ? Number(finalPrecoLocacao) : null,
             condominio: ref.condominio || null,
             iptu: ref.iptu || null,
             bairro: ref.bairro || ref.endereco?.bairro || '',

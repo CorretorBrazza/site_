@@ -88,7 +88,11 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
     notFound();
   }
 
-  const preco = imovel.transacao === 'Locação' ? imovel.precoLocacao : imovel.precoVenda;
+  const rawTransacao = String(imovel.transacao || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const isLocacao = rawTransacao.includes('loca') || rawTransacao.includes('alug');
+  const preco = isLocacao
+    ? (imovel.precoLocacao || imovel.precoVenda)
+    : (imovel.precoVenda || imovel.precoLocacao);
   const urlPagina = `https://imoveistaboao.com.br/imovel/${imovel.id}/`;
   const rawFoto = imovel.fotos && imovel.fotos.length > 0
     ? imovel.fotos[0]
@@ -229,7 +233,7 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
                 <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Valor do Imóvel</span>
                 <p className="text-3xl font-black text-emerald-600">
                   {preco ? formatCurrency(preco) : 'Consulte'}
-                  {imovel.transacao === 'Locação' && <span className="text-sm font-semibold text-slate-500"> /mês</span>}
+                  {isLocacao && <span className="text-sm font-semibold text-slate-500"> /mês</span>}
                 </p>
               </div>
 

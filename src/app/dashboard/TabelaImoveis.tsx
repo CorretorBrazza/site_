@@ -75,8 +75,9 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
 
   const imoveisFiltrados = imoveis.filter((imovel) => {
     if (filtroTransacao === 'Todos') return true;
-    if (filtroTransacao === 'Venda') return imovel.transacao === 'Venda' || imovel.transacao === 'Venda e Locação';
-    if (filtroTransacao === 'Locação') return imovel.transacao === 'Locação' || imovel.transacao === 'Venda e Locação';
+    const raw = String(imovel.transacao || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    if (filtroTransacao === 'Venda') return raw.includes('venda') || raw.includes('compra') || Boolean(imovel.precoVenda);
+    if (filtroTransacao === 'Locação') return raw.includes('loca') || raw.includes('alug') || Boolean(imovel.precoLocacao);
     return true;
   });
 
@@ -146,7 +147,11 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                 const isExpirado = ['EXPIRED', 'EXPIRADO'].includes(rawStatus);
                 const isAtivo = ['DELIVERED', 'PUBLISHED', 'ATIVO'].includes(rawStatus);
                 const status = statusMeta(rawStatus);
-                const valorExibicao = imovel.transacao === 'Locação' ? formatCurrency(imovel.precoLocacao) : formatCurrency(imovel.precoVenda);
+                const rawTransacao = String(imovel.transacao || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+                const isLoc = rawTransacao.includes('loca') || rawTransacao.includes('alug');
+                const valorExibicao = isLoc
+                  ? formatCurrency(imovel.precoLocacao || imovel.precoVenda)
+                  : formatCurrency(imovel.precoVenda || imovel.precoLocacao);
 
                 return (
                   <tr key={imovel.id} className="hover:bg-slate-50 transition-colors">

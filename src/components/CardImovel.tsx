@@ -17,7 +17,11 @@ export default function CardImovel({ imovel }: CardImovelProps) {
     }).format(value);
   };
 
-  const preco = imovel.transacao === 'Venda' ? imovel.precoVenda : imovel.precoLocacao;
+  const rawTransacao = String(imovel.transacao || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const isLocacao = rawTransacao.includes('loca') || rawTransacao.includes('alug');
+  const preco = isLocacao
+    ? (imovel.precoLocacao || imovel.precoVenda)
+    : (imovel.precoVenda || imovel.precoLocacao);
 
   return (
     <Link
@@ -49,7 +53,7 @@ export default function CardImovel({ imovel }: CardImovelProps) {
           <div className="absolute bottom-3 left-4 right-4 flex justify-between items-end">
             <div className="bg-emerald-600 text-white px-3.5 py-1.5 rounded-xl font-black text-lg shadow-md">
               {preco ? formatCurrency(preco) : 'Consulte'}
-              {imovel.transacao === 'Locação' && <span className="text-xs font-semibold text-emerald-100"> /mês</span>}
+              {isLocacao && <span className="text-xs font-semibold text-emerald-100"> /mês</span>}
             </div>
           </div>
         </div>

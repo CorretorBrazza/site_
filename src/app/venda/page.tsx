@@ -18,9 +18,11 @@ export const metadata: Metadata = {
 
 export default async function VendaPage() {
   const allImoveis = await getImoveis();
-  const imoveisVenda = allImoveis.filter(
-    (i) => (i.transacao === 'Venda' || i.transacao === 'Venda e Locação') && i.status === 'Ativo'
-  );
+  const imoveisVenda = allImoveis.filter((i) => {
+    const raw = String(i.transacao || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const isVen = raw.includes('venda') || raw.includes('compra') || Boolean(i.precoVenda);
+    return isVen && (i.status === 'Ativo' || !i.status);
+  });
 
   const itemListJsonLd = {
     '@context': 'https://schema.org',
