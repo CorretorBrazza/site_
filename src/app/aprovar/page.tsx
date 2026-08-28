@@ -161,6 +161,9 @@ function AprovarContent() {
     setIsSubmitting(false);
 
     if (result.success) {
+      if (typeof window !== 'undefined') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
       const responseData: any = result.data;
       if (responseData?.media_kit) {
         setAdData((prev: any) => ({
@@ -202,6 +205,9 @@ function AprovarContent() {
     setIsSubmitting(false);
 
     if (result.success) {
+      if (typeof window !== 'undefined') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
       const refreshed = await getApprovalDetails(adData.ad_id, token);
       if (refreshed.success && refreshed.data) {
         const nextData: any = refreshed.data;
@@ -249,6 +255,9 @@ function AprovarContent() {
     setIsSubmitting(false);
 
     if (result.success) {
+      if (typeof window !== 'undefined') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
       setApprovalStatus('REJEITADO');
     } else {
       alert(`Erro ao descartar imóvel: ${result.error}`);
