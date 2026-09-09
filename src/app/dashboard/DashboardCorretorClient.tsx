@@ -28,6 +28,7 @@ const workflowMeta: Record<string, { label: string; tone: string; nextAction: st
   PUBLISHED: { label: 'Publicado', tone: 'text-emerald-300 border-emerald-800 bg-emerald-950/60', nextAction: 'Use seu Media Kit e divulgue o imóvel.' },
   REJECTED: { label: 'Precisa de ajuste', tone: 'text-rose-300 border-rose-800 bg-rose-950/60', nextAction: 'Revise os dados e solicite uma nova aprovação.' },
   EXPIRED: { label: 'Anúncio expirado', tone: 'text-rose-300 border-rose-800 bg-rose-950/60', nextAction: 'Reative o anúncio com um crédito.' },
+  DELETED: { label: 'Excluído', tone: 'text-slate-400 border-slate-700 bg-slate-900', nextAction: 'Este anúncio foi excluído e não será processado.' },
 };
 
 function getWorkflowMeta(status?: string) {
@@ -204,6 +205,7 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
   const espacoTexto = totalMegas >= 1024 ? `${(totalMegas / 1024).toFixed(1)} GB` : `${totalMegas.toFixed(0)} MB`;
   const workSummary = listaImoveis.reduce((summary, item) => {
     const status = String(item.workflow_status || '').toUpperCase();
+    if (status === 'DELETEED' || status === 'DELETED') return summary;
     if (status === 'DELIVERED' || status === 'PUBLISHED') summary.publicados += 1;
     else if (status === 'PENDING_APPROVAL' || status === 'QUEUED_FOR_REVIEW') summary.aprovacao += 1;
     else if (status === 'REJECTED' || status === 'EXPIRED') summary.atencao += 1;
@@ -211,7 +213,7 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
     return summary;
   }, { publicados: 0, aprovacao: 0, processando: 0, atencao: 0 });
   const nextItem = listaImoveis.find((item) => ['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW', 'AWAITING_CREDITS', 'REJECTED', 'EXPIRED'].includes(String(item.workflow_status || '').toUpperCase()))
-    || listaImoveis.find((item) => !['DELIVERED', 'PUBLISHED'].includes(String(item.workflow_status || '').toUpperCase()));
+    || listaImoveis.find((item) => !['DELETED', 'DELETEED', 'DELIVERED', 'PUBLISHED'].includes(String(item.workflow_status || '').toUpperCase()));
   const nextItemMeta = nextItem ? getWorkflowMeta(nextItem.workflow_status) : null;
 
   return (

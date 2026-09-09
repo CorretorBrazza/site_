@@ -20,6 +20,7 @@ const statusMeta = (rawStatus?: string) => {
   if (['AWAITING_CREDITS', 'SEM_SALDO'].includes(status)) return { label: 'Aguardando crédito', note: 'Recarregue para liberar a aprovação', tone: 'bg-rose-50 text-rose-700 border-rose-200' };
   if (['REJECTED'].includes(status)) return { label: 'Precisa de ajuste', note: 'Revise e gere uma nova versão', tone: 'bg-rose-50 text-rose-700 border-rose-200' };
   if (['EXPIRED', 'EXPIRADO'].includes(status)) return { label: 'Expirado', note: 'Reative usando 1 crédito', tone: 'bg-rose-50 text-rose-700 border-rose-200' };
+  if (['DELETED', 'DELETEED'].includes(status)) return { label: 'Excluído', note: 'Este anúncio foi excluído', tone: 'bg-slate-100 text-slate-500 border-slate-200' };
   return { label: 'Em processamento', note: 'Estamos preparando seu anúncio', tone: 'bg-blue-50 text-blue-700 border-blue-200' };
 };
 
@@ -146,6 +147,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                 const rawStatus = String(imovel.workflow_status || imovel.status || '').toUpperCase();
                 const isExpirado = ['EXPIRED', 'EXPIRADO'].includes(rawStatus);
                 const isAtivo = ['DELIVERED', 'PUBLISHED', 'ATIVO'].includes(rawStatus);
+                const isExcluido = ['DELETED', 'DELETEED'].includes(rawStatus);
                 const status = statusMeta(rawStatus);
                 const rawTransacao = String(imovel.transacao || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
                 const isLoc = rawTransacao.includes('loca') || rawTransacao.includes('alug');
@@ -248,13 +250,15 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                           </Link>
                         )}
 
-                        <Link
-                          href={`/dashboard/editar/${imovel.id}`}
-                          title="Editar Anúncio"
-                          className="p-2 text-slate-500 hover:text-blue-600 hover:bg-slate-100 rounded-xl transition-colors"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Link>
+                        {!isExcluido && (
+                          <Link
+                            href={`/dashboard/editar/${imovel.id}`}
+                            title="Editar Anúncio"
+                            className="p-2 text-slate-500 hover:text-blue-600 hover:bg-slate-100 rounded-xl transition-colors"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Link>
+                        )}
 
                         {isExpirado && (
                           <button
@@ -267,13 +271,15 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                           </button>
                         )}
 
-                        <button
-                          onClick={() => setExclusaoModal({ isOpen: true, adId: imovel.id, referencia: imovel.referencia })}
-                          title="Excluir Anúncio"
-                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                        {!isExcluido && (
+                          <button
+                            onClick={() => setExclusaoModal({ isOpen: true, adId: imovel.id, referencia: imovel.referencia })}
+                            title="Excluir Anúncio"
+                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
