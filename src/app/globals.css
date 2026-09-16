@@ -41,3 +41,12 @@ a, button, input, textarea, select {
     overscroll-behavior: none;
   }
 }
+
+/* Esconde a scrollbar mantendo o scroll (abas horizontais, modais) */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

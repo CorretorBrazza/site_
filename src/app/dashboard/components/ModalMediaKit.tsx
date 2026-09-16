@@ -95,37 +95,37 @@ export default function ModalMediaKit({
   const seoTagsTexto = seoTagsList.join(', ');
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl max-w-3xl w-full max-h-[92vh] flex flex-col shadow-2xl relative border border-gray-100 overflow-hidden animate-in fade-in zoom-in duration-200">
+    <div className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+      <div className="bg-white rounded-3xl max-w-3xl w-full max-h-[92dvh] flex flex-col shadow-2xl relative border border-gray-100 overflow-hidden animate-in fade-in zoom-in duration-200 my-auto">
         
         {/* Header Modal */}
-        <div className="bg-slate-900 text-white p-6 relative shrink-0">
+        <div className="bg-slate-900 text-white p-4 sm:p-6 relative shrink-0">
           <button
             onClick={onClose}
-            className="absolute top-5 right-5 p-2 text-slate-400 hover:text-white rounded-full hover:bg-slate-800 transition-all"
+            className="absolute top-3 right-3 sm:top-5 sm:right-5 p-2 text-slate-400 hover:text-white rounded-full hover:bg-slate-800 transition-all z-10"
           >
             <X className="w-5 h-5" />
           </button>
 
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg">
-              <Sparkles className="w-6 h-6" />
+          <div className="flex items-center gap-3 pr-10">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shrink-0">
+              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-xl font-black tracking-tight">Media Kit do Imóvel {referencia}</h3>
-                <span className="bg-purple-950 text-purple-300 border border-purple-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">
-                  5 Canais Otimizados ✨
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="text-base sm:text-xl font-black tracking-tight">Media Kit do Imóvel {referencia}</h3>
+                <span className="bg-purple-950 text-purple-300 border border-purple-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase hidden sm:inline">
+                  5 Canais Otimizados
                 </span>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Texto gerado pela IA. Visualize e copie em 1 clique para colar no seu celular ou computador!
+              <p className="text-[11px] text-slate-400 mt-0.5 hidden sm:block">
+                Texto gerado pela IA. Visualize e copie em 1 clique!
               </p>
             </div>
           </div>
 
           {/* Abas dos 5 Canais */}
-          <div className="flex flex-wrap gap-2 mt-6 pt-2 border-t border-slate-800 text-xs font-bold">
+          <div className="flex gap-1.5 sm:gap-2 mt-4 sm:mt-6 pt-2 border-t border-slate-800 text-xs font-bold overflow-x-auto no-scrollbar pb-1">
             <button
               onClick={() => setAbaAtiva('whatsapp')}
               className={`px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
@@ -171,7 +171,7 @@ export default function ModalMediaKit({
 
         {/* Notificação de Cópia */}
         {copiadoTipo && (
-          <div className="bg-emerald-600 text-white px-6 py-2.5 text-xs font-bold flex items-center justify-between shadow-md">
+          <div className="bg-emerald-600 text-white px-4 sm:px-6 py-2.5 text-xs font-bold flex items-center justify-between shadow-md">
             <div className="flex items-center gap-2">
               <Check className="w-4 h-4" />
               <span>Texto copiado com sucesso! Agora é só colar no {copiadoTipo}.</span>
@@ -180,11 +180,11 @@ export default function ModalMediaKit({
         )}
 
         {/* Corpo do Conteúdo por Aba */}
-        <div className="p-6 overflow-y-auto flex-1 space-y-4">
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4">
           {/* ABA 1: WHATSAPP */}
           {abaAtiva === 'whatsapp' && (
             <div className="bg-emerald-50/60 border border-emerald-200 rounded-2xl p-5">
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 gap-2">
                 <div>
                   <h4 className="font-bold text-emerald-950 text-sm flex items-center gap-2">
                     <MessageCircle className="w-4 h-4 text-emerald-600" /> Canal 2: WhatsApp (Corretor Forward)
@@ -193,7 +193,7 @@ export default function ModalMediaKit({
                 </div>
                 <button
                   onClick={() => handleCopiar(copyWhatsapp, 'WhatsApp')}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-all flex items-center gap-1.5"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-all w-full sm:w-auto justify-center flex items-center gap-1.5"
                 >
                   {copiadoTipo === 'WhatsApp' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                   {copiadoTipo === 'WhatsApp' ? 'Copiado!' : 'Copiar Texto WhatsApp'}
@@ -208,7 +208,7 @@ export default function ModalMediaKit({
           {/* ABA 2: META ADS (INSTAGRAM) */}
           {abaAtiva === 'instagram' && (
             <div className="bg-pink-50/60 border border-pink-200 rounded-2xl p-5">
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 gap-2">
                 <div>
                   <h4 className="font-bold text-pink-950 text-sm flex items-center gap-2">
                     <Instagram className="w-4 h-4 text-pink-600" /> Canal 3: Meta Ads (Instagram & Facebook)
@@ -217,7 +217,7 @@ export default function ModalMediaKit({
                 </div>
                 <button
                   onClick={() => handleCopiar(copyInstagram, 'Instagram')}
-                  className="bg-pink-600 hover:bg-pink-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-all flex items-center gap-1.5"
+                  className="bg-pink-600 hover:bg-pink-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-all w-full sm:w-auto justify-center flex items-center gap-1.5"
                 >
                   {copiadoTipo === 'Instagram' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                   {copiadoTipo === 'Instagram' ? 'Copiado!' : 'Copiar Legenda Instagram'}
@@ -232,7 +232,7 @@ export default function ModalMediaKit({
           {/* ABA 3: ROTEIRO CANVA / REELS */}
           {abaAtiva === 'canva' && (
             <div className="bg-purple-50/60 border border-purple-200 rounded-2xl p-5">
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 gap-2">
                 <div>
                   <h4 className="font-bold text-purple-950 text-sm flex items-center gap-2">
                     <Video className="w-4 h-4 text-purple-600" /> Canal 4: Roteiro para Vídeo (Reels/TikTok) & Canva
@@ -241,7 +241,7 @@ export default function ModalMediaKit({
                 </div>
                 <button
                   onClick={() => handleCopiar(roteiroCanvaTexto, 'Roteiro Canva')}
-                  className="bg-purple-600 hover:bg-purple-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-all flex items-center gap-1.5"
+                  className="bg-purple-600 hover:bg-purple-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-all w-full sm:w-auto justify-center flex items-center gap-1.5"
                 >
                   {copiadoTipo === 'Roteiro Canva' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                   {copiadoTipo === 'Roteiro Canva' ? 'Copiado!' : 'Copiar Roteiro Canva'}
@@ -256,7 +256,7 @@ export default function ModalMediaKit({
           {/* ABA 4: SITE / PORTAIS */}
           {abaAtiva === 'portais' && (
             <div className="bg-blue-50/60 border border-blue-200 rounded-2xl p-5 space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                 <div>
                   <h4 className="font-bold text-blue-950 text-sm flex items-center gap-2">
                     <FileText className="w-4 h-4 text-blue-600" /> Canal 1: Descrição Completa para Portais & Site
@@ -265,7 +265,7 @@ export default function ModalMediaKit({
                 </div>
                 <button
                   onClick={() => handleCopiar(copyPortais, 'Descrição')}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-all flex items-center gap-1.5"
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-all w-full sm:w-auto justify-center flex items-center gap-1.5"
                 >
                   {copiadoTipo === 'Descrição' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                   {copiadoTipo === 'Descrição' ? 'Copiado!' : 'Copiar Descrição'}
@@ -295,7 +295,7 @@ export default function ModalMediaKit({
           {/* ABA 5: TAGS DE SEO */}
           {abaAtiva === 'seo' && (
             <div className="bg-amber-50/60 border border-amber-200 rounded-2xl p-5">
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 gap-2">
                 <div>
                   <h4 className="font-bold text-amber-950 text-sm flex items-center gap-2">
                     <Tag className="w-4 h-4 text-amber-600" /> Canal 5: Tags de SEO & Palavras-Chave
@@ -304,7 +304,7 @@ export default function ModalMediaKit({
                 </div>
                 <button
                   onClick={() => handleCopiar(seoTagsTexto, 'Tags SEO')}
-                  className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-all flex items-center gap-1.5"
+                  className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-all w-full sm:w-auto justify-center flex items-center gap-1.5"
                 >
                   {copiadoTipo === 'Tags SEO' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                   {copiadoTipo === 'Tags SEO' ? 'Copiado!' : 'Copiar Tags SEO'}
@@ -318,13 +318,13 @@ export default function ModalMediaKit({
         </div>
 
         {/* Footer Modal */}
-        <div className="p-4 bg-slate-50 border-t border-gray-100 flex justify-end shrink-0">
+        <div className="p-3 sm:p-4 bg-slate-50 border-t border-gray-100 flex justify-end shrink-0">
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-2.5 text-xs font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition-all shadow-xs"
+            className="px-5 sm:px-6 py-2.5 text-xs font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition-all shadow-xs"
           >
-            Fechar Media Kit
+            Fechar
           </button>
         </div>
       </div>
