@@ -7,7 +7,7 @@ import { fetchBrokerApi } from '@/lib/api';
 import ModalExclusaoInteligente from './components/ModalExclusaoInteligente';
 import ModalAcervoFotos from './components/ModalAcervoFotos';
 import ModalMediaKit from './components/ModalMediaKit';
-import { HardDrive, RefreshCw, Trash2, Edit, Sparkles, Clock, ExternalLink, CircleAlert } from 'lucide-react';
+import { HardDrive, RefreshCw, Trash2, Edit, Sparkles, Clock, ExternalLink, CircleAlert, Link2, Check } from 'lucide-react';
 
 interface TabelaImoveisProps {
   imoveis: Imovel[];
@@ -27,6 +27,7 @@ const statusMeta = (rawStatus?: string) => {
 export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
   const [filtroTransacao, setFiltroTransacao] = useState<'Todos' | 'Venda' | 'Locação'>('Todos');
   const [renovandoId, setRenovandoId] = useState<string | null>(null);
+  const [copiadoLinkId, setCopiadoLinkId] = useState<string | null>(null);
 
   // Estados dos modais
   const [exclusaoModal, setExclusaoModal] = useState<{ isOpen: boolean; adId: string; referencia: string }>({
@@ -72,6 +73,21 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
   const formatCurrency = (val?: number | null) => {
     if (!val) return 'Consulte';
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+  };
+
+  // Link público amigável: usa a referência (imutável) em vez do token/UUID do anúncio.
+  const linkPublicoDoImovel = (imovel: Imovel) =>
+    `/imovel/${encodeURIComponent(imovel.referencia || imovel.id)}`;
+
+  const handleCopiarLink = async (imovel: Imovel) => {
+    const url = `${window.location.origin}${linkPublicoDoImovel(imovel)}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiadoLinkId(imovel.id);
+      setTimeout(() => setCopiadoLinkId(null), 2500);
+    } catch {
+      alert('Não foi possível copiar o link automaticamente. Copie pela barra de endereço.');
+    }
   };
 
   const imoveisFiltrados = imoveis.filter((imovel) => {
@@ -242,14 +258,25 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                     <td className="px-5 py-4 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end gap-1.5">
                         {isAtivo && (
-                          <Link
-                            href={`/imovel/${imovel.id}`}
-                            target="_blank"
-                            title="Visualizar Anúncio no Site"
-                            className="p-2 text-slate-500 hover:text-blue-600 hover:bg-slate-100 rounded-xl transition-colors"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                          </Link>
+                          <>
+                            <button
+                              onClick={() => handleCopiarLink(imovel)}
+                              title="Copiar Link do Anúncio"
+                              className={`p-2 rounded-xl transition-colors ${
+                                copiadoLinkId === imovel.id ? 'text-emerald-600 bg-emerald-50' : 'text-slate-500 hover:text-blue-600 hover:bg-slate-100'
+                              }`}
+                            >
+                              {copiadoLinkId === imovel.id ? <Check className="w-4 h-4" /> : <Link2 className="w-4 h-4" />}
+                            </button>
+                            <Link
+                              href={linkPublicoDoImovel(imovel)}
+                              target="_blank"
+                              title="Visualizar Anúncio no Site"
+                              className="p-2 text-slate-500 hover:text-blue-600 hover:bg-slate-100 rounded-xl transition-colors"
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                            </Link>
+                          </>
                         )}
 
                         {!isExcluido && (
@@ -380,14 +407,25 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                   )}
 
                   {isAtivo && (
-                    <Link
-                      href={`/imovel/${imovel.id}`}
-                      target="_blank"
-                      title="Visualizar Anúncio no Site"
-                      className="p-2 text-slate-500 hover:text-blue-600 hover:bg-slate-100 rounded-xl transition-colors"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                    </Link>
+                    <>
+                      <button
+                        onClick={() => handleCopiarLink(imovel)}
+                        title="Copiar Link do Anúncio"
+                        className={`p-2 rounded-xl transition-colors ${
+                          copiadoLinkId === imovel.id ? 'text-emerald-600 bg-emerald-50' : 'text-slate-500 hover:text-blue-600 hover:bg-slate-100'
+                        }`}
+                      >
+                        {copiadoLinkId === imovel.id ? <Check className="w-4 h-4" /> : <Link2 className="w-4 h-4" />}
+                      </button>
+                      <Link
+                        href={linkPublicoDoImovel(imovel)}
+                        target="_blank"
+                        title="Visualizar Anúncio no Site"
+                        className="p-2 text-slate-500 hover:text-blue-600 hover:bg-slate-100 rounded-xl transition-colors"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                      </Link>
+                    </>
                   )}
 
                   {!isExcluido && (

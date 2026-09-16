@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   
   const rawFoto = imovel.fotos && imovel.fotos.length > 0 ? imovel.fotos[0] : 'https://images.unsplash.com/photo-1560518883-ce09059eeffa';
   const fotoCapa = rawFoto.startsWith('http') ? rawFoto : `https://imoveistaboao.com.br${rawFoto}`;
-  const urlPagina = `https://imoveistaboao.com.br/imovel/${imovel.id}`;
+  const urlPagina = `https://imoveistaboao.com.br/imovel/${encodeURIComponent(imovel.referencia || imovel.id)}`;
 
   return {
     title: tituloSeo,
@@ -93,7 +93,7 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
   const preco = isLocacao
     ? (imovel.precoLocacao || imovel.precoVenda)
     : (imovel.precoVenda || imovel.precoLocacao);
-  const urlPagina = `https://imoveistaboao.com.br/imovel/${imovel.id}/`;
+  const urlPagina = `https://imoveistaboao.com.br/imovel/${encodeURIComponent(imovel.referencia || imovel.id)}/`;
   const rawFoto = imovel.fotos && imovel.fotos.length > 0
     ? imovel.fotos[0]
     : 'https://images.unsplash.com/photo-1560518883-ce09059eeffa';
