@@ -14,7 +14,7 @@ export default function HeaderSaldoCreditos({
   onAbrirRecarga,
 }: HeaderSaldoCreditosProps) {
   return (
-    <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative overflow-hidden">
+    <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 relative overflow-hidden">
       <div className="flex items-center gap-5">
         <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shadow-xs">
           <Coins className="w-7 h-7" />

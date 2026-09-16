@@ -33,3 +33,11 @@ body {
 a, button, input, textarea, select {
   transition: all 0.2s ease-in-out;
 }
+
+/* App Shell apenas do Dashboard do Corretor (somente mobile, rota /dashboard) */
+@media (max-width: 767px) {
+  body.dashboard-app-shell {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+}

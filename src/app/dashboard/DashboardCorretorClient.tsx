@@ -9,7 +9,8 @@ import BannerBackupGamificacao from './components/BannerBackupGamificacao';
 import ModalRecargaCreditos from './components/ModalRecargaCreditos';
 import TabelaImoveis from './TabelaImoveis';
 import PainelConhecimentoRegional from './components/PainelConhecimentoRegional';
-import { ShieldCheck, LogOut, RefreshCw, Building2, CheckCircle2, Clock3, CircleAlert, MessageCircle } from 'lucide-react';
+import BottomNavMobile, { TabId } from './components/BottomNavMobile';
+import { ShieldCheck, LogOut, RefreshCw, Building2, CheckCircle2, Clock3, CircleAlert, MessageCircle, Coins, ChevronRight, Sparkles, MapPin } from 'lucide-react';
 
 interface DashboardCorretorClientProps {
   imoveis?: Imovel[];
@@ -46,6 +47,29 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
   const [listaImoveis, setListaImoveis] = useState<Imovel[]>(initialImoveis);
   const [loading, setLoading] = useState(true);
   const [pacoteInicialModal, setPacoteInicialModal] = useState<'start' | 'pro' | 'elite'>('pro');
+  const [activeTab, setActiveTab] = useState<TabId>('inicio');
+
+  // Bloqueia o scroll do body apenas no mobile dentro do App Shell do dashboard.
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    const apply = () => {
+      if (mq.matches) document.body.classList.add('dashboard-app-shell');
+      else document.body.classList.remove('dashboard-app-shell');
+    };
+    apply();
+    if (typeof mq.addEventListener === 'function') {
+      mq.addEventListener('change', apply);
+      return () => {
+        document.body.classList.remove('dashboard-app-shell');
+        mq.removeEventListener('change', apply);
+      };
+    }
+    (mq as unknown as { addListener: (cb: () => void) => void }).addListener(apply);
+    return () => {
+      document.body.classList.remove('dashboard-app-shell');
+      (mq as unknown as { removeListener: (cb: () => void) => void }).removeListener(apply);
+    };
+  }, []);
 
   useEffect(() => {
     // Checa se há um parâmetro recarga na URL (ex: ?recarga=pro) vindo da página /planos
@@ -215,111 +239,313 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
   const nextItem = listaImoveis.find((item) => ['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW', 'AWAITING_CREDITS', 'REJECTED', 'EXPIRED'].includes(String(item.workflow_status || '').toUpperCase()))
     || listaImoveis.find((item) => !['DELETED', 'DELETEED', 'DELIVERED', 'PUBLISHED'].includes(String(item.workflow_status || '').toUpperCase()));
   const nextItemMeta = nextItem ? getWorkflowMeta(nextItem.workflow_status) : null;
+  const inicialUsuario = (usuario?.nome?.[0] || 'C').toUpperCase();
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-8">
-        
-        {/* Top Header — Clean Light Style */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 relative overflow-hidden">
-          <div className="relative z-10 space-y-2">
-            <div className="flex flex-wrap items-center gap-3">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                {usuario ? `Olá, ${usuario.nome}` : 'Painel do Corretor'}
-              </h1>
-              <span className="bg-blue-50 text-blue-700 border border-blue-200 text-xs font-black px-3 py-1 rounded-full flex items-center gap-1 shadow-xs uppercase tracking-wider">
-                <ShieldCheck className="w-4 h-4" /> PLANO {usuario?.plano_atual?.toUpperCase() || 'START'}
-              </span>
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+
+      {/* ============================ MOBILE: APP SHELL ============================ */}
+      <div className="md:hidden fixed inset-0 z-40 flex flex-col bg-slate-50" style={{ height: '100dvh' }}>
+
+        {/* Header Fixo Mobile */}
+        <header className="flex-shrink-0 bg-white border-b border-slate-200 px-4" style={{ height: 60 }}>
+          <div className="h-full flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shrink-0">
+                <Building2 className="w-4 h-4" />
+              </div>
+              <div className="min-w-0 leading-tight">
+                <p className="text-sm font-black text-slate-900 truncate">Imóveis Taboão</p>
+                <p className="text-[9px] uppercase tracking-wider font-bold text-blue-600">Painel do Corretor</p>
+              </div>
             </div>
-            <p className="text-slate-500 text-xs sm:text-sm font-medium">
-              {usuario ? `Sessão ativa: ${usuario.email}` : 'Gerencie seus anúncios, Media Kits de IA e backups de fotos em nuvem.'}
-            </p>
-          </div>
 
-          <div className="relative z-10 flex items-center gap-3 w-full sm:w-auto justify-end">
-            <button
-              onClick={() => window.location.reload()}
-              title="Atualizar Dados"
-              className="p-3 bg-slate-50 border border-slate-200 text-slate-600 hover:text-blue-600 hover:border-blue-300 rounded-xl transition-all shadow-xs"
-            >
-              <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin text-blue-600' : ''}`} />
-            </button>
+            <div className="flex items-center gap-1.5 shrink-0">
+              <button
+                onClick={() => window.location.reload()}
+                title="Atualizar Dados"
+                className="p-2 bg-slate-50 border border-slate-200 text-slate-600 hover:text-blue-600 hover:border-blue-300 rounded-xl transition-all shadow-xs"
+              >
+                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-blue-600' : ''}`} />
+              </button>
 
-            <button
-              onClick={handleLogout}
-              title="Encerrar Sessão Segura"
-              className="p-3 bg-slate-50 border border-slate-200 text-slate-500 hover:text-red-600 hover:border-red-300 rounded-xl transition-all shadow-xs"
-            >
-              <LogOut className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Saldo de Créditos */}
-        <HeaderSaldoCreditos
-          saldoCreditos={usuario?.saldo_creditos ?? 1}
-          planoAtual={usuario?.plano_atual || 'Start'}
-          onAbrirRecarga={() => setModalRecargaAberto(true)}
-        />
-
-        {/* Central de trabalho: fila, exceções e próxima ação */}
-        <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-            <div className="text-[10px] font-black uppercase tracking-wider text-emerald-700 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Publicados</div>
-            <div className="text-2xl font-black text-slate-900 mt-2">{workSummary.publicados}</div>
-          </div>
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-            <div className="text-[10px] font-black uppercase tracking-wider text-amber-700 flex items-center gap-1.5"><Clock3 className="w-3.5 h-3.5 text-amber-600" /> Aprovação</div>
-            <div className="text-2xl font-black text-slate-900 mt-2">{workSummary.aprovacao}</div>
-          </div>
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-            <div className="text-[10px] font-black uppercase tracking-wider text-blue-700 flex items-center gap-1.5"><RefreshCw className="w-3.5 h-3.5 text-blue-600" /> Processando</div>
-            <div className="text-2xl font-black text-slate-900 mt-2">{workSummary.processando}</div>
-          </div>
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-            <div className="text-[10px] font-black uppercase tracking-wider text-rose-700 flex items-center gap-1.5"><CircleAlert className="w-3.5 h-3.5 text-rose-600" /> Sua atenção</div>
-            <div className="text-2xl font-black text-slate-900 mt-2">{workSummary.atencao}</div>
-          </div>
-        </section>
-
-        <section className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col md:flex-row gap-4 md:items-center md:justify-between shadow-sm">
-          <div className="flex gap-3">
-            <div className="shrink-0 p-2.5 h-fit rounded-xl bg-blue-50 border border-blue-200 text-blue-600"><MessageCircle className="w-5 h-5" /></div>
-            <div>
-              <p className="text-[10px] uppercase tracking-wider font-black text-blue-600">Próxima ação</p>
-              <h2 className="text-base font-bold text-slate-900 mt-1">{nextItem ? `${nextItem.referencia} — ${nextItemMeta?.label}` : 'Envie seu primeiro imóvel pelo WhatsApp'}</h2>
-              <p className="text-sm text-slate-600 mt-1">{nextItem ? nextItemMeta?.nextAction : 'Envie fotos e as informações principais do imóvel para iniciarmos seu Media Kit.'}</p>
+              {usuario && (
+                <div className="flex items-center gap-1.5">
+                  <span
+                    title={`${usuario.nome} (${usuario.email})`}
+                    className="w-8 h-8 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700 font-black text-xs"
+                  >
+                    {inicialUsuario}
+                  </span>
+                  <button
+                    onClick={handleLogout}
+                    title="Encerrar Sessão Segura"
+                    className="p-2 bg-slate-50 border border-slate-200 text-slate-500 hover:text-red-600 hover:border-red-300 rounded-xl transition-all shadow-xs"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
-          <button onClick={() => window.location.reload()} className="text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:border-blue-500 hover:text-blue-600 transition-colors">Atualizar status</button>
-        </section>
+        </header>
 
-        {/* Banner da Central de Fotos & Backups */}
-        <BannerBackupGamificacao
-          totalFotosBackup={totalFotosReal}
-          espacoTexto={espacoTexto}
-        />
+        {/* Conteúdo Central Rolável */}
+        <div className="flex-1 overflow-y-auto bg-slate-50 overscroll-contain">
+          {activeTab === 'inicio' && (
+            <div className="p-3.5 space-y-3.5">
+              <div className="flex items-center justify-between">
+                <h1 className="text-lg font-extrabold text-slate-900 tracking-tight">
+                  {usuario ? `Olá, ${usuario.nome}` : 'Painel do Corretor'}
+                </h1>
+                <span className="bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-black px-2.5 py-1 rounded-full flex items-center gap-1 shadow-xs uppercase tracking-wider">
+                  <ShieldCheck className="w-3 h-3" /> {usuario?.plano_atual?.toUpperCase() || 'START'}
+                </span>
+              </div>
 
-        {/* Tabela de Imóveis do Corretor */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-blue-600" />
-              Seus Imóveis Cadastrados ({listaImoveis.length})
-            </h2>
-          </div>
+              <HeaderSaldoCreditos
+                saldoCreditos={usuario?.saldo_creditos ?? 1}
+                planoAtual={usuario?.plano_atual || 'Start'}
+                onAbrirRecarga={() => setModalRecargaAberto(true)}
+              />
 
-          <PainelConhecimentoRegional />
-          <TabelaImoveis imoveis={listaImoveis} />
+              <div className="grid grid-cols-2 gap-2">
+                <div className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
+                  <div className="text-[9px] font-black uppercase tracking-wider text-emerald-700 flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-emerald-600" /> Publicados</div>
+                  <div className="text-xl font-black text-slate-900 mt-1">{workSummary.publicados}</div>
+                </div>
+                <div className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
+                  <div className="text-[9px] font-black uppercase tracking-wider text-amber-700 flex items-center gap-1"><Clock3 className="w-3 h-3 text-amber-600" /> Aprovação</div>
+                  <div className="text-xl font-black text-slate-900 mt-1">{workSummary.aprovacao}</div>
+                </div>
+                <div className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
+                  <div className="text-[9px] font-black uppercase tracking-wider text-blue-700 flex items-center gap-1"><RefreshCw className="w-3 h-3 text-blue-600" /> Processando</div>
+                  <div className="text-xl font-black text-slate-900 mt-1">{workSummary.processando}</div>
+                </div>
+                <div className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
+                  <div className="text-[9px] font-black uppercase tracking-wider text-rose-700 flex items-center gap-1"><CircleAlert className="w-3 h-3 text-rose-600" /> Atenção</div>
+                  <div className="text-xl font-black text-slate-900 mt-1">{workSummary.atencao}</div>
+                </div>
+              </div>
+
+              <div className="bg-white border border-slate-200 rounded-2xl p-4 flex gap-3 shadow-sm">
+                <div className="shrink-0 p-2 h-fit rounded-xl bg-blue-50 border border-blue-200 text-blue-600"><MessageCircle className="w-5 h-5" /></div>
+                <div className="min-w-0">
+                  <p className="text-[9px] uppercase tracking-wider font-black text-blue-600">Próxima ação</p>
+                  <h2 className="text-sm font-bold text-slate-900 mt-0.5 truncate">{nextItem ? `${nextItem.referencia} — ${nextItemMeta?.label}` : 'Envie seu primeiro imóvel pelo WhatsApp'}</h2>
+                  <p className="text-xs text-slate-600 mt-0.5 line-clamp-2">{nextItem ? nextItemMeta?.nextAction : 'Envie fotos e as informações principais do imóvel para iniciarmos seu Media Kit.'}</p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setActiveTab('bairro')}
+                className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center justify-between gap-3 text-left hover:border-violet-700 transition-colors"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="shrink-0 p-2 rounded-xl bg-violet-950/60 border border-violet-800 text-violet-300"><MapPin className="w-5 h-5" /></div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-white">Inteligência Local</p>
+                    <p className="text-xs text-slate-400">Contribua com informações do bairro</p>
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-slate-500 shrink-0" />
+              </button>
+
+              <BannerBackupGamificacao
+                totalFotosBackup={totalFotosReal}
+                espacoTexto={espacoTexto}
+              />
+            </div>
+          )}
+
+          {activeTab === 'imoveis' && (
+            <div className="p-3.5 space-y-3.5">
+              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <Building2 className="w-4 h-4 text-blue-600" />
+                Seus Imóveis ({listaImoveis.length})
+              </h2>
+              <TabelaImoveis imoveis={listaImoveis} />
+            </div>
+          )}
+
+          {activeTab === 'bairro' && (
+            <div className="p-3.5">
+              <PainelConhecimentoRegional />
+            </div>
+          )}
+
+          {activeTab === 'conta' && (
+            <div className="p-3.5 space-y-3.5">
+              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-blue-600" />
+                Minha Conta
+              </h2>
+
+              <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <span className="w-12 h-12 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700 font-black text-lg">
+                    {inicialUsuario}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-black text-slate-900 truncate">{usuario?.nome || 'Corretor'}</p>
+                    <p className="text-xs text-slate-500 truncate">{usuario?.email || 'Sessão ativa'}</p>
+                    <span className="mt-1 inline-flex bg-blue-50 text-blue-700 border border-blue-200 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                      Plano {usuario?.plano_atual?.toUpperCase() || 'START'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-4 text-white shadow-sm flex items-center justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider font-black text-blue-100"><Coins className="w-3.5 h-3.5" /> Saldo de créditos</div>
+                  <div className="text-3xl font-black mt-1">{usuario?.saldo_creditos ?? 1}</div>
+                </div>
+                <button
+                  onClick={() => setModalRecargaAberto(true)}
+                  className="bg-white text-blue-700 font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl shadow-md"
+                >
+                  Recarregar
+                </button>
+              </div>
+
+              <button
+                onClick={() => router.push('/planos')}
+                className="w-full bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between text-left hover:border-blue-300"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-600"><Sparkles className="w-5 h-5" /></div>
+                  <div>
+                    <p className="text-sm font-bold text-slate-900">Planos e Preços</p>
+                    <p className="text-xs text-slate-500">Conheça o Start, Pro e Elite</p>
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-slate-400" />
+              </button>
+
+              <button
+                onClick={handleLogout}
+                className="w-full bg-white border border-rose-200 rounded-2xl p-4 shadow-sm flex items-center gap-3 text-left hover:border-rose-300"
+              >
+                <div className="p-2 rounded-xl bg-rose-50 text-rose-600"><LogOut className="w-5 h-5" /></div>
+                <div>
+                  <p className="text-sm font-bold text-rose-700">Encerrar Sessão</p>
+                  <p className="text-xs text-slate-500">Sair do painel com segurança</p>
+                </div>
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Modal de Recarga Mercado Pago */}
-        <ModalRecargaCreditos
-          isOpen={modalRecargaAberto}
-          onClose={() => setModalRecargaAberto(false)}
-          pacoteInicial={pacoteInicialModal}
-        />
+        {/* Bottom Navigation Bar */}
+        <BottomNavMobile activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
+
+      {/* ============================ DESKTOP: INALTERADO ============================ */}
+      <div className="hidden md:block py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto space-y-8">
+
+          {/* Top Header — Clean Light Style */}
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 relative overflow-hidden">
+            <div className="relative z-10 space-y-2">
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                  {usuario ? `Olá, ${usuario.nome}` : 'Painel do Corretor'}
+                </h1>
+                <span className="bg-blue-50 text-blue-700 border border-blue-200 text-xs font-black px-3 py-1 rounded-full flex items-center gap-1 shadow-xs uppercase tracking-wider">
+                  <ShieldCheck className="w-4 h-4" /> PLANO {usuario?.plano_atual?.toUpperCase() || 'START'}
+                </span>
+              </div>
+              <p className="text-slate-500 text-xs sm:text-sm font-medium">
+                {usuario ? `Sessão ativa: ${usuario.email}` : 'Gerencie seus anúncios, Media Kits de IA e backups de fotos em nuvem.'}
+              </p>
+            </div>
+
+            <div className="relative z-10 flex items-center gap-3 w-full sm:w-auto justify-end">
+              <button
+                onClick={() => window.location.reload()}
+                title="Atualizar Dados"
+                className="p-3 bg-slate-50 border border-slate-200 text-slate-600 hover:text-blue-600 hover:border-blue-300 rounded-xl transition-all shadow-xs"
+              >
+                <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin text-blue-600' : ''}`} />
+              </button>
+
+              <button
+                onClick={handleLogout}
+                title="Encerrar Sessão Segura"
+                className="p-3 bg-slate-50 border border-slate-200 text-slate-500 hover:text-red-600 hover:border-red-300 rounded-xl transition-all shadow-xs"
+              >
+                <LogOut className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Saldo de Créditos */}
+          <HeaderSaldoCreditos
+            saldoCreditos={usuario?.saldo_creditos ?? 1}
+            planoAtual={usuario?.plano_atual || 'Start'}
+            onAbrirRecarga={() => setModalRecargaAberto(true)}
+          />
+
+          {/* Central de trabalho: fila, exceções e próxima ação */}
+          <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+              <div className="text-[10px] font-black uppercase tracking-wider text-emerald-700 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Publicados</div>
+              <div className="text-2xl font-black text-slate-900 mt-2">{workSummary.publicados}</div>
+            </div>
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+              <div className="text-[10px] font-black uppercase tracking-wider text-amber-700 flex items-center gap-1.5"><Clock3 className="w-3.5 h-3.5 text-amber-600" /> Aprovação</div>
+              <div className="text-2xl font-black text-slate-900 mt-2">{workSummary.aprovacao}</div>
+            </div>
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+              <div className="text-[10px] font-black uppercase tracking-wider text-blue-700 flex items-center gap-1.5"><RefreshCw className="w-3.5 h-3.5 text-blue-600" /> Processando</div>
+              <div className="text-2xl font-black text-slate-900 mt-2">{workSummary.processando}</div>
+            </div>
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+              <div className="text-[10px] font-black uppercase tracking-wider text-rose-700 flex items-center gap-1.5"><CircleAlert className="w-3.5 h-3.5 text-rose-600" /> Sua atenção</div>
+              <div className="text-2xl font-black text-slate-900 mt-2">{workSummary.atencao}</div>
+            </div>
+          </section>
+
+          <section className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col md:flex-row gap-4 md:items-center md:justify-between shadow-sm">
+            <div className="flex gap-3">
+              <div className="shrink-0 p-2.5 h-fit rounded-xl bg-blue-50 border border-blue-200 text-blue-600"><MessageCircle className="w-5 h-5" /></div>
+              <div>
+                <p className="text-[10px] uppercase tracking-wider font-black text-blue-600">Próxima ação</p>
+                <h2 className="text-base font-bold text-slate-900 mt-1">{nextItem ? `${nextItem.referencia} — ${nextItemMeta?.label}` : 'Envie seu primeiro imóvel pelo WhatsApp'}</h2>
+                <p className="text-sm text-slate-600 mt-1">{nextItem ? nextItemMeta?.nextAction : 'Envie fotos e as informações principais do imóvel para iniciarmos seu Media Kit.'}</p>
+              </div>
+            </div>
+            <button onClick={() => window.location.reload()} className="text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:border-blue-500 hover:text-blue-600 transition-colors">Atualizar status</button>
+          </section>
+
+          {/* Banner da Central de Fotos & Backups */}
+          <BannerBackupGamificacao
+            totalFotosBackup={totalFotosReal}
+            espacoTexto={espacoTexto}
+          />
+
+          {/* Tabela de Imóveis do Corretor */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-blue-600" />
+                Seus Imóveis Cadastrados ({listaImoveis.length})
+              </h2>
+            </div>
+
+            <PainelConhecimentoRegional />
+            <TabelaImoveis imoveis={listaImoveis} />
+          </div>
+        </div>
+      </div>
+
+      {/* Modal de Recarga Mercado Pago */}
+      <ModalRecargaCreditos
+        isOpen={modalRecargaAberto}
+        onClose={() => setModalRecargaAberto(false)}
+        pacoteInicial={pacoteInicialModal}
+      />
     </div>
   );
 }
