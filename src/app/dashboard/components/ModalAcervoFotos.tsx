@@ -70,28 +70,28 @@ export default function ModalAcervoFotos({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl relative border border-gray-100 animate-in fade-in zoom-in duration-200">
+    <div className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+      <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[90dvh] overflow-y-auto p-4 sm:p-6 shadow-2xl relative border border-gray-100 animate-in fade-in zoom-in duration-200 my-auto">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-all z-10"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-all z-10"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Top Header */}
-        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
-          <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
-            <HardDrive className="w-6 h-6" />
+        <div className="flex items-center gap-3 mb-4 sm:mb-6 pb-4 border-b border-gray-100 pr-10">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold shrink-0">
+            <HardDrive className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-xl font-black text-gray-900">Acervo do Imóvel {referencia}</h3>
-              <span className="bg-green-100 text-green-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="text-lg sm:text-xl font-black text-gray-900">Acervo do Imóvel {referencia}</h3>
+              <span className="bg-green-100 text-green-800 text-[10px] font-bold px-2 py-0.5 rounded-full hidden sm:inline">
                 Nuvem Imóveis Taboão ☁️
               </span>
             </div>
-            <p className="text-xs text-gray-500 mt-0.5">
+            <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5">
               {dadosAcervo?.titulo || 'Gerencie suas fotos em alta resolução e anotações'}
             </p>
           </div>
@@ -104,7 +104,7 @@ export default function ModalAcervoFotos({
         ) : dadosAcervo ? (
           <div className="space-y-6">
             {/* Banner Espaço Salvo */}
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center justify-between">
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <ImageIcon className="w-5 h-5 text-blue-600" />
                 <div>
@@ -123,7 +123,7 @@ export default function ModalAcervoFotos({
                   download
                   target="_blank"
                   rel="noreferrer"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-xs transition-all w-full sm:w-auto justify-center flex items-center gap-1.5"
                 >
                   <Download className="w-4 h-4" /> Baixar Fotos
                 </a>
