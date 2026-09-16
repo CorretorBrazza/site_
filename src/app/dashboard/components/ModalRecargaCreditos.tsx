@@ -67,27 +67,27 @@ export default function ModalRecargaCreditos({ isOpen, onClose, pacoteInicial = 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-gray-100 overflow-hidden relative">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
+      <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-gray-100 overflow-hidden relative flex flex-col max-h-[92dvh]">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-white relative">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-4 sm:p-6 text-white relative shrink-0">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors"
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors"
           >
             <X className="w-6 h-6" />
           </button>
-          <div className="flex items-center gap-2 text-blue-200 font-semibold text-xs uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-blue-200 font-semibold text-xs uppercase tracking-wider mb-1 pr-10">
             <Sparkles className="w-4 h-4 text-yellow-300 fill-yellow-300" />
             Recarga Instantânea de Créditos
           </div>
-          <h2 className="text-2xl font-bold">Escolha seu Pacote de Anúncios</h2>
-          <p className="text-blue-100 text-sm mt-1">
+          <h2 className="text-xl sm:text-2xl font-bold pr-10">Escolha seu Pacote de Anúncios</h2>
+          <p className="text-blue-100 text-xs sm:text-sm mt-1">
             Cada crédito permite publicar ou reativar um anúncio por 90 dias com backup completo.
           </p>
         </div>
 
-        <div className="p-6 space-y-6 max-h-[80vh] overflow-y-auto">
+        <div className="p-4 sm:p-6 space-y-6 max-h-[80dvh] overflow-y-auto flex-1 min-h-0">
           {pixData ? (
             /* Tela do QR Code PIX */
             <div className="text-center space-y-4 py-4">
