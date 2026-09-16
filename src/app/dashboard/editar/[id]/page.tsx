@@ -6,6 +6,7 @@ import FormEditarImovel from './FormEditarImovel';
 import { Imovel } from '@/types/imovel';
 import { ArrowLeft, Loader2, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+import DashboardShell from '../../components/DashboardShell';
 
 export default function EditarImovelPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -77,57 +78,53 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
     carregarAnuncio();
   }, [id]);
 
-  if (loading) {
-    return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-4 p-8">
-        <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
-        <p className="text-slate-600 font-semibold text-sm">Carregando dados do anúncio...</p>
-      </div>
-    );
-  }
-
-  if (error || !imovel) {
-    return (
-      <div className="max-w-3xl mx-auto p-8 my-8 bg-rose-50 border border-rose-200 rounded-3xl text-center space-y-4">
-        <div className="inline-flex p-3 bg-rose-100 rounded-2xl text-rose-600">
-          <AlertCircle className="w-8 h-8" />
-        </div>
-        <h1 className="text-xl font-bold text-rose-900">Não foi possível abrir o editor</h1>
-        <p className="text-sm text-rose-700 max-w-md mx-auto">{error || 'Anúncio não encontrado ou sem permissão de acesso.'}</p>
-        <div className="pt-2">
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-sm"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Voltar ao Dashboard
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
-      <div className="flex items-center justify-between gap-4 border-b border-slate-200 pb-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
+    <DashboardShell activeTab="imoveis" backRoute="/dashboard" showChildrenOnDesktop>
+      {loading ? (
+        <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-4 p-8">
+          <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
+          <p className="text-slate-600 font-semibold text-sm">Carregando dados do anúncio...</p>
+        </div>
+      ) : error || !imovel ? (
+        <div className="max-w-3xl mx-auto p-6 my-6 md:p-8 md:my-8 bg-rose-50 border border-rose-200 rounded-3xl text-center space-y-4">
+          <div className="inline-flex p-3 bg-rose-100 rounded-2xl text-rose-600">
+            <AlertCircle className="w-8 h-8" />
+          </div>
+          <h1 className="text-xl font-bold text-rose-900">Não foi possível abrir o editor</h1>
+          <p className="text-sm text-rose-700 max-w-md mx-auto">{error || 'Anúncio não encontrado ou sem permissão de acesso.'}</p>
+          <div className="pt-2">
             <Link
               href="/dashboard"
-              className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
-              title="Voltar ao Dashboard"
+              className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-sm"
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-4 h-4" />
+              Voltar ao Dashboard
             </Link>
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight">Editar Anúncio {imovel.referencia}</h1>
           </div>
-          <p className="text-xs text-slate-500 font-medium pl-8">
-            Atualize as informações cadastrais e comerciais do imóvel diretamente no portal.
-          </p>
         </div>
-      </div>
+      ) : (
+        <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+          <div className="flex items-center justify-between gap-4 border-b border-slate-200 pb-4">
+            <div className="space-y-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/dashboard"
+                  className="hidden md:inline-flex p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
+                  title="Voltar ao Dashboard"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </Link>
+                <h1 className="text-2xl font-black text-slate-900 tracking-tight">Editar Anúncio {imovel.referencia}</h1>
+              </div>
+              <p className="text-xs text-slate-500 font-medium pl-0 md:pl-8">
+                Atualize as informações cadastrais e comerciais do imóvel diretamente no portal.
+              </p>
+            </div>
+          </div>
 
-      <FormEditarImovel imovel={imovel} />
-    </div>
+          <FormEditarImovel imovel={imovel} />
+        </div>
+      )}
+    </DashboardShell>
   );
 }

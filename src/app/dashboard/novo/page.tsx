@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import DashboardShell from '../components/DashboardShell';
 
 export default function NovoImovel() {
   const router = useRouter();
@@ -87,11 +88,12 @@ export default function NovoImovel() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Novo Imóvel</h1>
-        <p className="text-gray-600 text-sm">Preencha os dados e selecione as fotos.</p>
-      </div>
+    <DashboardShell activeTab="imoveis" backRoute="/dashboard" showChildrenOnDesktop>
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Novo Imóvel</h1>
+          <p className="text-gray-600 text-sm">Preencha os dados e selecione as fotos.</p>
+        </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Seção 1: Informações Básicas */}
@@ -392,6 +394,7 @@ export default function NovoImovel() {
           </button>
         </div>
       </form>
-    </div>
+      </div>
+    </DashboardShell>
   );
 }

@@ -9,7 +9,8 @@ import BannerBackupGamificacao from './components/BannerBackupGamificacao';
 import ModalRecargaCreditos from './components/ModalRecargaCreditos';
 import TabelaImoveis from './TabelaImoveis';
 import PainelConhecimentoRegional from './components/PainelConhecimentoRegional';
-import BottomNavMobile, { TabId } from './components/BottomNavMobile';
+import DashboardShell from './components/DashboardShell';
+import { TabId } from './components/BottomNavMobile';
 import { ShieldCheck, LogOut, RefreshCw, Building2, CheckCircle2, Clock3, CircleAlert, MessageCircle, Coins, ChevronRight, Sparkles, MapPin } from 'lucide-react';
 
 interface DashboardCorretorClientProps {
@@ -49,28 +50,6 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
   const [pacoteInicialModal, setPacoteInicialModal] = useState<'start' | 'pro' | 'elite'>('pro');
   const [activeTab, setActiveTab] = useState<TabId>('inicio');
 
-  // Bloqueia o scroll do body apenas no mobile dentro do App Shell do dashboard.
-  useEffect(() => {
-    const mq = window.matchMedia('(max-width: 767px)');
-    const apply = () => {
-      if (mq.matches) document.body.classList.add('dashboard-app-shell');
-      else document.body.classList.remove('dashboard-app-shell');
-    };
-    apply();
-    if (typeof mq.addEventListener === 'function') {
-      mq.addEventListener('change', apply);
-      return () => {
-        document.body.classList.remove('dashboard-app-shell');
-        mq.removeEventListener('change', apply);
-      };
-    }
-    (mq as unknown as { addListener: (cb: () => void) => void }).addListener(apply);
-    return () => {
-      document.body.classList.remove('dashboard-app-shell');
-      (mq as unknown as { removeListener: (cb: () => void) => void }).removeListener(apply);
-    };
-  }, []);
-
   useEffect(() => {
     // Checa se há um parâmetro recarga na URL (ex: ?recarga=pro) vindo da página /planos
     if (typeof window !== 'undefined') {
@@ -79,6 +58,12 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
       if (recargaParam === 'start' || recargaParam === 'pro' || recargaParam === 'elite') {
         setPacoteInicialModal(recargaParam);
         setModalRecargaAberto(true);
+      }
+
+      // Abre direto na aba indicada (ex: ?aba=imoveis vindo das páginas internas)
+      const abaParam = urlParams.get('aba');
+      if (abaParam === 'inicio' || abaParam === 'imoveis' || abaParam === 'bairro' || abaParam === 'conta') {
+        setActiveTab(abaParam);
       }
     }
 
@@ -245,201 +230,151 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
     <div className="min-h-screen bg-slate-50 text-slate-900">
 
       {/* ============================ MOBILE: APP SHELL ============================ */}
-      <div className="md:hidden fixed inset-0 z-40 flex flex-col bg-slate-50" style={{ height: '100dvh' }}>
+      <DashboardShell activeTab={activeTab} onTabChange={setActiveTab} usuario={usuario} loading={loading}>
+        {activeTab === 'inicio' && (
+          <div className="p-3.5 space-y-3.5">
+            <div className="flex items-center justify-between">
+              <h1 className="text-lg font-extrabold text-slate-900 tracking-tight">
+                {usuario ? `Olá, ${usuario.nome}` : 'Painel do Corretor'}
+              </h1>
+              <span className="bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-black px-2.5 py-1 rounded-full flex items-center gap-1 shadow-xs uppercase tracking-wider">
+                <ShieldCheck className="w-3 h-3" /> {usuario?.plano_atual?.toUpperCase() || 'START'}
+              </span>
+            </div>
 
-        {/* Header Fixo Mobile */}
-        <header className="flex-shrink-0 bg-white border-b border-slate-200 px-4" style={{ height: 60 }}>
-          <div className="h-full flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shrink-0">
-                <Building2 className="w-4 h-4" />
+            <HeaderSaldoCreditos
+              saldoCreditos={usuario?.saldo_creditos ?? 1}
+              planoAtual={usuario?.plano_atual || 'Start'}
+              onAbrirRecarga={() => setModalRecargaAberto(true)}
+            />
+
+            <div className="grid grid-cols-2 gap-2">
+              <div className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
+                <div className="text-[9px] font-black uppercase tracking-wider text-emerald-700 flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-emerald-600" /> Publicados</div>
+                <div className="text-xl font-black text-slate-900 mt-1">{workSummary.publicados}</div>
               </div>
-              <div className="min-w-0 leading-tight">
-                <p className="text-sm font-black text-slate-900 truncate">Imóveis Taboão</p>
-                <p className="text-[9px] uppercase tracking-wider font-bold text-blue-600">Painel do Corretor</p>
+              <div className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
+                <div className="text-[9px] font-black uppercase tracking-wider text-amber-700 flex items-center gap-1"><Clock3 className="w-3 h-3 text-amber-600" /> Aprovação</div>
+                <div className="text-xl font-black text-slate-900 mt-1">{workSummary.aprovacao}</div>
+              </div>
+              <div className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
+                <div className="text-[9px] font-black uppercase tracking-wider text-blue-700 flex items-center gap-1"><RefreshCw className="w-3 h-3 text-blue-600" /> Processando</div>
+                <div className="text-xl font-black text-slate-900 mt-1">{workSummary.processando}</div>
+              </div>
+              <div className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
+                <div className="text-[9px] font-black uppercase tracking-wider text-rose-700 flex items-center gap-1"><CircleAlert className="w-3 h-3 text-rose-600" /> Atenção</div>
+                <div className="text-xl font-black text-slate-900 mt-1">{workSummary.atencao}</div>
               </div>
             </div>
 
-            <div className="flex items-center gap-1.5 shrink-0">
-              <button
-                onClick={() => window.location.reload()}
-                title="Atualizar Dados"
-                className="p-2 bg-slate-50 border border-slate-200 text-slate-600 hover:text-blue-600 hover:border-blue-300 rounded-xl transition-all shadow-xs"
-              >
-                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-blue-600' : ''}`} />
-              </button>
-
-              {usuario && (
-                <div className="flex items-center gap-1.5">
-                  <span
-                    title={`${usuario.nome} (${usuario.email})`}
-                    className="w-8 h-8 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700 font-black text-xs"
-                  >
-                    {inicialUsuario}
-                  </span>
-                  <button
-                    onClick={handleLogout}
-                    title="Encerrar Sessão Segura"
-                    className="p-2 bg-slate-50 border border-slate-200 text-slate-500 hover:text-red-600 hover:border-red-300 rounded-xl transition-all shadow-xs"
-                  >
-                    <LogOut className="w-4 h-4" />
-                  </button>
-                </div>
-              )}
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 flex gap-3 shadow-sm">
+              <div className="shrink-0 p-2 h-fit rounded-xl bg-blue-50 border border-blue-200 text-blue-600"><MessageCircle className="w-5 h-5" /></div>
+              <div className="min-w-0">
+                <p className="text-[9px] uppercase tracking-wider font-black text-blue-600">Próxima ação</p>
+                <h2 className="text-sm font-bold text-slate-900 mt-0.5 truncate">{nextItem ? `${nextItem.referencia} — ${nextItemMeta?.label}` : 'Envie seu primeiro imóvel pelo WhatsApp'}</h2>
+                <p className="text-xs text-slate-600 mt-0.5 line-clamp-2">{nextItem ? nextItemMeta?.nextAction : 'Envie fotos e as informações principais do imóvel para iniciarmos seu Media Kit.'}</p>
+              </div>
             </div>
-          </div>
-        </header>
 
-        {/* Conteúdo Central Rolável */}
-        <div className="flex-1 overflow-y-auto bg-slate-50 overscroll-contain">
-          {activeTab === 'inicio' && (
-            <div className="p-3.5 space-y-3.5">
-              <div className="flex items-center justify-between">
-                <h1 className="text-lg font-extrabold text-slate-900 tracking-tight">
-                  {usuario ? `Olá, ${usuario.nome}` : 'Painel do Corretor'}
-                </h1>
-                <span className="bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-black px-2.5 py-1 rounded-full flex items-center gap-1 shadow-xs uppercase tracking-wider">
-                  <ShieldCheck className="w-3 h-3" /> {usuario?.plano_atual?.toUpperCase() || 'START'}
-                </span>
-              </div>
-
-              <HeaderSaldoCreditos
-                saldoCreditos={usuario?.saldo_creditos ?? 1}
-                planoAtual={usuario?.plano_atual || 'Start'}
-                onAbrirRecarga={() => setModalRecargaAberto(true)}
-              />
-
-              <div className="grid grid-cols-2 gap-2">
-                <div className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
-                  <div className="text-[9px] font-black uppercase tracking-wider text-emerald-700 flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-emerald-600" /> Publicados</div>
-                  <div className="text-xl font-black text-slate-900 mt-1">{workSummary.publicados}</div>
-                </div>
-                <div className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
-                  <div className="text-[9px] font-black uppercase tracking-wider text-amber-700 flex items-center gap-1"><Clock3 className="w-3 h-3 text-amber-600" /> Aprovação</div>
-                  <div className="text-xl font-black text-slate-900 mt-1">{workSummary.aprovacao}</div>
-                </div>
-                <div className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
-                  <div className="text-[9px] font-black uppercase tracking-wider text-blue-700 flex items-center gap-1"><RefreshCw className="w-3 h-3 text-blue-600" /> Processando</div>
-                  <div className="text-xl font-black text-slate-900 mt-1">{workSummary.processando}</div>
-                </div>
-                <div className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
-                  <div className="text-[9px] font-black uppercase tracking-wider text-rose-700 flex items-center gap-1"><CircleAlert className="w-3 h-3 text-rose-600" /> Atenção</div>
-                  <div className="text-xl font-black text-slate-900 mt-1">{workSummary.atencao}</div>
-                </div>
-              </div>
-
-              <div className="bg-white border border-slate-200 rounded-2xl p-4 flex gap-3 shadow-sm">
-                <div className="shrink-0 p-2 h-fit rounded-xl bg-blue-50 border border-blue-200 text-blue-600"><MessageCircle className="w-5 h-5" /></div>
+            <button
+              onClick={() => setActiveTab('bairro')}
+              className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center justify-between gap-3 text-left hover:border-violet-700 transition-colors"
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="shrink-0 p-2 rounded-xl bg-violet-950/60 border border-violet-800 text-violet-300"><MapPin className="w-5 h-5" /></div>
                 <div className="min-w-0">
-                  <p className="text-[9px] uppercase tracking-wider font-black text-blue-600">Próxima ação</p>
-                  <h2 className="text-sm font-bold text-slate-900 mt-0.5 truncate">{nextItem ? `${nextItem.referencia} — ${nextItemMeta?.label}` : 'Envie seu primeiro imóvel pelo WhatsApp'}</h2>
-                  <p className="text-xs text-slate-600 mt-0.5 line-clamp-2">{nextItem ? nextItemMeta?.nextAction : 'Envie fotos e as informações principais do imóvel para iniciarmos seu Media Kit.'}</p>
+                  <p className="text-sm font-bold text-white">Inteligência Local</p>
+                  <p className="text-xs text-slate-400">Contribua com informações do bairro</p>
                 </div>
               </div>
+              <ChevronRight className="w-5 h-5 text-slate-500 shrink-0" />
+            </button>
 
-              <button
-                onClick={() => setActiveTab('bairro')}
-                className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center justify-between gap-3 text-left hover:border-violet-700 transition-colors"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="shrink-0 p-2 rounded-xl bg-violet-950/60 border border-violet-800 text-violet-300"><MapPin className="w-5 h-5" /></div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-bold text-white">Inteligência Local</p>
-                    <p className="text-xs text-slate-400">Contribua com informações do bairro</p>
-                  </div>
-                </div>
-                <ChevronRight className="w-5 h-5 text-slate-500 shrink-0" />
-              </button>
+            <BannerBackupGamificacao
+              totalFotosBackup={totalFotosReal}
+              espacoTexto={espacoTexto}
+            />
+          </div>
+        )}
 
-              <BannerBackupGamificacao
-                totalFotosBackup={totalFotosReal}
-                espacoTexto={espacoTexto}
-              />
-            </div>
-          )}
+        {activeTab === 'imoveis' && (
+          <div className="p-3.5 space-y-3.5">
+            <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-blue-600" />
+              Seus Imóveis ({listaImoveis.length})
+            </h2>
+            <TabelaImoveis imoveis={listaImoveis} />
+          </div>
+        )}
 
-          {activeTab === 'imoveis' && (
-            <div className="p-3.5 space-y-3.5">
-              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <Building2 className="w-4 h-4 text-blue-600" />
-                Seus Imóveis ({listaImoveis.length})
-              </h2>
-              <TabelaImoveis imoveis={listaImoveis} />
-            </div>
-          )}
+        {activeTab === 'bairro' && (
+          <div className="p-3.5">
+            <PainelConhecimentoRegional />
+          </div>
+        )}
 
-          {activeTab === 'bairro' && (
-            <div className="p-3.5">
-              <PainelConhecimentoRegional />
-            </div>
-          )}
+        {activeTab === 'conta' && (
+          <div className="p-3.5 space-y-3.5">
+            <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-blue-600" />
+              Minha Conta
+            </h2>
 
-          {activeTab === 'conta' && (
-            <div className="p-3.5 space-y-3.5">
-              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-blue-600" />
-                Minha Conta
-              </h2>
-
-              <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-                <div className="flex items-center gap-3">
-                  <span className="w-12 h-12 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700 font-black text-lg">
-                    {inicialUsuario}
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+              <div className="flex items-center gap-3">
+                <span className="w-12 h-12 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700 font-black text-lg">
+                  {inicialUsuario}
+                </span>
+                <div className="min-w-0">
+                  <p className="text-sm font-black text-slate-900 truncate">{usuario?.nome || 'Corretor'}</p>
+                  <p className="text-xs text-slate-500 truncate">{usuario?.email || 'Sessão ativa'}</p>
+                  <span className="mt-1 inline-flex bg-blue-50 text-blue-700 border border-blue-200 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    Plano {usuario?.plano_atual?.toUpperCase() || 'START'}
                   </span>
-                  <div className="min-w-0">
-                    <p className="text-sm font-black text-slate-900 truncate">{usuario?.nome || 'Corretor'}</p>
-                    <p className="text-xs text-slate-500 truncate">{usuario?.email || 'Sessão ativa'}</p>
-                    <span className="mt-1 inline-flex bg-blue-50 text-blue-700 border border-blue-200 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
-                      Plano {usuario?.plano_atual?.toUpperCase() || 'START'}
-                    </span>
-                  </div>
                 </div>
               </div>
+            </div>
 
-              <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-4 text-white shadow-sm flex items-center justify-between gap-3">
-                <div>
-                  <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider font-black text-blue-100"><Coins className="w-3.5 h-3.5" /> Saldo de créditos</div>
-                  <div className="text-3xl font-black mt-1">{usuario?.saldo_creditos ?? 1}</div>
-                </div>
-                <button
-                  onClick={() => setModalRecargaAberto(true)}
-                  className="bg-white text-blue-700 font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl shadow-md"
-                >
-                  Recarregar
-                </button>
+            <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-4 text-white shadow-sm flex items-center justify-between gap-3">
+              <div>
+                <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider font-black text-blue-100"><Coins className="w-3.5 h-3.5" /> Saldo de créditos</div>
+                <div className="text-3xl font-black mt-1">{usuario?.saldo_creditos ?? 1}</div>
               </div>
-
               <button
-                onClick={() => router.push('/planos')}
-                className="w-full bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between text-left hover:border-blue-300"
+                onClick={() => setModalRecargaAberto(true)}
+                className="bg-white text-blue-700 font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl shadow-md"
               >
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-600"><Sparkles className="w-5 h-5" /></div>
-                  <div>
-                    <p className="text-sm font-bold text-slate-900">Planos e Preços</p>
-                    <p className="text-xs text-slate-500">Conheça o Start, Pro e Elite</p>
-                  </div>
-                </div>
-                <ChevronRight className="w-5 h-5 text-slate-400" />
-              </button>
-
-              <button
-                onClick={handleLogout}
-                className="w-full bg-white border border-rose-200 rounded-2xl p-4 shadow-sm flex items-center gap-3 text-left hover:border-rose-300"
-              >
-                <div className="p-2 rounded-xl bg-rose-50 text-rose-600"><LogOut className="w-5 h-5" /></div>
-                <div>
-                  <p className="text-sm font-bold text-rose-700">Encerrar Sessão</p>
-                  <p className="text-xs text-slate-500">Sair do painel com segurança</p>
-                </div>
+                Recarregar
               </button>
             </div>
-          )}
-        </div>
 
-        {/* Bottom Navigation Bar */}
-        <BottomNavMobile activeTab={activeTab} onTabChange={setActiveTab} />
-      </div>
+            <button
+              onClick={() => router.push('/planos')}
+              className="w-full bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between text-left hover:border-blue-300"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-600"><Sparkles className="w-5 h-5" /></div>
+                <div>
+                  <p className="text-sm font-bold text-slate-900">Planos e Preços</p>
+                  <p className="text-xs text-slate-500">Conheça o Start, Pro e Elite</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-slate-400" />
+            </button>
+
+            <button
+              onClick={handleLogout}
+              className="w-full bg-white border border-rose-200 rounded-2xl p-4 shadow-sm flex items-center gap-3 text-left hover:border-rose-300"
+            >
+              <div className="p-2 rounded-xl bg-rose-50 text-rose-600"><LogOut className="w-5 h-5" /></div>
+              <div>
+                <p className="text-sm font-bold text-rose-700">Encerrar Sessão</p>
+                <p className="text-xs text-slate-500">Sair do painel com segurança</p>
+              </div>
+            </button>
+          </div>
+        )}
+      </DashboardShell>
 
       {/* ============================ DESKTOP: INALTERADO ============================ */}
       <div className="hidden md:block py-8 px-4 sm:px-6 lg:px-8">
