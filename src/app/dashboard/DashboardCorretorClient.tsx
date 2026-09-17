@@ -7,11 +7,12 @@ import { fetchBrokerApi } from '@/lib/api';
 import HeaderSaldoCreditos from './components/HeaderSaldoCreditos';
 import BannerBackupGamificacao from './components/BannerBackupGamificacao';
 import ModalRecargaCreditos from './components/ModalRecargaCreditos';
+import ContactModal from '@/components/ContactModal';
 import TabelaImoveis from './TabelaImoveis';
 import PainelConhecimentoRegional from './components/PainelConhecimentoRegional';
 import DashboardShell from './components/DashboardShell';
 import { TabId } from './components/BottomNavMobile';
-import { ShieldCheck, LogOut, RefreshCw, Building2, CheckCircle2, Clock3, CircleAlert, MessageCircle, Coins, ChevronRight, Sparkles, MapPin } from 'lucide-react';
+import { ShieldCheck, LogOut, RefreshCw, Building2, CheckCircle2, Clock3, CircleAlert, MessageCircle, Coins, ChevronRight, Sparkles, MapPin, Mail } from 'lucide-react';
 
 interface DashboardCorretorClientProps {
   imoveis?: Imovel[];
@@ -44,6 +45,7 @@ function getWorkflowMeta(status?: string) {
 export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }: DashboardCorretorClientProps) {
   const router = useRouter();
   const [modalRecargaAberto, setModalRecargaAberto] = useState(false);
+  const [modalContatoAberto, setModalContatoAberto] = useState(false);
   const [usuario, setUsuario] = useState<{ email: string; nome: string; saldo_creditos: number; plano_atual: string } | null>(null);
   const [listaImoveis, setListaImoveis] = useState<Imovel[]>(initialImoveis);
   const [loading, setLoading] = useState(true);
@@ -363,6 +365,20 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
             </button>
 
             <button
+              onClick={() => setModalContatoAberto(true)}
+              className="w-full bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between text-left hover:border-blue-300"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-blue-50 border border-blue-200 text-blue-600"><Mail className="w-5 h-5" /></div>
+                <div>
+                  <p className="text-sm font-bold text-slate-900">Contato</p>
+                  <p className="text-xs text-slate-500">Atendimento e Ouvidoria</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-slate-400" />
+            </button>
+
+            <button
               onClick={handleLogout}
               className="w-full bg-white border border-rose-200 rounded-2xl p-4 shadow-sm flex items-center gap-3 text-left hover:border-rose-300"
             >
@@ -480,6 +496,10 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
         isOpen={modalRecargaAberto}
         onClose={() => setModalRecargaAberto(false)}
         pacoteInicial={pacoteInicialModal}
+      />
+      <ContactModal
+        isOpen={modalContatoAberto}
+        onClose={() => setModalContatoAberto(false)}
       />
     </div>
   );
