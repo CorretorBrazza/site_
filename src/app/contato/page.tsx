@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { MapPin, Mail, Clock } from 'lucide-react';
 import ContactForm from '@/components/ContactForm';
+import ContactButton from '@/components/ContactButton';
 
 export const metadata: Metadata = {
   title: 'Fale Conosco | Imóveis Taboão da Serra e imediações',
@@ -43,9 +44,9 @@ export default function ContatoPage() {
                   </div>
                   <div>
                     <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">E-mail de Atendimento & Ouvidoria</span>
-                    <a href="mailto:contato@colegacorretor.com.br" className="font-semibold text-white hover:text-amber-400 transition-colors">
-                      contato@colegacorretor.com.br
-                    </a>
+                    <ContactButton className="font-semibold text-white hover:text-amber-400 transition-colors">
+                      Contato
+                    </ContactButton>
                   </div>
                 </li>
 

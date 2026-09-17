@@ -4,20 +4,25 @@ import { useState } from 'react';
 import { Send, CheckCircle2, AlertCircle } from 'lucide-react';
 import { trackEvent } from '@/lib/analytics';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://imoveis-taboao-api-production-4cd9.up.railway.app/api/v1';
+const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
+const WEB3FORMS_ACCESS_KEY = '7d915857-c79e-4ff4-b507-ac4edaa6ce5c';
+
+const campoBase =
+  'w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-950 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 text-xs md:text-sm';
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
     nome: '',
     email: '',
     telefone: '',
+    assunto: '',
     mensagem: '',
   });
 
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [consentimento, setConsentimento] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -28,25 +33,31 @@ export default function ContactForm() {
     setStatus('submitting');
 
     try {
-      const response = await fetch(`${API_BASE_URL}/contact`, {
+      const response = await fetch(WEB3FORMS_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
         body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          subject: `Imóveis Taboão — ${formData.assunto || 'Contato via portal'}`,
+          from_name: formData.nome,
           nome: formData.nome,
           email: formData.email,
           telefone: formData.telefone,
+          assunto: formData.assunto,
           mensagem: formData.mensagem,
-          website: '',
+          _replyto: formData.email,
+          _template: 'box',
+          _captcha: false,
         }),
       });
 
       if (response.ok) {
         trackEvent('contact_form_submitted', { form: 'public_contact' });
         setStatus('success');
-        setFormData({ nome: '', email: '', telefone: '', mensagem: '' });
+        setFormData({ nome: '', email: '', telefone: '', assunto: '', mensagem: '' });
         setConsentimento(false);
       } else {
         setStatus('error');
@@ -99,7 +110,7 @@ export default function ContactForm() {
               value={formData.nome}
               onChange={handleChange}
               placeholder="Digite seu nome completo"
-              className="w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-950 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 text-xs md:text-sm"
+              className={campoBase}
             />
           </div>
 
@@ -116,7 +127,7 @@ export default function ContactForm() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="seu@email.com"
-                className="w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-950 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 text-xs md:text-sm"
+                className={campoBase}
               />
             </div>
             <div>
@@ -131,14 +142,36 @@ export default function ContactForm() {
                 value={formData.telefone}
                 onChange={handleChange}
                 placeholder="(11) 99999-9999"
-                className="w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-950 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 text-xs md:text-sm"
+                className={campoBase}
               />
             </div>
           </div>
 
           <div>
+            <label htmlFor="assunto" className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+              Assunto *
+            </label>
+            <select
+              id="assunto"
+              name="assunto"
+              required
+              value={formData.assunto}
+              onChange={handleChange}
+              className={`${campoBase} cursor-pointer`}
+            >
+              <option value="" disabled>Selecione o assunto...</option>
+              <option value="Dúvidas sobre imóveis">Dúvidas sobre imóveis</option>
+              <option value="Anunciar meu imóvel">Anunciar meu imóvel</option>
+              <option value="Área do Corretor">Área do Corretor</option>
+              <option value="Suporte técnico">Suporte técnico</option>
+              <option value="Ouvidoria / Reclamação">Ouvidoria / Reclamação</option>
+              <option value="Outros assuntos">Outros assuntos</option>
+            </select>
+          </div>
+
+          <div>
             <label htmlFor="mensagem" className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-              Mensagem *
+              Texto da Mensagem *
             </label>
             <textarea
               id="mensagem"
@@ -148,7 +181,7 @@ export default function ContactForm() {
               value={formData.mensagem}
               onChange={handleChange}
               placeholder="Digite sua dúvida ou mensagem..."
-              className="w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-950 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 text-xs md:text-sm resize-none"
+              className={`${campoBase} resize-none`}
             />
           </div>
 
@@ -162,7 +195,7 @@ export default function ContactForm() {
             />
             <span>
               Autorizo o uso dos meus dados para receber resposta sobre esta mensagem, conforme a{' '}
-              <a href="/politica-de-privacidade" className="font-bold text-amber-400 underline">Política de Privacidade</a>.
+              <a href="/politica-de-privacidade" target="_blank" className="font-bold text-amber-400 underline">Política de Privacidade</a>.
             </span>
           </label>
 

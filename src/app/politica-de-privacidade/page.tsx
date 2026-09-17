@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { Shield, Lock, Eye, FileText, CheckCircle2 } from 'lucide-react';
+import ContactButton from '@/components/ContactButton';
 
 export const metadata: Metadata = {
   title: 'Política de Privacidade | Imóveis Taboão',
@@ -109,7 +110,7 @@ export default function PoliticaPrivacidadePage() {
               A entidade controladora responsável pelo tratamento dos dados pessoais neste portal é <span className="font-semibold text-gray-900">Colega Corretor Estratégia Imobiliária</span> (CNPJ: 63.188.894/0001-05).
             </p>
             <p className="text-gray-600 leading-relaxed">
-              Para exercer qualquer um dos seus direitos previstos na LGPD ou enviar dúvidas, sugestões e reclamações, entre em contato diretamente pelo e-mail do nosso canal de atendimento: <a href="mailto:contato@colegacorretor.com.br" className="font-semibold text-blue-600 hover:underline">contato@colegacorretor.com.br</a>.
+              Para exercer qualquer um dos seus direitos previstos na LGPD ou enviar dúvidas, sugestões e reclamações, entre em contato diretamente pelo formulário do nosso canal de atendimento: <ContactButton className="font-semibold text-blue-600 hover:underline">Contato</ContactButton>.
             </p>
           </section>
         </div>

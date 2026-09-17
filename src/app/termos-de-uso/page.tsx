@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { FileText, AlertCircle, ShieldAlert, Scale, HelpCircle, Lock } from 'lucide-react';
+import ContactButton from '@/components/ContactButton';
 
 export const metadata: Metadata = {
   title: 'Termos de Uso | Imóveis Taboão',
@@ -83,7 +84,7 @@ export default function TermosUsoPage() {
               O portal <span className="font-semibold text-gray-900">Imóveis Taboão</span> é mantido e operado por <span className="font-semibold text-gray-900">Colega Corretor Estratégia Imobiliária</span> (CNPJ: 63.188.894/0001-05).
             </p>
             <p className="text-gray-600 leading-relaxed">
-              Em caso de dúvidas, sugestões ou solicitações relacionadas a estes Termos de Uso, entre em contato através do nosso canal oficial de atendimento: <a href="mailto:contato@colegacorretor.com.br" className="font-semibold text-blue-600 hover:underline">contato@colegacorretor.com.br</a>.
+              Em caso de dúvidas, sugestões ou solicitações relacionadas a estes Termos de Uso, entre em contato através do nosso canal oficial de atendimento: <ContactButton className="font-semibold text-blue-600 hover:underline">Contato</ContactButton>.
             </p>
           </section>
         </div>
