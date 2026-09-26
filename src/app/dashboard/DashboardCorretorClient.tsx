@@ -104,12 +104,24 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
           setUsuario(userUpdated);
           localStorage.setItem('user_info', JSON.stringify(userUpdated));
         } else {
-          // Se o corretor não existe na API (banco limpo), remove o cache antigo do navegador
-          localStorage.removeItem('user_info');
-          localStorage.removeItem('auth_token');
-          setUsuario(null);
-          setListaImoveis([]);
-          router.replace('/login');
+          // Apenas desloga se o erro for comprovadamente de autenticação inválida ou expirada.
+          // Em instabilidade temporária (502, 503 ou offline), mantém a sessão com o cache local.
+          const errText = String(jsonPerfil.error || '').toLowerCase();
+          const isAuthError = errText.includes('expirad') ||
+            errText.includes('sessão') ||
+            errText.includes('sessao') ||
+            errText.includes('unauthorized') ||
+            errText.includes('token') ||
+            errText.includes('não autorizado');
+
+          if (isAuthError) {
+            localStorage.removeItem('user_info');
+            localStorage.removeItem('auth_token');
+            setUsuario(null);
+            setListaImoveis([]);
+            router.replace('/login');
+            return;
+          }
         }
 
         // Busca anúncios do corretor autenticado; não há e-mail controlável na requisição.

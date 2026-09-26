@@ -1,4 +1,9 @@
-const envUrl = process.env.NEXT_PUBLIC_API_URL || 'https://imoveis-taboao-api-production-4cd9.up.railway.app';
+const defaultProdApiUrl = 'https://imoveis-taboao-api-production-4cd9.up.railway.app';
+const envUrl = process.env.NEXT_PUBLIC_API_URL || (
+  process.env.NODE_ENV === 'production'
+    ? defaultProdApiUrl
+    : 'http://localhost:3001'
+);
 const cleanBaseUrl = envUrl.trim().replace(/\/+$/, '').replace(/\/api\/v1\/?$/, '');
 
 export const API_BASE_URL = `${cleanBaseUrl}/api/v1`;

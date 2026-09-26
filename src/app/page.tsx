@@ -4,6 +4,7 @@ import { getImoveis } from '@/app/actions/imovel-server-actions';
 import CardImovel from '@/components/CardImovel';
 import { processarEOrdenarImoveis } from '@/utils/imovelSorting';
 import HomeLiveSection from '@/components/HomeLiveSection';
+import { safeJsonLd } from '@/lib/jsonld';
 
 export default async function Home() {
   const allImoveis = await getImoveis();
@@ -37,7 +38,7 @@ export default async function Home() {
     <div className="flex flex-col min-h-screen bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
 
       {/* Hero Section — Clean Light Real Estate */}

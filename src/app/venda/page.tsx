@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { Suspense } from 'react';
 import { getImoveis } from '@/app/actions/imovel-server-actions';
 import VendaClient from './VendaClient';
+import { safeJsonLd } from '@/lib/jsonld';
 
 export const revalidate = 60;
 
@@ -58,7 +59,7 @@ export default async function VendaPage() {
     <div className="min-h-screen bg-[#0b132b] text-slate-100 py-12 px-4">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(itemListJsonLd) }}
       />
       <div className="max-w-7xl mx-auto">
         <Suspense fallback={

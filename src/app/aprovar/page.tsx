@@ -87,10 +87,20 @@ function AprovarContent() {
       // Salva sessão dinâmica para que a Navbar e o Painel reconheçam o corretor automaticamente
       if (valResult.data?.session_token) {
         localStorage.setItem('auth_token', valResult.data.session_token);
-        document.cookie = `auth_token=${valResult.data.session_token}; path=/; max-age=2592000; SameSite=Lax`;
+        const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
+        document.cookie = `auth_token=${valResult.data.session_token}; path=/; max-age=2592000; SameSite=Lax${isHttps ? '; Secure' : ''}`;
       }
       if (valResult.data?.user) {
         localStorage.setItem('user_info', JSON.stringify(valResult.data.user));
+      }
+
+      // Remove o token da query string da URL para mitigar vazamento em Referer e histórico
+      if (typeof window !== 'undefined' && rawToken && window.history?.replaceState) {
+        try {
+          const cleanUrl = new URL(window.location.href);
+          cleanUrl.searchParams.delete('token');
+          window.history.replaceState({}, document.title, cleanUrl.toString());
+        } catch {}
       }
 
       const adId = valResult.data?.ad_id || adIdParam;

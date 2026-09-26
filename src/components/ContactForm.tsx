@@ -10,6 +10,8 @@ const WEB3FORMS_ACCESS_KEY = '7d915857-c79e-4ff4-b507-ac4edaa6ce5c';
 const campoBase =
   'w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-950 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 text-xs md:text-sm';
 
+import { API_BASE_URL } from '@/lib/api';
+
 export default function ContactForm() {
   const [formData, setFormData] = useState({
     nome: '',
@@ -17,6 +19,7 @@ export default function ContactForm() {
     telefone: '',
     assunto: '',
     mensagem: '',
+    website: '',
   });
 
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
@@ -30,34 +33,67 @@ export default function ContactForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!consentimento) return;
+
+    // Proteção contra bots: honeypot preenchido é descartado silenciosamente
+    if (formData.website) {
+      setStatus('success');
+      setFormData({ nome: '', email: '', telefone: '', assunto: '', mensagem: '', website: '' });
+      return;
+    }
+
     setStatus('submitting');
 
     try {
-      const response = await fetch(WEB3FORMS_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-          access_key: WEB3FORMS_ACCESS_KEY,
-          subject: `Imóveis Taboão — ${formData.assunto || 'Contato via portal'}`,
-          from_name: formData.nome,
-          nome: formData.nome,
-          email: formData.email,
-          telefone: formData.telefone,
-          assunto: formData.assunto,
-          mensagem: formData.mensagem,
-          _replyto: formData.email,
-          _template: 'box',
-          _captcha: false,
-        }),
-      });
+      // 1. Tenta enviar para a rota segura da API com rate-limiting e honeypot
+      let submitted = false;
+      try {
+        const apiRes = await fetch(`${API_BASE_URL}/contact`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nome: formData.nome,
+            email: formData.email,
+            telefone: formData.telefone,
+            assunto: formData.assunto,
+            mensagem: formData.mensagem,
+            website: formData.website,
+          }),
+        });
+        if (apiRes.ok) {
+          submitted = true;
+        }
+      } catch {
+        // Fallback para Web3Forms caso API esteja temporariamente inalcançável
+      }
 
-      if (response.ok) {
+      if (!submitted) {
+        const response = await fetch(WEB3FORMS_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify({
+            access_key: WEB3FORMS_ACCESS_KEY,
+            subject: `Imóveis Taboão — ${formData.assunto || 'Contato via portal'}`,
+            from_name: formData.nome,
+            nome: formData.nome,
+            email: formData.email,
+            telefone: formData.telefone,
+            assunto: formData.assunto,
+            mensagem: formData.mensagem,
+            _replyto: formData.email,
+            _template: 'box',
+            _captcha: true,
+          }),
+        });
+        submitted = response.ok;
+      }
+
+      if (submitted) {
         trackEvent('contact_form_submitted', { form: 'public_contact' });
         setStatus('success');
-        setFormData({ nome: '', email: '', telefone: '', assunto: '', mensagem: '' });
+        setFormData({ nome: '', email: '', telefone: '', assunto: '', mensagem: '', website: '' });
         setConsentimento(false);
       } else {
         setStatus('error');
@@ -93,6 +129,8 @@ export default function ContactForm() {
           <input
             type="text"
             name="website"
+            value={formData.website}
+            onChange={handleChange}
             tabIndex={-1}
             autoComplete="off"
             aria-hidden="true"

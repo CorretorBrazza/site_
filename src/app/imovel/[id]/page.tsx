@@ -6,6 +6,7 @@ import ShareButton from '@/components/ShareButton';
 import { BedDouble, ShowerHead, Car, Maximize, MapPin, Mail, ShieldCheck, Phone, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import TrackedWhatsAppLink from '@/components/TrackedWhatsAppLink';
+import { safeJsonLd } from '@/lib/jsonld';
 
 export const dynamicParams = true;
 export const revalidate = 60;
@@ -143,7 +144,7 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
     <div className="min-h-screen bg-slate-50 text-slate-900 py-8 px-4">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
       <div className="max-w-7xl mx-auto space-y-8">
         

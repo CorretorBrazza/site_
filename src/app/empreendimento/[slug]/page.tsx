@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { empreendimentos } from '@/data/empreendimentos';
 import { MapPin, Calendar, CheckCircle2, Ruler, BedDouble, Car, PlayCircle, MessageCircle, ChevronLeft, Building2, ParkingCircle, Bike, Accessibility, Navigation } from 'lucide-react';
 import Link from 'next/link';
+import { safeJsonLd } from '@/lib/jsonld';
 import PropertyHeroBanner from '@/components/PropertyHeroBanner';
 import PropertyTabsSection from '@/components/PropertyTabsSection';
 import TrackedWhatsAppLink from '@/components/TrackedWhatsAppLink';
@@ -89,7 +90,7 @@ export default async function EmpreendimentoPage({
         <div className="min-h-screen bg-[#F9FAFB]">
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
             />
             {/* Navigation */}
             <div className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100">
