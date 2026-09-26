@@ -133,11 +133,9 @@ export async function exchangeMagicToken(magicToken: string) {
  * `exchangeMagicToken` bem-sucedido.
  */
 export function persistBrokerSession(sessionToken: string, user: any): void {
-  if (typeof window === 'undefined') return;
-  window.localStorage.setItem('auth_token', sessionToken);
-  const isHttps = window.location.protocol === 'https:';
-  document.cookie = `auth_token=${sessionToken}; path=/; max-age=2592000; SameSite=Lax${isHttps ? '; Secure' : ''}`;
-  if (user) {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem('auth_token', sessionToken);
+    if (user) {
     window.localStorage.setItem('user_info', JSON.stringify(user));
   }
 }

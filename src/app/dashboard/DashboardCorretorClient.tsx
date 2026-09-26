@@ -231,11 +231,10 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
     carregarDadosPainel();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_info');
-    document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-    router.push('/login');
+    const handleLogout = () => {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user_info');
+      router.push('/login');
   };
 
   const totalFotosReal = (listaImoveis || []).reduce((acc, item) => acc + (item.fotos?.length || 0), 0);
