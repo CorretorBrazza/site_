@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { escapeHtml } from '@/lib/html';
 
 const TABELA_MCMV_2026 = [
     { renda: 1500, financiamento: 86551.61, parcela: 449.99, subsidio_com: 55000.00, subsidio_sem: 16500.00 },
@@ -322,7 +323,10 @@ export default function SimuladorClient() {
                     ...prev,
                     {
                         type: 'bot',
-                        content: `<strong>Tudo pronto, ${variables.nome}!</strong><br><br>Seus dados foram enviados com sucesso. Clique no botão abaixo para conversar agora mesmo com o nosso consultor especialista via WhatsApp.`,
+                        // `variables.nome` é digitado pelo usuário e esta mensagem é renderizada
+                        // via dangerouslySetInnerHTML: sem escape, um nome como
+                        // `<img src=x onerror=...>` executava JS no navegador (XSS DOM).
+                        content: `<strong>Tudo pronto, ${escapeHtml(variables.nome)}!</strong><br><br>Seus dados foram enviados com sucesso. Clique no botão abaixo para conversar agora mesmo com o nosso consultor especialista via WhatsApp.`,
                         isHtml: true
                     }
                 ]);
