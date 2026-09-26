@@ -61,9 +61,14 @@ function AprovarContent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [approvalStatus, setApprovalStatus] = useState<string | null>(null);
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
+  const [corretorNome, setCorretorNome] = useState<string>('');
+  const [saldoDisponivel, setSaldoDisponivel] = useState<number | null>(null);
 
   useEffect(() => {
-    const effectiveToken = rawToken || (typeof window !== 'undefined' ? localStorage.getItem('auth_token') : '') || '';
+    // Somente o token do Magic Link (?token=) é aceito aqui. NÃO há fallback para o
+    // auth_token da sessão: o link de aprovação é distribuído por WhatsApp/e-mail e
+    // concede acesso somente a este anúncio. Sessão de corretor é autenticada em /login.
+    const effectiveToken = rawToken || '';
     setToken(effectiveToken);
 
     if (!effectiveToken) {
@@ -84,14 +89,13 @@ function AprovarContent() {
         return;
       }
 
-      // Salva sessão dinâmica para que a Navbar e o Painel reconheçam o corretor automaticamente
-      if (valResult.data?.session_token) {
-        localStorage.setItem('auth_token', valResult.data.session_token);
-        const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
-        document.cookie = `auth_token=${valResult.data.session_token}; path=/; max-age=2592000; SameSite=Lax${isHttps ? '; Secure' : ''}`;
-      }
-      if (valResult.data?.user) {
-        localStorage.setItem('user_info', JSON.stringify(valResult.data.user));
+      // O Magic Link de aprovação NÃO concede sessão do corretor (ver ApprovalService.validateToken).
+      // Aprovação, edição e reordenação usam o próprio token do link; para acessar o painel
+      // o corretor precisa entrar em /login. Nunca persistir credencial derivada deste link:
+      // ele trafega por WhatsApp/e-mail e tratá-lo como sessão expõe a conta inteira.
+      if (valResult.data?.corretor) {
+        setCorretorNome(valResult.data.corretor.nome || '');
+        setSaldoDisponivel(Number(valResult.data.corretor.saldo_disponivel ?? 0));
       }
 
       // Remove o token da query string da URL para mitigar vazamento em Referer e histórico
@@ -327,7 +331,7 @@ function AprovarContent() {
               </div>
             </div>
             <a
-              href="/painel"
+              href="/dashboard"
               className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-colors shrink-0 shadow-md"
             >
               Ir para o Painel
@@ -364,6 +368,21 @@ function AprovarContent() {
               <strong>Dica de Produtividade:</strong> Esta tela funciona perfeitamente no celular, mas para revisar até 20 fotos em alta resolução, selecionar a capa e copiar seus textos de Media Kit com máximo conforto, você também pode abrir este mesmo link no seu <strong>computador ou notebook</strong>.
             </span>
           </div>
+        </div>
+
+        {/* Aviso de escopo do Magic Link */}
+        <div className="bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl px-4 py-3 text-xs leading-relaxed flex items-start gap-2.5">
+          <span className="text-base shrink-0">🔐</span>
+          <span>
+            Este link dá acesso <strong>apenas a este anúncio</strong>, para você revisar, editar e aprovar.
+            Ele não abre o seu painel. {corretorNome ? `Olá, ${corretorNome}. ` : ''}
+            {saldoDisponivel !== null && (
+              <>
+                Você tem <strong>{saldoDisponivel} crédito{saldoDisponivel === 1 ? '' : 's'} disponível{saldoDisponivel === 1 ? '' : 'eis'}</strong> para esta aprovação.{' '}
+              </>
+            )}
+            Para ver os seus imóveis, créditos e histórico, <a href="/dashboard" className="underline font-semibold">entre no painel</a>.
+          </span>
         </div>
 
         {/* Header do Anúncio */}

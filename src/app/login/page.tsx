@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Building2, Lock, Mail, User, Phone, ShieldCheck, Eye, EyeOff, Sparkles, ArrowRight, Loader2 } from 'lucide-react';
 
-import { API_BASE_URL } from '@/lib/api';
+import { API_BASE_URL, exchangeMagicToken, persistBrokerSession, stripTokenFromUrl } from '@/lib/api';
 
 function LoginContent() {
   const router = useRouter();
@@ -28,25 +28,29 @@ function LoginContent() {
 
   // 1. Validação de Login Dinâmico / Sessão Ativa
   useEffect(() => {
-    // Se veio com token na URL (login dinâmico / magic link)
+    // Se veio com token na URL (login dinâmico / magic link de 24h do resumo do WhatsApp)
     if (tokenDinamico) {
-      localStorage.setItem('auth_token', tokenDinamico);
-      document.cookie = `auth_token=${tokenDinamico}; path=/; max-age=2592000; SameSite=Lax`;
+      // O token da URL NÃO é uma sessão. Precisa ser trocado por uma sessão validada pela
+      // API (POST /auth/magic-login) antes de qualquer gravação. A versão anterior gravava o
+      // token cru em localStorage+cookie e redirecionava para /dashboard sem verificar nada,
+      // o que deixava uma credencial não validada persistida e entrava na área autenticada
+      // mesmo em caso de falha.
+      (async () => {
+        // Limpa a URL antes da chamada: o token já está em memória, então não há motivo para
+        // deixá-lo exposto em Referer, histórico e logs durante o round-trip.
+        stripTokenFromUrl();
+        const result = await exchangeMagicToken(tokenDinamico);
 
-      fetch(`${API_BASE_URL}/corretor/me`, {
-        headers: { Authorization: `Bearer ${tokenDinamico}` },
-      })
-        .then((r) => r.json())
-        .then((json) => {
-          if (json.success && json.data) {
-            localStorage.setItem('user_info', JSON.stringify(json.data));
-          }
-        })
-        .catch(() => {})
-        .finally(() => {
-          const targetUrl = recargaParam ? `/dashboard?recarga=${encodeURIComponent(recargaParam)}` : '/dashboard';
-          router.replace(targetUrl);
-        });
+        if (!result.success) {
+          setErro(result.error || 'Link de acesso inválido ou expirado.');
+          setValidandoSessao(false);
+          return;
+        }
+
+        persistBrokerSession(result.data!.sessionToken, result.data!.user);
+        const targetUrl = recargaParam ? `/dashboard?recarga=${encodeURIComponent(recargaParam)}` : '/dashboard';
+        router.replace(targetUrl);
+      })();
       return;
     }
 

@@ -97,6 +97,69 @@ export async function fetchApi<T = any>(
 
 type ApiResult<T = any> = { success: boolean; data?: T; error?: string; message?: string };
 
+/**
+ * Troca o Magic Token de nível de conta (o de 24h enviado no resumo do WhatsApp) por uma
+ * sessão de corretor.
+ *
+ * Regra de segurança: este fluxo autentica a CONTA, então o token de aprovação de anúncio
+ * (o de ~7d que vai no link /aprovar) é rejeitado pela API. Nunca grave o token da URL
+ * direto no storage: grave apenas o `sessionToken` devolvido aqui, depois de validado.
+ */
+export async function exchangeMagicToken(magicToken: string) {
+  const clean = String(magicToken || '').trim();
+  if (!clean) {
+    return { success: false, error: 'Link de acesso sem token de segurança.' };
+  }
+
+  const res = await fetchApi<{ token?: string; user?: any }>('/auth/magic-login', {
+    method: 'POST',
+    body: JSON.stringify({ token: clean }),
+  });
+
+  if (!res.success) {
+    return { success: false, error: res.error || 'Link de acesso inválido ou expirado.' };
+  }
+
+  const sessionToken = res.data?.token;
+  if (!sessionToken) {
+    return { success: false, error: 'A API não retornou uma sessão válida para este link.' };
+  }
+
+  return { success: true, data: { sessionToken, user: res.data?.user || null } };
+}
+
+/**
+ * Persiste a sessão devolvida pelo auto-login. Deve ser chamada SOMENTE depois de um
+ * `exchangeMagicToken` bem-sucedido.
+ */
+export function persistBrokerSession(sessionToken: string, user: any): void {
+  if (typeof window === 'undefined') return;
+  window.localStorage.setItem('auth_token', sessionToken);
+  const isHttps = window.location.protocol === 'https:';
+  document.cookie = `auth_token=${sessionToken}; path=/; max-age=2592000; SameSite=Lax${isHttps ? '; Secure' : ''}`;
+  if (user) {
+    window.localStorage.setItem('user_info', JSON.stringify(user));
+  }
+}
+
+/**
+ * Remove o token da query string assim que ele for consumido, para não vazar em Referer,
+ * histórico do navegador e logs do servidor.
+ */
+export function stripTokenFromUrl(): void {
+  if (typeof window === 'undefined') return;
+  const url = new URL(window.location.href);
+  let changed = false;
+  for (const key of ['token', 'auth_token', 'ad_id']) {
+    if (url.searchParams.has(key)) {
+      url.searchParams.delete(key);
+      changed = true;
+    }
+  }
+  if (!changed) return;
+  window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+}
+
 function missingMagicLinkCredentials(token: string | undefined | null, adId?: string | null): ApiResult | null {
   if (!String(token || '').trim()) return { success: false, error: 'Magic Link sem token de segurança. Abra o link completo recebido por e-mail ou WhatsApp.' };
   if (adId !== undefined && adId !== null && !String(adId).trim()) return { success: false, error: 'Magic Link sem identificação do anúncio.' };

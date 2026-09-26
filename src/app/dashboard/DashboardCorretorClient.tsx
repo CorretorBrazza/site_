@@ -56,6 +56,21 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
     // Checa se há um parâmetro recarga na URL (ex: ?recarga=pro) vindo da página /planos
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
+
+      // Link de auto-login legado: o WhatsApp enviava /dashboard?token=<magic token>.
+      // O painel não faz troca de token — delega para /login, que é o único lugar que
+      // valida o token com a API e persiste a sessão devolvida. Assim não existe uma
+      // credencial não validada em localStorage nem lógica de auth duplicada.
+      const legacyToken = urlParams.get('token') || urlParams.get('auth_token');
+      if (legacyToken) {
+        const destino = new URLSearchParams();
+        destino.set('token', legacyToken);
+        const recargaLegada = urlParams.get('recarga');
+        if (recargaLegada) destino.set('recarga', recargaLegada);
+        router.replace(`/login?${destino.toString()}`);
+        return;
+      }
+
       const recargaParam = urlParams.get('recarga');
       if (recargaParam === 'start' || recargaParam === 'pro' || recargaParam === 'elite') {
         setPacoteInicialModal(recargaParam);
