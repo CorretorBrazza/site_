@@ -121,6 +121,15 @@ const securityHeaders = [
     value: "nosniff",
   },
   {
+    // Sem HSTS a primeira visita (ou apos o cache expirar) aceita SSL-strip: o atacante
+    // intercepta o HTML, troca https por http e serve a pagina por http. Como o
+    // script-src ainda aceita 'unsafe-inline', o script injetado executa e le o
+    // auth_token do localStorage. includeSubDomains e preload valem para o dominio
+    // inteiro, incluindo os subdominios da Netlify.
+    key: "Strict-Transport-Security",
+    value: "max-age=63072000; includeSubDomains; preload",
+  },
+  {
     // Alinhado com frame-ancestors 'none' da CSP. SAMEORIGIN ainda permitia embed da
     // própria origem em um frame de terceiros.
     key: "X-Frame-Options",

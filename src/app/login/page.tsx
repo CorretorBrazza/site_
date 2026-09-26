@@ -91,11 +91,12 @@ function LoginContent() {
         return;
       }
 
-      // Salva a sessão no localStorage e Cookie seguro
+      // Salva a sessão usando o helper canônico. A versão anterior montava o cookie
+      // na mão e sem `Secure`, o que deixava o JWT trafegar em texto claro se a página
+      // fosse aberta por http. Usar o mesmo caminho do login por magic link garante
+      // que os dois fluxos persistem a sessão de forma idêntica.
       if (json.data?.token) {
-        localStorage.setItem('auth_token', json.data.token);
-        localStorage.setItem('user_info', JSON.stringify(json.data.user));
-        document.cookie = `auth_token=${json.data.token}; path=/; max-age=2592000; SameSite=Lax`;
+        persistBrokerSession(json.data.token, json.data.user);
       }
 
       // Redireciona para o Dashboard preservando o parâmetro de recarga se houver
