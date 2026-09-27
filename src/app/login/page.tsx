@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Building2, Lock, Mail, User, Phone, ShieldCheck, Eye, EyeOff, Sparkles, ArrowRight, Loader2 } from 'lucide-react';
 
-import { API_BASE_URL, exchangeMagicToken, persistBrokerSession, stripTokenFromUrl } from '@/lib/api';
+import { exchangeMagicToken, persistBrokerSession, stripTokenFromUrl } from '@/lib/api';
 
 function LoginContent() {
   const router = useRouter();
@@ -71,7 +71,12 @@ function LoginContent() {
     setErro(null);
     setLoading(true);
 
-    const endpoint = modo === 'login' ? `${API_BASE_URL}/auth/login` : `${API_BASE_URL}/auth/register`;
+    // Mesmo-origin de propósito. A sessão vive em cookie httpOnly, e cookie só
+    // pertence ao domínio que o Recebeu: chamando a Railway direto daqui, o
+    // Set-Cookie seria gravado em up.railway.app e o dashboard, que chama pelo
+    // proxy em imoveistaboao.com.br, não veria o cookie. O sintoma era entrar e
+    // sair na hora: primeiro request do painel vinha sem credencial e caía em 401.
+    const endpoint = modo === 'login' ? '/api/v1/auth/login/' : '/api/v1/auth/register/';
 
     const body = modo === 'login'
       ? { email, senha }
@@ -82,6 +87,7 @@ function LoginContent() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
+        credentials: 'same-origin',
       });
 
       const json = await res.json();
@@ -91,10 +97,8 @@ function LoginContent() {
         return;
       }
 
-      // Salva a sessão usando o helper canônico. A versão anterior montava o cookie
-      // na mão e sem `Secure`, o que deixava o JWT trafegar em texto claro se a página
-      // fosse aberta por http. Usar o mesmo caminho do login por magic link garante
-      // que os dois fluxos persistem a sessão de forma idêntica.
+      // Guarda so o perfil. O token fica em cookie httpOnly, invisivel ao JS:
+      // guardar em localStorage devolveria o problema que a migracao resolveu.
       if (json.data?.token) {
         persistBrokerSession(json.data.token, json.data.user);
       }
