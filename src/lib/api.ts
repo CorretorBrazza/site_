@@ -65,14 +65,28 @@ export async function fetchBrokerApi<T = any>(
   return fetchApi<T>(endpoint, { ...options, headers, credentials: 'same-origin' });
 }
 
+/**
+ * O site roda com `trailingSlash: true`, que responde 308 de `/api/v1/x` para
+ * `/api/v1/x/`. Um 308 em toda chamada significa um round-trip extra e um POST
+ * dependendo de o fetch seguir redirect preservando o corpo.
+ *
+ * Normalizar a barra aqui evita o 308 por completo. O Express aceita barra
+ * final por padrao, entao `/anuncios/?limit=3` responde igual a `/anuncios`.
+ */
+function comBarraFinal(endpoint: string): string {
+  const [caminho, query] = endpoint.split('?');
+  const alvo = caminho.replace(/\/+$/, '');
+  return query !== undefined ? `${alvo}/?${query}` : `${alvo}/`;
+}
+
 export async function fetchApi<T = any>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<{ success: boolean; data?: T; error?: string; message?: string }> {
-  const cleanEndpoint = endpoint.replace(/^\/+/, '');
+  const finalEndpoint = comBarraFinal(endpoint.replace(/^\/+/, ''));
   const url = typeof window === 'undefined'
-    ? `${API_BASE_URL}/${cleanEndpoint}`
-    : `${API_BROWSER_BASE_URL}/${cleanEndpoint}`;
+    ? `${API_BASE_URL}/${finalEndpoint}`
+    : `${API_BROWSER_BASE_URL}/${finalEndpoint}`;
 
   const defaultHeaders: Record<string, string> = {
     'Content-Type': 'application/json',
