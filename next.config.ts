@@ -157,6 +157,29 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
+  /**
+   * Proxy same-origin da API.
+   *
+   * O site roda em imoveistaboao.com.br e a API em *.up.railway.app: origens
+   * diferentes. Se o navegador chamasse a API direto, a sessão em cookie só
+   * funcionaria com `SameSite=None`, que depende de o usuário não bloquear
+   * cookies de terceiros — e Safari/Chrome já bloqueiam por padrão em vários
+   * casos. O login passaria a falhar de forma intermitente e difícil de
+   * diagnosticar.
+   *
+   * Rewritando `/api/v1/*` para a Railway, a chamada sai de
+   * imoveistaboao.com.br e volta para imoveistaboao.com.br. O cookie de sessão
+   * fica first-party, `SameSite=Lax` funciona, e nenhum atributo de terceiros
+   * é preciso. A API continua accessible direto para apps e integrações.
+   */
+  async rewrites() {
+    return [
+      {
+        source: '/api/v1/:path*',
+        destination: `${apiOrigin}/api/v1/:path*`,
+      },
+    ];
+  },
   async headers() {
     return [
       {

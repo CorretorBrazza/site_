@@ -6,31 +6,63 @@ const envUrl = process.env.NEXT_PUBLIC_API_URL || (
 );
 const cleanBaseUrl = envUrl.trim().replace(/\/+$/, '').replace(/\/api\/v1\/?$/, '');
 
+/** Base absoluta. Usada no servidor (server actions), onde URL relativa não funciona. */
 export const API_BASE_URL = `${cleanBaseUrl}/api/v1`;
 
+/**
+ * Base usada no navegador: relativa de propósito.
+ *
+ * Passa pelo rewrite `/api/v1/:path*` do next.config.ts e sai para a Railway,
+ * o que faz a requisição ser same-origin. É o que permite o cookie de sessão
+ * httpOnly ser first-party e valer com `SameSite=Lax`, em vez de depender de
+ * `SameSite=None` e de o usuário não bloquear cookies de terceiros.
+ */
+export const API_BROWSER_BASE_URL = '/api/v1';
 
+const COOKIE_CSRF = 'imv_csrf';
 
-function getBrokerToken(): string | null {
-  if (typeof window === 'undefined') return null;
-  return window.localStorage.getItem('auth_token');
+/** O token de CSRF é legível de propósito: o JS precisa colocá-lo no header. */
+function lerTokenCsrf(): string | null {
+  if (typeof document === 'undefined') return null;
+  for (const parte of document.cookie.split(';')) {
+    const eq = parte.indexOf('=');
+    if (eq < 0) continue;
+    if (parte.slice(0, eq).trim() === COOKIE_CSRF) {
+      try {
+        return decodeURIComponent(parte.slice(eq + 1).trim());
+      } catch {
+        return parte.slice(eq + 1).trim();
+      }
+    }
+  }
+  return null;
 }
 
+const METODOS_SEGUROS = new Set(['GET', 'HEAD']);
+
+/**
+ * Chamadas autenticadas do corretor.
+ *
+ * Não manda `Authorization`: a credencial é o cookie httpOnly, que o JS não
+ * enxerga. Manda o header de CSRF quando muda estado, porque cookie vai sozinho
+ * no request e um POST cross-site poderia chegar com a sessão da vítima.
+ *
+ * Não há mais "tem token?" no cliente: quem decide se a sessão vale é a API. Um
+ * 401 aqui é o mesmo sinal de sessão expirada que antes vinha do localStorage.
+ */
 export async function fetchBrokerApi<T = any>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<{ success: boolean; data?: T; error?: string; message?: string }> {
-  const token = getBrokerToken();
-  if (!token) {
-    return { success: false, error: 'Sessão expirada. Faça login novamente.' };
+  const headers: Record<string, string> = { ...(options.headers as Record<string, string>) };
+  const metodo = String(options.method || 'GET').toUpperCase();
+
+  if (!METODOS_SEGUROS.has(metodo)) {
+    const csrf = lerTokenCsrf();
+    if (csrf) headers['x-csrf-token'] = csrf;
   }
 
-  return fetchApi<T>(endpoint, {
-    ...options,
-    headers: {
-      ...options.headers,
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  return fetchApi<T>(endpoint, { ...options, headers, credentials: 'same-origin' });
 }
 
 export async function fetchApi<T = any>(
@@ -38,7 +70,9 @@ export async function fetchApi<T = any>(
   options: RequestInit = {}
 ): Promise<{ success: boolean; data?: T; error?: string; message?: string }> {
   const cleanEndpoint = endpoint.replace(/^\/+/, '');
-  const url = `${API_BASE_URL}/${cleanEndpoint}`;
+  const url = typeof window === 'undefined'
+    ? `${API_BASE_URL}/${cleanEndpoint}`
+    : `${API_BROWSER_BASE_URL}/${cleanEndpoint}`;
 
   const defaultHeaders: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -76,6 +110,14 @@ export async function fetchApi<T = any>(
     }
 
     if (!res.ok) {
+      // Quem valida a sessão é a API, não o cliente. Um 401 aqui é o sinal de
+      // sessão expirada, que antes vinha da ausência do token no localStorage.
+      if (res.status === 401) {
+        return { success: false, error: 'Sessão expirada. Faça login novamente.' };
+      }
+      if (res.status === 403 && /csrf/i.test(String(json.message || json.error || ''))) {
+        return { success: false, error: 'Sessão expirada. Faça login novamente.' };
+      }
       return {
         success: false,
         error: json.message || json.error || `Erro HTTP ${res.status}`,
@@ -129,15 +171,37 @@ export async function exchangeMagicToken(magicToken: string) {
 }
 
 /**
- * Persiste a sessão devolvida pelo auto-login. Deve ser chamada SOMENTE depois de um
- * `exchangeMagicToken` bem-sucedido.
+ * A sessão NÃO é guardada aqui.
+ *
+ * O token fica em cookie httpOnly, que o JavaScript não consegue ler. Guardá-lo
+ * em localStorage seria devolver o problema que a migração resolveu: qualquer
+ * XSS lê o credential e leva a sessão embora. O que sobra no storage é o perfil,
+ * só para a UI não piscar no primeiro render.
  */
-export function persistBrokerSession(sessionToken: string, user: any): void {
-    if (typeof window === 'undefined') return;
-    window.localStorage.setItem('auth_token', sessionToken);
-    if (user) {
+export function persistBrokerSession(_sessionToken: string, user: any): void {
+  if (typeof window === 'undefined') return;
+  if (user) {
     window.localStorage.setItem('user_info', JSON.stringify(user));
   }
+}
+
+/**
+ * Encerra a sessão.
+ *
+ * Apagar o localStorage não basta: o cookie httpOnly sobrevive a isso, porque
+ * só o servidor consegue expirá-lo. Sem esta chamada, "sair" no site deixaria a
+ * sessão ativa — o pior tipo de bug de logout, porque passa despercebido.
+ */
+export async function logoutBrokerSession(): Promise<void> {
+  try {
+    await fetchApi('/auth/logout', { method: 'POST' });
+  } catch {
+    // Mesmo que a chamada falhe, o localStorage é limpo abaixo. O cookie
+    // expira por conta própria no Max-Age, e o /auth/me passa a recusar.
+  }
+  if (typeof window === 'undefined') return;
+  window.localStorage.removeItem('auth_token');
+  window.localStorage.removeItem('user_info');
 }
 
 /**

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Building2, LogOut, RefreshCw, ArrowLeft } from 'lucide-react';
 import BottomNavMobile, { TabId } from './BottomNavMobile';
+import { logoutBrokerSession } from '@/lib/api';
 
 interface DashboardShellProps {
   children: React.ReactNode;
@@ -64,11 +65,10 @@ export default function DashboardShell({
     };
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_info');
-    router.push('/login');
-  };
+    const handleLogout = async () => {
+      await logoutBrokerSession();
+      router.push('/login');
+    };
 
   const handleTab = (tab: TabId) => {
     if (onTabChange) {

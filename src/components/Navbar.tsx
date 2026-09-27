@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Menu, X, Sparkles, Building2, User, LayoutDashboard, LogOut } from 'lucide-react';
+import { logoutBrokerSession } from '@/lib/api';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,27 +12,23 @@ export default function Navbar() {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('auth_token');
-    const savedUser = localStorage.getItem('user_info');
-    if (token && savedUser) {
+      const savedUser = localStorage.getItem('user_info');
+      if (savedUser) {
       try {
-        setUsuario(JSON.parse(savedUser));
-      } catch {
-        setUsuario({ nome: 'Corretor' });
+          setUsuario(JSON.parse(savedUser));
+        } catch {
+          setUsuario({ nome: 'Corretor' });
+        }
+      } else {
+        setUsuario(null);
       }
-    } else if (token) {
-      setUsuario({ nome: 'Corretor' });
-    } else {
-      setUsuario(null);
-    }
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_info');
-    setUsuario(null);
-    router.push('/login');
-  };
+    const handleLogout = async () => {
+      await logoutBrokerSession();
+      setUsuario(null);
+      router.push('/login');
+    };
 
   return (
     <nav className="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 transition-colors shadow-xs">

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Imovel } from '@/types/imovel';
-import { fetchBrokerApi } from '@/lib/api';
+import { fetchBrokerApi, logoutBrokerSession } from '@/lib/api';
 import HeaderSaldoCreditos from './components/HeaderSaldoCreditos';
 import BannerBackupGamificacao from './components/BannerBackupGamificacao';
 import ModalRecargaCreditos from './components/ModalRecargaCreditos';
@@ -85,8 +85,10 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
     }
 
     // A sessão JWT é a única fonte de identidade; user_info serve apenas para exibição provisória.
-    const token = localStorage.getItem('auth_token');
-    const savedUser = localStorage.getItem('user_info');
+      // A sessao vive em cookie httpOnly, invisivel ao JS. O que sobra no storage
+      // e o perfil, so para a UI nao piscar no primeiro render. Quem decide se a
+      // sessao ainda vale e a API: um 401 manda o usuario para /login.
+      const savedUser = localStorage.getItem('user_info');
     if (savedUser) {
       try {
         setUsuario(JSON.parse(savedUser));
@@ -95,11 +97,14 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
       }
     }
 
-    if (!token) {
-      setUsuario(null);
-      setListaImoveis([]);
-      setLoading(false);
-      router.replace('/login');
+      // Sem perfil no storage, nao ha sessao a tentar. Se o cookie httpOnly ainda
+      // estiver valido mas o storage foi limpo, a API responde 401 no primeiro
+      // fetch e o usuario e levado para /login — o mesmo caminho de antes.
+      if (!savedUser) {
+        setUsuario(null);
+        setListaImoveis([]);
+        setLoading(false);
+        router.replace('/login');
       return;
     }
 
@@ -231,11 +236,11 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
     carregarDadosPainel();
   }, []);
 
-    const handleLogout = () => {
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('user_info');
-      router.push('/login');
-  };
+      const handleLogout = async () => {
+        // Expirar o cookie httpOnly e obrigatorio: ele nao morre com o localStorage.
+        await logoutBrokerSession();
+        router.push('/login');
+    };
 
   const totalFotosReal = (listaImoveis || []).reduce((acc, item) => acc + (item.fotos?.length || 0), 0);
   const totalMegas = totalFotosReal * 2.5;
