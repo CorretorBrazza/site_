@@ -65,6 +65,82 @@ export async function fetchBrokerApi<T = any>(
   return fetchApi<T>(endpoint, { ...options, headers, credentials: 'same-origin' });
 }
 
+const COOKIE_ADMIN_CSRF = 'imv_admin_csrf';
+
+function lerTokenCsrfAdmin(): string | null {
+  if (typeof document === 'undefined') return null;
+  for (const parte of document.cookie.split(';')) {
+    const eq = parte.indexOf('=');
+    if (eq < 0) continue;
+    if (parte.slice(0, eq).trim() === COOKIE_ADMIN_CSRF) {
+      try {
+        return decodeURIComponent(parte.slice(eq + 1).trim());
+      } catch {
+        return parte.slice(eq + 1).trim();
+      }
+    }
+  }
+  return null;
+}
+
+/**
+ * Chamadas do painel administrativo.
+ *
+ * O painel lia um JWT do `localStorage` e o mandava em `Authorization`. Isso
+ * punha a credencial no mesmo origin que carrega GTM, GA e AdSense: qualquer
+ * XSS — que a CSP não bloqueia, porque `script-src` tem `unsafe-inline` — lia o
+ * token e passava a injetar crédito, excluir anúncio e ler o e-mail e telefone
+ * de todos os corretores.
+ *
+ * A sessão do admin agora também é cookie httpOnly, em cookie próprio
+ * (`imv_admin_session`). O XSS ainda age como a vítima, mas não consegue roubar
+ * a credencial para usar depois. `Bearer` continua aceito pela API para uso por
+ * script e testes.
+ */
+export async function fetchAdminApi<T = any>(
+  endpoint: string,
+  options: RequestInit = {}
+): Promise<T & { success: boolean; data?: any; error?: string; message?: string }> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(options.headers as Record<string, string>),
+  };
+  const metodo = String(options.method || 'GET').toUpperCase();
+
+  if (!METODOS_SEGUROS.has(metodo)) {
+    const csrf = lerTokenCsrfAdmin();
+    if (csrf) headers['x-csrf-token'] = csrf;
+  }
+
+  // Devolve o corpo INTEIRO, e não só `data`: os endpoints de /admin respondem
+  // com `{ success, data, ...data }`, e o painel lê campos do topo (`corretores`,
+  // `gemini_metrics`). `fetchApi` reduziria a `{ success, data }` e quebraria.
+  const res = await fetch(resolveApiUrl(endpoint), {
+    ...options,
+    headers,
+    credentials: 'same-origin',
+  });
+
+  const text = await res.text();
+  if (!text) {
+    return { success: res.ok } as never;
+  }
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { success: false, error: `Resposta inesperada do servidor (HTTP ${res.status}).` } as never;
+  }
+}
+
+/** Logout do admin: expira o cookie httpOnly no servidor, não só no navegador. */
+export async function logoutAdminSession(): Promise<void> {
+  try {
+    await fetchAdminApi('/admin/logout', { method: 'POST' });
+  } catch {
+    // Mesmo que a chamada falhe, o cookie é expirado na próxima navegação.
+  }
+}
+
 /**
  * O site roda com `trailingSlash: true`, que responde 308 de `/api/v1/x` para
  * `/api/v1/x/`. Um 308 em toda chamada significa um round-trip extra e um POST
@@ -77,6 +153,14 @@ function comBarraFinal(endpoint: string): string {
   const [caminho, query] = endpoint.split('?');
   const alvo = caminho.replace(/\/+$/, '');
   return query !== undefined ? `${alvo}/?${query}` : `${alvo}/`;
+}
+
+/** URL final de uma chamada, respeitando a barra final e o proxy do browser. */
+export function resolveApiUrl(endpoint: string): string {
+  const finalEndpoint = comBarraFinal(endpoint.replace(/^\/+/, ''));
+  return typeof window === 'undefined'
+    ? `${API_BASE_URL}/${finalEndpoint}`
+    : `${API_BROWSER_BASE_URL}/${finalEndpoint}`;
 }
 
 export async function fetchApi<T = any>(

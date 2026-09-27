@@ -29,7 +29,7 @@ import {
   ExternalLink,
   PhoneCall,
 } from 'lucide-react';
-import { API_BASE_URL } from '@/lib/api';
+import { fetchAdminApi, logoutAdminSession } from '@/lib/api';
 import CuradoriaRegionalAdmin from './CuradoriaRegionalAdmin';
 
 interface OperationItem {
@@ -155,24 +155,50 @@ export default function AdminDashboardPage() {
   // Convite de Novos Corretores com Bônus
   const [telefoneConvite, setTelefoneConvite] = useState('');
   const [creditosConvite, setCreditosConvite] = useState(3);
+  const [requestIdConvite, setRequestIdConvite] = useState('');
   const [nomeConvite, setNomeConvite] = useState('');
   const [enviandoConvite, setEnviandoConvite] = useState(false);
   const [msgSucessoConvite, setMsgSucessoConvite] = useState<string | null>(null);
   const [erroConvite, setErroConvite] = useState<string | null>(null);
 
-  // Verifica token ao carregar
+  // Verifica a sessão ao carregar. Não há token no `localStorage`: a credencial
+  // é o cookie httpOnly, que o JS não enxerga. A única forma de saber se ainda
+  // vale é chamar a API e deixar ela responder 401 ou 200.
   useEffect(() => {
-    const savedToken = localStorage.getItem('admin_token');
-    if (savedToken) {
-      setAdminToken(savedToken);
-    } else {
-      setLoading(false);
+    // Migração do painel: a sessão passou de `localStorage` para cookie httpOnly.
+    // Enquanto o token antigo não for apagado, ele continua no disco e um XSS
+    // ainda teria o que roubar — mesmo que nada mais o leia. Esta é a única
+    // oportunidade de limpá-lo, porque quem já tem o cookie httpOnly não
+    // precisa mais de nada em JS.
+    try {
+      window.localStorage.removeItem('admin_token');
+      window.sessionStorage.removeItem('admin_token');
+    } catch {
+      // Modo privado / storage bloqueado: sem legado para apagar, tudo bem.
     }
   }, []);
 
   useEffect(() => {
+    let cancelado = false;
+    (async () => {
+      try {
+        const res = await fetchAdminApi('/admin/stats');
+        if (cancelado) return;
+        if (res.success) {
+          setAdminToken('cookie');
+        } else {
+          setLoading(false);
+        }
+      } catch {
+        if (!cancelado) setLoading(false);
+      }
+    })();
+    return () => { cancelado = true; };
+  }, []);
+
+  useEffect(() => {
     if (adminToken) {
-      carregarDadosAdmin(adminToken);
+      carregarDadosAdmin();
     }
   }, [adminToken]);
 
@@ -182,50 +208,48 @@ export default function AdminDashboardPage() {
     setAutenticando(true);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/admin/login`, {
+      const res = await fetchAdminApi('/admin/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: emailLogin, senha: senhaLogin }),
       });
 
-      const json = await res.json();
-      if (json.success && json.data.token) {
-        localStorage.setItem('admin_token', json.data.token);
-        setAdminToken(json.data.token);
+      if (res.success) {
+        // A resposta não traz mais token: a sessão está no cookie httpOnly.
+        setAdminToken('cookie');
       } else {
-        setErroAuth(json.message || 'Falha na autenticação administrativa. Verifique e-mail e senha.');
+        setErroAuth(res.message || 'Falha na autenticação administrativa. Verifique e-mail e senha.');
       }
-    } catch (err) {
-      setErroAuth('Erro ao se conectar com a API no Railway.');
+    } catch {
+      setErroAuth('Erro ao se conectar com a API.');
     } finally {
       setAutenticando(false);
     }
   };
 
-  const handleLogoutAdmin = () => {
-    localStorage.removeItem('admin_token');
+  const handleLogoutAdmin = async () => {
+    // Expira o cookie no servidor. Limpar só o estado da tela deixaria a sessão
+    // viva até o token expirar sozinho.
+    await logoutAdminSession();
     setAdminToken(null);
   };
 
-  const carregarDadosAdmin = async (token: string) => {
+  const carregarDadosAdmin = async () => {
     setLoading(true);
     try {
-      const headers = { Authorization: `Bearer ${token}` };
+      // `catch` devolve o mesmo formato de `fetchAdminApi`, senão o TypeScript
+      // estreita o tipo e perde `data`/`gemini_metrics` nos usos abaixo.
+      const semSessao = (): { success: boolean; data?: any; error?: string; message?: string } =>
+        ({ success: false });
       const [resStats, resCorretores, resAnuncios, resConhecimento, resMetrics] = await Promise.all([
-        fetch(`${API_BASE_URL}/admin/stats`, { headers }).then((r) => r.json()).catch(() => ({})),
-        fetch(`${API_BASE_URL}/admin/corretores`, { headers }).then((r) => r.json()).catch(() => ({})),
-        fetch(`${API_BASE_URL}/admin/anuncios`, { headers }).then((r) => r.json()).catch(() => ({})),
-        fetch(`${API_BASE_URL}/admin/conhecimento`, { headers }).then((r) => r.json()).catch(() => ({})),
-        fetch(`${API_BASE_URL}/admin/gemini-metrics`, { headers }).then((r) => r.json()).catch(() => ({})),
+        fetchAdminApi('/admin/stats').catch(semSessao),
+        fetchAdminApi('/admin/corretores').catch(semSessao),
+        fetchAdminApi('/admin/anuncios').catch(semSessao),
+        fetchAdminApi('/admin/conhecimento').catch(semSessao),
+        fetchAdminApi('/admin/gemini-metrics').catch(semSessao),
       ]);
 
-      // Se o token estiver expirado ou inválido, limpa localStorage e pede login limpo
-      if (
-        (resCorretores.message && resCorretores.message.includes('expirad')) ||
-        (resCorretores.error && resCorretores.error.includes('expirad')) ||
-        (resStats.message && resStats.message.includes('expirad'))
-      ) {
-        localStorage.removeItem('admin_token');
+      // Sessão recusada pela API: volta para a tela de login.
+      if (!resStats.success && !resCorretores.success) {
         setAdminToken(null);
         setErroAuth('Sessão expirada. Insira sua senha para reautenticar e carregar o Firebase.');
         return;
@@ -281,19 +305,17 @@ export default function AdminDashboardPage() {
     if (!confirmou) return;
 
     try {
-      const res = await fetch(`${API_BASE_URL}/admin/anuncios/${encodeURIComponent(adId)}`, {
+      const json = await fetchAdminApi(`/admin/anuncios/${encodeURIComponent(adId)}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${adminToken}` },
       });
 
-      const json = await res.json();
       if (json.success) {
         alert(`Anúncio "${titulo}" excluído com sucesso do portal!`);
-        carregarDadosAdmin(adminToken);
+        carregarDadosAdmin();
       } else {
         alert(json.message || 'Erro ao excluir anúncio.');
       }
-    } catch (err) {
+    } catch {
       alert('Erro de conexão ao excluir anúncio.');
     }
   };
@@ -306,25 +328,19 @@ export default function AdminDashboardPage() {
     setProcessandoIa(true);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/admin/conhecimento/texto-bruto`, {
+      const json = await fetchAdminApi('/admin/conhecimento/texto-bruto', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${adminToken}`,
-        },
         body: JSON.stringify({
           texto_bruto: textoBruto,
           cidade: cidadeSel,
           bairro: bairroSel,
         }),
       });
-
-      const json = await res.json();
       if (json.success) {
         setMsgSucessoIa(`✨ Conhecimento extraído e formatado com sucesso pela IA! Cadastrado: "${json.data.conhecimento.titulo}"`);
         setTextoBruto('');
         setBairroSel('');
-        carregarDadosAdmin(adminToken);
+        carregarDadosAdmin();
       } else {
         setErroIa(json.message || 'Falha ao processar texto bruto com IA.');
       }
@@ -341,12 +357,8 @@ export default function AdminDashboardPage() {
     setSalvandoCredito(true);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/admin/corretores/creditos`, {
+      const json = await fetchAdminApi('/admin/corretores/creditos', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${adminToken}`,
-        },
         body: JSON.stringify({
           email: corretorSelecionado.email,
           quantidade: Number(qtdCreditos),
@@ -354,15 +366,14 @@ export default function AdminDashboardPage() {
         }),
       });
 
-      const json = await res.json();
       if (json.success) {
         alert(`Créditos ajustados com sucesso para ${corretorSelecionado.email}!`);
         setCorretorSelecionado(null);
-        carregarDadosAdmin(adminToken);
+        carregarDadosAdmin();
       } else {
         alert(json.message || 'Erro ao ajustar créditos.');
       }
-    } catch (err) {
+    } catch {
       alert('Erro de conexão ao servidor.');
     } finally {
       setSalvandoCredito(false);
@@ -376,27 +387,32 @@ export default function AdminDashboardPage() {
     setErroConvite(null);
     setEnviandoConvite(true);
 
+    // A chave nasce quando o formulário é preenchido e é REUSADA em toda
+    // reenvio enquanto o mesmo convite não concluir. É ela que impede o duplo
+    // clique de creditar o bônus duas vezes; um `randomUUID()` por tentativa
+    // não impediria nada, porque cada clique seria um pedido distinto.
+    const requestId = requestIdConvite || crypto.randomUUID();
+    setRequestIdConvite(requestId);
+
     try {
-      const res = await fetch(`${API_BASE_URL}/admin/convidar-corretor`, {
+      const json = await fetchAdminApi('/admin/convidar-corretor', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${adminToken}`,
-        },
         body: JSON.stringify({
           telefone: telefoneConvite,
           creditos_bonus: Number(creditosConvite),
           nome_sugerido: nomeConvite,
+          request_id: requestId,
         }),
       });
 
-      const json = await res.json();
       if (json.success) {
         setMsgSucessoConvite(json.message || `Convite enviado com sucesso para ${telefoneConvite}!`);
         setTelefoneConvite('');
         setNomeConvite('');
         setCreditosConvite(3);
-        carregarDadosAdmin(adminToken);
+        // Convite concluído: o próximo precisa ser um pedido novo.
+        setRequestIdConvite('');
+        carregarDadosAdmin();
       } else {
         setErroConvite(json.message || 'Falha ao enviar convite.');
       }
@@ -516,7 +532,7 @@ export default function AdminDashboardPage() {
 
           <div className="flex items-center gap-3">
             <button
-              onClick={() => carregarDadosAdmin(adminToken)}
+              onClick={() => carregarDadosAdmin()}
               className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 transition-all text-xs flex items-center gap-1.5 font-bold"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} /> Atualizar

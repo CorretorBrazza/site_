@@ -5,8 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Building2, KeyRound, Mail, Lock, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
 
-import { API_BASE_URL } from '@/lib/api';
-
 function EsqueciSenhaForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -38,7 +36,7 @@ function EsqueciSenhaForm() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
+      const res = await fetch(`/api/v1/auth/forgot-password/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -70,7 +68,7 @@ function EsqueciSenhaForm() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/auth/reset-password`, {
+      const res = await fetch(`/api/v1/auth/reset-password/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: tokenParam, senha: novaSenha }),

@@ -3,8 +3,6 @@
 import { useState, useEffect } from 'react';
 import { Imovel } from '@/types/imovel';
 
-import { API_BASE_URL } from '@/lib/api';
-
 export function useLiveImoveis(initialImoveis: Imovel[]) {
   const [imoveis, setImoveis] = useState<Imovel[]>(initialImoveis);
   const [loading, setLoading] = useState(false);
@@ -15,7 +13,7 @@ export function useLiveImoveis(initialImoveis: Imovel[]) {
     async function fetchLive() {
       try {
         setLoading(true);
-        const res = await fetch(`${API_BASE_URL}/anuncios?limit=100&status=DELIVERED`, {
+        const res = await fetch(`/api/v1/anuncios/?limit=100&status=DELIVERED`, {
           cache: 'no-store',
         });
         const json = await res.json();

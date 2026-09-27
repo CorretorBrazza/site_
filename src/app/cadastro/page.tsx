@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { Sparkles, Check, ArrowRight, ShieldCheck, AlertCircle, Loader2, Lock, Mail, User, Phone } from 'lucide-react';
-import { API_BASE_URL } from '@/lib/api';
 import Link from 'next/link';
 
 export default function CadastroPage() {
@@ -27,9 +26,13 @@ export default function CadastroPage() {
     setErrorMsg('');
 
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+      // Mesmo caminho do login: passando pelo proxy do site, o cookie de sessão
+      // nasce em imoveistaboao.com.br. Chamando a Railway direto, o cookie
+      // nasceria no domínio do Railway e o navegador o ignoraria.
+      const response = await fetch('/api/v1/auth/register/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
         body: JSON.stringify({ nome, email, senha, telefone, creci }),
       });
 

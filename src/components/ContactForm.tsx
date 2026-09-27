@@ -10,8 +10,6 @@ const WEB3FORMS_ACCESS_KEY = '7d915857-c79e-4ff4-b507-ac4edaa6ce5c';
 const campoBase =
   'w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-950 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 text-xs md:text-sm';
 
-import { API_BASE_URL } from '@/lib/api';
-
 export default function ContactForm() {
   const [formData, setFormData] = useState({
     nome: '',
@@ -47,7 +45,7 @@ export default function ContactForm() {
       // 1. Tenta enviar para a rota segura da API com rate-limiting e honeypot
       let submitted = false;
       try {
-        const apiRes = await fetch(`${API_BASE_URL}/contact`, {
+        const apiRes = await fetch(`/api/v1/contact/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

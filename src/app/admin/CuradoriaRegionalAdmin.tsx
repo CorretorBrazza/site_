@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { Archive, CheckCircle2, CircleAlert, Lock, Plus, RefreshCw, Send, ShieldCheck, Unlock, XCircle } from 'lucide-react';
-import { API_BASE_URL } from '@/lib/api';
+import { fetchAdminApi } from '@/lib/api';
 
 type Fact = {
   id: string;
@@ -47,12 +47,12 @@ export default function CuradoriaRegionalAdmin({ adminToken }: { adminToken: str
     validUntil: '', locked: false,
   });
 
-  const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${adminToken}` };
+  // Sessão administrativa é cookie httpOnly: nada de `Authorization: Bearer`
+  // aqui. O `fetchAdminApi` anexa o cookie e o header de CSRF nas escritas.
   async function refresh() {
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/knowledge-facts`, { headers: { Authorization: `Bearer ${adminToken}` } });
-      const json = await response.json();
+      const json = await fetchAdminApi('/admin/knowledge-facts');
       if (json.success) setFacts(Array.isArray(json.data) ? json.data : []);
     } finally { setLoading(false); }
   }
@@ -65,8 +65,8 @@ export default function CuradoriaRegionalAdmin({ adminToken }: { adminToken: str
     event.preventDefault();
     setSaving(true); setNotice(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/knowledge-facts`, {
-        method: 'POST', headers,
+      const json = await fetchAdminApi('/admin/knowledge-facts', {
+        method: 'POST',
         body: JSON.stringify({
           entity: { tipo: form.entityType, nome: form.entityName },
           scope: { cidade: form.cidade, bairro: form.bairro || null },
@@ -79,7 +79,6 @@ export default function CuradoriaRegionalAdmin({ adminToken }: { adminToken: str
           locked_by_admin: form.locked,
         }),
       });
-      const json = await response.json();
       if (!json.success) throw new Error(json.message || 'Falha ao publicar o fato.');
       setNotice('Fato publicado com autoridade administrativa e disponível imediatamente para o RAG.');
       setForm({ ...form, entityName: '', bairro: '', valor: '', observacao: '', validUntil: '' });
@@ -93,10 +92,9 @@ export default function CuradoriaRegionalAdmin({ adminToken }: { adminToken: str
     if (!reason || reason.trim().length < 5) return;
     setSaving(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/knowledge-facts/${encodeURIComponent(fact.id)}/moderate`, {
-        method: 'POST', headers, body: JSON.stringify({ acao: action, motivo: reason }),
+      const json = await fetchAdminApi(`/admin/knowledge-facts/${encodeURIComponent(fact.id)}/moderate`, {
+        method: 'POST', body: JSON.stringify({ acao: action, motivo: reason }),
       });
-      const json = await response.json();
       if (!json.success) throw new Error(json.message || 'Falha na moderação.');
       setNotice(`Fato ${action.toLowerCase()} com sucesso.`);
       await refresh();
