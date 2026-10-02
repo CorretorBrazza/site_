@@ -1,18 +1,18 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import PhotoReorder, { PhotoItem } from '@/components/PhotoReorder';
 import MediaKitDisplay from '@/components/MediaKitDisplay';
-import {
-  validateMagicToken,
-  getApprovalDetails,
-  approveAd,
-  rejectAd,
-  editAd,
-  reorderPhotos,
-} from '@/lib/api';
+import { resolveApiUrl } from '@/lib/api';
 import { normalizeApprovalFinalidade } from '@/lib/approval-form';
+import { lerLinkDeAprovacao, mensagemDaFalha, type ApprovalFailure } from '@/lib/approval-link';
+import {
+  criarClienteAprovacao,
+  SegredoDaAprovacao,
+  type ClienteAprovacao,
+  type DetalhesAnuncio,
+} from '@/lib/approval-client';
 import {
   CheckCircle2,
   AlertTriangle,
@@ -23,20 +23,34 @@ import {
   FileText,
   Save,
   MapPin,
-  Building2,
-  Send,
 } from 'lucide-react';
 
-function AprovarContent() {
-  const searchParams = useSearchParams();
-  const rawToken = searchParams.get('token') || '';
-  const adIdParam = searchParams.get('ad_id') || searchParams.get('adId') || '';
-  const [token, setToken] = useState<string>(rawToken);
+/**
+ * Estados da tela.
+ *
+ * `bloqueado` é terminal e cobre ausente/inválido/expirado/já usado/sem
+ * crédito/indisponível. O texto exibido vem de `mensagemDaFalha`, derivado só
+ * do status HTTP: a tela nunca repete a mensagem do backend, porque ela diria
+ * ao corretor se o link existe, se o anúncio existe ou se o prazo venceu.
+ */
+type Etapa = 'carregando' | 'carregando-detalhes' | 'revisao' | 'concluido' | 'descartado' | 'bloqueado';
 
-  const [loading, setLoading] = useState(true);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [adData, setAdData] = useState<any>(null);
+interface Feedback {
+  tom: 'sucesso' | 'erro';
+  texto: string;
+}
+
+function AprovarContent() {
+  const [etapa, setEtapa] = useState<Etapa>('carregando');
+  const [falha, setFalha] = useState<ApprovalFailure>('ausente');
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
+
+  const [adData, setAdData] = useState<DetalhesAnuncio | null>(null);
+  const [approvalStatus, setApprovalStatus] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'preview' | 'fotos' | 'mediakit'>('preview');
+
+  const [corretorNome, setCorretorNome] = useState('');
+  const [saldoDisponivel, setSaldoDisponivel] = useState<number | null>(null);
 
   // Formulário de Edição Completo
   const [titulo, setTitulo] = useState('');
@@ -54,96 +68,118 @@ function AprovarContent() {
   const [areaUtil, setAreaUtil] = useState<number | ''>('');
   const [bairro, setBairro] = useState('');
 
-  // Fotos
   const [fotos, setFotos] = useState<PhotoItem[]>([]);
-
-  // Estados de Ação
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [approvalStatus, setApprovalStatus] = useState<string | null>(null);
-  const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
-  const [corretorNome, setCorretorNome] = useState<string>('');
-  const [saldoDisponivel, setSaldoDisponivel] = useState<number | null>(null);
+
+  /**
+   * A credencial vive nestas duas refs e em mais lugar nenhum.
+   *
+   * `segredoRef` guarda o token em memória; `clienteRef` guarda as funções que
+   * o leem. Nenhum dos dois é estado de render, então o token nunca entra em
+   * comparação de efeito, prop de componente ou serialização. Os componentes
+   * filhos (`PhotoReorder`, `MediaKitDisplay`) recebem só dados do anúncio.
+   */
+  const segredoRef = useRef<SegredoDaAprovacao | null>(null);
+  const clienteRef = useRef<ClienteAprovacao | null>(null);
+
+  const aplicarDetalhes = useCallback((data: DetalhesAnuncio) => {
+    setAdData(data);
+    setApprovalStatus(data.status);
+
+    const refinados = data.dados_refinados || {};
+    const carac = refinados.caracteristicas || {};
+    setTitulo(refinados.titulo || '');
+    setTipoImovel(refinados.tipoImovel || 'Apartamento');
+    setFinalidade(normalizeApprovalFinalidade(refinados));
+    setDescricao(refinados.descricao || '');
+    setPrecoVenda(refinados.precoVenda ?? '');
+    setPrecoLocacao(refinados.precoLocacao ?? '');
+    setCondominio(refinados.condominio ?? '');
+    setIptu(refinados.iptu ?? '');
+    setQuartos(carac.quartos ?? '');
+    setSuites(carac.suites ?? '');
+    setBanheiros(carac.banheiros ?? '');
+    setVagas(carac.vagas ?? '');
+    setAreaUtil(carac.areaUtil ?? carac.areaTotal ?? '');
+    setBairro(refinados.endereco?.bairro || '');
+    setFotos(data.fotos || []);
+  }, []);
 
   useEffect(() => {
-    // Somente o token do Magic Link (?token=) é aceito aqui. NÃO há fallback para o
-    // auth_token da sessão: o link de aprovação é distribuído por WhatsApp/e-mail e
-    // concede acesso somente a este anúncio. Sessão de corretor é autenticada em /login.
-    const effectiveToken = rawToken || '';
-    setToken(effectiveToken);
+    let cancelado = false;
 
-    if (!effectiveToken) {
-      setErrorMsg('Token de segurança não fornecido. Acesse pelo link enviado no WhatsApp/e-mail ou faça login no seu Painel.');
-      setLoading(false);
-      return;
-    }
+    const segredo = new SegredoDaAprovacao();
+    const cliente = criarClienteAprovacao(
+      { resolver: resolveApiUrl, fetchImpl: (...args) => fetch(...args) },
+      segredo
+    );
+    segredoRef.current = segredo;
+    clienteRef.current = cliente;
 
-    async function loadAdData() {
-      setLoading(true);
-      setErrorMsg(null);
+    // Limpa a barra de endereços ANTES de qualquer requisição. `lerLinkDeAprovacao`
+    // faz as duas coisas em sequência síncrona: lê o fragmento e já chama
+    // `replaceState`. A partir daqui o `#token=` não existe mais — nem em
+    // `Referer`, nem em histórico, nem para o usuário copiar a URL.
+    const link = lerLinkDeAprovacao(window);
 
-      // Valida token
-      const valResult = await validateMagicToken(effectiveToken, adIdParam || undefined);
-      if (!valResult.success) {
-        setErrorMsg(valResult.error || 'Magic Link ou sessão inválida.');
-        setLoading(false);
+    // Daqui para baixo o efeito só se inscreve no resultado e publica estado.
+    // A URL é um sistema externo: o trabalho nela é feito de forma síncrona,
+    // logo acima, e o estado é escrito a partir da continuação assíncrona —
+    // escrever em estado no corpo síncrono do efeito provoca render em cascata.
+    void (async () => {
+      if (cancelado) return;
+
+      if (!link.token) {
+        // Link sem token no fragmento (inclusive o antigo `?token=`): o mesmo
+        // estado genérico de link inválido, e nenhuma chamada ao backend.
+        setFalha('ausente');
+        setEtapa('bloqueado');
         return;
       }
 
-      // O Magic Link de aprovação NÃO concede sessão do corretor (ver ApprovalService.validateToken).
-      // Aprovação, edição e reordenação usam o próprio token do link; para acessar o painel
-      // o corretor precisa entrar em /login. Nunca persistir credencial derivada deste link:
-      // ele trafega por WhatsApp/e-mail e tratá-lo como sessão expõe a conta inteira.
-      if (valResult.data?.corretor) {
-        setCorretorNome(valResult.data.corretor.nome || '');
-        setSaldoDisponivel(Number(valResult.data.corretor.saldo_disponivel ?? 0));
-      }
+      segredo.guardar(link.token);
+      // O `ad_id` do fragmento vai só como checagem de consistência. Quem
+      // resolve o anúncio é o hash do token, no backend.
+      const validado = await cliente.validar(link.adId || undefined);
+      if (cancelado) return;
 
-      // Remove o token da query string da URL para mitigar vazamento em Referer e histórico
-      if (typeof window !== 'undefined' && rawToken && window.history?.replaceState) {
-        try {
-          const cleanUrl = new URL(window.location.href);
-          cleanUrl.searchParams.delete('token');
-          window.history.replaceState({}, document.title, cleanUrl.toString());
-        } catch {}
-      }
-
-      const adId = valResult.data?.ad_id || adIdParam;
-      const detailsResult = await getApprovalDetails(adId, token);
-
-      if (!detailsResult.success || !detailsResult.data) {
-        setErrorMsg(detailsResult.error || 'Não foi possível carregar os detalhes do imóvel.');
-        setLoading(false);
+      if (!validado.ok || !validado.data?.valid) {
+        setFalha(validado.falha || 'invalido');
+        setEtapa('bloqueado');
+        segredo.limpar();
         return;
       }
 
-      const data = detailsResult.data;
-      setAdData(data);
-      setApprovalStatus(data.status);
+      const dados = validado.data;
+      if (dados.corretor) {
+        setCorretorNome(dados.corretor.nome || '');
+        setSaldoDisponivel(Number(dados.corretor.saldo_disponivel ?? 0));
+      }
 
-      // Preenche form completo
-      const refinados = data.dados_refinados || {};
-      const carac = refinados.caracteristicas || {};
-      setTitulo(refinados.titulo || '');
-      setTipoImovel(refinados.tipoImovel || 'Apartamento');
-      setFinalidade(normalizeApprovalFinalidade(refinados));
-      setDescricao(refinados.descricao || '');
-      setPrecoVenda(refinados.precoVenda ?? '');
-      setPrecoLocacao(refinados.precoLocacao ?? '');
-      setCondominio(refinados.condominio ?? '');
-      setIptu(refinados.iptu ?? '');
-      setQuartos(carac.quartos ?? '');
-      setSuites(carac.suites ?? '');
-      setBanheiros(carac.banheiros ?? '');
-      setVagas(carac.vagas ?? '');
-      setAreaUtil(carac.areaUtil ?? carac.areaTotal ?? '');
-      setBairro(refinados.endereco?.bairro || '');
-      setFotos(data.fotos || []);
+      if (cancelado) return;
+      setEtapa('carregando-detalhes');
 
-      setLoading(false);
-    }
+      const adId = dados.ad_id || link.adId;
+      const detalhes = await cliente.detalhes(adId);
+      if (cancelado) return;
 
-    loadAdData();
-  }, [token, adIdParam]);
+      if (!detalhes.ok || !detalhes.data) {
+        setFalha(detalhes.falha || 'invalido');
+        setEtapa('bloqueado');
+        segredo.limpar();
+        return;
+      }
+
+      aplicarDetalhes(detalhes.data);
+      setEtapa('revisao');
+    })();
+
+    return () => {
+      cancelado = true;
+      segredo.limpar();
+      clienteRef.current = null;
+    };
+  }, [aplicarDetalhes]);
 
   const getPayloadEditado = () => ({
     titulo,
@@ -164,162 +200,180 @@ function AprovarContent() {
     },
   });
 
+  /** Falha de ação: mesmo mapeamento por status, sem vazar texto do backend. */
+  const registrarFalhaDeAcao = (motivo: ApprovalFailure) => {
+    setFeedback({ tom: 'erro', texto: mensagemDaFalha(motivo) });
+    if (motivo === 'ausente' || motivo === 'invalido') {
+      setFalha(motivo);
+      setEtapa('bloqueado');
+    }
+  };
+
   // Ação: Salvar Edições
   const handleSaveEdits = async () => {
-    if (!adData) return;
+    const cliente = clienteRef.current;
+    if (!cliente || !adData) return;
     setIsSubmitting(true);
-    setFeedbackMsg(null);
+    setFeedback(null);
 
-    const result = await editAd(token, adData.ad_id, getPayloadEditado());
+    const result = await cliente.editar(adData.ad_id, getPayloadEditado());
 
     setIsSubmitting(false);
 
-    if (result.success) {
-      if (typeof window !== 'undefined') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (result.ok) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const mediaKit = result.data?.media_kit;
+      if (mediaKit) {
+        setAdData((prev) => (prev ? { ...prev, media_kit: mediaKit } : prev));
       }
-      const responseData: any = result.data;
-      if (responseData?.media_kit) {
-        setAdData((prev: any) => ({
-          ...prev,
-          media_kit: responseData.media_kit,
-        }));
-      }
-      setFeedbackMsg('Edições salvas e Media Kit recalibrado com sucesso!');
-      setTimeout(() => setFeedbackMsg(null), 4000);
+      setFeedback({ tom: 'sucesso', texto: 'Edições salvas e Media Kit recalibrado com sucesso!' });
     } else {
-      alert(`Erro ao salvar edições: ${result.error}`);
+      registrarFalhaDeAcao(result.falha || 'desconhecido');
     }
   };
 
   // Ação: Reordenar Fotos
   const handleReorderPhotos = async (newPhotos: PhotoItem[]) => {
-    if (!adData) return;
+    const cliente = clienteRef.current;
+    if (!cliente || !adData) return;
     setFotos(newPhotos);
+    setFeedback(null);
 
     // A API recebe os índices do array original; `ordem` muda na interface e não identifica a foto.
     const novaOrdem = newPhotos.map((photo, index) => photo.source_index ?? index);
-    const result = await reorderPhotos(token, adData.ad_id, novaOrdem);
+    const result = await cliente.reordenar(adData.ad_id, novaOrdem);
 
-    if (!result.success) {
-      alert(`Erro ao reordenar fotos: ${result.error}`);
+    if (!result.ok) {
+      registrarFalhaDeAcao(result.falha || 'desconhecido');
     }
   };
 
   // Ação: Aprovar
   const handleApprove = async () => {
-    if (!adData) return;
+    const cliente = clienteRef.current;
+    if (!cliente || !adData) return;
     if (!confirm('Deseja realmente APROVAR este anúncio? 1 crédito será debitado do seu saldo.')) return;
 
     setIsSubmitting(true);
-    setFeedbackMsg(null);
+    setFeedback(null);
 
-    const result = await approveAd(token, adData.ad_id, getPayloadEditado());
+    const result = await cliente.aprovar(adData.ad_id, getPayloadEditado(), { aprovar: true });
 
     setIsSubmitting(false);
 
-    if (result.success) {
-      if (typeof window !== 'undefined') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-      const refreshed = await getApprovalDetails(adData.ad_id, token);
-      if (refreshed.success && refreshed.data) {
-        const nextData: any = refreshed.data;
-        const nextRefinados = nextData.dados_refinados || {};
-        const nextCarac = nextRefinados.caracteristicas || {};
-        setAdData(nextData);
-        setApprovalStatus(nextData.status || result.data?.status || 'DELIVERED');
-        setFotos(nextData.fotos || []);
-        setTitulo(nextRefinados.titulo || '');
-        setTipoImovel(nextRefinados.tipoImovel || 'Apartamento');
-        setFinalidade(normalizeApprovalFinalidade(nextRefinados));
-        setDescricao(nextRefinados.descricao || '');
-        setPrecoVenda(nextRefinados.precoVenda ?? '');
-        setPrecoLocacao(nextRefinados.precoLocacao ?? '');
-        setCondominio(nextRefinados.condominio ?? '');
-        setIptu(nextRefinados.iptu ?? '');
-        setQuartos(nextCarac.quartos ?? '');
-        setSuites(nextCarac.suites ?? '');
-        setBanheiros(nextCarac.banheiros ?? '');
-        setVagas(nextCarac.vagas ?? '');
-        setAreaUtil(nextCarac.areaUtil ?? nextCarac.areaTotal ?? '');
-        setBairro(nextRefinados.endereco?.bairro || '');
-      } else {
-        setApprovalStatus(result.data?.status || 'DELIVERED');
-        setAdData((prev: any) => ({
-          ...prev,
-          status: result.data?.status || 'DELIVERED',
-          media_kit: result.data?.media_kit || prev.media_kit,
-        }));
-      }
-      setFeedbackMsg('Anúncio Aprovado com sucesso! Fotos e Media Kit foram liberados.');
-    } else {
-      alert(`Erro ao aprovar anúncio: ${result.error}`);
+    if (!result.ok) {
+      registrarFalhaDeAcao(result.falha || 'desconhecido');
+      return;
     }
+
+    const statusFinal = result.data?.status || 'DELIVERED';
+    const adId = adData.ad_id;
+    const refresh = await cliente.detalhes(adId);
+
+    if (refresh.ok && refresh.data) {
+      aplicarDetalhes(refresh.data);
+      setApprovalStatus(refresh.data.status || statusFinal);
+    } else {
+      setApprovalStatus(statusFinal);
+      setAdData((prev) => (prev ? { ...prev, status: statusFinal } : prev));
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setEtapa('concluido');
+    // O link cumpriu o papel. Não sobra motivo para a credencial continuar em memória.
+    segredoRef.current?.limpar();
+    setFeedback({ tom: 'sucesso', texto: 'Anúncio Aprovado com sucesso! Fotos e Media Kit foram liberados.' });
   };
 
   // Ação: Rejeitar / Descartar
   const handleReject = async () => {
-    if (!adData) return;
-    const confirmou = window.confirm('Deseja realmente DESCARTAR este imóvel?\n\n🛡️ Nenhum crédito será debitado do seu saldo e o processamento será cancelado.');
+    const cliente = clienteRef.current;
+    if (!cliente || !adData) return;
+    const confirmou = window.confirm(
+      'Deseja realmente DESCARTAR este imóvel?\n\n🛡️ Nenhum crédito será debitado do seu saldo e o processamento será cancelado.'
+    );
     if (!confirmou) return;
 
     setIsSubmitting(true);
-    const result = await rejectAd(token, adData.ad_id, 'Descartado pelo corretor');
+    setFeedback(null);
+
+    const result = await cliente.aprovar(adData.ad_id, undefined, {
+      aprovar: false,
+      motivo: 'Descartado pelo corretor',
+    });
+
     setIsSubmitting(false);
 
-    if (result.success) {
-      if (typeof window !== 'undefined') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-      setApprovalStatus('REJEITADO');
-    } else {
-      alert(`Erro ao descartar imóvel: ${result.error}`);
+    if (!result.ok) {
+      registrarFalhaDeAcao(result.falha || 'desconhecido');
+      return;
     }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setApprovalStatus('REJEITADO');
+    setEtapa('descartado');
+    segredoRef.current?.limpar();
+    setFeedback({ tom: 'sucesso', texto: 'Imóvel descartado. Nenhum crédito foi consumido.' });
   };
 
-  if (loading) {
+  if (etapa === 'carregando' || etapa === 'carregando-detalhes') {
     return (
       <div className="min-h-screen bg-slate-50 text-slate-800 flex items-center justify-center p-6">
         <div className="text-center space-y-3">
           <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto" />
-          <p className="text-sm font-bold text-slate-600">Validando token e gerando prévia em Taboão da Serra e imediações...</p>
+          <p className="text-sm font-bold text-slate-600">
+            {etapa === 'carregando'
+              ? 'Validando seu link de aprovação...'
+              : 'Carregando o anúncio para revisão em Taboão da Serra e imediações...'}
+          </p>
         </div>
       </div>
     );
   }
 
-  if (errorMsg) {
+  if (etapa === 'bloqueado') {
     return (
       <div className="min-h-screen bg-slate-50 text-slate-800 flex items-center justify-center p-6">
         <div className="bg-white border border-red-200 rounded-3xl p-8 text-center shadow-xl space-y-4 max-w-md">
           <div className="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center mx-auto text-red-600 border border-red-200">
             <AlertTriangle className="w-8 h-8" />
           </div>
-          <h2 className="text-xl font-black text-slate-900">Acesso Não Autorizado</h2>
-          <p className="text-xs text-slate-600 leading-relaxed">{errorMsg}</p>
-          <div className="pt-2">
-            <a
+          <h2 className="text-xl font-black text-slate-900">Não foi possível abrir este link</h2>
+          <p className="text-xs text-slate-600 leading-relaxed">{mensagemDaFalha(falha)}</p>
+          <p className="text-xs text-slate-500 leading-relaxed">
+            Para acessar seus imóveis, créditos e histórico, entre no painel com seu e-mail e senha.
+          </p>
+          <div className="pt-2 flex flex-col sm:flex-row gap-2 justify-center">
+            <Link
               href="/"
-              className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-md"
+              className="inline-flex items-center justify-center px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-md"
             >
               Voltar ao Portal
-            </a>
+            </Link>
+            <Link
+              href="/login"
+              className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-md"
+            >
+              Entrar no Painel
+            </Link>
           </div>
         </div>
       </div>
     );
   }
 
-  const refinados = adData?.dados_refinados || {};
-  const mediaKit = adData?.media_kit || {};
+  if (!adData) return null;
+
+  const refinados = adData.dados_refinados || {};
+  const mediaKit = adData.media_kit || {};
+  const aprovado = approvalStatus === 'APPROVED' || approvalStatus === 'DELIVERED';
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 py-8 px-4">
       <main className="max-w-5xl mx-auto space-y-6">
 
         {/* Banner de Status se Descartado */}
-        {approvalStatus === 'REJEITADO' && (
+        {(etapa === 'descartado' || approvalStatus === 'REJEITADO') && (
           <div className="bg-amber-50 border border-amber-200 text-amber-950 rounded-3xl p-6 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <AlertTriangle className="w-10 h-10 text-amber-600 shrink-0" />
@@ -340,7 +394,7 @@ function AprovarContent() {
         )}
 
         {/* Banner de Status se Aprovado */}
-        {(approvalStatus === 'APPROVED' || approvalStatus === 'DELIVERED') && (
+        {(etapa === 'concluido' || aprovado) && (
           <div className="bg-emerald-50 border border-emerald-200 text-emerald-950 rounded-3xl p-6 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <CheckCircle2 className="w-10 h-10 text-emerald-600 shrink-0" />
@@ -360,6 +414,19 @@ function AprovarContent() {
           </div>
         )}
 
+        {/* Feedback de ação (sucesso ou erro), acima das abas para valer em todas */}
+        {feedback && (
+          <div
+            className={`rounded-2xl px-4 py-3 text-xs font-bold border ${
+              feedback.tom === 'sucesso'
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                : 'bg-red-50 border-red-200 text-red-800'
+            }`}
+          >
+            {feedback.texto}
+          </div>
+        )}
+
         {/* Dica de Tela Maior / Desktop */}
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/80 rounded-2xl p-4 flex items-center justify-between gap-3 text-xs text-blue-900 shadow-xs">
           <div className="flex items-center gap-2.5">
@@ -370,7 +437,7 @@ function AprovarContent() {
           </div>
         </div>
 
-        {/* Aviso de escopo do Magic Link */}
+        {/* Aviso de escopo do link de aprovação */}
         <div className="bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl px-4 py-3 text-xs leading-relaxed flex items-start gap-2.5">
           <span className="text-base shrink-0">🔐</span>
           <span>
@@ -408,14 +475,14 @@ function AprovarContent() {
           <div className="flex items-center gap-2">
             <span
               className={`text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-wider ${
-                approvalStatus === 'APPROVED' || approvalStatus === 'DELIVERED'
+                aprovado
                   ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                   : approvalStatus === 'REJEITADO'
                   ? 'bg-red-50 text-red-700 border border-red-200'
                   : 'bg-amber-50 text-amber-800 border border-amber-200'
               }`}
             >
-              {approvalStatus === 'APPROVED' || approvalStatus === 'DELIVERED' ? 'Aprovado & Publicado' : approvalStatus === 'REJEITADO' ? 'Rejeitado' : 'Pendente de Aprovação'}
+              {aprovado ? 'Aprovado & Publicado' : approvalStatus === 'REJEITADO' ? 'Rejeitado' : 'Pendente de Aprovação'}
             </span>
           </div>
         </div>
@@ -467,11 +534,6 @@ function AprovarContent() {
                 <FileText className="w-5 h-5 text-blue-600" />
                 <span>Editar Dados do Imóvel</span>
               </h3>
-              {feedbackMsg && (
-                <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-xl border border-emerald-200">
-                  {feedbackMsg}
-                </span>
-              )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
@@ -509,7 +571,7 @@ function AprovarContent() {
                   onChange={(e) => setFinalidade(e.target.value)}
                   className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium"
                 >
-                  <option value="Não informado">Selecione / Não informado</option>
+                  <option value="Não informado">Selecionar / Não informado</option>
                   <option value="Venda">Venda</option>
                   <option value="Locação">Locação</option>
                   <option value="Venda e Locação">Venda e Locação</option>
@@ -641,8 +703,8 @@ function AprovarContent() {
               <button
                 type="button"
                 onClick={handleSaveEdits}
-                disabled={isSubmitting}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-md"
+                disabled={isSubmitting || aprovado}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 text-blue-400" />}
                 <span>Salvar Edições</span>
@@ -653,7 +715,7 @@ function AprovarContent() {
 
         {/* Conteúdo Aba 2: Fotos */}
         {activeTab === 'fotos' && (
-          approvalStatus === 'APPROVED' || approvalStatus === 'DELIVERED' ? (
+          aprovado ? (
             <PhotoReorder
               initialPhotos={fotos}
               onSaveOrder={handleReorderPhotos}
@@ -666,7 +728,7 @@ function AprovarContent() {
               </div>
               <h3 className="text-xl font-black text-slate-900">🔒 Galeria de Fotos Bloqueada para Download</h3>
               <p className="text-xs text-slate-600 max-w-lg mx-auto leading-relaxed">
-                A galeria completa de fotos em alta resolução otimizadas para publicação será <strong>liberada instantaneamente</strong> assim que você conferir os dados e clicar em <strong>&quot;Aprovar & Publicar Anúncio&quot;</strong>.
+                A galeria completa de fotos em alta resolução otimizadas para publicação será <strong>liberada instantaneamente</strong> assim que você conferir os dados e clicar em <strong>&quot;Aprovar &amp; Publicar Anúncio&quot;</strong>.
               </p>
               <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 max-w-md mx-auto text-xs text-blue-800 font-bold">
                 💳 O débito de 1 crédito do seu saldo só ocorre no momento da aprovação!
@@ -674,10 +736,10 @@ function AprovarContent() {
               <button
                 onClick={handleApprove}
                 disabled={isSubmitting}
-                className="inline-flex items-center gap-2 px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-lg transition-all"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-                <span>Aprovar Anúncio Agora & Liberar Fotos</span>
+                <span>Aprovar Anúncio Agora &amp; Liberar Fotos</span>
               </button>
             </div>
           )
@@ -685,16 +747,16 @@ function AprovarContent() {
 
         {/* Conteúdo Aba 3: Media Kit */}
         {activeTab === 'mediakit' && (
-          approvalStatus === 'APPROVED' || approvalStatus === 'DELIVERED' ? (
-            <MediaKitDisplay mediaKit={adData.media_kit || mediaKit} referencia={adData.referencia} />
+          aprovado ? (
+            <MediaKitDisplay mediaKit={mediaKit} referencia={adData.referencia} />
           ) : (
             <div className="bg-white border border-blue-200 rounded-3xl p-8 text-center space-y-4 shadow-sm">
               <div className="w-16 h-16 bg-blue-50 border border-blue-200 rounded-2xl flex items-center justify-center mx-auto text-blue-600">
                 <Sparkles className="w-8 h-8" />
               </div>
-              <h3 className="text-xl font-black text-slate-900">🔒 Media Kit & Mídias Bloqueadas para Download</h3>
+              <h3 className="text-xl font-black text-slate-900">🔒 Media Kit &amp; Mídias Bloqueadas para Download</h3>
               <p className="text-xs text-slate-600 max-w-lg mx-auto leading-relaxed">
-                O Media Kit profissional (legendas otimizadas por IA para Instagram e WhatsApp, tags de SEO e arquivos em alta resolução na nuvem) será **liberado instantaneamente** assim que você conferir os dados e clicar em <strong>"Aprovar & Publicar Anúncio"</strong>.
+                O Media Kit profissional (legendas otimizadas por IA para Instagram e WhatsApp, tags de SEO e arquivos em alta resolução na nuvem) será <strong>liberado instantaneamente</strong> assim que você conferir os dados e clicar em <strong>&quot;Aprovar &amp; Publicar Anúncio&quot;</strong>.
               </p>
               <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 max-w-md mx-auto text-xs text-blue-800 font-bold">
                 💳 O débito de 1 crédito do seu saldo só ocorre no momento da aprovação!
@@ -702,17 +764,17 @@ function AprovarContent() {
               <button
                 onClick={handleApprove}
                 disabled={isSubmitting}
-                className="inline-flex items-center gap-2 px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-lg transition-all"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-                <span>Aprovar Anúncio Agora & Liberar Kit</span>
+                <span>Aprovar Anúncio Agora &amp; Liberar Kit</span>
               </button>
             </div>
           )
         )}
 
         {/* Sticky Actions Footer se pendente */}
-        {approvalStatus !== 'APPROVED' && approvalStatus !== 'DELIVERED' && (
+        {!aprovado && approvalStatus !== 'REJEITADO' && etapa === 'revisao' && (
           <div className="sticky bottom-4 bg-white/95 backdrop-blur-md border border-slate-200 rounded-3xl p-4 sm:p-5 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-3 z-30">
             <div className="text-xs text-slate-600 font-medium">
               Ao aprovar, <strong>1 crédito</strong> será debitado do seu saldo e o kit final será publicado em Taboão da Serra e imediações.
@@ -722,7 +784,7 @@ function AprovarContent() {
               <button
                 onClick={handleReject}
                 disabled={isSubmitting}
-                className="flex-1 sm:flex-none px-5 py-3.5 border border-slate-300 bg-slate-100 hover:bg-red-50 hover:text-red-700 hover:border-red-300 text-slate-700 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
+                className="flex-1 sm:flex-none px-5 py-3.5 border border-slate-300 bg-slate-100 hover:bg-red-50 hover:text-red-700 hover:border-red-300 text-slate-700 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span>🗑️ Descartar Imóvel (0 Créditos)</span>
               </button>
@@ -730,10 +792,10 @@ function AprovarContent() {
               <button
                 onClick={handleApprove}
                 disabled={isSubmitting}
-                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-lg"
+                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-                <span>Aprovar & Publicar Anúncio</span>
+                <span>Aprovar &amp; Publicar Anúncio</span>
               </button>
             </div>
           </div>
@@ -745,9 +807,5 @@ function AprovarContent() {
 }
 
 export default function AprovarPage() {
-  return (
-    <Suspense fallback={<div className="p-8 text-center text-xs text-slate-500 font-medium">Carregando tela de aprovação...</div>}>
-      <AprovarContent />
-    </Suspense>
-  );
+  return <AprovarContent />;
 }

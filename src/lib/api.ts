@@ -335,14 +335,17 @@ export async function validateMagicToken(token: string, adId?: string) {
   });
 }
 
-export async function getApprovalDetails(adId: string, token: string) {
-  const invalid = missingMagicLinkCredentials(token, adId);
-  if (invalid) return invalid;
-  const params = new URLSearchParams({ ad_id: adId.trim(), token: token.trim() });
-  return fetchApi(`/approval?${params.toString()}`, {
-    method: 'GET',
-  });
-}
+/**
+ * `getApprovalDetails` foi removido daqui de prop├│sito.
+ *
+ * Ele fazia `GET /approval?ad_id=...&token=...`, e a query string ├® exatamente
+ * o vetor que a migra├º├úo de `/aprovar` eliminou: log de acesso do proxy,
+ * `Referer` de terceiro, hist├│rico do navegador, analytics. O backend removeu a
+ * rota GET correspondente, ent├úo a fun├º├úo j├í estava quebrada E insegura.
+ *
+ * O fluxo de aprova├º├úo usa `src/lib/approval-client.ts`, que faz POST com o
+ * token no corpo. A tela nunca precisou desta fun├º├úo.
+ */
 
 export async function approveAd(token: string, adId: string, dadosEditados?: any) {
   const invalid = missingMagicLinkCredentials(token, adId);
