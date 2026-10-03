@@ -401,6 +401,75 @@ export async function reorderPhotos(token: string, adId: string, novaOrdem: numb
   });
 }
 
+/** Snapshot de revisão devolvido por `POST /review/resolve`. Espelha `ReviewSnapshot` da API. */
+export interface ReviewSnapshot {
+  ad_id: string;
+  referencia: string;
+  status: string;
+  knowledge_status: string | null;
+  review_gate: string | null;
+  valor: number | null;
+  dados: Record<string, any>;
+  fotos: string[];
+  created_at: any;
+}
+
+/**
+ * Resultado da resolução do token de revisão.
+ *
+ * Discriminado de propósito, e não um `{ success, error }` genérico. A tela precisa reagir
+ * diferente a "link inválido" e "sistema indisponível": o primeiro é definitivo, o segundo é
+ * retentável. Um único `error` com a mensagem dentro obrigaria a página a interpretar texto para
+ * decidir se mostra "tente novamente", e a decisão passaria a depender da redação da mensagem.
+ */
+export type ReviewResolveResult =
+  | { kind: 'ok'; anuncio: ReviewSnapshot }
+  | { kind: 'invalid' }
+  | { kind: 'unavailable' };
+
+/**
+ * Resolve um token de revisão no anúncio correspondente.
+ *
+ * Não usa `fetchApi` porque o resultado precisa do STATUS HTTP: é o status que separa 404
+ * (link inválido) de 503 (indisponível), e `fetchApi` achata os dois em `{ success: false }`.
+ *
+ * O token vai no corpo de um POST, nunca na URL. Esta função não loga, não persiste e não
+ * coloca o token em nenhum header além do corpo; quem a chama é responsável por não guardá-lo
+ * fora da memória do componente.
+ */
+export async function resolveReviewToken(token: string): Promise<ReviewResolveResult> {
+  const clean = String(token || '').trim();
+  if (!clean) return { kind: 'invalid' };
+
+  const url = resolveApiUrl('/review/resolve');
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: clean }),
+    });
+
+    // 400 (corpo inválido) e 404 (token inexistente/expirado/fora do portão) são o mesmo
+    // desfecho para o usuário: o link não abre. A API responde a mesma mensagem para os dois.
+    if (res.status === 400 || res.status === 404) return { kind: 'invalid' };
+
+    // 503 e qualquer outro não-2xx (incluindo 5xx e o HTML de proxy fora do ar) são retentáveis.
+    if (!res.ok) return { kind: 'unavailable' };
+
+    const json = (await res.json().catch(() => null)) as
+      | { success?: boolean; data?: { anuncio?: ReviewSnapshot } }
+      | null;
+    const anuncio = json?.data?.anuncio;
+    if (!json?.success || !anuncio) return { kind: 'unavailable' };
+
+    return { kind: 'ok', anuncio };
+  } catch {
+    // Falha de rede/DNS/offline: indistinguível de indisponibilidade para o usuário.
+    return { kind: 'unavailable' };
+  }
+}
+
 export async function getCorretorProfile() {
   return fetchBrokerApi('/corretor/me', { method: 'GET' });
 }
