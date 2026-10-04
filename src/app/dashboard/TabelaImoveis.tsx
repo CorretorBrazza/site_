@@ -24,6 +24,21 @@ const statusMeta = (rawStatus?: string) => {
   return { label: 'Em processamento', note: 'Estamos preparando seu anúncio', tone: 'bg-blue-50 text-blue-700 border-blue-200' };
 };
 
+/**
+ * Escolhe a foto de capa respeitando o índice definido no Link Dinâmico.
+ * O índice é normalizado antes de indexar: `NaN`, negativos, fracionários e
+ * valores maiores que a lista caem na primeira foto, e anúncio sem foto não
+ * gera acesso fora do vetor.
+ */
+const escolherFotoCapa = (fotos: string[] | undefined, indice?: number): string | null => {
+  const lista = Array.isArray(fotos) ? fotos : [];
+  if (lista.length === 0) return null;
+  const bruto = Number(indice ?? 0);
+  const indiceSeguro = Number.isFinite(bruto) ? Math.trunc(bruto) : 0;
+  const indiceLimitado = Math.min(Math.max(0, indiceSeguro), lista.length - 1);
+  return lista[indiceLimitado] ?? lista[0] ?? null;
+};
+
 export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
   const [filtroTransacao, setFiltroTransacao] = useState<'Todos' | 'Venda' | 'Locação'>('Todos');
   const [renovandoId, setRenovandoId] = useState<string | null>(null);
@@ -161,12 +176,18 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-800 text-xs">
               {imoveisFiltrados.map((imovel) => {
-                const fotoCapa = imovel.fotos && imovel.fotos.length > 0 ? imovel.fotos[0] : null;
+                const fotoCapa = escolherFotoCapa(imovel.fotos, imovel.capa_index);
                 const rawStatus = String(imovel.workflow_status || imovel.status || '').toUpperCase();
-                const isExpirado = ['EXPIRED', 'EXPIRADO'].includes(rawStatus);
+                // A expiracao e CALCULADA pela API, nunca gravada no documento: nenhum
+                // codigo escreve 'EXPIRED'. Ler so o status deixava o botao de renovar
+                // permanentemente invisivel, e o anuncio saia do ar sem caminho de volta.
+                const isExpirado = ['EXPIRED', 'EXPIRADO'].includes(rawStatus) || imovel.expirado === true;
+                // Renovar e possivel enquanto o anuncio estiver no ar e a regra de
+                // validade estiver ativa, mesmo antes de vencer.
+                const podeRenovar = imovel.pode_renovar === true;
                 const isAtivo = ['DELIVERED', 'PUBLISHED', 'ATIVO'].includes(rawStatus);
                 const isExcluido = ['DELETED', 'DELETEED'].includes(rawStatus);
-                const status = statusMeta(rawStatus);
+                const status = statusMeta(isExpirado ? 'EXPIRED' : rawStatus);
                 const rawTransacao = String(imovel.transacao || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
                 const isLoc = rawTransacao.includes('loca') || rawTransacao.includes('alug');
                 const valorExibicao = isLoc
@@ -289,12 +310,12 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                           </Link>
                         )}
 
-                        {isExpirado && (
+                        {(isExpirado || podeRenovar) && (
                           <button
                             onClick={() => handleRenovar(imovel.id, imovel.referencia)}
                             disabled={renovandoId === imovel.id}
-                            title="Renovar por 90 dias (1 crédito)"
-                            className="p-2 text-amber-600 hover:text-amber-700 hover:bg-amber-50 rounded-xl transition-colors"
+                            title={isExpirado ? 'Reativar por 90 dias (1 crédito)' : `Renovar por 90 dias (1 crédito)${imovel.dias_restantes != null ? ` — restam ${imovel.dias_restantes} dias` : ''}`}
+                            className={`p-2 rounded-xl transition-colors ${isExpirado ? 'text-amber-600 hover:text-amber-700 hover:bg-amber-50' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'}`}
                           >
                             <RefreshCw className={`w-4 h-4 ${renovandoId === imovel.id ? 'animate-spin' : ''}`} />
                           </button>
@@ -321,12 +342,13 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
         {/* Mobile: Cards de Imóvel (block md:hidden) */}
         <div className="block md:hidden divide-y divide-slate-100">
           {imoveisFiltrados.map((imovel) => {
-            const fotoCapa = imovel.fotos && imovel.fotos.length > 0 ? imovel.fotos[0] : null;
+            const fotoCapa = escolherFotoCapa(imovel.fotos, imovel.capa_index);
             const rawStatus = String(imovel.workflow_status || imovel.status || '').toUpperCase();
-            const isExpirado = ['EXPIRED', 'EXPIRADO'].includes(rawStatus);
+            const isExpirado = ['EXPIRED', 'EXPIRADO'].includes(rawStatus) || imovel.expirado === true;
+            const podeRenovar = imovel.pode_renovar === true;
             const isAtivo = ['DELIVERED', 'PUBLISHED', 'ATIVO'].includes(rawStatus);
             const isExcluido = ['DELETED', 'DELETEED'].includes(rawStatus);
-            const status = statusMeta(rawStatus);
+            const status = statusMeta(isExpirado ? 'EXPIRED' : rawStatus);
             const rawTransacao = String(imovel.transacao || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
             const isLoc = rawTransacao.includes('loca') || rawTransacao.includes('alug');
             const valorExibicao = isLoc
@@ -438,12 +460,12 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                     </Link>
                   )}
 
-                  {isExpirado && (
+                  {(isExpirado || podeRenovar) && (
                     <button
                       onClick={() => handleRenovar(imovel.id, imovel.referencia)}
                       disabled={renovandoId === imovel.id}
-                      title="Renovar por 90 dias (1 crédito)"
-                      className="p-2 text-amber-600 hover:text-amber-700 hover:bg-amber-50 rounded-xl transition-colors"
+                      title={isExpirado ? 'Reativar por 90 dias (1 crédito)' : `Renovar por 90 dias (1 crédito)${imovel.dias_restantes != null ? ` — restam ${imovel.dias_restantes} dias` : ''}`}
+                      className={`p-2 rounded-xl transition-colors ${isExpirado ? 'text-amber-600 hover:text-amber-700 hover:bg-amber-50' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'}`}
                     >
                       <RefreshCw className={`w-4 h-4 ${renovandoId === imovel.id ? 'animate-spin' : ''}`} />
                     </button>

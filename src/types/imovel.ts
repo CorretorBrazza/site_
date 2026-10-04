@@ -58,5 +58,21 @@ export interface Imovel {
   estagio?: number;
   media_kit?: unknown;
   approval_url?: string | null;
+  /**
+   * Validade calculada pela API. Vem preenchida apenas quando a regra de
+   * 90 dias está ativa; `null` significa "não expira", e nesse caso
+   * `pode_renovar` também é `false`.
+   */
+  expires_at?: string | null;
+  dias_restantes?: number | null;
+  expirado?: boolean;
+  pode_renovar?: boolean;
+  /**
+   * Índice da foto marcada como capa no Link Dinâmico. Gravado pela publicação
+   * na raiz de `dados_refinados`; o Dashboard o respeita ao escolher a miniatura.
+   * Sempre um inteiro dentro da lista de fotos: o mapper normaliza ausentes,
+   * negativos, fracionários e fora de faixa para 0.
+   */
+  capa_index?: number;
 }
 

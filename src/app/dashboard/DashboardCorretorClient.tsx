@@ -178,6 +178,20 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
               ? Number(ref.precoVenda)
               : (item.precoVenda || (isVen ? (ref.preco || item.preco) : null) || null);
 
+            // Validade e capa são CALCULADAS/enviadas pela API. O objeto `Imovel` é
+            // montado por allowlist: sem este mapeamento explícito os campos caem
+            // no vazio e o painel perde o botão de renovar, o aviso de dias
+            // restantes e a capa escolhida no Link Dinâmico.
+            const expirado = Boolean(item.expirado);
+            const podeRenovar = Boolean(item.pode_renovar);
+            const diasRestantes = typeof item.dias_restantes === 'number' ? item.dias_restantes : null;
+            const expiresAt = item.expires_at ?? null;
+            // A publicação grava `capa_index` na raiz de `dados_refinados`. O
+            // clamp final acontece em `TabelaImoveis`, que conhece o tamanho da
+            // lista de fotos; aqui só se garante que o valor é inteiro.
+            const capaIndexBruto = Number(item.dados_refinados?.capa_index);
+            const capaIndex = Number.isInteger(capaIndexBruto) ? capaIndexBruto : 0;
+
             return {
               id: item.ad_id || item.id || item.referencia?.toLowerCase() || 'anuncio-sem-id',
               referencia: item.referencia || 'BRA0000',
@@ -215,6 +229,11 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
               destaque: true,
               media_kit: item.media_kit || null,
               approval_url: item.approval_url || null,
+              expirado,
+              pode_renovar: podeRenovar,
+              dias_restantes: diasRestantes,
+              expires_at: expiresAt,
+              capa_index: capaIndex,
               createdAt: item.created_at?._seconds
                 ? new Date(item.created_at._seconds * 1000).toISOString()
                 : item.created_at || new Date().toISOString(),
