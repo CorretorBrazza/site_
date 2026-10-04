@@ -42,3 +42,7 @@ next-env.d.ts
 
 # local data (sensitive)
 /src/data/proprietarios/
+
+# Arquivos locais de desenvolvimento e logs de build
+build_output.txt
+run_dev.bat
