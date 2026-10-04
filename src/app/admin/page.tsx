@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import {
   ShieldCheck,
@@ -151,6 +151,12 @@ export default function AdminDashboardPage() {
   const [qtdCreditos, setQtdCreditos] = useState(5);
   const [motivoAjuste, setMotivoAjuste] = useState('Bônus de Parceiro Admin');
   const [salvandoCredito, setSalvandoCredito] = useState(false);
+  // Chave de idempotência do ajuste em andamento. Vive enquanto o modal estiver
+  // aberto para o mesmo corretor, para que reenvio não credite duas vezes.
+  const [operacaoAjusteId, setOperacaoAjusteId] = useState('');
+  // Espelho síncrono de `loading`: o estado só re-renderiza depois do commit, o
+  // que não impede dois `onClick` no mesmo tick de dispararem duas cargas.
+  const carregandoRef = useRef(false);
 
   // Convite de Novos Corretores com Bônus
   const [telefoneConvite, setTelefoneConvite] = useState('');
@@ -234,6 +240,12 @@ export default function AdminDashboardPage() {
   };
 
   const carregarDadosAdmin = async () => {
+    // Guarda de concorrência. Cada clique dispara 5 chamadas, que incluem
+    // leituras de coleção inteira na API; sem travar, cliques repetidos
+    // multiplicavam o custo e a última resposta a chegar escrevia por cima de
+    // uma mais recente, mostrando dado velho sem aviso.
+    if (carregandoRef.current) return;
+    carregandoRef.current = true;
     setLoading(true);
     try {
       // `catch` devolve o mesmo formato de `fetchAdminApi`, senão o TypeScript
@@ -295,6 +307,7 @@ export default function AdminDashboardPage() {
     } catch (err) {
       console.error('Erro ao carregar painel admin:', err);
     } finally {
+      carregandoRef.current = false;
       setLoading(false);
     }
   };
@@ -356,6 +369,14 @@ export default function AdminDashboardPage() {
     if (!corretorSelecionado || !adminToken) return;
     setSalvandoCredito(true);
 
+    // A chave nasce ao ABRIR o formulário e é reusada em todo reenvio enquanto o
+    // ajuste não concluir. O endpoint já implementa idempotência por
+    // `operacao_id`; sem enviá-lo, cada tentativa — inclusive um retry por timeout
+    // de rede, que o `disabled` do botão não impede — virava uma operação nova
+    // e creditaria em dobro, com duas entradas de auditoria.
+    const requestId = operacaoAjusteId || crypto.randomUUID();
+    setOperacaoAjusteId(requestId);
+
     try {
       const json = await fetchAdminApi('/admin/corretores/creditos', {
         method: 'POST',
@@ -363,12 +384,15 @@ export default function AdminDashboardPage() {
           email: corretorSelecionado.email,
           quantidade: Number(qtdCreditos),
           motivo: motivoAjuste,
+          operacao_id: requestId,
         }),
       });
 
       if (json.success) {
         alert(`Créditos ajustados com sucesso para ${corretorSelecionado.email}!`);
         setCorretorSelecionado(null);
+        // Ajuste concluído: a próxima operação precisa ser outra.
+        setOperacaoAjusteId('');
         carregarDadosAdmin();
       } else {
         alert(json.message || 'Erro ao ajustar créditos.');
@@ -533,7 +557,8 @@ export default function AdminDashboardPage() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => carregarDadosAdmin()}
-              className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 transition-all text-xs flex items-center gap-1.5 font-bold"
+              disabled={loading}
+              className="p-2.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-slate-300 rounded-xl border border-slate-700 transition-all text-xs flex items-center gap-1.5 font-bold"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} /> Atualizar
             </button>
@@ -971,7 +996,12 @@ export default function AdminDashboardPage() {
                         </td>
                         <td className="p-4 text-right">
                           <button
-                            onClick={() => setCorretorSelecionado(c)}
+                            onClick={() => {
+                              setCorretorSelecionado(c);
+                              // Novo corretor, nova operação: a chave do ajuste
+                              // anterior não pode valer para esta.
+                              setOperacaoAjusteId('');
+                            }}
                             className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-3.5 py-2 rounded-xl text-xs transition-all flex items-center gap-1.5 ml-auto shadow-md"
                           >
                             <Coins className="w-4 h-4" /> Adicionar Créditos
