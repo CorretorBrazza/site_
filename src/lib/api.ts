@@ -336,15 +336,15 @@ export async function validateMagicToken(token: string, adId?: string) {
 }
 
 /**
- * `getApprovalDetails` foi removido daqui de prop├│sito.
+ * `getApprovalDetails` foi removido daqui de propósito.
  *
- * Ele fazia `GET /approval?ad_id=...&token=...`, e a query string ├® exatamente
- * o vetor que a migra├º├úo de `/aprovar` eliminou: log de acesso do proxy,
- * `Referer` de terceiro, hist├│rico do navegador, analytics. O backend removeu a
- * rota GET correspondente, ent├úo a fun├º├úo j├í estava quebrada E insegura.
+ * Ele fazia `GET /approval?ad_id=...&token=...`, e a query string é exatamente
+ * o vetor que a migração de `/aprovar` eliminou: log de acesso do proxy,
+ * `Referer` de terceiro, histórico do navegador, analytics. O backend removeu a
+ * rota GET correspondente, então a função já estava quebrada E insegura.
  *
- * O fluxo de aprova├º├úo usa `src/lib/approval-client.ts`, que faz POST com o
- * token no corpo. A tela nunca precisou desta fun├º├úo.
+ * O fluxo de aprovação usa `src/lib/approval-client.ts`, que faz POST com o
+ * token no corpo. A tela nunca precisou desta função.
  */
 
 export async function approveAd(token: string, adId: string, dadosEditados?: any) {
