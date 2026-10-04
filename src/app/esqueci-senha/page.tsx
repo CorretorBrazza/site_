@@ -175,7 +175,7 @@ function EsqueciSenhaForm() {
                 required
                 value={novaSenha}
                 onChange={(e) => setNovaSenha(e.target.value)}
-                placeholder="Mínimo 6 caracteres"
+                placeholder="Mínimo 8 caracteres"
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 pl-10 pr-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
               />
             </div>
