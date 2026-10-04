@@ -500,3 +500,413 @@ export async function updateAnuncioForBroker(adId: string, data: Record<string, 
   });
 }
 
+
+
+// ==========================================
+// PRODUTO: LINK DINÂMICO DE PUBLICAÇÃO
+// ==========================================
+
+export type TipoPergunta = 'botoes' | 'selecao_multipla' | 'moeda' | 'numero' | 'texto';
+
+/**
+ * Procedência de um valor, exatamente como o backend a nomeia.
+ *
+ * As nove entradas espelham a união `OrigemDado` de `review.types.ts`. A versão anterior deste
+ * tipo listava quatro delas, e a consequência não era um erro de compilação: `ReviewField.origem`
+ * chegava do JSON como `string`, o `switch` do componente não casava com `A_VALIDAR` nem com
+ * `CONFLITANTE`, e o `default` — que era "Declarado" — os mostrava ao corretor como declaração
+ * dele. Um campo que a Extraction V2 marcou como pendente aparecia como confirmado, e o corretor
+ * aprovava sem ver.
+ *
+ * `VALIDADO` não faz parte de `ExtractionStatus`: existe só em `pistas_geograficas`, onde uma
+ * fonte externa confirmou o bairro. É mais forte que `DECLARADO` — por isso tem entrada própria
+ * em vez de ser dobrado em `A_VALIDAR`.
+ *
+ * `NAO_APLICAVEL` existe para o campo que não vale para este tipo de imóvel. Não é dado faltando,
+ * e tratá-lo como pendência ensinaria o corretor a preencher o que não existe.
+ */
+export type OrigemDado =
+  | 'DECLARADO'
+  | 'VISUAL'
+  | 'INFERIDO'
+  | 'CORRETOR'
+  | 'VALIDADO'
+  | 'A_VALIDAR'
+  | 'CONFLITANTE'
+  | 'NAO_INFORMADO'
+  | 'NAO_APLICAVEL';
+
+export interface DynamicQuestion {
+  id: string;
+  campo: string;
+  tipo: TipoPergunta;
+  pergunta: string;
+  opcoes?: string[];
+  obrigatoria: boolean;
+  critica?: boolean;
+  respondida: boolean;
+  resposta_atual?: unknown;
+ajuda?: string;
+  /**
+   * Procedência da resposta, quando a pergunta veio de uma fonte rastreável.
+   *
+   * O backend popula este campo (`origemDoStatus` em `review-extraction-v2.adapter.ts`), mas a
+   * pergunta dinâmica aparecia na tela sem selo de procedência: a ausência não era falta de dado,
+   * era o tipo `DynamicQuestion` sem o campo. Sem ele, uma pergunta que a V2 lançou para resolver
+   * uma pista fraca parece a pergunta que o corretor mesmo ideou, e as duas têm pesos diferentes
+   * no cálculo de completude.
+   */
+  origem?: OrigemDado;
+}
+
+export interface ReviewField {
+  campo: string;
+  rotulo: string;
+  valor: unknown;
+  origem: OrigemDado;
+  confianca: number;
+  confirmado: boolean;
+  editavel: boolean;
+  obrigatorio?: boolean;
+  critico?: boolean;
+  /**
+   * Estado da Extraction V2 que originou o campo.
+   *
+   * Diferente de `origem`: a origem diz de onde veio o valor, o status diz o quanto a V2 confia
+   * nele. Uma pista `A_VALIDAR` que virou campo editável tem `origem: 'A_VALIDAR'` e
+   * `status: 'A_VALIDAR'`; um campo criado a partir de dado visual tem `origem: 'VISUAL'` e
+   * `status: 'CONFIRMADO'`. Lendo o par, sabe-se se o selo é de procedência ou de verificação.
+   */
+  status?: string;
+  /**
+   * ID da pista de evidência que originou o campo.
+   *
+   * Sem isto, `A_VALIDAR` e `CONFLITANTE` são rótulos sem lastro: o corretor é avisado de que
+   * precisa confirmar, mas não tem como saber o que viu. É o mesmo identificador que a tela de
+   * evidência usa para abrir a origem.
+   */
+  evidence_id?: string;
+}
+
+export interface ReviewPreviewData {
+  titulo: string;
+  descricao: string;
+  ficha_tecnica: string;
+  destaques: string[];
+  texto_portal: string;
+  texto_whatsapp: string;
+  redes_sociais: string;
+  tags: string[];
+}
+
+export interface ReviewSessionData {
+  ad_id: string;
+  referencia: string;
+  status: string;
+  knowledge_status: string | null;
+  review_gate: string | null;
+  expires_at: string;
+  valor: number | null;
+  fotos: string[];
+  capa_index: number;
+  capa_sugerida_ia: number | null;
+  dados: Record<string, any>;
+  campos_identificados: ReviewField[];
+  campos_pendentes: string[];
+  perguntas_dinamicas: DynamicQuestion[];
+  conflitos: Array<{ campo: string; descricao: string }>;
+  preview: ReviewPreviewData | null;
+  review_state_version: number;
+  completude: number; // 0-100%
+  created_at: string | null;
+}
+
+export interface PublishResult {
+  ad_id: string;
+  referencia: string;
+  status: string;
+  saldo_restante: number;
+  published_at: string;
+  media_kit?: unknown;
+  message?: string;
+}
+
+export type ReviewSessionResult =
+  | { kind: 'ok'; session: ReviewSessionData }
+  | { kind: 'invalid' }
+  | { kind: 'unavailable' };
+
+/**
+ * Carrega a sessão completa do Link Dinâmico.
+ */
+export async function getReviewSession(token: string): Promise<ReviewSessionResult> {
+  const clean = String(token || '').trim();
+  if (!clean) return { kind: 'invalid' };
+
+  const url = resolveApiUrl('/review/session');
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: clean }),
+    });
+
+    if (res.status === 400 || res.status === 404) return { kind: 'invalid' };
+    if (!res.ok) return { kind: 'unavailable' };
+
+    const json = (await res.json().catch(() => null)) as
+      | { success?: boolean; data?: { session?: ReviewSessionData } }
+      | null;
+    const session = json?.data?.session;
+    if (!json?.success || !session) return { kind: 'unavailable' };
+
+    return { kind: 'ok', session };
+  } catch {
+    return { kind: 'unavailable' };
+  }
+}
+
+/**
+ * Lê o inteiro de "Conflito de edição: a versão <n> já está salva".
+ *
+ * Devolve `null` em vez de adivinhar quando não há número legível. Adivinhar `version + 1` seria
+ * pior que não reconciliar: um palpite errado produz outro 409, e o 409 seguinte repete o palpite.
+ * É exatamente o loop que a correção do controle de versão elimina, e um fallback otimista o
+ * reabria.
+ */
+function lerVersaoDaMensagem(mensagem: unknown): number | null {
+  if (typeof mensagem !== 'string') return null;
+  const achado = mensagem.match(/vers[aã]o\s+(\d+)/i);
+  if (!achado) return null;
+  const numero = Number(achado[1]);
+  return Number.isInteger(numero) && numero >= 0 ? numero : null;
+}
+
+/**
+ * Salva rascunho de edições do corretor (Autosave).
+ *
+ * `serverVersion` só aparece no 409, e ele existe por um motivo específico: o `ConflictError` do
+ * backend não tem campo estruturado para a versão, só a frase `Conflito de edição: a versão <n>
+ * já está salva. Recarregue para atualizar.` O controlador de versão precisa do `<n>` para
+ * reconciliar sozinho; sem ele, sobraria só a opção de parar e mandar o corretor recarregar, o que
+ * jogaria fora a edição em curso. A extração fica aqui, num único lugar, para que o parsing da
+ * frase não seja reimplementado — nem errado de novo — em cada tela.
+ */
+export async function autosaveReview(
+  token: string,
+  dados: Record<string, unknown>,
+  version: number,
+  capaIndex?: number,
+): Promise<{
+  success: boolean;
+  version?: number;
+  error?: string;
+  isConflict?: boolean;
+  serverVersion?: number;
+}> {
+  const clean = String(token || '').trim();
+  if (!clean) return { success: false, error: 'Token ausente' };
+
+  const url = resolveApiUrl('/review/autosave');
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token: clean,
+        dados,
+        version,
+        capa_index: capaIndex,
+      }),
+    });
+
+    const json = await res.json().catch(() => null);
+
+    if (res.status === 409) {
+      return {
+        success: false,
+        isConflict: true,
+        error: json?.message || 'Conflito de versão',
+        // `?? undefined` e não `??`: a propriedade é opcional, e `null` aqui faria o chamador
+        // distinguir "não li" de "não existe" sem necessidade.
+        serverVersion: lerVersaoDaMensagem(json?.message) ?? lerVersaoDaMensagem(json?.error) ?? undefined,
+      };
+    }
+
+    if (!res.ok) {
+      return { success: false, error: json?.message || `Erro HTTP ${res.status}` };
+    }
+
+    return { success: true, version: json?.data?.version };
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Falha na conexão';
+    return { success: false, error: msg };
+  }
+}
+
+/**
+ * Salva resposta de pergunta dinâmica.
+ *
+ * Esta chamadabumpara `review_state_version`: `saveAnswer` incrementa o contador no Firestore e
+ * devolve a versão nova em `data.version`. É a informação que faltava ser repassada adiante — a
+ * versão ignorada aqui fazia o autosave seguinte mandar o número velho e tomar 409. Quem chama é
+ * obrigado a aplicar o `version` devolvido.
+ */
+export async function answerReviewQuestion(
+  token: string,
+  questionId: string,
+  resposta: unknown,
+): Promise<{ success: boolean; version?: number; error?: string }> {
+  const clean = String(token || '').trim();
+  if (!clean) return { success: false, error: 'Token ausente' };
+
+  const url = resolveApiUrl('/review/answer');
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token: clean,
+        question_id: questionId,
+        resposta,
+      }),
+    });
+
+    const json = await res.json().catch(() => null);
+    if (!res.ok) {
+      return { success: false, error: json?.message || `Erro HTTP ${res.status}` };
+    }
+
+    return { success: true, version: json?.data?.version };
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Falha na conexão';
+    return { success: false, error: msg };
+  }
+}
+
+/**
+ * Seleciona a foto de capa.
+ *
+ * Não bumpa `review_state_version`. `setCover` grava `capa_index` e devolve só `{ success,
+ * capa_index }` — não há `version` no corpo porque não houve incremento. Confundir as duas rotas
+ * custaria um 409 evitável: tratar a capa como se tivesse bumpado a versão faz o cliente avançar o
+ * contador local, e o próximo autosave manda um número que o servidor nunca guardou.
+ */
+export async function selectReviewCover(
+  token: string,
+  photoIndex: number,
+): Promise<{ success: boolean; capa_index?: number; error?: string }> {
+  const clean = String(token || '').trim();
+  if (!clean) return { success: false, error: 'Token ausente' };
+
+  const url = resolveApiUrl('/review/cover');
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token: clean,
+        photo_index: photoIndex,
+      }),
+    });
+
+    const json = await res.json().catch(() => null);
+    if (!res.ok) {
+      return { success: false, error: json?.message || `Erro HTTP ${res.status}` };
+    }
+
+    return { success: true, capa_index: json?.data?.capa_index };
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Falha na conexão';
+    return { success: false, error: msg };
+  }
+}
+
+/**
+ * Regenera a prévia comercial viva.
+ */
+export async function generateReviewPreview(
+  token: string,
+): Promise<{ success: boolean; preview?: ReviewPreviewData; error?: string }> {
+  const clean = String(token || '').trim();
+  if (!clean) return { success: false, error: 'Token ausente' };
+
+  const url = resolveApiUrl('/review/preview');
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: clean }),
+    });
+
+    const json = await res.json().catch(() => null);
+    if (!res.ok) {
+      return { success: false, error: json?.message || `Erro HTTP ${res.status}` };
+    }
+
+    return { success: true, preview: json?.data?.preview };
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Falha na conexão';
+    return { success: false, error: msg };
+  }
+}
+
+/**
+ * Publicação final e débito atômico de 1 crédito.
+ */
+export async function publishReview(
+  token: string,
+  idempotencyKey?: string,
+): Promise<{ success: boolean; result?: PublishResult; error?: string; code?: string }> {
+  const clean = String(token || '').trim();
+  if (!clean) return { success: false, error: 'Token ausente', code: 'TOKEN_AUSENTE' };
+
+  const url = resolveApiUrl('/review/publish');
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token: clean,
+        idempotency_key: idempotencyKey,
+      }),
+    });
+
+    const json = await res.json().catch(() => null);
+
+    if (res.status === 402) {
+      return {
+        success: false,
+        error: json?.message || 'Saldo insuficiente de créditos. Recarregue para publicar.',
+        code: 'SALDO_INSUFICIENTE',
+      };
+    }
+
+    if (res.status === 401 || res.status === 404) {
+      return {
+        success: false,
+        error: json?.message || 'Link de publicação inválido ou expirado.',
+        code: 'TOKEN_INVALIDO',
+      };
+    }
+
+    if (!res.ok) {
+      return {
+        success: false,
+        error: json?.message || `Erro HTTP ${res.status}`,
+        code: 'ERRO_PUBLICACAO',
+      };
+    }
+
+    return { success: true, result: json?.data?.result };
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Falha na conexão com o servidor';
+    return { success: false, error: msg, code: 'ERRO_REDE' };
+  }
+}
