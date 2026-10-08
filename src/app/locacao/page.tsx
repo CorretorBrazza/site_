@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 };
 
 export default async function LocacaoPage() {
-  const allImoveis = await getImoveis();
+  const { imoveis: allImoveis, fallback: catalogoFallback } = await getImoveis();
   const imoveisLocacao = allImoveis.filter((i) => {
     const raw = String(i.transacao || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
     const isLoc = raw.includes('loca') || raw.includes('alug') || Boolean(i.precoLocacao);
@@ -57,6 +57,11 @@ export default async function LocacaoPage() {
 
   return (
     <div className="min-h-screen bg-[#0b132b] text-slate-100 py-12 px-4">
+      {catalogoFallback && (
+        <div className="max-w-7xl mx-auto mb-6 bg-amber-500/10 border border-amber-400/40 text-amber-200 text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-xl text-center">
+          Estamos com instabilidade no catálogo — os imóveis abaixo podem estar desatualizados. Tente novamente em instantes.
+        </div>
+      )}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(itemListJsonLd) }}

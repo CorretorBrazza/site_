@@ -101,7 +101,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
       setCopiadoLinkId(imovel.id);
       setTimeout(() => setCopiadoLinkId(null), 2500);
     } catch {
-      alert('Não foi possível copiar o link automaticamente. Copie pela barra de endereço.');
+      window.prompt('Não foi possível copiar automaticamente — selecione e copie o link abaixo:', url);
     }
   };
 
@@ -508,7 +508,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
       <ModalAcervoFotos
         isOpen={acervoModal.isOpen}
         onClose={() => setAcervoModal({ isOpen: false, adId: '', referencia: '' })}
-        adId={exclusaoModal.adId || acervoModal.adId}
+        adId={acervoModal.adId}
         referencia={acervoModal.referencia}
       />
 

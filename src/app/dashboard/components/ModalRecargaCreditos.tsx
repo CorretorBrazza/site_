@@ -50,6 +50,8 @@ export default function ModalRecargaCreditos({ isOpen, onClose, pacoteInicial = 
       } else if (json.data?.init_point) {
         // Redireciona pro Mercado Pago Checkout Pro
         window.location.href = json.data.init_point;
+      } else {
+        alert('Não foi possível gerar o pagamento. Tente outro método.');
       }
     } catch (err) {
       alert('Falha ao conectar com a API de pagamentos.');

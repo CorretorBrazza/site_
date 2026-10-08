@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Imovel } from '@/types/imovel';
 import { fetchBrokerApi, logoutBrokerSession } from '@/lib/api';
@@ -51,6 +51,9 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
   const [loading, setLoading] = useState(true);
   const [pacoteInicialModal, setPacoteInicialModal] = useState<'start' | 'pro' | 'elite'>('pro');
   const [activeTab, setActiveTab] = useState<TabId>('inicio');
+
+  // Evita disparos concorrentes do carregamento (montagem + refetch no focus).
+  const carregandoEmVoo = useRef(false);
 
   useEffect(() => {
     // Checa se há um parâmetro recarga na URL (ex: ?recarga=pro) vindo da página /planos
@@ -109,6 +112,8 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
     }
 
     async function carregarDadosPainel() {
+      if (carregandoEmVoo.current) return;
+      carregandoEmVoo.current = true;
       setLoading(true);
       try {
         // Busca perfil pela sessão autenticada para ter saldo real de créditos.
@@ -249,10 +254,25 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
         console.error('Erro ao carregar dados do painel do corretor:', err);
       } finally {
         setLoading(false);
+        carregandoEmVoo.current = false;
       }
     }
 
     carregarDadosPainel();
+
+    // Refetch no focus/volta à aba: o saldo e o status dos anúncios podem ter mudado
+    // em outra aba (ex.: publicação feita no Link Dinâmico). A guarda `carregandoEmVoo`
+    // evita requisões concorrentes com a carga inicial ou entre focos repetidos.
+    // `visibilitychange` dispara ao sair E ao voltar; só recarrega quando fica visível.
+    const aoFocarJanela = () => {
+      if (document.visibilityState === 'visible') carregarDadosPainel();
+    };
+    window.addEventListener('focus', aoFocarJanela);
+    document.addEventListener('visibilitychange', aoFocarJanela);
+    return () => {
+      window.removeEventListener('focus', aoFocarJanela);
+      document.removeEventListener('visibilitychange', aoFocarJanela);
+    };
   }, []);
 
       const handleLogout = async () => {

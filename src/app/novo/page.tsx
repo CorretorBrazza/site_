@@ -15,11 +15,16 @@ export const metadata: Metadata = {
 };
 
 export default async function HomeNovo() {
-  const imoveis = await getImoveis();
+  const { imoveis, fallback: catalogoFallback } = await getImoveis();
   const destaques = imoveis.filter(imovel => imovel.destaque && imovel.status === 'Ativo');
 
   return (
     <div>
+      {catalogoFallback && (
+        <div className="bg-amber-50 border-b border-amber-200 text-amber-900 text-xs sm:text-sm font-semibold px-4 py-2.5 text-center">
+          Estamos com instabilidade no catálogo — os imóveis abaixo podem estar desatualizados. Tente novamente em instantes.
+        </div>
+      )}
       {/* Hero Section */}
       <section className="relative h-[500px] flex items-center justify-center bg-blue-900 overflow-hidden">
         <div className="absolute inset-0 z-0">

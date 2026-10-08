@@ -1,12 +1,26 @@
 import { Imovel } from '@/types/imovel';
 import { API_BASE_URL } from '@/lib/api';
 
+export interface ResultadoCatalogoImoveis {
+  imoveis: Imovel[];
+  /** true quando a resposta da API falhou e o catálogo veio do último bom em memória. */
+  fallback: boolean;
+}
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __ultimoCatalogoImoveis: { imoveis: Imovel[]; em: number } | undefined;
+}
+
 /**
  * Busca anúncios entregues/publicados na API oficial do Imóveis Taboão.
+ *
+ * Em falha total da API, serve o último catálogo válido em memória em vez de
+ * devolver `[]` silenciosamente — uma lista vazia pareceria "portal sem
+ * imóveis", enganando o visitante e zerando o sitemap. `fallback: true` deixa
+ * a UI avisar que os dados podem estar desatualizados.
  */
-export async function getImoveis(): Promise<Imovel[]> {
-  let apiImoveis: Imovel[] = [];
-
+export async function getImoveis(): Promise<ResultadoCatalogoImoveis> {
   try {
     const fetchOptions: RequestInit = { next: { revalidate: 60 } };
 
@@ -14,7 +28,7 @@ export async function getImoveis(): Promise<Imovel[]> {
     const json = await res.json();
 
     if (json.success && Array.isArray(json.data)) {
-      apiImoveis = json.data
+      const apiImoveis: Imovel[] = json.data
         .filter((item: any) => {
           const st = (item.status || '').toUpperCase();
           return st === 'APPROVED' || st === 'DELIVERED' || st === 'PUBLISHED' || st === 'ATIVO';
@@ -75,10 +89,27 @@ export async function getImoveis(): Promise<Imovel[]> {
             destaque: true,
           };
         });
+
+      if (apiImoveis.length > 0) {
+        globalThis.__ultimoCatalogoImoveis = {
+          imoveis: apiImoveis,
+          em: Date.now(),
+        };
+      }
+
+      // Sucesso legítimo com catálogo vazio: não é falha, não sobrescreve o
+      // último bom e não merece aviso de instabilidade.
+      return { imoveis: apiImoveis, fallback: false };
     }
   } catch (err) {
     console.error('Erro ao buscar anúncios da API:', err);
   }
 
-  return apiImoveis;
+  // Falha: serve o último catálogo válido (se houver) sinalizando fallback.
+  const ultimoBom = globalThis.__ultimoCatalogoImoveis;
+  if (ultimoBom && ultimoBom.imoveis.length > 0) {
+    return { imoveis: ultimoBom.imoveis, fallback: true };
+  }
+
+  return { imoveis: [], fallback: true };
 }

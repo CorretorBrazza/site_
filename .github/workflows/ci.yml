@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Lint, tipos, build e dependências
+    name: Lint, testes, tipos, build e dependências
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -26,7 +26,7 @@ jobs:
       - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Instalar dependências bloqueadas
@@ -37,6 +37,9 @@ jobs:
 
       - name: Executar lint
         run: npm run lint
+
+      - name: Rodar testes de contrato
+        run: npm run test:approval && npm run test:review
 
       - name: Verificar tipos
         run: npx tsc --noEmit

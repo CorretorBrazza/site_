@@ -12,9 +12,9 @@ export const dynamicParams = true;
 export const revalidate = 60;
 
 export async function generateStaticParams() {
-  const imoveis = await getImoveis();
+  const { imoveis } = await getImoveis();
   if (!imoveis || imoveis.length === 0) {
-    return [{ id: 'demo' }];
+    return [];
   }
   return imoveis.map((imovel) => ({
     id: imovel.id,
@@ -23,7 +23,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const imoveis = await getImoveis();
+  const { imoveis } = await getImoveis();
   const searchKey = id.toLowerCase().trim();
   const imovel = imoveis.find((i) =>
     i.id?.toLowerCase() === searchKey ||
@@ -78,7 +78,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function ImovelDetalhes({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const imoveis = await getImoveis();
+  const { imoveis } = await getImoveis();
   const searchKey = id.toLowerCase().trim();
   const imovel = imoveis.find((i) =>
     i.id?.toLowerCase() === searchKey ||

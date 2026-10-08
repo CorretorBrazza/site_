@@ -26,7 +26,7 @@ export default function ModalAcervoFotos({
     total_fotos: number;
     fotos_no_r2: number;
     espaco_salvo_mb: string;
-    fotos: { id: string; r2_key?: string | null; storage?: 'R2' | 'LEGACY_SOURCE'; download_url: string }[];
+    fotos: { id: string; r2_key?: string | null; storage?: 'R2' | 'LEGACY_SOURCE'; display_url?: string; download_url: string }[];
   } | null>(null);
   const [textoAnotacao, setTextoAnotacao] = useState('');
 
@@ -119,13 +119,11 @@ export default function ModalAcervoFotos({
 
               {dadosAcervo.fotos.length > 0 && (
                 <a
-                  href={dadosAcervo.fotos[0].download_url}
+                  href={`/api/v1/storage/acervo/${encodeURIComponent(adId)}/download`}
                   download
-                  target="_blank"
-                  rel="noreferrer"
                   className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-xs transition-all w-full sm:w-auto justify-center flex items-center gap-1.5"
                 >
-                  <Download className="w-4 h-4" /> Baixar Fotos
+                  <Download className="w-4 h-4" /> Baixar Fotos em ZIP
                 </a>
               )}
             </div>
@@ -139,8 +137,9 @@ export default function ModalAcervoFotos({
                 {dadosAcervo.fotos.map((foto, idx) => (
                   <div key={foto.id} className="group relative rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
                     <img
-                      src={foto.download_url}
+                      src={foto.display_url || foto.download_url}
                       alt={`Foto ${idx + 1}`}
+                      loading="lazy"
                       className="w-full h-32 object-cover transition-transform group-hover:scale-105"
                     />
                     <span className={`absolute top-1.5 left-1.5 rounded px-1.5 py-0.5 text-[9px] font-bold ${foto.storage === 'R2' ? 'bg-emerald-600 text-white' : 'bg-amber-500 text-amber-950'}`}>

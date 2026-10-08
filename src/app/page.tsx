@@ -7,7 +7,7 @@ import HomeLiveSection from '@/components/HomeLiveSection';
 import { safeJsonLd } from '@/lib/jsonld';
 
 export default async function Home() {
-  const allImoveis = await getImoveis();
+  const { imoveis: allImoveis, fallback: catalogoFallback } = await getImoveis();
   const imoveisAtivos = allImoveis.filter(i => i.status === 'Ativo');
   const destaques = processarEOrdenarImoveis(imoveisAtivos).slice(0, 6);
 
@@ -40,6 +40,12 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
+
+      {catalogoFallback && (
+        <div className="bg-amber-50 border-b border-amber-200 text-amber-900 text-xs sm:text-sm font-semibold px-4 py-2.5 text-center">
+          Estamos com instabilidade no catálogo — os imóveis abaixo podem estar desatualizados. Tente novamente em instantes.
+        </div>
+      )}
 
       {/* Hero Section — Clean Light Real Estate */}
       <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden py-16 px-4 bg-gradient-to-b from-blue-50/50 via-slate-50 to-slate-50">

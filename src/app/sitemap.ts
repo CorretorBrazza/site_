@@ -37,7 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
     // Imóveis dinâmicos
-    const imoveis = await getImoveis();
+    const { imoveis } = await getImoveis();
     const imovelRoutes = imoveis.map((imovel) => ({
         url: `${baseUrl}/imovel/${imovel.id}/`,
         lastModified: new Date(imovel.updatedAt || new Date()),
