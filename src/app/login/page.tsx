@@ -54,14 +54,9 @@ function LoginContent() {
       return;
     }
 
-    // Se já possui sessão ativa no navegador
-    const existingToken = localStorage.getItem('auth_token');
-    if (existingToken) {
-      const targetUrl = recargaParam ? `/dashboard?recarga=${encodeURIComponent(recargaParam)}` : '/dashboard';
-      router.replace(targetUrl);
-      return;
-    }
-
+    // Sessão ativa é decidida pelo cookie httpOnly, que o JS não enxerga.
+    // Checar localStorage aqui (resquício da migração) gerava redirect loop
+    // quando havia auth_token sem user_info válido.
     // Não há login dinâmico nem sessão prévia: exibe formulário
     setValidandoSessao(false);
   }, [tokenDinamico, recargaParam, router]);
