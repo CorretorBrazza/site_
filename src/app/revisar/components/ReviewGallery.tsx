@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Image as ImageIcon, Sparkles, Check, Crown } from 'lucide-react';
 
 interface ReviewGalleryProps {
-  fotos: string[];
+  fotos: Array<string | { url: string }>;
   capaIndex: number;
   capaSugeridaIa: number | null;
   onSelectCover: (index: number) => void;
@@ -20,7 +20,12 @@ export function ReviewGallery({
 }: ReviewGalleryProps) {
   const [selectedPhotoModal, setSelectedPhotoModal] = useState<string | null>(null);
 
-  if (!fotos || fotos.length === 0) {
+  // Normaliza: aceita string ou objeto {url}
+  const urls: string[] = (fotos || [])
+    .map((f) => (typeof f === 'string' ? f : f?.url))
+    .filter((u): u is string => typeof u === 'string' && u.length > 0);
+
+  if (urls.length === 0) {
     return (
       <div className="bg-white border border-slate-200 rounded-3xl p-6 text-center shadow-sm space-y-3">
         <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto text-slate-400">
@@ -31,14 +36,14 @@ export function ReviewGallery({
     );
   }
 
-  const fotoPrincipal = fotos[capaIndex] || fotos[0];
+  const fotoPrincipal = urls[capaIndex] || urls[0];
 
   return (
     <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
           <ImageIcon className="w-5 h-5 text-blue-600" />
-          <span>Fotos do Imóvel ({fotos.length})</span>
+          <span>Fotos do Imóvel ({urls.length})</span>
         </h2>
         <span className="text-[11px] font-bold text-slate-400">Toque em uma foto para definir como capa</span>
       </div>
@@ -49,7 +54,7 @@ export function ReviewGallery({
         <img
           src={fotoPrincipal}
           alt="Foto de capa do anúncio"
-          className="w-full h-full object-cover cursor-pointer hover:scale-102 transition-transform duration-300"
+          className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
           onClick={() => setSelectedPhotoModal(fotoPrincipal)}
         />
         <div className="absolute top-3 left-3 bg-blue-600/90 backdrop-blur-sm text-white text-[11px] font-black px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-md uppercase tracking-wider">
@@ -62,7 +67,7 @@ export function ReviewGallery({
       <div className="space-y-2">
         <p className="text-xs font-bold text-slate-700">Selecione a foto principal (Capa):</p>
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
-          {fotos.map((foto, idx) => {
+          {urls.map((foto, idx) => {
             const isSelected = idx === capaIndex;
             const isIaSuggested = idx === capaSugeridaIa;
 
@@ -81,7 +86,6 @@ export function ReviewGallery({
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={foto} alt={`Foto ${idx + 1}`} className="w-full h-full object-cover" />
 
-                {/* Badge Selecionada */}
                 {isSelected && (
                   <div className="absolute inset-0 bg-blue-900/30 flex items-center justify-center">
                     <span className="bg-blue-600 text-white rounded-full p-1 shadow-md">
@@ -90,7 +94,6 @@ export function ReviewGallery({
                   </div>
                 )}
 
-                {/* Badge IA Sugere */}
                 {isIaSuggested && !isSelected && (
                   <div className="absolute top-1 right-1 bg-amber-500 text-slate-900 text-[9px] font-black px-1.5 py-0.5 rounded-md shadow flex items-center gap-0.5">
                     <Sparkles className="w-2.5 h-2.5" />
