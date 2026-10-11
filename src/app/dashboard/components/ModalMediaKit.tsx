@@ -67,19 +67,20 @@ export default function ModalMediaKit({
     mediaKit?.canal_2_whatsapp ||
     mediaKit?.mensagem_whatsapp ||
     mediaKit?.copy_whatsapp ||
-    `🚨 *NOVIDADE EM TABOÃO DA SERRA (${referencia})* 🚨\n\nExcelente imóvel disponível!\n📲 Fale comigo para agendar uma visita!`;
+    `⏳ O texto do WhatsApp para o imóvel ${referencia} está sendo preparado pela inteligência artificial.\nAtualize a página em alguns instantes para visualizar a copy completa!`;
 
   const copyInstagram =
     mediaKit?.canal_3_meta_ads ||
     mediaKit?.copy_instagram ||
-    `🔥 EXCELENTE OPORTUNIDADE EM TABOÃO DA SERRA! (${referencia})\n\nImóvel impecável pronto para morar! Ideal para sua família.\n\n📲 Entre em contato hoje mesmo para agendar uma visita!\n\n#imoveistaboao #taboaodaserra #corretordeimoveis`;
+    `⏳ A legenda do Instagram / Meta Ads para o imóvel ${referencia} está sendo elaborada pela inteligência artificial.\nAtualize a página em alguns instantes!`;
 
   const canal1 = mediaKit?.canal_1_portais;
   const copyPortais =
     canal1?.descricao_completa ||
     mediaKit?.descricao_completa ||
     mediaKit?.copy_portal ||
-    `Imóvel referência ${referencia} em Taboão da Serra. Documentação ok.`;
+    canal1?.descricao_enxuta ||
+    `⏳ A descrição detalhada para portais do imóvel ${referencia} está sendo gerada pela inteligência artificial.`;
 
   const roteiroCanva = mediaKit?.canal_4_roteiro_canva || [];
   const roteiroCanvaTexto = roteiroCanva.length > 0
@@ -89,9 +90,11 @@ export default function ModalMediaKit({
             `🎬 CENA ${c.cena || i + 1}:\n• O QUE FALAR: "${c.falar}"\n• TEXTO CANVA/TELA: "${c.texto_tela_canva}"\n`
         )
         .join('\n')
-    : `🎬 ROTEIRO REELS / CANVA:\nCena 1: Mostre a entrada e diga "Conheça este incrível imóvel em Taboão da Serra!"\nCena 2: Mostre a sala e os quartos destacando o acabamento.`;
+    : `⏳ Roteiro de vídeo / Canva para o imóvel ${referencia} está sendo gerado pela IA.`;
 
-  const seoTagsList = mediaKit?.canal_5_seo_tags || ['imoveis taboao', 'taboao da serra', 'apartamento taboao', 'casa taboao'];
+  const seoTagsList = mediaKit?.canal_5_seo_tags && mediaKit.canal_5_seo_tags.length > 0
+    ? mediaKit.canal_5_seo_tags
+    : ['imoveis taboao', 'taboao da serra', 'imoveis', referencia.toLowerCase()];
   const seoTagsTexto = seoTagsList.join(', ');
 
   return (

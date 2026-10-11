@@ -290,6 +290,17 @@ export default function RevisarPage() {
 
     // O patch já vem no formato aceito: o autosave não sabe nada sobre nomes de campo.
     triggerAutosave(resultado.dados);
+
+    // Se o corretor alterar o tipo do imóvel ou a transação, as perguntas dinâmicas
+    // precisam ser recalculadas pelo backend para refletir o novo contexto.
+    if (item.campo === 'tipoImovel' || item.campo === 'transacao') {
+      const token = tokenRef.current;
+      if (token) {
+        setTimeout(() => {
+          carregarSessao(token);
+        }, 1200);
+      }
+    }
   };
 
   /**
