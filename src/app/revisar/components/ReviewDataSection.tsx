@@ -37,7 +37,20 @@ export function ReviewDataSection({
   const [erroDeEdicao, setErroDeEdicao] = useState<{ campo: string; texto: string } | null>(null);
 
   const tipo = String(dados?.tipoImovel || '').toLowerCase();
-  const isApto = tipo.includes('apto') || tipo.includes('apartamento');
+  const isCasa = tipo.includes('casa') || tipo.includes('sobrado') || tipo.includes('chacara') || tipo.includes('terreno');
+  const isCondominioFechado =
+    Boolean(dados?.condominio) ||
+    Boolean(dados?.nomeCondominio) ||
+    Boolean(dados?.valorCondominio) ||
+    (Array.isArray(dados?.diferenciais_declarados) && dados.diferenciais_declarados.some((d: string) => String(d).toLowerCase().includes('condomínio') || String(d).toLowerCase().includes('condominio')));
+  const isApto = !isCasa && (tipo.includes('apto') || tipo.includes('apartamento'));
+
+  const camposFiltrados = campos.filter((item) => {
+    if (isCasa && !isCondominioFechado && (item.campo === 'condominio' || item.campo === 'valorCondominio')) {
+      return false;
+    }
+    return true;
+  });
 
   const startEdit = (item: ReviewField, valorAtual: unknown) => {
     setEditingField(item.campo);
@@ -83,7 +96,7 @@ export function ReviewDataSection({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {campos.map((item) => {
+        {camposFiltrados.map((item) => {
           const isEditing = editingField === item.campo;
           const valorAtual = dados?.[item.campo] ?? item.valor;
           const isNaoInformado =
