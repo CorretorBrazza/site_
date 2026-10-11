@@ -85,10 +85,14 @@ export default function ModalMediaKit({
   const roteiroCanva = mediaKit?.canal_4_roteiro_canva || [];
   const roteiroCanvaTexto = roteiroCanva.length > 0
     ? roteiroCanva
-        .map(
-          (c, i) =>
-            `🎬 CENA ${c.cena || i + 1}:\n• O QUE FALAR: "${c.falar}"\n• TEXTO CANVA/TELA: "${c.texto_tela_canva}"\n`
-        )
+        .map((c: any, i: number) => {
+          const numCena = c.cena || c.slide || i + 1;
+          const textoTela = c.texto_tela_canva || c.destaque || '';
+          const oQueFalar = c.falar && c.falar !== 'undefined'
+            ? c.falar
+            : (textoTela ? `Destaque do imóvel: ${textoTela}. Agende sua visita!` : 'Venha conhecer este lindo imóvel!');
+          return `🎬 CENA ${numCena}:\n• O QUE FALAR: "${oQueFalar}"\n• TEXTO CANVA/TELA: "${textoTela}"\n`;
+        })
         .join('\n')
     : `⏳ Roteiro de vídeo / Canva para o imóvel ${referencia} está sendo gerado pela IA.`;
 
