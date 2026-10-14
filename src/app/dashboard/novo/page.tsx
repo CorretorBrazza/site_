@@ -1,399 +1,300 @@
-'use client';
+﻿'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardShell from '../components/DashboardShell';
+import { fetchBrokerApi } from '@/lib/api';
+
+type StagedPhoto = {
+  photoId: string;
+  name: string;
+  url: string;
+};
+
+const ALLOWED_MIME_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
+const MAX_PHOTOS = 20;
 
 export default function NovoImovel() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [propData, setPropData] = useState({
-    nome: '',
-    telefone: '',
-    email: '',
-    observacoes: ''
-  });
-  const [formData, setFormData] = useState({
-    referencia: '',
-    titulo: '',
-    descricao: '',
-    transacao: 'Venda' as any,
-    tipoImovel: 'Casa',
-    videoUrl: '',
-    endereco: {
-      rua: '',
-      numero: '',
-      bairro: '',
-      cidade: 'Taboão da Serra',
-      estado: 'SP',
-      cep: ''
-    },
-    caracteristicas: {
-      quartos: 0,
-      suites: 0,
-      banheiros: 0,
-      vagas: 0,
-      areaUtil: 0,
-      areaTotal: 0
-    },
-    precoVenda: undefined as number | undefined,
-    precoLocacao: undefined as number | undefined,
-    destaque: false,
-    status: 'Ativo' as any,
-    corretor: {
-      nome: 'BRAZZA',
-      telefone: '5511932785602'
+  const [text, setText] = useState('');
+  const [files, setFiles] = useState<File[]>([]);
+  const [readyPhotos, setReadyPhotos] = useState<StagedPhoto[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [processing, setProcessing] = useState(false);
+  const [message, setMessage] = useState('');
+  const [history, setHistory] = useState<any[]>([]);
+
+  const loadHistory = useCallback(async () => {
+    const response = await fetchBrokerApi('/intake/history');
+    if (response.success) {
+      setHistory(response.data || []);
     }
-  });
+  }, []);
 
-  const CORRETORES = [
-    { nome: 'BRAZZA', telefone: '5511932785602' },
-    { nome: 'MARIA', telefone: '5511970988512' }
-  ];
+  useEffect(() => {
+    loadHistory();
+  }, [loadHistory]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const newFiles = Array.from(e.target.files);
-      const combined = [...selectedFiles, ...newFiles];
-      const totalSize = combined.reduce((acc, file) => acc + file.size, 0);
-      const maxSize = 20 * 1024 * 1024; // 20MB
+  const activePhotoCount = readyPhotos.length + files.length;
 
-      if (totalSize > maxSize) {
-        alert(`O tamanho total das fotos (${(totalSize / 1024 / 1024).toFixed(2)}MB) excede 20MB. Por favor, selecione fotos menores.`);
-        return;
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files) return;
+
+    const selected = Array.from(event.target.files);
+    const remainingSlots = Math.max(0, MAX_PHOTOS - activePhotoCount);
+
+    if (remainingSlots === 0) {
+      setMessage('Limite de 20 fotos por anúncio atingido.');
+      event.target.value = '';
+      return;
+    }
+
+    const accepted: File[] = [];
+    for (const file of selected) {
+      if (accepted.length >= remainingSlots) break;
+      if (!ALLOWED_MIME_TYPES.has(file.type) || file.size <= 0 || file.size > MAX_FILE_BYTES) {
+        setMessage('Apenas JPEG, PNG ou WebP de até 10MB por foto.');
+        continue;
+      }
+      accepted.push(file);
+    }
+
+    if (accepted.length === 0) {
+      event.target.value = '';
+      return;
+    }
+
+    setFiles((current) => [...current, ...accepted]);
+    setMessage(`${accepted.length} foto(s) selecionada(s). Clique em "Preparar fotos".`);
+    event.target.value = '';
+  };
+
+  const removeFile = (index: number) => {
+    setFiles((current) => current.filter((_, i) => i !== index));
+  };
+
+  const removeReadyPhoto = (photoId: string) => {
+    setReadyPhotos((current) => current.filter((photo) => photo.photoId !== photoId));
+  };
+
+  const stageFiles = async () => {
+    if (files.length === 0) return;
+    if (activePhotoCount >= MAX_PHOTOS) {
+      setMessage('Limite de 20 fotos por anúncio atingido.');
+      return;
+    }
+
+    setUploading(true);
+    setMessage('Enviando fotos...');
+
+    try {
+      const stagedPhotos: StagedPhoto[] = [];
+      for (const file of files) {
+        const sign = await fetchBrokerApi('/intake/photos/sign', {
+          method: 'POST',
+          body: JSON.stringify({
+            filename: file.name,
+            contentType: file.type || 'image/jpeg',
+            tamanhoBytes: file.size,
+          }),
+        });
+
+        if (!sign.success || !sign.data?.uploadUrl) {
+          throw new Error(sign.message || 'Não foi possível preparar o upload da foto.');
+        }
+
+        const uploadResponse = await fetch(sign.data.uploadUrl, {
+          method: 'PUT',
+          body: file,
+          headers: { 'Content-Type': file.type || 'image/jpeg' },
+        });
+
+        if (!uploadResponse.ok) {
+          throw new Error(`Falha no upload da foto ${file.name}.`);
+        }
+
+        const confirm = await fetchBrokerApi('/intake/photos/confirm', {
+          method: 'POST',
+          body: JSON.stringify({ photoId: sign.data.photoId }),
+        });
+
+        if (!confirm.success || !confirm.data?.urlOptimized) {
+          throw new Error(confirm.message || `Falha ao confirmar a foto ${file.name}.`);
+        }
+
+        stagedPhotos.push({
+          photoId: sign.data.photoId,
+          name: file.name,
+          url: confirm.data.urlOptimized,
+        });
       }
 
-      setSelectedFiles(combined);
-      e.target.value = ''; // Limpa para permitir selecionar mais fotos
+      setReadyPhotos((current) => [...current, ...stagedPhotos]);
+      setFiles([]);
+      setMessage(`${stagedPhotos.length} foto(s) pronta(s) para processamento.`);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Erro ao enviar fotos.');
+    } finally {
+      setUploading(false);
     }
   };
 
-  const moverArquivo = (fromIndex: number, toIndex: number) => {
-    if (toIndex < 0 || toIndex >= selectedFiles.length) return;
-    const novosArquivos = [...selectedFiles];
-    const temp = novosArquivos[fromIndex];
-    novosArquivos[fromIndex] = novosArquivos[toIndex];
-    novosArquivos[toIndex] = temp;
-    setSelectedFiles(novosArquivos);
+  const processIntake = async () => {
+    if (text.trim().length < 20) {
+      setMessage('Escreva o texto do imóvel antes de processar.');
+      return;
+    }
+    if (readyPhotos.length === 0) {
+      setMessage('Aguarde o processamento das fotos.');
+      return;
+    }
+
+    setProcessing(true);
+    setMessage('Enviando para a IA...');
+
+    try {
+      const response = await fetchBrokerApi('/intake/run', {
+        method: 'POST',
+        body: JSON.stringify({
+          text,
+          photoIds: readyPhotos.map((photo) => photo.photoId),
+        }),
+      });
+
+      if (!response.success) {
+        throw new Error(response.message || 'Falha ao processar o anúncio.');
+      }
+
+      setMessage(response.message || 'Anúncio enviado para processamento.');
+      setText('');
+      setReadyPhotos([]);
+      await loadHistory();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Erro ao processar anúncio.');
+    } finally {
+      setProcessing(false);
+    }
   };
 
-  const removerArquivo = (index: number) => {
-    setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
-  };
+  const canProcess = text.trim().length >= 20
+    && readyPhotos.length > 0
+    && files.length === 0
+    && !uploading
+    && !processing;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert('O cadastro manual está sendo migrado para o fluxo seguro da API. Por enquanto, envie fotos e detalhes pelo WhatsApp para gerar e aprovar o anúncio.');
-  };
+  const disabledReason = text.trim().length < 20
+    ? 'Escreva o texto do imóvel antes de processar.'
+    : (readyPhotos.length === 0 || files.length > 0 || uploading || processing)
+      ? (files.length > 0 || uploading || readyPhotos.length === 0)
+        ? 'Aguarde o processamento das fotos.'
+        : ''
+      : '';
 
   return (
     <DashboardShell activeTab="imoveis" backRoute="/dashboard" showChildrenOnDesktop>
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Novo Imóvel</h1>
-          <p className="text-gray-600 text-sm">Preencha os dados e selecione as fotos.</p>
+      <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Novo imóvel</h1>
+          <p className="text-gray-600 text-sm">Envie texto livre e até 20 fotos; a IA processará o anúncio.</p>
         </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Seção 1: Informações Básicas */}
         <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
-          <h2 className="text-lg font-bold border-b pb-2">Informações Básicas</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Transação</label>
-              <select
-                className="mt-1 block w-full border rounded-md p-2"
-                value={formData.transacao}
-                onChange={e => setFormData({ ...formData, transacao: e.target.value as any })}
-              >
-                <option value="Venda">Venda</option>
-                <option value="Locação">Locação</option>
-                <option value="Venda e Locação">Venda e Locação</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Tipo do Imóvel</label>
-              <select
-                className="mt-1 block w-full border rounded-md p-2"
-                value={formData.tipoImovel}
-                onChange={e => setFormData({ ...formData, tipoImovel: e.target.value })}
-              >
-                <option value="Casa">Casa</option>
-                <option value="Apartamento">Apartamento</option>
-                <option value="Terreno">Terreno</option>
-                <option value="Comercial">Comercial</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Corretor Responsável</label>
-              <select
-                className="mt-1 block w-full border rounded-md p-2 bg-blue-50/50"
-                value={formData.corretor.nome}
-                onChange={e => {
-                  const selectCorretor = CORRETORES.find(c => c.nome === e.target.value);
-                  if (selectCorretor) {
-                    setFormData({ ...formData, corretor: selectCorretor });
-                  }
-                }}
-              >
-                {CORRETORES.map(c => (
-                  <option key={c.nome} value={c.nome}>{c.nome}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="md:col-span-1">
-              <label className="block text-sm font-medium text-gray-700">Referência</label>
-              <input
-                type="text" disabled
-                className="mt-1 block w-full border bg-gray-100 rounded-md p-2 text-gray-500 italic"
-                placeholder="Gerada automaticamente"
-              />
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700">Título do Imóvel</label>
-              <input
-                type="text" required
-                className="mt-1 block w-full border rounded-md p-2"
-                onChange={e => setFormData({ ...formData, titulo: e.target.value })}
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Descrição Detalhada</label>
-            <textarea
-              rows={4} required
-              className="mt-1 block w-full border rounded-md p-2"
-              onChange={e => setFormData({ ...formData, descricao: e.target.value })}
-            />
-          </div>
-        </section>
+          <textarea
+            value={text}
+            onChange={(event) => setText(event.target.value)}
+            placeholder="Digite ou cole o texto completo do imóvel (livre, sem formulário)."
+            className="w-full min-h-56 border rounded-lg p-3"
+            maxLength={12000}
+          />
 
-        {/* Seção: Mídia (Fotos e Vídeo) */}
-        <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
-          <div className="border-b pb-2">
-            <h2 className="text-lg font-bold">Mídia (Fotos e Vídeo)</h2>
-            <p className="text-xs text-gray-500 mt-1">A <strong>1ª foto selecionada</strong> será usada como imagem de Capa e SEO.</p>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Fotos do Imóvel (Selecione várias)</label>
+          <div className="flex items-center gap-3">
             <input
               type="file"
+              accept="image/jpeg,image/png,image/webp"
               multiple
-              accept="image/*"
-              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
               onChange={handleFileChange}
+              disabled={uploading || activePhotoCount >= MAX_PHOTOS}
             />
+            <button
+              type="button"
+              onClick={stageFiles}
+              disabled={uploading || files.length === 0}
+              className="px-4 py-2 rounded-lg bg-gray-900 text-white disabled:opacity-50"
+            >
+              {uploading ? 'Enviando fotos...' : `Preparar ${files.length || 0} foto(s)`}
+            </button>
+          </div>
 
-            {selectedFiles.length > 0 && (
-              <div className="mt-4 bg-gray-50 p-4 rounded-xl border border-gray-200">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-bold text-gray-700 uppercase">
-                    Fotos Selecionadas ({selectedFiles.length})
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedFiles([])}
-                    className="text-xs text-red-600 hover:underline"
-                  >
-                    Limpar Todas
+          {files.length > 0 && (
+            <ul className="text-sm text-gray-600 space-y-1">
+              {files.map((file, index) => (
+                <li key={`${file.name}-${index}`} className="flex justify-between gap-2">
+                  <span>{file.name}</span>
+                  <button type="button" className="text-red-600" onClick={() => removeFile(index)}>
+                    remover
                   </button>
-                </div>
+                </li>
+              ))}
+            </ul>
+          )}
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                  {selectedFiles.map((file, idx) => (
-                    <div
-                      key={idx}
-                      className={`relative bg-white rounded-lg border-2 p-2 flex flex-col justify-between ${
-                        idx === 0 ? 'border-amber-500 shadow-md ring-2 ring-amber-200' : 'border-gray-200'
-                      }`}
+          {readyPhotos.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-gray-700">{readyPhotos.length} foto(s) pronta(s)</p>
+              <div className="grid grid-cols-3 gap-2">
+                {readyPhotos.map((photo) => (
+                  <div key={photo.photoId} className="relative">
+                    <img src={photo.url} alt={photo.name} className="h-24 w-full object-cover rounded-lg" />
+                    <button
+                      type="button"
+                      onClick={() => removeReadyPhoto(photo.photoId)}
+                      className="absolute right-1 top-1 rounded bg-white/90 px-1 text-xs text-red-600"
                     >
-                      {idx === 0 && (
-                        <span className="absolute top-1 left-1 bg-amber-500 text-white font-bold text-[9px] uppercase px-1.5 py-0.5 rounded shadow z-10">
-                          ⭐ Capa
-                        </span>
-                      )}
-                      <div className="relative aspect-square w-full overflow-hidden rounded mb-2">
-                        <img
-                          src={URL.createObjectURL(file)}
-                          alt={`Preview ${idx + 1}`}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="flex justify-between items-center bg-gray-100 p-1 rounded text-xs">
-                        <button
-                          type="button"
-                          onClick={() => moverArquivo(idx, idx - 1)}
-                          disabled={idx === 0}
-                          className="p-1 text-gray-600 disabled:opacity-30"
-                          title="Mover para esquerda"
-                        >
-                          ⬅️
-                        </button>
-                        <span className="font-bold text-[11px] text-gray-500">#{idx + 1}</span>
-                        <button
-                          type="button"
-                          onClick={() => moverArquivo(idx, idx + 1)}
-                          disabled={idx === selectedFiles.length - 1}
-                          className="p-1 text-gray-600 disabled:opacity-30"
-                          title="Mover para direita"
-                        >
-                          ➡️
-                        </button>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => removerArquivo(idx)}
-                        className="mt-1 text-[10px] text-red-600 hover:bg-red-50 font-medium py-0.5 rounded text-center"
-                      >
-                        🗑️ Remover
-                      </button>
-                    </div>
-                  ))}
-                </div>
+                      ×
+                    </button>
+                  </div>
+                ))}
               </div>
-            )}
-          </div>
-          <div className="pt-4">
-            <label className="block text-sm font-medium text-gray-700">Link do Vídeo (YouTube/Vimeo)</label>
-            <input
-              type="url"
-              placeholder="https://www.youtube.com/watch?v=..."
-              className="mt-1 block w-full border rounded-md p-2"
-              onChange={e => setFormData({ ...formData, videoUrl: e.target.value })}
-            />
-          </div>
-        </section>
+            </div>
+          )}
 
-        {/* Seção 2: Localização */}
-        <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
-          <h2 className="text-lg font-bold border-b pb-2">Localização</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="md:col-span-3">
-              <label className="block text-sm font-medium text-gray-700">Rua/Logradouro</label>
-              <input type="text" className="mt-1 block w-full border rounded-md p-2" onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, rua: e.target.value } })} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Número</label>
-              <input type="text" className="mt-1 block w-full border rounded-md p-2" onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, numero: e.target.value } })} />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <input type="text" placeholder="Bairro" className="border rounded-md p-2" onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, bairro: e.target.value } })} />
-            <input type="text" placeholder="Cidade" defaultValue="Taboão da Serra" className="border rounded-md p-2" onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, cidade: e.target.value } })} />
-            <input type="text" placeholder="Estado" defaultValue="SP" className="border rounded-md p-2" onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, estado: e.target.value } })} />
-          </div>
-        </section>
-
-        {/* Seção 3: Características e Preço */}
-        <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
-          <h2 className="text-lg font-bold border-b pb-2">Características e Valores</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Quartos</label>
-              <input type="number" className="block w-full border rounded-md p-2" onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, quartos: Number(e.target.value) } })} />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Suítes</label>
-              <input type="number" className="block w-full border rounded-md p-2" onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, suites: Number(e.target.value) } })} />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Banheiros</label>
-              <input type="number" className="block w-full border rounded-md p-2" onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, banheiros: Number(e.target.value) } })} />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Vagas</label>
-              <input type="number" className="block w-full border rounded-md p-2" onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, vagas: Number(e.target.value) } })} />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Área Útil (m²)</label>
-              <input type="number" className="block w-full border rounded-md p-2" onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, areaUtil: Number(e.target.value) } })} />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Área Total (m²)</label>
-              <input type="number" className="block w-full border rounded-md p-2" onChange={e => setFormData({ ...formData, caracteristicas: { ...formData.caracteristicas, areaTotal: Number(e.target.value) } })} />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
-            <div>
-              <label className="block text-sm font-bold text-blue-700">Valor de Venda (R$)</label>
-              <input type="number" className="mt-1 block w-full border-2 border-blue-100 rounded-md p-2 outline-none" onChange={e => setFormData({ ...formData, precoVenda: Number(e.target.value) })} />
-            </div>
-            <div>
-              <label className="block text-sm font-bold text-green-700">Valor de Locação (R$)</label>
-              <input type="number" className="mt-1 block w-full border-2 border-green-100 rounded-md p-2 outline-none" onChange={e => setFormData({ ...formData, precoLocacao: Number(e.target.value) })} />
-            </div>
-          </div>
-          <div className="flex items-center gap-2 pt-4">
-            <input type="checkbox" id="destaque" className="w-5 h-5" onChange={e => setFormData({ ...formData, destaque: e.target.checked })} />
-            <label htmlFor="destaque" className="font-semibold text-gray-700 cursor-pointer">Colocar em Destaque na Home</label>
-          </div>
-        </section>
-
-        {/* Seção 4: Dados do Proprietário (Apenas Local) */}
-        <section className="bg-gray-50 p-6 rounded-xl border-2 border-dashed border-gray-300 space-y-4">
-          <div className="flex items-center justify-between border-b border-gray-200 pb-2">
-            <h2 className="text-lg font-bold text-gray-800">Dados Privados do Proprietário</h2>
-            <span className="text-[10px] font-black uppercase bg-gray-200 px-2 py-1 rounded text-gray-600 tracking-tighter">Apenas Local</span>
-          </div>
-          <p className="text-xs text-gray-500 italic">Estes dados NÃO são salvos no site online e não ficam visíveis para o público. São apenas para seu controle interno.</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Nome do Proprietário</label>
-              <input
-                type="text"
-                className="mt-1 block w-full border rounded-md p-2 bg-white"
-                onChange={e => setPropData({ ...propData, nome: e.target.value })}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Telefone de Contato</label>
-              <input
-                type="text"
-                className="mt-1 block w-full border rounded-md p-2 bg-white"
-                onChange={e => setPropData({ ...propData, telefone: e.target.value })}
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">E-mail</label>
-              <input
-                type="email"
-                className="mt-1 block w-full border rounded-md p-2 bg-white"
-                onChange={e => setPropData({ ...propData, email: e.target.value })}
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Observações Internas (Ex: Onde retirar chaves, horários, etc)</label>
-            <textarea
-              rows={3}
-              className="mt-1 block w-full border rounded-md p-2 bg-white"
-              onChange={e => setPropData({ ...propData, observacoes: e.target.value })}
-            />
-          </div>
-        </section>
-
-        <div className="flex gap-4">
-          <button
-            type="submit"
-            disabled={loading}
-            className={`flex-1 text-white py-4 rounded-xl font-bold text-lg shadow-lg transition-all ${loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
-          >
-            {loading ? 'Processando e Enviando...' : 'Salvar e Publicar Tudo'}
-          </button>
           <button
             type="button"
-            onClick={() => router.push('/dashboard')}
-            className="px-8 bg-gray-200 text-gray-700 py-4 rounded-xl font-bold hover:bg-gray-300"
+            onClick={processIntake}
+            disabled={!canProcess}
+            className="px-5 py-2 rounded-lg bg-blue-600 text-white disabled:opacity-50"
           >
-            Cancelar
+            {processing ? 'Processando...' : 'Processar'}
           </button>
-        </div>
-      </form>
+
+          {!canProcess && disabledReason ? <p className="text-sm text-gray-600">{disabledReason}</p> : null}
+          {message ? <p className="text-sm text-gray-700">{message}</p> : null}
+        </section>
+
+        <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+          <h2 className="text-lg font-bold mb-4">Histórico</h2>
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm">
+              <thead>
+                <tr className="text-left border-b">
+                  <th className="py-2 pr-4">Referência</th>
+                  <th className="py-2 pr-4">Status</th>
+                  <th className="py-2 pr-4">Pipeline</th>
+                </tr>
+              </thead>
+              <tbody>
+                {history.map((item) => (
+                  <tr key={item.ad_id} className="border-b">
+                    <td className="py-2 pr-4">{item.referencia || item.ad_id}</td>
+                    <td className="py-2 pr-4">{item.status}</td>
+                    <td className="py-2 pr-4">{item.pipeline_status || '-'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
       </div>
     </DashboardShell>
   );
