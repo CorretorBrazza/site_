@@ -110,17 +110,19 @@ export default function ImageCarousel({ images, alt }: ImageCarouselProps) {
                             onClick={() => setCurrentIndex(index)}
                             className={`relative shrink-0 h-20 md:h-24 aspect-video rounded-lg overflow-hidden transition-all duration-300 border-2 ${
                                 currentIndex === index
-                                    ? 'border-blue-600 shadow-lg scale-105 ring-2 ring-blue-400'
-                                    : 'border-gray-300 opacity-60 hover:opacity-100 hover:border-gray-400'
+                                    ? 'border-gold-500 shadow-lg scale-105 ring-2 ring-gold-500/30'
+                                    : 'border-line opacity-60 hover:opacity-100 hover:border-muted/50'
                             }`}
                         >
                             <img
                                 src={image}
                                 alt={`Thumbnail ${index + 1}`}
+                                loading="lazy"
+                                decoding="async"
                                 className="w-full h-full object-cover"
                             />
                             {currentIndex === index && (
-                                <div className="absolute inset-0 bg-blue-500/10 pointer-events-none" />
+                                <div className="absolute inset-0 bg-gold-500/10 pointer-events-none" />
                             )}
                         </button>
                     ))}

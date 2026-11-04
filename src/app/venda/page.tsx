@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 import { getImoveis } from '@/app/actions/imovel-server-actions';
-import VendaClient from './VendaClient';
+import { ListagemImoveis } from '@/components/listagem/ListagemImoveis';
 import { safeJsonLd } from '@/lib/jsonld';
 
 export const revalidate = 60;
@@ -56,23 +56,27 @@ export default async function VendaPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0b132b] text-slate-100 py-12 px-4">
-      {catalogoFallback && (
-        <div className="max-w-7xl mx-auto mb-6 bg-amber-500/10 border border-amber-400/40 text-amber-200 text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-xl text-center">
-          Estamos com instabilidade no catálogo — os imóveis abaixo podem estar desatualizados. Tente novamente em instantes.
-        </div>
-      )}
+    <div className="flex flex-col">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(itemListJsonLd) }}
       />
-      <div className="max-w-7xl mx-auto">
-        <Suspense fallback={
-          <div className="text-center py-20 text-slate-400">Carregando imóveis à venda em Taboão da Serra e imediações...</div>
-        }>
-          <VendaClient allImoveis={allImoveis} />
-        </Suspense>
-      </div>
+
+      {catalogoFallback && (
+        <div className="border-b border-gold-500/30 bg-gold-500/10 px-4 py-2.5 text-center text-xs font-semibold text-gold-700 sm:text-sm">
+          Estamos com instabilidade no catálogo — os imóveis abaixo podem estar desatualizados. Tente novamente em instantes.
+        </div>
+      )}
+
+      <Suspense
+        fallback={(
+          <div className="mx-auto max-w-[1240px] px-4 py-20 text-center text-sm text-muted">
+            Carregando imóveis à venda em Taboão da Serra e imediações...
+          </div>
+        )}
+      >
+        <ListagemImoveis imoveis={allImoveis} modo="venda" />
+      </Suspense>
     </div>
   );
 }
