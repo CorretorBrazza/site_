@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { safeJsonLd } from '@/lib/jsonld';
 import {
   MessageSquare,
   Sparkles,
@@ -71,7 +72,7 @@ export default function ComoFuncionaPage() {
     <div className="bg-slate-950 min-h-screen text-slate-100 pb-20">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(faqJsonLd) }}
       />
       {/* Hero Section */}
       <div className="bg-gradient-to-b from-slate-950 via-blue-950/60 to-slate-950 text-white pt-16 pb-20 px-4 relative overflow-hidden">

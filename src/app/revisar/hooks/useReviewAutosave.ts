@@ -101,6 +101,31 @@ export function useReviewAutosave({
   }, []);
 
   /**
+   * Flush de última hora: aba fechada, recarregada ou navegação externa.
+   *
+   * O `destruir()` do controlador já envia a pendência quando o componente
+   * desmonta, mas fechar a aba não desmonta nada — o `beforeunload` é o único
+   * aviso que existe. Só interrompe o usuário quando há trabalho não confirmado.
+   */
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+
+    const aoSair = (event: BeforeUnloadEvent) => {
+      const controlador = controladorRef.current;
+      if (!controlador || !controlador.temPendencia()) return undefined;
+
+      void controlador.salvarAgora();
+      event.preventDefault();
+      // Necessário para o Chrome exibir o diálogo nativo.
+      event.returnValue = '';
+      return '';
+    };
+
+    window.addEventListener('beforeunload', aoSair);
+    return () => window.removeEventListener('beforeunload', aoSair);
+  }, []);
+
+  /**
    * Adota a versão que uma resposta fora do autosave devolveu.
    *
    * É o ponto que fecha o deadlock: `answer` incrementa `review_state_version` no servidor, e sem

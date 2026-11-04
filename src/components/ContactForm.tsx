@@ -44,6 +44,11 @@ export default function ContactForm() {
     try {
       // 1. Tenta enviar para a rota segura da API com rate-limiting e honeypot
       let submitted = false;
+      // Só cai no fallback quando o caminho principal está INDISPONÍVEL (rede ou
+      // 5xx). Antes, qualquer `!apiRes.ok` — inclusive 400 de validação e 429 de
+      // rate limit — caía no Web3Forms e enviava de novo por fora da rota
+      // protegida. Além de contornar o limite, um timeout duplicava o lead.
+      let usarFallback = false;
       try {
         const apiRes = await fetch(`/api/v1/contact/`, {
           method: 'POST',
@@ -59,12 +64,19 @@ export default function ContactForm() {
         });
         if (apiRes.ok) {
           submitted = true;
+        } else if (apiRes.status >= 500) {
+          usarFallback = true;
+        } else {
+          // 4xx é resposta definitiva: não adianta repetir por outro caminho.
+          setStatus('error');
+          return;
         }
       } catch {
-        // Fallback para Web3Forms caso API esteja temporariamente inalcançável
+        // Falha de rede: a API pode estar fora, o fallback ainda pode entregar.
+        usarFallback = true;
       }
 
-      if (!submitted) {
+      if (!submitted && usarFallback) {
         const response = await fetch(WEB3FORMS_ENDPOINT, {
           method: 'POST',
           headers: {

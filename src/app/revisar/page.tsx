@@ -13,7 +13,7 @@ import {
   PublishResult,
 } from '@/lib/api';
 import { useReviewAutosave } from './hooks/useReviewAutosave';
-import { montarPatch } from './reviewPatch';
+import { MAPA_CAMPO_PATCH, montarPatch } from './reviewPatch';
 import { exigeConfirmacao } from './reviewOrigens';
 import { ReviewHeader } from './components/ReviewHeader';
 import { ReviewGallery } from './components/ReviewGallery';
@@ -144,6 +144,8 @@ export default function RevisarPage() {
   const [publishResult, setPublishResult] = useState<PublishResult | null>(null);
   const [isRefreshingPreview, setIsRefreshingPreview] = useState(false);
   const [erroPorCampo, setErroPorCampo] = useState<Record<string, string>>({});
+  /** Perguntas com POST em voo: bloqueia duplo clique por pergunta. */
+  const [perguntasEnviando, setPerguntasEnviando] = useState<Record<string, boolean>>({});
 
   // Hook de Autosave
   const {
@@ -278,9 +280,18 @@ export default function RevisarPage() {
 
     // Espelho local no vocabulário de leitura, com o valor já normalizado: se o corretor digitou
     // "350.000", o card passa a mostrar 350000 (formatado em pt-BR), e não a string digitada.
-    const valorCanonico =
-      Object.values(resultado.dados).find((v) => typeof v === 'object' && v !== null) ??
-      Object.values(resultado.dados)[0];
+    //
+    // O valor precisa ser lido pelo CAMINHO do patch, e não pelo primeiro objeto
+    // encontrado em `resultado.dados`. Para todo campo dentro de `caracteristicas`
+    // (quartos, suítes, banheiros, vagas, áreas) o patch é
+    // `{ caracteristicas: { quartos: 3, vagas_cobertas: "..." } }` — pegar o
+    // primeiro objeto devolvia o subobjeto inteiro, e o card renderizava
+    // `String(obj)` = "[object Object]" até recarregar a página.
+    const destino = MAPA_CAMPO_PATCH[item.campo];
+    const dadosDoPatch = resultado.dados as Record<string, any>;
+    const valorCanonico = destino && destino.caminho.length === 2
+      ? dadosDoPatch?.[destino.caminho[0]]?.[destino.caminho[1]]
+      : dadosDoPatch?.[destino?.caminho[0] ?? item.campo];
     const paraExibir = valorCanonico === null || valorCanonico === undefined ? '' : valorCanonico;
 
     setSession({
@@ -293,11 +304,20 @@ export default function RevisarPage() {
 
     // Se o corretor alterar o tipo do imóvel ou a transação, as perguntas dinâmicas
     // precisam ser recalculadas pelo backend para refletir o novo contexto.
+    //
+    // O reload precisa esperar o autosave terminar: com debounce de 1s e reload em
+    // 1,2s, a sessão recarregada chegava antes de o POST voltar, o select exibia o
+    // valor antigo e a versão local regredia — o autosave seguinte tomava 409.
     if (item.campo === 'tipoImovel' || item.campo === 'transacao') {
       const token = tokenRef.current;
       if (token) {
-        setTimeout(() => {
-          carregarSessao(token);
+        setTimeout(async () => {
+          try {
+            await forceSaveNow();
+          } catch {
+            // Se o flush falhar, o reload ainda é útil para recalcular as perguntas.
+          }
+          await carregarSessao(token);
         }, 1200);
       }
     }
@@ -313,50 +333,62 @@ export default function RevisarPage() {
    */
   const handleAnswerQuestion = async (questionId: string, resposta: unknown) => {
     if (!session) return;
+    // Duplo clique no "Confirmar" disparava dois POST /review/answer para a
+    // mesma pergunta. Além do custo, o segundo podia chegar antes do primeiro e
+    // sobrescrever a resposta otimista com a versão velha.
+    if (perguntasEnviando[questionId]) return;
 
-    const pergunta = session.perguntas_dinamicas.find((q) => q.id === questionId);
+    setPerguntasEnviando((prev) => ({ ...prev, [questionId]: true }));
 
-    const updatedPerguntas = session.perguntas_dinamicas.map((q) =>
-      q.id === questionId ? { ...q, respondida: true, resposta_atual: resposta } : q,
-    );
-
-    const updatedSession = {
-      ...session,
-      perguntas_dinamicas: updatedPerguntas,
-    };
-
-    setSession(updatedSession);
+    // Updater funcional: `session` é o snapshot do render. Duas respostas em
+    // sequência (Q1 e Q2) partiam do mesmo snapshot e a segunda apagava a
+    // primeira — a tela mostrava Q1 como "não respondida" de novo.
+    setSession((prev) => (prev ? {
+      ...prev,
+      perguntas_dinamicas: prev.perguntas_dinamicas.map((q) =>
+        q.id === questionId ? { ...q, respondida: true, resposta_atual: resposta } : q,
+      ),
+    } : prev));
 
     const token = tokenRef.current;
-    if (!token) return;
-
-    const respostaRes = await answerReviewQuestion(token, questionId, resposta);
-
-    // O servidor é a autoridade da versão, mesmo quando a resposta foi recusada: se ele bumpou,
-    // o número novo precisa ser adotado antes da próxima escrita.
-    if (typeof respostaRes.version === 'number') {
-      aplicarVersao(respostaRes.version);
-    }
-
-    if (!respostaRes.success) {
-      // Desfaz o "respondida" otimista: a tela mentiria sobre uma resposta que não foi gravada.
-      setSession((prev) =>
-        prev
-          ? {
-              ...prev,
-              perguntas_dinamicas: prev.perguntas_dinamicas.map((q) =>
-                q.id === questionId ? { ...q, respondida: false, resposta_atual: pergunta?.resposta_atual } : q,
-              ),
-            }
-          : null,
-      );
+    if (!token) {
+      setPerguntasEnviando((prev) => ({ ...prev, [questionId]: false }));
       return;
     }
 
-    // Recarregar prévia silenciosamente após responder pergunta
-    const previewRes = await generateReviewPreview(token);
-    if (previewRes.success && previewRes.preview) {
-      setSession((prev) => (prev ? { ...prev, preview: previewRes.preview! } : null));
+    const respostaAnterior = session.perguntas_dinamicas.find((q) => q.id === questionId)?.resposta_atual;
+
+    try {
+      const respostaRes = await answerReviewQuestion(token, questionId, resposta);
+
+      // O servidor é a autoridade da versão, mesmo quando a resposta foi recusada: se ele bumpou,
+      // o número novo precisa ser adotado antes da próxima escrita.
+      if (typeof respostaRes.version === 'number') {
+        aplicarVersao(respostaRes.version);
+      }
+
+      if (!respostaRes.success) {
+        // Desfaz o "respondida" otimista: a tela mentiria sobre uma resposta que não foi gravada.
+        setSession((prev) =>
+          prev
+            ? {
+                ...prev,
+                perguntas_dinamicas: prev.perguntas_dinamicas.map((q) =>
+                  q.id === questionId ? { ...q, respondida: false, resposta_atual: respostaAnterior } : q,
+                ),
+              }
+            : null,
+        );
+        return;
+      }
+
+      // Recarregar prévia silenciosamente após responder pergunta
+      const previewRes = await generateReviewPreview(token);
+      if (previewRes.success && previewRes.preview) {
+        setSession((prev) => (prev ? { ...prev, preview: previewRes.preview! } : null));
+      }
+    } finally {
+      setPerguntasEnviando((prev) => ({ ...prev, [questionId]: false }));
     }
   };
 
@@ -606,6 +638,7 @@ export default function RevisarPage() {
         <ReviewQuestions
           perguntas={session.perguntas_dinamicas}
           onAnswerQuestion={handleAnswerQuestion}
+          disabled={perguntasEnviando}
         />
 
         {/* 4. DADOS IDENTIFICADOS E EDITOR COMPLETO */}

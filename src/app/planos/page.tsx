@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { safeJsonLd } from '@/lib/jsonld';
 import {
   Sparkles,
   Check,
@@ -84,7 +85,7 @@ export default function PlanosPage() {
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(faqJsonLd) }}
       />
       <main className="flex-1">
 

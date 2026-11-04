@@ -1,5 +1,6 @@
 import { Imovel } from '@/types/imovel';
 import { API_BASE_URL } from '@/lib/api';
+import { mapearAnuncioParaImovel, statusPublico } from '@/lib/imovelMapper';
 
 export interface ResultadoCatalogoImoveis {
   imoveis: Imovel[];
@@ -19,76 +20,45 @@ declare global {
  * devolver `[]` silenciosamente — uma lista vazia pareceria "portal sem
  * imóveis", enganando o visitante e zerando o sitemap. `fallback: true` deixa
  * a UI avisar que os dados podem estar desatualizados.
+ *
+ * A conversão anúncio → `Imovel` mora em `lib/imovelMapper.ts` e é a MESMA usada
+ * pelo hook do cliente. Antes eram duas cópias que já tinham divergido.
  */
 export async function getImoveis(): Promise<ResultadoCatalogoImoveis> {
   try {
-    const fetchOptions: RequestInit = { next: { revalidate: 60 } };
+    // Paginação: a API devolve no máximo 100 por página e informa `has_more`.
+    // Antes o site pedia só a primeira e o anúncio 101 nunca aparecia — nem na
+    // vitrine, nem no sitemap, sem nenhum aviso. O teto de 5 páginas (500
+    // anúncios) evita um laço sem fim se a API responder algo inesperado.
+    const MAX_PAGINAS = 5;
 
-    const res = await fetch(`${API_BASE_URL}/anuncios?limit=100&status=DELIVERED`, fetchOptions);
-    const json = await res.json();
+    const recebidos: any[] = [];
+    let algumaPaginaOk = false;
 
-    if (json.success && Array.isArray(json.data)) {
-      const apiImoveis: Imovel[] = json.data
-        .filter((item: any) => {
-          const st = (item.status || '').toUpperCase();
-          return st === 'APPROVED' || st === 'DELIVERED' || st === 'PUBLISHED' || st === 'ATIVO';
-        })
-        .map((item: any) => {
-          const ref = item.dados_refinados || item.dados_brutos || {};
-          const fotosArray = (item.fotos || []).map((f: any) => (typeof f === 'string' ? f : f.url_optimized || f.url || f.url_original));
+    for (let pagina = 1; pagina <= MAX_PAGINAS; pagina += 1) {
+      const res = await fetch(
+        `${API_BASE_URL}/anuncios?limit=100&page=${pagina}&status=DELIVERED`,
+        {
+          next: { revalidate: 60 },
+          // Sem teto, uma API em cold start deixava o build/ISR pendurado.
+          signal: AbortSignal.timeout(20_000),
+        },
+      );
+      if (!res.ok) break;
 
-          const mediaKit = item.media_kit || item.conteudo_gerado || {};
-          const canalPortais = mediaKit.canal_1_portais || {};
+      const json = await res.json();
+      if (!json?.success || !Array.isArray(json.data)) break;
 
-          const rawTransacao = String(ref.transacao || item.transacao || ref.finalidade || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-          const isLoc = rawTransacao.includes('loca') || rawTransacao.includes('alug');
-          const isVen = rawTransacao.includes('venda') || rawTransacao.includes('compra');
-          const finalTransacao = isLoc && isVen ? 'Venda e Locação' : (isLoc ? 'Locação' : (isVen ? 'Venda' : (ref.precoLocacao || item.precoLocacao ? 'Locação' : 'Venda')));
+      algumaPaginaOk = true;
+      recebidos.push(...json.data);
 
-          const finalPrecoLocacao = ref.precoLocacao !== undefined && ref.precoLocacao !== null && ref.precoLocacao !== ''
-            ? Number(ref.precoLocacao)
-            : (item.precoLocacao || ref.precoPacote || item.precoPacote || (isLoc ? (ref.preco || item.preco) : null) || null);
+      if (json.has_more !== true || json.data.length === 0) break;
+    }
 
-          const finalPrecoVenda = ref.precoVenda !== undefined && ref.precoVenda !== null && ref.precoVenda !== ''
-            ? Number(ref.precoVenda)
-            : (item.precoVenda || (isVen ? (ref.preco || item.preco) : null) || null);
-
-          return {
-            id: item.ad_id || item.referencia?.toLowerCase() || `imv_${Math.random()}`,
-            referencia: item.referencia || 'BRA0000',
-            titulo: ref.titulo || canalPortais.titulo_comercial || mediaKit.titulo_seo || `Imóvel ${item.referencia}`,
-            descricao: ref.descricao || canalPortais.descricao_completa || mediaKit.descricao_completa || mediaKit.descricao_media || mediaKit.legenda_social || '',
-            tipo: ref.tipo || ref.tipoImovel || 'Imóvel',
-            transacao: finalTransacao,
-            precoVenda: finalPrecoVenda ? Number(finalPrecoVenda) : null,
-            precoLocacao: finalPrecoLocacao ? Number(finalPrecoLocacao) : null,
-            condominio: ref.condominio || null,
-            iptu: ref.iptu || null,
-            bairro: ref.bairro || ref.endereco?.bairro || '',
-            cidade: ref.cidade || ref.endereco?.cidade || '',
-            endereco: {
-              rua: ref.rua || ref.endereco?.rua || '',
-              bairro: ref.bairro || ref.endereco?.bairro || '',
-              cidade: ref.cidade || ref.endereco?.cidade || '',
-              estado: ref.estado || ref.endereco?.estado || 'SP',
-              cep: ref.cep || ref.endereco?.cep || '',
-            },
-            fotos: fotosArray,
-            caracteristicas: {
-              quartos: ref.quartos ?? ref.caracteristicas?.quartos ?? null,
-              suites: ref.suites ?? ref.caracteristicas?.suites ?? null,
-              banheiros: ref.banheiros ?? ref.caracteristicas?.banheiros ?? null,
-              vagas: ref.vagas ?? ref.caracteristicas?.vagas ?? null,
-              areaUtil: ref.areaUtil ?? ref.caracteristicas?.areaUtil ?? null,
-            },
-            corretor: item.corretor || {
-              nome: item.corretor_nome || 'Corretor',
-              telefone: item.corretor_telefone || '',
-            },
-            status: 'Ativo',
-            destaque: true,
-          };
-        });
+    if (algumaPaginaOk) {
+      const apiImoveis: Imovel[] = recebidos
+        .filter(statusPublico)
+        .map(mapearAnuncioParaImovel);
 
       if (apiImoveis.length > 0) {
         globalThis.__ultimoCatalogoImoveis = {

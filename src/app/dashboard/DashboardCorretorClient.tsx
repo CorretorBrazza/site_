@@ -91,12 +91,26 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
       // A sessao vive em cookie httpOnly, invisivel ao JS. O que sobra no storage
       // e o perfil, so para a UI nao piscar no primeiro render. Quem decide se a
       // sessao ainda vale e a API: um 401 manda o usuario para /login.
-      const savedUser = localStorage.getItem('user_info');
+      //
+      // Todo o acesso ao storage fica dentro do try: `getItem` pode lançar
+      // SecurityError (armazenamento bloqueado, modo privado, política de
+      // terceiros). Fora do try, o erro matava o effect no meio e o `finally`
+      // nunca rodava — o painel ficava no spinner para sempre.
+      let savedUser: string | null = null;
+      try {
+        savedUser = localStorage.getItem('user_info');
+      } catch {
+        savedUser = null;
+      }
     if (savedUser) {
       try {
         setUsuario(JSON.parse(savedUser));
       } catch {
-        localStorage.removeItem('user_info');
+        try {
+          localStorage.removeItem('user_info');
+        } catch {
+          // Sem storage disponível não há o que limpar.
+        }
       }
     }
 

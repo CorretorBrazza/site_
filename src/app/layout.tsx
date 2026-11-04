@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AnalyticsConsent from "@/components/AnalyticsConsent";
+import { safeJsonLd } from "@/lib/jsonld";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -72,7 +73,7 @@ export default function RootLayout({
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(globalJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(globalJsonLd) }}
         />
       </head>
       <body className={`${plusJakartaSans.variable} ${playfairDisplay.variable} antialiased bg-[#faf9f6] text-slate-800 flex flex-col min-h-screen`}>

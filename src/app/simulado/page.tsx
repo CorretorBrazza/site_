@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import SimuladorClient from './SimuladorClient';
+import { safeJsonLd } from '@/lib/jsonld';
 
 export const metadata: Metadata = {
   title: 'Até quando no aluguel? Simulador de Financiamento Caixa MCMV',
@@ -36,7 +37,7 @@ export default function SimuladoPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
       <SimuladorClient />
     </>

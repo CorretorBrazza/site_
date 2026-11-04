@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { Award, Target, Heart, MapPin, Sparkles, MessageSquare, HardDrive, Cpu, ShieldCheck, ArrowRight, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
+import { safeJsonLd } from '@/lib/jsonld';
 
 export const metadata: Metadata = {
   title: 'Sobre Nós | Imóveis Taboão — Inteligência Artificial para o Mercado Imobiliário',
@@ -20,7 +21,7 @@ export default function SobreNosPage() {
     <div className="bg-slate-950 text-slate-100 min-h-screen py-16 px-4">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
       <div className="max-w-5xl mx-auto space-y-16">
 

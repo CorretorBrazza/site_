@@ -23,7 +23,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     const routes = staticRoutes.map((route) => ({
         url: route.path ? `${baseUrl}${route.path}/` : `${baseUrl}`,
-        lastModified: new Date(),
+        // Sem `lastModified: new Date()` em toda entrada. O sitemap é regerado a
+        // cada hora, e anunciar que TODAS as páginas mudaram a cada geração é um
+        // sinal falso para o buscador (ele passa a ignorar a data).
         changeFrequency: route.changeFrequency,
         priority: route.priority,
     }));
@@ -31,19 +33,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Empreendimentos dinâmicos
     const empreendimentoRoutes = empreendimentos.map((emp) => ({
         url: `${baseUrl}/empreendimento/${emp.slug}/`,
-        lastModified: new Date(),
         changeFrequency: 'weekly' as const,
         priority: 0.7,
     }));
 
     // Imóveis dinâmicos
     const { imoveis } = await getImoveis();
-    const imovelRoutes = imoveis.map((imovel) => ({
-        url: `${baseUrl}/imovel/${imovel.id}/`,
-        lastModified: new Date(imovel.updatedAt || new Date()),
-        changeFrequency: 'weekly' as const,
-        priority: 0.6,
-    }));
+    const imovelRoutes = imoveis.map((imovel) => {
+        // A URL pública é a REFERÊNCIA (é o canonical de `/imovel/[id]`). Antes o
+        // sitemap listava `/imovel/<ad_id>`, cujo canonical aponta para
+        // `/imovel/<referencia>` — duas URLs para a mesma página, com o sitemap
+        // apontando justamente para a que o canonical desautoriza.
+        const identificador = imovel.referencia || imovel.id;
+        const atualizado = imovel.updatedAt ? new Date(imovel.updatedAt) : undefined;
+        return {
+            url: `${baseUrl}/imovel/${encodeURIComponent(identificador)}/`,
+            lastModified: atualizado && !Number.isNaN(atualizado.getTime()) ? atualizado : undefined,
+            changeFrequency: 'weekly' as const,
+            priority: 0.6,
+        };
+    });
 
     return [...routes, ...empreendimentoRoutes, ...imovelRoutes];
 }

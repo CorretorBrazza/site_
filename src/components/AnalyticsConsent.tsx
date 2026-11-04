@@ -43,8 +43,18 @@ function loadAnalytics() {
 
 export default function AnalyticsConsent() {
   const [choice, setChoice] = useState<'unknown' | 'accepted' | 'rejected'>('unknown');
+  /**
+   * O banner só pode existir depois da hidratação.
+   *
+   * O estado inicial é `unknown` no SSR, então o banner era renderizado no HTML
+   * e sumia no primeiro effect para quem já tinha decidido — um "pisca" fixo no
+   * rodapé a cada navegação (e CLS no mobile). Com `mounted`, o servidor não
+   * emite o banner e o cliente decide em um único passo.
+   */
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const saved = window.localStorage.getItem('analytics_consent');
     if (saved === 'accepted') {
       setChoice('accepted');
@@ -60,7 +70,7 @@ export default function AnalyticsConsent() {
     if (value === 'accepted') loadAnalytics();
   };
 
-  if (choice !== 'unknown') return null;
+  if (!mounted || choice !== 'unknown') return null;
 
   return (
     <aside

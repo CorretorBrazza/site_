@@ -25,7 +25,7 @@ export default function CardImovel({ imovel }: CardImovelProps) {
 
   return (
     <Link
-      href={`/imovel/${imovel.id}`}
+      href={`/imovel/${encodeURIComponent(imovel.referencia || imovel.id)}`}
       className="block group"
       onClick={() => trackEvent('view_property', { transaction: imovel.transacao })}
     >

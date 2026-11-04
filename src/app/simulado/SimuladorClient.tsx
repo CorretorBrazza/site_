@@ -263,7 +263,7 @@ export default function SimuladorClient() {
             setInputType('none');
             setStep(3);
         } else if (step === 3) {
-            const num = parseFloat(val.replace(/\D/g, '')) || 0;
+            const num = normalizarMoeda(val);
             setVariables(prev => ({ ...prev, renda: num }));
             setMessages(prev => [...prev, { type: 'user', content: `R$ ${num.toLocaleString('pt-BR')}` }]);
             setInputType('none');
@@ -286,27 +286,81 @@ export default function SimuladorClient() {
             setVariables(prev => ({ ...prev, consentimento: value }));
             setMessages(prev => [...prev, { type: 'user', content: label }]);
             setInputType('none');
-            finalizarSimulacao(value);
+            void finalizarSimulacao(value);
         }
     };
 
-    const finalizarSimulacao = (aceitou: boolean) => {
+    /**
+     * Converte o que o usuário digitou em número.
+     *
+     * `parseFloat(val.replace(/\D/g, ''))` tratava "3500.50" como 350050 e
+     * "3.500" como 3500 — a renda caía na última faixa da tabela e o simulador
+     * sugeria um financiamento absurdo. Aqui o separador decimal é respeitado:
+     * vírgula é decimal; ponto com grupos de 3 dígitos é milhar.
+     */
+    const normalizarMoeda = (texto: string): number => {
+        const limpo = String(texto || '').replace(/[^\d,.-]/g, '').trim();
+        if (!limpo) return 0;
+
+        if (limpo.includes(',')) {
+            const semMilhar = limpo.replace(/\./g, '').replace(',', '.');
+            const valor = Number(semMilhar);
+            return Number.isFinite(valor) ? valor : 0;
+        }
+
+        // Sem vírgula: "3.500" e "1.200.000" são milhares; "3500.50" é decimal.
+        if (/^\d{1,3}(\.\d{3})+$/.test(limpo)) {
+            const valor = Number(limpo.replace(/\./g, ''));
+            return Number.isFinite(valor) ? valor : 0;
+        }
+
+        const valor = Number(limpo);
+        return Number.isFinite(valor) ? valor : 0;
+    };
+
+    const finalizarSimulacao = async (aceitou: boolean) => {
         const lead = { ...variables, consentimento: aceitou, ...dadosAutomaticos };
 
         if (aceitou) {
-            // Enviar Lead com consentimento usando o token de ativação do Web3Forms
-            fetch('https://api.web3forms.com/submit', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    access_key: '7d915857-c79e-4ff4-b507-ac4edaa6ce5c',
-                    subject: `Novo Lead: ${lead.nome}`,
-                    ...lead
-                })
-            });
+            // Enviar Lead com consentimento usando o token de ativação do Web3Forms.
+            // A resposta PRECISA ser conferida: antes o fetch não era aguardado nem
+            // tinha catch, e a mensagem de sucesso era montada logo depois — o lead
+            // se perdia com uma confirmação falsa na tela.
+            let enviado = false;
+            try {
+                const resposta = await fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        access_key: '7d915857-c79e-4ff4-b507-ac4edaa6ce5c',
+                        subject: `Novo Lead: ${lead.nome}`,
+                        ...lead
+                    })
+                });
+                enviado = resposta.ok;
+            } catch {
+                enviado = false;
+            }
+
+            if (!enviado) {
+                setIsTyping(true);
+                setTimeout(() => {
+                    setIsTyping(false);
+                    setMessages(prev => [
+                        ...prev,
+                        {
+                            type: 'bot',
+                            content: `<strong>Quase lá, ${escapeHtml(variables.nome)}!</strong><br><br>Não conseguimos registrar seus dados agora — pode ser instabilidade momentânea na conexão. Toque no botão do WhatsApp abaixo para falar com um consultor e garantir seu atendimento.`,
+                            isHtml: true
+                        }
+                    ]);
+                    setInputType('actions');
+                }, 800);
+                return;
+            }
 
             if (typeof window !== 'undefined' && (window as any).dataLayer) {
                 (window as any).dataLayer.push({

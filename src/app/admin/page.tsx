@@ -157,6 +157,9 @@ export default function AdminDashboardPage() {
   // Espelho síncrono de `loading`: o estado só re-renderiza depois do commit, o
   // que não impede dois `onClick` no mesmo tick de dispararem duas cargas.
   const carregandoRef = useRef(false);
+  // Resposta de /admin/stats obtida na checagem de sessão, para não repetir a
+  // chamada mais cara do painel na montagem.
+  const statsIniciaisRef = useRef<{ data: any; em: number } | null>(null);
 
   // Convite de Novos Corretores com Bônus
   const [telefoneConvite, setTelefoneConvite] = useState('');
@@ -191,6 +194,10 @@ export default function AdminDashboardPage() {
         const res = await fetchAdminApi('/admin/stats');
         if (cancelado) return;
         if (res.success) {
+          // Reaproveita esta resposta: `carregarDadosAdmin` pediria /admin/stats
+          // de novo segundos depois, duplicando a leitura da coleção inteira a
+          // cada abertura do painel.
+          statsIniciaisRef.current = { data: res.data || res, em: Date.now() };
           setAdminToken('cookie');
         } else {
           setLoading(false);
@@ -252,8 +259,17 @@ export default function AdminDashboardPage() {
       // estreita o tipo e perde `data`/`gemini_metrics` nos usos abaixo.
       const semSessao = (): { success: boolean; data?: any; error?: string; message?: string } =>
         ({ success: false });
+
+      // Se a checagem de sessão trouxe /admin/stats há menos de 30s, usa aquela
+      // resposta em vez de repetir a chamada mais cara do painel.
+      const statsEmCache = statsIniciaisRef.current;
+      const statsPromessa = statsEmCache && Date.now() - statsEmCache.em < 30_000
+        ? Promise.resolve({ success: true, data: statsEmCache.data })
+        : fetchAdminApi('/admin/stats').catch(semSessao);
+      statsIniciaisRef.current = null;
+
       const [resStats, resCorretores, resAnuncios, resConhecimento, resMetrics] = await Promise.all([
-        fetchAdminApi('/admin/stats').catch(semSessao),
+        statsPromessa,
         fetchAdminApi('/admin/corretores').catch(semSessao),
         fetchAdminApi('/admin/anuncios').catch(semSessao),
         fetchAdminApi('/admin/conhecimento').catch(semSessao),

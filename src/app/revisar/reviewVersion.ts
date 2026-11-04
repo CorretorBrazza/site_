@@ -105,6 +105,12 @@ export class ControladorAutosave {
 
   private emVoo = false;
   private retentativasConflito = 0;
+  /** Tentativas automáticas depois de erro de rede/validação. */
+  private retentativasErro = 0;
+  /** Timer do backoff de erro, separado do debounce de digitação. */
+  private timerErro: unknown = null;
+  /** Após desmontar, não agenda mais nada: o flush já foi disparado. */
+  private destruido = false;
 
   private readonly lerToken: () => string;
   private readonly salvar: Salvador;
@@ -160,10 +166,34 @@ export class ControladorAutosave {
   }
 
   private armar(): void {
+    if (this.destruido) return;
     this.cancelarTimer();
     this.timer = this.agendador(() => {
       void this.salvarPendente();
     }, this.debounceMs);
+  }
+
+  /**
+   * Rearma depois de um erro de transporte/validação.
+   *
+   * Sem isto, a pendência ficava parada no estado `error` até o corretor digitar
+   * de novo — quem navegou para outra aba ou perdeu o sinal por um instante
+   * perdia a edição sem nenhum aviso. O backoff é curto e limitado: 2s, 4s, 8s
+   * (máx. 3 tentativas), porque a próxima digitação já rearma o debounce normal.
+   */
+  private agendarRetentativaDeErro(): void {
+    if (this.destruido) return;
+    if (!this.temPendencia()) return;
+    if (this.retentativasErro >= 3) return;
+
+    this.retentativasErro += 1;
+    const atraso = Math.min(8000, 2000 * 2 ** (this.retentativasErro - 1));
+
+    if (this.timerErro !== null) this.cancelador(this.timerErro);
+    this.timerErro = this.agendador(() => {
+      this.timerErro = null;
+      void this.salvarPendente();
+    }, atraso);
   }
 
   private cancelarTimer(): void {
@@ -207,7 +237,9 @@ export class ControladorAutosave {
    */
   aplicarVersaoDoServidor(versao: number | undefined | null): void {
     if (typeof versao !== 'number' || !Number.isInteger(versao) || versao < 0) return;
-    if (versao === this.versao) return;
+    // Menor que a local é resposta fora de ordem (duas chamadas em voo). Adotar
+    // o número menor fazia o próximo autosave tomar 409 e entrar em cascata.
+    if (versao <= this.versao) return;
     this.versao = versao;
     this.retentativasConflito = 0;
     this.aoConfirmarVersao?.(versao);
@@ -259,9 +291,27 @@ export class ControladorAutosave {
     this.mudar('idle');
   }
 
-  /** Libera o timer. Usado no desmontar do componente. */
+  /**
+   * Libera os timers no desmontar do componente.
+   *
+   * Antes, isto só cancelava o timer — e a pendência morria junto com a
+   * instância. Como o debounce é de 1s, navegar logo depois de digitar
+   * descartava a edição sem aviso. Agora o desmontar DISPARA o envio da
+   * pendência (o controlador é recriado a cada montagem, então esta é a última
+   * chance) e só depois libera os timers.
+   */
   destruir(): void {
+    this.destruido = true;
     this.cancelarTimer();
+    if (this.timerErro !== null) {
+      this.cancelador(this.timerErro);
+      this.timerErro = null;
+    }
+    if (this.temPendencia()) {
+      // `salvarPendente` checa `destruido` apenas para agendar; o envio em si
+      // continua válido e é o que preserva o trabalho do corretor.
+      void this.salvarPendente();
+    }
   }
 
   /* ------------------------------ execução ------------------------------ */
@@ -293,6 +343,7 @@ export class ControladorAutosave {
       this.emVoo = false;
       const mensagem = erro instanceof Error ? erro.message : 'Falha na conexão';
       this.mudar('error', mensagem);
+      this.agendarRetentativaDeErro();
       return this.estado;
     }
     this.emVoo = false;
@@ -316,8 +367,9 @@ export class ControladorAutosave {
       return this.tratarConflito(resultado, dadosDoVoo, capaDoVoo);
     }
 
-    // Erru de transporte ou de validação: a pendência fica para a próxima tentativa.
+    // Erro de transporte ou de validação: a pendência fica para a próxima tentativa.
     this.mudar('error', resultado.error || 'Erro ao salvar alterações');
+    this.agendarRetentativaDeErro();
     return this.estado;
   }
 
@@ -398,8 +450,11 @@ export class ControladorAutosave {
     const aindaVale = dadosDoVoo !== null || capaDoVoo !== undefined;
     if (aindaVale) {
       // Garante que a pendência volte mesmo que ela tenha sido consumida no caminho.
+      // A edição feita DURANTE o voo (`this.pendente`) é mais nova que a do voo,
+      // então ela vence a mesclagem — a ordem invertida regravava o valor antigo
+      // por cima do que o corretor acabou de digitar.
       if (dadosDoVoo) {
-        this.pendente = { ...(this.pendente || {}), ...dadosDoVoo };
+        this.pendente = { ...dadosDoVoo, ...(this.pendente || {}) };
       }
       if (capaDoVoo !== undefined) {
         this.capaPendente = capaDoVoo;

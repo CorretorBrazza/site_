@@ -7,7 +7,13 @@ import { HelpCircle, CheckCircle2, ChevronRight, AlertCircle } from 'lucide-reac
 interface ReviewQuestionsProps {
   perguntas: DynamicQuestion[];
   onAnswerQuestion: (questionId: string, resposta: unknown) => void;
-  disabled?: boolean;
+  /**
+   * `true` desabilita tudo; um mapa desabilita por pergunta.
+   *
+   * O mapa é o que impede o duplo clique de disparar dois POST /review/answer
+   * para a mesma pergunta sem travar as outras.
+   */
+  disabled?: boolean | Record<string, boolean>;
 }
 
 export function ReviewQuestions({
@@ -17,6 +23,10 @@ export function ReviewQuestions({
 }: ReviewQuestionsProps) {
   const [selectedInputs, setSelectedInputs] = useState<Record<string, any>>({});
   const [multiSelected, setMultiSelected] = useState<Record<string, string[]>>({});
+
+  const bloqueada = (questionId: string): boolean => (
+    typeof disabled === 'boolean' ? disabled : Boolean(disabled?.[questionId])
+  );
 
   if (!perguntas || perguntas.length === 0) {
     return null;
@@ -109,7 +119,7 @@ export function ReviewQuestions({
                     <button
                       key={opcao}
                       type="button"
-                      disabled={disabled}
+                      disabled={bloqueada(q.id)}
                       onClick={() => handleBotoesClick(q, opcao)}
                       className="w-full py-3 px-4 min-h-[48px] bg-white border border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-slate-800 font-bold text-xs rounded-xl text-left flex items-center justify-between shadow-sm transition-all active:scale-98"
                     >
@@ -130,7 +140,7 @@ export function ReviewQuestions({
                         <button
                           key={opcao}
                           type="button"
-                          disabled={disabled}
+                          disabled={bloqueada(q.id)}
                           onClick={() => handleMultiToggle(q.id, opcao)}
                           className={`w-full py-2.5 px-3.5 min-h-[44px] border text-xs font-bold rounded-xl text-left flex items-center justify-between transition-all ${
                             isChecked
@@ -153,7 +163,7 @@ export function ReviewQuestions({
                   <div className="flex items-center justify-end gap-2 pt-1">
                     <button
                       type="button"
-                      disabled={disabled}
+                      disabled={bloqueada(q.id)}
                       onClick={() => onAnswerQuestion(q.id, 'Não informado')}
                       className="text-xs text-slate-500 font-bold px-3 py-2 rounded-lg hover:bg-slate-200"
                     >
@@ -161,7 +171,7 @@ export function ReviewQuestions({
                     </button>
                     <button
                       type="button"
-                      disabled={disabled}
+                      disabled={bloqueada(q.id)}
                       onClick={() => handleMultiSubmit(q.id)}
                       className="bg-blue-600 text-white text-xs font-bold px-4 py-2 rounded-xl shadow hover:bg-blue-700"
                     >
@@ -193,7 +203,7 @@ export function ReviewQuestions({
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      disabled={disabled}
+                      disabled={bloqueada(q.id)}
                       onClick={() => onAnswerQuestion(q.id, 'Não informado')}
                       className="text-xs text-slate-500 font-bold px-3 py-2.5 rounded-xl hover:bg-slate-100"
                     >
@@ -201,7 +211,7 @@ export function ReviewQuestions({
                     </button>
                     <button
                       type="button"
-                      disabled={disabled}
+                      disabled={bloqueada(q.id)}
                       onClick={() => handleInputSubmit(q.id)}
                       className="bg-blue-600 text-white text-xs font-bold px-5 py-2.5 min-h-[44px] rounded-xl shadow hover:bg-blue-700 active:scale-98"
                     >

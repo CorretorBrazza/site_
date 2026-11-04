@@ -94,7 +94,11 @@ function AprovarContent() {
     setDescricao(refinados.descricao || '');
     setPrecoVenda(refinados.precoVenda ?? '');
     setPrecoLocacao(refinados.precoLocacao ?? '');
-    setCondominio(refinados.condominio ?? '');
+    // A taxa vem de `valorCondominio`; `condominio` numérico é legado (a taxa
+    // que versões antigas gravavam nesse campo). `condominio` texto é o NOME e
+    // não é editado nesta tela.
+    const taxaCondominio = refinados.valorCondominio ?? refinados.condominio;
+    setCondominio(typeof taxaCondominio === 'number' && Number.isFinite(taxaCondominio) ? taxaCondominio : '');
     setIptu(refinados.iptu ?? '');
     setQuartos(carac.quartos ?? '');
     setSuites(carac.suites ?? '');
@@ -181,24 +185,82 @@ function AprovarContent() {
     };
   }, [aplicarDetalhes]);
 
-  const getPayloadEditado = () => ({
-    titulo,
-    tipoImovel,
-    finalidade,
-    descricao,
-    precoVenda: precoVenda === '' ? null : Number(precoVenda),
-    precoLocacao: precoLocacao === '' ? null : Number(precoLocacao),
-    condominio: condominio === '' ? null : Number(condominio),
-    iptu: iptu === '' ? null : Number(iptu),
-    bairro,
-    caracteristicas: {
-      quartos: quartos === '' ? null : Number(quartos),
-      suites: suites === '' ? null : Number(suites),
-      banheiros: banheiros === '' ? null : Number(banheiros),
-      vagas: vagas === '' ? null : Number(vagas),
-      areaUtil: areaUtil === '' ? null : Number(areaUtil),
-    },
-  });
+  /** Igual a `numero`, mas escrevendo dentro do objeto de características. */
+  const numeroEm = (alvo: Record<string, unknown>, campo: string, atual: number | '', original: unknown) => {
+    if (atual === '') {
+      const tinhaValor = original !== null && original !== undefined && original !== '';
+      if (tinhaValor) alvo[campo] = null;
+      return;
+    }
+    if (!Number.isFinite(atual)) return;
+    const originalNumerico = typeof original === 'number' && Number.isFinite(original) ? original : null;
+    if (originalNumerico === null || atual !== originalNumerico) alvo[campo] = atual;
+  };
+
+  /**
+   * Payload de edição com APENAS os campos que o corretor mudou.
+   *
+   * Antes, esta função mandava todos os campos sempre — inclusive os que a tela
+   * só exibia. Como os valores vinham da extração por IA, um preço formatado
+   * ("350.000,00") virava `Number(...) = NaN`, e `JSON.stringify` grava `NaN`
+   * como `null`: um clique em "Aprovar" (que debita crédito) zerava preço, IPTU
+   * e áreas que ninguém tocou.
+   *
+   * Agora: campo não alterado não vai; número inválido é OMITIDO (nunca vira
+   * null por acidente); e limpar um campo que tinha valor envia `null` de
+   * propósito.
+   *
+   * `condominio` é o NOME do condomínio (string) no resto do sistema
+   * (`reviewPatch.ts`, `UpdateAnuncioSchema`, formulário de edição). A taxa em
+   * reais é `valorCondominio`. Esta tela edita a taxa e não toca no nome.
+   */
+  const getPayloadEditado = () => {
+    const orig = adData?.dados_refinados || {};
+    const origCarac = orig.caracteristicas || {};
+    const payload: Record<string, unknown> = {};
+
+    const texto = (campo: string, atual: string, original: unknown) => {
+      if (String(atual ?? '') !== String(original ?? '')) payload[campo] = atual;
+    };
+
+    const numero = (campo: string, atual: number | '', original: unknown) => {
+      if (atual === '') {
+        const tinhaValor = original !== null && original !== undefined && original !== '';
+        if (tinhaValor) payload[campo] = null;
+        return;
+      }
+      if (!Number.isFinite(atual)) return;
+      const originalNumerico = typeof original === 'number' && Number.isFinite(original) ? original : null;
+      if (originalNumerico === null || atual !== originalNumerico) payload[campo] = atual;
+    };
+
+    texto('titulo', titulo, orig.titulo);
+    texto('tipoImovel', tipoImovel, orig.tipoImovel);
+    texto('finalidade', finalidade, orig.finalidade ?? orig.transacao);
+    texto('descricao', descricao, orig.descricao);
+    texto('bairro', bairro, orig.bairro ?? orig.endereco?.bairro);
+
+    numero('precoVenda', precoVenda, orig.precoVenda);
+    numero('precoLocacao', precoLocacao, orig.precoLocacao);
+    numero('iptu', iptu, orig.iptu ?? orig.iptuMensal);
+    // Compatibilidade: anúncios antigos guardavam a TAXA em `condominio` (número).
+    // Nesse caso ela é a origem do valor exibido, mas nunca é sobrescrita como texto.
+    numero(
+      'valorCondominio',
+      condominio,
+      orig.valorCondominio ?? (typeof orig.condominio === 'number' ? orig.condominio : null),
+    );
+
+    const caracteristicas: Record<string, unknown> = {};
+    numeroEm(caracteristicas, 'quartos', quartos, origCarac.quartos);
+    numeroEm(caracteristicas, 'suites', suites, origCarac.suites);
+    numeroEm(caracteristicas, 'banheiros', banheiros, origCarac.banheiros);
+    numeroEm(caracteristicas, 'vagas', vagas, origCarac.vagas);
+    numeroEm(caracteristicas, 'areaUtil', areaUtil, origCarac.areaUtil ?? origCarac.areaTotal);
+    if (Object.keys(caracteristicas).length > 0) payload.caracteristicas = caracteristicas;
+
+    return payload;
+  };
 
   /** Falha de ação: mesmo mapeamento por status, sem vazar texto do backend. */
   const registrarFalhaDeAcao = (motivo: ApprovalFailure) => {
@@ -213,10 +275,17 @@ function AprovarContent() {
   const handleSaveEdits = async () => {
     const cliente = clienteRef.current;
     if (!cliente || !adData) return;
+
+    const payload = getPayloadEditado();
+    if (Object.keys(payload).length === 0) {
+      setFeedback({ tom: 'sucesso', texto: 'Nenhuma alteração para salvar.' });
+      return;
+    }
+
     setIsSubmitting(true);
     setFeedback(null);
 
-    const result = await cliente.editar(adData.ad_id, getPayloadEditado());
+    const result = await cliente.editar(adData.ad_id, payload);
 
     setIsSubmitting(false);
 
@@ -257,7 +326,12 @@ function AprovarContent() {
     setIsSubmitting(true);
     setFeedback(null);
 
-    const result = await cliente.aprovar(adData.ad_id, getPayloadEditado(), { aprovar: true });
+    // Sem alteração, `dados_editados` não vai: o backend aprova o que já está
+    // gravado, em vez de receber um objeto vazio e regravar o documento.
+    const payload = getPayloadEditado();
+    const dadosEditados = Object.keys(payload).length > 0 ? payload : undefined;
+
+    const result = await cliente.aprovar(adData.ad_id, dadosEditados, { aprovar: true });
 
     setIsSubmitting(false);
 
@@ -601,7 +675,7 @@ function AprovarContent() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Condomínio (R$)</label>
+                <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Taxa de Condomínio (R$)</label>
                 <input
                   type="number"
                   value={condominio}

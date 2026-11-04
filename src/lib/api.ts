@@ -115,11 +115,11 @@ export async function fetchAdminApi<T = any>(
   // Devolve o corpo INTEIRO, e não só `data`: os endpoints de /admin respondem
   // com `{ success, data, ...data }`, e o painel lê campos do topo (`corretores`,
   // `gemini_metrics`). `fetchApi` reduziria a `{ success, data }` e quebraria.
-  const res = await fetch(resolveApiUrl(endpoint), {
+  const res = await fetch(resolveApiUrl(endpoint), comTimeout({
     ...options,
     headers,
     credentials: 'same-origin',
-  });
+  }));
 
   const text = await res.text();
   if (!text) {
@@ -163,6 +163,31 @@ export function resolveApiUrl(endpoint: string): string {
     : `${API_BROWSER_BASE_URL}/${finalEndpoint}`;
 }
 
+/**
+ * Teto de tempo de cada chamada à API.
+ *
+ * Sem ele, uma API em cold start ou fora do ar deixa a promessa pendurada para
+ * sempre: "Abrindo seu anúncio…" e "Validando seu link…" ficavam na tela sem
+ * erro e sem botão de tentar de novo.
+ */
+const API_TIMEOUT_MS = 20_000;
+
+/** Aplica o timeout sem sobrescrever um `signal` que o chamador já passou. */
+function comTimeout(options: RequestInit): RequestInit {
+  if (options.signal) return options;
+  if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
+    return { ...options, signal: AbortSignal.timeout(API_TIMEOUT_MS) };
+  }
+  return options;
+}
+
+function mensagemDeFalhaDeRede(err: unknown, url: string): string {
+  if (err instanceof Error && (err.name === 'TimeoutError' || err.name === 'AbortError')) {
+    return `A API demorou demais para responder (${url}). Tente novamente em instantes.`;
+  }
+  return `Falha na conexão com a API (${url}): ${err instanceof Error ? err.message : String(err)}`;
+}
+
 export async function fetchApi<T = any>(
   endpoint: string,
   options: RequestInit = {}
@@ -177,13 +202,13 @@ export async function fetchApi<T = any>(
   };
 
   try {
-    const res = await fetch(url, {
+    const res = await fetch(url, comTimeout({
       ...options,
       headers: {
         ...defaultHeaders,
         ...options.headers,
       },
-    });
+    }));
 
     const text = await res.text();
     let json: any = {};
@@ -226,7 +251,7 @@ export async function fetchApi<T = any>(
   } catch (err: any) {
     return {
       success: false,
-      error: `Falha na conexão com a API (${url}): ${err.message}`,
+      error: mensagemDeFalhaDeRede(err, url),
     };
   }
 }

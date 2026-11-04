@@ -16,8 +16,11 @@ export async function generateStaticParams() {
   if (!imoveis || imoveis.length === 0) {
     return [];
   }
+  // Pré-renderiza pela REFERÊNCIA, que é a URL canônica anunciada no sitemap e
+  // nos links internos. O `ad_id` continua aceito em runtime (`dynamicParams`),
+  // mas não é a URL que se publica — gerar as duas criava conteúdo duplicado.
   return imoveis.map((imovel) => ({
-    id: imovel.id,
+    id: imovel.referencia || imovel.id,
   }));
 }
 

@@ -38,7 +38,7 @@ export default async function VendaPage() {
         '@type': 'RealEstateListing',
         name: imovel.titulo,
         description: imovel.descricao ? `${imovel.descricao.substring(0, 150)}...` : undefined,
-        url: `https://imoveistaboao.com.br/imovel/${imovel.id}/`,
+        url: `https://imoveistaboao.com.br/imovel/${encodeURIComponent(imovel.referencia || imovel.id)}/`,
         image: imovel.fotos && imovel.fotos.length > 0 ? imovel.fotos[0] : undefined,
         offers: imovel.precoVenda ? {
           '@type': 'Offer',
