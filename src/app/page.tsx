@@ -1,8 +1,33 @@
 import Link from 'next/link';
-import { Search, Sparkles, MapPin, CheckCircle2, ArrowRight, Home as HomeIcon, Key } from 'lucide-react';
+import {
+  Search,
+  MapPin,
+  ArrowRight,
+  Home as HomeIcon,
+  Key,
+  Sparkles,
+  ShieldCheck,
+  Clock,
+  CloudUpload,
+  MessageCircle,
+} from 'lucide-react';
 import { getImoveis } from '@/app/actions/imovel-server-actions';
 import HomeLiveSection from '@/components/HomeLiveSection';
 import { safeJsonLd } from '@/lib/jsonld';
+import { Container, Section, SectionTitle } from '@/components/ui/container';
+import { ButtonLink } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input, Select } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+
+const NUMERO_WHATSAPP = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '5511989161897').replace(/\D/g, '');
+
+const PROVAS = [
+  { icone: ShieldCheck, titulo: 'Atendimento local', texto: 'Taboão da Serra e imediações' },
+  { icone: Clock, titulo: '90 dias no ar', texto: 'Cada crédito publica por 90 dias' },
+  { icone: Sparkles, titulo: 'IA + revisão', texto: 'Nada é publicado sem você conferir' },
+  { icone: CloudUpload, titulo: 'Fotos em backup', texto: 'Acervo em alta resolução na nuvem' },
+] as const;
 
 export default async function Home() {
   const { imoveis: allImoveis, fallback: catalogoFallback } = await getImoveis();
@@ -31,244 +56,228 @@ export default async function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50 text-slate-900">
+    <div className="flex flex-col">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
 
-      {catalogoFallback && (
-        <div className="bg-amber-50 border-b border-amber-200 text-amber-900 text-xs sm:text-sm font-semibold px-4 py-2.5 text-center">
-          Estamos com instabilidade no catálogo — os imóveis abaixo podem estar desatualizados. Tente novamente em instantes.
-        </div>
-      )}
+      {/* ---------------- HERO ---------------- */}
+      <Section tone="navy" spacing="compact" className="relative overflow-hidden pt-12 sm:pt-16">
+        {/* Halo dourado discreto */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-40 right-1/4 h-80 w-80 rounded-full bg-gold-500/10 blur-3xl"
+        />
 
-      {/* Hero Section — Clean Light Real Estate */}
-      <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden py-16 px-4 bg-gradient-to-b from-blue-50/50 via-slate-50 to-slate-50">
-        
-        <div className="relative z-10 max-w-5xl mx-auto w-full text-center space-y-6">
+        <Container className="relative z-10">
+          <div className="mx-auto max-w-3xl text-center">
+            <Badge tone="gold" className="mb-5 border border-gold-500/30 bg-gold-500/10">
+              <MapPin className="h-3 w-3" aria-hidden="true" />
+              Taboão da Serra e imediações
+            </Badge>
 
-          {/* Badge de Localização Oficial */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs md:text-sm font-extrabold uppercase tracking-wider shadow-xs">
-            <MapPin className="w-4 h-4 text-blue-600 shrink-0" />
-            <span>Imóveis em Taboão da Serra e imediações</span>
+            <h1 className="text-3xl font-bold leading-[1.1] tracking-tight text-white sm:text-5xl">
+              Seu próximo imóvel em{' '}
+              <span className="text-gold-400">Taboão da Serra</span>{' '}
+              começa aqui
+            </h1>
+
+            <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/70 sm:text-base">
+              Casas, apartamentos e sobrados com procedência: dados conferidos,
+              fotos em alta e contato direto com o corretor responsável.
+            </p>
           </div>
 
-          {/* Título Principal */}
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight leading-tight max-w-4xl mx-auto">
-            Encontre o Imóvel dos seus Sonhos em <span className="text-blue-600">Taboão da Serra e imediações</span>
-          </h1>
-
-          <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto font-medium leading-relaxed px-2">
-            Casas, apartamentos e sobrados selecionados com transparência, segurança jurídica e publicação rápida com Inteligência Artificial.
-          </p>
-
-          {/* Widget de Busca Responsivo — Clean White Card */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-5 md:p-8 shadow-xl max-w-4xl mx-auto text-left mt-8">
-            <form action="/venda" method="GET" className="space-y-5">
-              
-              {/* Abas Comprar / Alugar */}
-              <div className="flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200 w-full sm:w-fit">
-                <a
-                  href="/venda"
-                  className="flex-1 sm:flex-initial px-6 py-2.5 text-xs md:text-sm font-extrabold rounded-xl bg-blue-600 text-white shadow-sm text-center flex items-center justify-center gap-2"
-                >
-                  <HomeIcon className="w-4 h-4" />
+          {/* Busca */}
+          <Card className="mx-auto mt-8 max-w-4xl p-4 sm:p-6">
+            <form action="/venda" method="GET" className="space-y-4">
+              <div className="flex w-full gap-1 rounded-xl bg-paper p-1 sm:w-fit">
+                <span className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-brand-900 px-5 py-2 text-xs font-extrabold uppercase tracking-wider text-white sm:flex-none">
+                  <HomeIcon className="h-4 w-4" aria-hidden="true" />
                   Comprar
-                </a>
-                <a
+                </span>
+                <Link
                   href="/locacao"
-                  className="flex-1 sm:flex-initial px-6 py-2.5 text-xs md:text-sm font-bold rounded-xl text-slate-600 hover:text-slate-900 text-center flex items-center justify-center gap-2 transition-colors"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-lg px-5 py-2 text-xs font-extrabold uppercase tracking-wider text-muted hover:text-brand-900 sm:flex-none"
                 >
-                  <Key className="w-4 h-4" />
+                  <Key className="h-4 w-4" aria-hidden="true" />
                   Alugar
-                </a>
+                </Link>
               </div>
 
-              {/* Grid dos Filtros de Busca */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3.5">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">Localização</label>
-                  <input
+                  <label htmlFor="busca-bairro" className="mb-1.5 block text-[11px] font-extrabold uppercase tracking-wider text-muted">
+                    Localização
+                  </label>
+                  <Input
+                    id="busca-bairro"
                     type="text"
                     name="bairro"
-                    defaultValue="Taboão da Serra e imediações"
                     placeholder="Bairro ou região"
-                    className="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-300 rounded-xl px-3.5 py-3 text-xs md:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+                    defaultValue=""
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">Tipo de Imóvel</label>
-                  <select
-                    name="tipo"
-                    className="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-300 rounded-xl px-3.5 py-3 text-xs md:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
-                  >
-                    <option value="">Todos os Tipos</option>
+                  <label htmlFor="busca-tipo" className="mb-1.5 block text-[11px] font-extrabold uppercase tracking-wider text-muted">
+                    Tipo
+                  </label>
+                  <Select id="busca-tipo" name="tipo" defaultValue="">
+                    <option value="">Todos os tipos</option>
                     <option value="Apartamento">Apartamento</option>
                     <option value="Sobrado">Sobrado / Casa</option>
                     <option value="Terreno">Terreno</option>
                     <option value="Comercial">Comercial</option>
-                  </select>
+                  </Select>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">Preço Máximo</label>
-                  <select
-                    name="precoMax"
-                    className="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-300 rounded-xl px-3.5 py-3 text-xs md:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
-                  >
-                    <option value="">Sem limite de preço</option>
+                  <label htmlFor="busca-preco" className="mb-1.5 block text-[11px] font-extrabold uppercase tracking-wider text-muted">
+                    Preço máximo
+                  </label>
+                  <Select id="busca-preco" name="precoMax" defaultValue="">
+                    <option value="">Sem limite</option>
                     <option value="300000">Até R$ 300 mil</option>
                     <option value="500000">Até R$ 500 mil</option>
                     <option value="800000">Até R$ 800 mil</option>
                     <option value="1200000">Até R$ 1,2 milhão</option>
-                  </select>
+                  </Select>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">Dormitórios</label>
-                  <select
-                    name="quartos"
-                    className="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-300 rounded-xl px-3.5 py-3 text-xs md:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
-                  >
-                    <option value="">Qualquer quantidade</option>
-                    <option value="1">1+ Quartos</option>
-                    <option value="2">2+ Quartos</option>
-                    <option value="3">3+ Quartos</option>
-                  </select>
+                  <label htmlFor="busca-quartos" className="mb-1.5 block text-[11px] font-extrabold uppercase tracking-wider text-muted">
+                    Dormitórios
+                  </label>
+                  <Select id="busca-quartos" name="quartos" defaultValue="">
+                    <option value="">Qualquer</option>
+                    <option value="1">1+ quartos</option>
+                    <option value="2">2+ quartos</option>
+                    <option value="3">3+ quartos</option>
+                  </Select>
                 </div>
               </div>
 
-              {/* Botão de Busca Azul Royal */}
               <button
                 type="submit"
-                className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-xl shadow-lg shadow-blue-600/20 transition-all flex items-center justify-center gap-2 text-sm uppercase tracking-wider"
+                className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gold-500 text-sm font-extrabold uppercase tracking-wider text-brand-950 transition-colors hover:bg-gold-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:ring-offset-2"
               >
-                <Search className="w-5 h-5" />
-                <span>Buscar Imóveis em Taboão da Serra e imediações</span>
+                <Search className="h-5 w-5" aria-hidden="true" />
+                Buscar imóveis
               </button>
             </form>
-          </div>
+          </Card>
 
+          {/* Provas rápidas */}
+          <ul className="mx-auto mt-8 grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-4">
+            {PROVAS.map(({ icone: Icone, titulo, texto }) => (
+              <li key={titulo} className="flex items-start gap-2.5 rounded-xl border border-white/10 bg-white/5 p-3">
+                <Icone className="mt-0.5 h-4 w-4 shrink-0 text-gold-400" aria-hidden="true" />
+                <div className="min-w-0">
+                  <p className="truncate text-[11px] font-extrabold uppercase tracking-wider text-white">{titulo}</p>
+                  <p className="text-[11px] leading-snug text-white/60">{texto}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </Section>
+
+      {catalogoFallback && (
+        <div className="border-b border-gold-500/30 bg-gold-500/10 px-4 py-2.5 text-center text-xs font-semibold text-gold-700 sm:text-sm">
+          Estamos com instabilidade no catálogo — os imóveis abaixo podem estar desatualizados. Tente novamente em instantes.
         </div>
-      </section>
+      )}
 
-      {/* Vitrine de Imóveis em Destaque */}
-      <section className="py-16 bg-white border-t border-slate-200">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
-            <div>
-              <span className="text-blue-600 font-extrabold uppercase tracking-widest text-xs block mb-1">
-                Seleção Exclusiva
-              </span>
-              <h2 className="text-2xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
-                Novos Anúncios em Taboão da Serra e imediações
-              </h2>
-            </div>
+      {/* ---------------- VITRINE ---------------- */}
+      <Section tone="paper">
+        <Container>
+          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <SectionTitle
+              sobre="Seleção do portal"
+              titulo="Novos anúncios na região"
+              descricao="Imóveis publicados e revisados por corretores de Taboão da Serra e imediações."
+            />
             <Link
               href="/venda"
-              className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-bold text-sm transition-colors"
+              className="inline-flex items-center gap-1.5 self-start text-sm font-extrabold text-brand-900 hover:text-gold-700 sm:self-auto"
             >
-              <span>Ver todos os imóveis</span>
-              <ArrowRight className="w-4 h-4" />
+              Ver todos
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
 
           <HomeLiveSection initialImoveis={allImoveis} />
-        </div>
-      </section>
+        </Container>
+      </Section>
 
-      {/* Flagship Section Para Corretores — Alto Impacto SaaS */}
-      <section className="py-20 px-4 bg-gradient-to-b from-slate-950 via-blue-950/60 to-slate-950 text-white border-t border-slate-800 relative overflow-hidden">
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-6xl mx-auto space-y-12 relative z-10">
-          <div className="text-center max-w-3xl mx-auto space-y-4">
-            <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-black uppercase tracking-wider border border-blue-400/30">
-              <Sparkles className="w-4 h-4 text-amber-400" />
-              Tecnologia de Inteligência Artificial para Corretores
-            </span>
-
-            <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
-              Publique Imóveis em 3 Minutos Sem Digitar Nada. <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500">Nossa IA Analisa suas Fotos e Escreve o Anúncio.</span>
+      {/* ---------------- PARA O CORRETOR ---------------- */}
+      <Section tone="navy">
+        <Container>
+          <div className="mx-auto max-w-2xl text-center">
+            <Badge tone="gold" className="mb-4 border border-gold-500/30 bg-gold-500/10">
+              <Sparkles className="h-3 w-3" aria-hidden="true" />
+              Para corretores
+            </Badge>
+            <h2 className="text-2xl font-bold leading-tight text-white sm:text-4xl">
+              Publique em minutos. <span className="text-gold-400">Pague por anúncio.</span>
             </h2>
-
-            <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal">
-              <strong>1 crédito grátis para testar.</strong> Envie fotos e descrição solta pelo WhatsApp oficial. A IA gera seu Media Kit completo para 5 canais e faz o backup de fotos em alta na nuvem por 1 ano.
+            <p className="mt-3 text-sm leading-relaxed text-white/70 sm:text-base">
+              Envie fotos e um texto solto pelo WhatsApp. A IA monta o anúncio,
+              você revisa e aprova. <strong className="font-semibold text-white">R$ 12,90 por imóvel</strong>,
+              90 dias no ar — sem assinatura.
             </p>
           </div>
 
-          {/* 3 Pilares Visuais */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 space-y-3 hover:border-slate-700 transition-all shadow-xl">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-950 border border-emerald-800 text-emerald-400 flex items-center justify-center font-black">
-                📸
-              </div>
-              <h3 className="text-lg font-black text-white">Envio Direto pelo WhatsApp</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Esqueça formulários lentos. Mande até 20 fotos e o texto bruto no número oficial <strong>(11) 98916-1897</strong>.
-              </p>
-            </div>
-
-            <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 space-y-3 hover:border-slate-700 transition-all shadow-xl">
-              <div className="w-12 h-12 rounded-2xl bg-purple-950 border border-purple-800 text-purple-400 flex items-center justify-center font-black">
-                🤖
-              </div>
-              <h3 className="text-lg font-black text-white">Visão Computacional & RAG</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                A IA identifica acabamentos, armários, sacadas e reconhece condomínios de Taboão e Embu sem alucinações.
-              </p>
-            </div>
-
-            <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 space-y-3 hover:border-slate-700 transition-all shadow-xl">
-              <div className="w-12 h-12 rounded-2xl bg-amber-950 border border-amber-800 text-amber-400 flex items-center justify-center font-black">
-                ☁️
-              </div>
-              <h3 className="text-lg font-black text-white">Cofre de Fotos por 365 Dias</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Libere memória no celular! Baixe suas fotos em alta resolução no seu acervo seguro a qualquer momento.
-              </p>
-            </div>
+          <div className="mt-10 grid gap-4 sm:grid-cols-3">
+            {[
+              {
+                icone: MessageCircle,
+                titulo: '1. Envie pelo WhatsApp',
+                texto: 'Até 20 fotos e a descrição que você já tem no celular.',
+              },
+              {
+                icone: Sparkles,
+                titulo: '2. A IA escreve',
+                texto: 'Título, descrição, ficha e textos para redes e portais.',
+              },
+              {
+                icone: ShieldCheck,
+                titulo: '3. Você aprova',
+                texto: 'Nada vai ao ar antes da sua revisão. Só então o crédito é usado.',
+              },
+            ].map(({ icone: Icone, titulo, texto }) => (
+              <Card key={titulo} className="border-white/10 bg-white/5 p-5 shadow-none">
+                <Icone className="h-6 w-6 text-gold-400" aria-hidden="true" />
+                <h3 className="mt-3 text-sm font-extrabold text-white">{titulo}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-white/60">{texto}</p>
+              </Card>
+            ))}
           </div>
 
-          {/* Ações e Social Proof */}
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 text-center space-y-6 shadow-2xl">
-            <div className="flex flex-wrap justify-center items-center gap-4">
-              <a
-                href="https://wa.me/5511989161897?text=Ol%C3%A1%2C%20quero%20ativar%20meu%20cr%C3%A9dito%20gr%C3%A1tis%20de%20Media%20Kit"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-2xl shadow-xl transition-all text-xs uppercase tracking-wider flex items-center gap-2"
-              >
-                <span>🚀 Quero Meu Crédito Grátis no WhatsApp</span>
-              </a>
-
-              <Link
-                href="/demo"
-                className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-2xl shadow-xl transition-all text-xs uppercase tracking-wider flex items-center gap-2"
-              >
-                <Sparkles className="w-4 h-4" />
-                <span>Testar Simulador Demo</span>
-              </Link>
-
-              <Link
-                href="/como-funciona"
-                className="px-8 py-4 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-2xl border border-slate-700 transition-all text-xs flex items-center gap-2"
-              >
-                <span>Ver Como Funciona</span>
-                <ArrowRight className="w-4 h-4 text-amber-400" />
-              </Link>
-            </div>
-
-            <div className="text-xs text-slate-400 flex items-center justify-center gap-2 font-medium">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span>Ferramenta oficial criada sob medida para corretores e imobiliárias de Taboão da Serra e região.</span>
-            </div>
+          <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <ButtonLink href="/planos" variant="primary" size="lg" className="w-full sm:w-auto">
+              Publicar meu imóvel
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </ButtonLink>
+            <ButtonLink
+              href={`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent('Olá! Quero publicar um imóvel no portal.')}`}
+              variant="whatsapp"
+              size="lg"
+              externo
+              className="w-full sm:w-auto"
+            >
+              <MessageCircle className="h-4 w-4" aria-hidden="true" />
+              Falar no WhatsApp
+            </ButtonLink>
           </div>
-        </div>
-      </section>
 
+          <p className="mt-4 text-center text-xs text-white/50">
+            Ou <Link href="/demo" className="font-bold text-gold-400 underline underline-offset-2 hover:text-gold-300">teste a demonstração</Link> antes de criar a conta.
+          </p>
+        </Container>
+      </Section>
     </div>
   );
 }

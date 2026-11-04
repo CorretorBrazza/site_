@@ -5,6 +5,8 @@ import CardImovel from '@/components/CardImovel';
 import { processarEOrdenarImoveis } from '@/utils/imovelSorting';
 import { useLiveImoveis } from '@/hooks/useLiveImoveis';
 import { Building2 } from 'lucide-react';
+import { EmptyState } from '@/components/ui/empty-state';
+import { ButtonLink } from '@/components/ui/button';
 
 interface HomeLiveSectionProps {
   initialImoveis: Imovel[];
@@ -17,18 +19,21 @@ export default function HomeLiveSection({ initialImoveis }: HomeLiveSectionProps
 
   if (destaques.length === 0) {
     return (
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-10 text-center space-y-4 max-w-xl mx-auto">
-        <Building2 className="w-12 h-12 text-amber-500 mx-auto opacity-80" />
-        <h3 className="text-lg font-bold text-white">Nenhum imóvel listado no momento</h3>
-        <p className="text-xs text-slate-400">
-          Seja o primeiro corretor a publicar um imóvel em Taboão da Serra e imediações com Inteligência Artificial!
-        </p>
-      </div>
+      <EmptyState
+        icone={<Building2 className="h-10 w-10" aria-hidden="true" />}
+        titulo="Nenhum imóvel publicado no momento"
+        descricao="Seja o primeiro corretor a publicar em Taboão da Serra e imediações. A IA monta o anúncio e você só revisa."
+        acao={(
+          <ButtonLink href="/planos" variant="primary" size="md">
+            Publicar meu imóvel
+          </ButtonLink>
+        )}
+      />
     );
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {destaques.map((imovel) => (
         <CardImovel key={imovel.id} imovel={imovel} />
       ))}

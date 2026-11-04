@@ -1,37 +1,110 @@
 @import "tailwindcss";
 
+/* ============================================================
+   DESIGN TOKENS — Imóveis Taboão
+   Paleta derivada do logotipo: navy profundo + ouro + branco.
+   Ver PLANO-LAYOUT-BRANDING.md (Opção A):
+     - navy  → estrutura e autoridade
+     - ouro  → assinatura / CTA de produto
+     - verde → SOMENTE o botão de WhatsApp
+   Regras de contraste:
+     - ouro sobre navy  ≈ 7:1  → pode ser texto
+     - ouro sobre branco ≈ 2,3:1 → NUNCA texto; só filete/ícone grande/borda
+     - botão ouro usa texto navy (nunca branco)
+   ============================================================ */
 @theme {
-  --color-primary: #1e3a8a;
-  --color-primary-dark: #0f172a;
-  --color-primary-light: #2563eb;
-  --color-accent: #2563eb;
-  --color-accent-light: #3b82f6;
-  --color-accent-hover: #1d4ed8;
-  --color-gold: #d97706;
-  --color-gold-light: #f59e0b;
-  --color-success: #059669;
-  --color-bg-light: #f8fafc;
+  /* Marca */
+  --color-brand-950: #06101f;
+  --color-brand-900: #091731;
+  --color-brand-800: #0e2242;
+  --color-brand-700: #16305a;
+  --color-brand-600: #1f4076;
+
+  /* Ouro */
+  --color-gold-300: #f0dca8;
+  --color-gold-400: #e0c07a;
+  --color-gold-500: #c9a961;
+  --color-gold-600: #b2985e;
+  --color-gold-700: #8c7442;
+
+  /* Neutros quentes */
+  --color-paper: #faf9f6;
+  --color-surface: #ffffff;
+  --color-line: #e7e3da;
+  --color-ink: #0b1220;
+  --color-muted: #5b6472;
+
+  /* Semânticos */
+  --color-success: #1e7a5a;
+  --color-warning: #b4761a;
+  --color-danger: #b3261e;
+  --color-whatsapp: #25d366;
+
+  /* Papéis — é o que os componentes devem usar */
+  --color-primary: #091731;
+  --color-primary-dark: #06101f;
+  --color-primary-light: #1f4076;
+  --color-accent: #c9a961;
+  --color-accent-light: #e0c07a;
+  --color-accent-hover: #b2985e;
+  --color-gold: #c9a961;
+  --color-gold-light: #e0c07a;
+  --color-bg-light: #faf9f6;
+
+  /* Tipografia */
   --font-sans: var(--font-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-serif: var(--font-serif), Georgia, serif;
+  --font-serif: var(--font-serif), Georgia, "Times New Roman", serif;
+
+  /* Raio e sombra padrão da marca */
+  --radius-brand: 0.875rem;
+  --shadow-brand: 0 1px 2px rgba(9, 23, 49, 0.06), 0 8px 24px -12px rgba(9, 23, 49, 0.18);
 }
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #faf9f6;
+  --foreground: #0b1220;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background-color: #f8fafc;
-  color: #0f172a;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
   font-family: var(--font-sans);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Títulos usam a serifa da marca; rótulos de UI continuam na sans. */
+h1, h2, .font-display {
+  font-family: var(--font-serif);
+  letter-spacing: -0.01em;
+}
+
+/* Foco visível e consistente (acessibilidade) */
+:focus-visible {
+  outline: 2px solid var(--color-gold-500);
+  outline-offset: 2px;
+}
+
+/* Preços alinham em coluna, sem "pular" a cada render */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
 /* Transições padrão suaves */
 a, button, input, textarea, select {
-  transition: all 0.2s ease-in-out;
+  transition-property: color, background-color, border-color, box-shadow, transform, opacity;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  a, button, input, textarea, select { transition-duration: 0.01ms; }
 }
 
 /* App Shell apenas do Dashboard do Corretor (somente mobile, rota /dashboard) */
@@ -49,4 +122,14 @@ a, button, input, textarea, select {
 }
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+/* Skeleton para carregamentos (evita "pulo" de layout) */
+@keyframes brand-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #efece5, #f7f5f0, #efece5);
+  animation: brand-pulse 1.6s ease-in-out infinite;
 }

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import { SiteHeader } from "@/components/site/SiteHeader";
+import { SiteFooter } from "@/components/site/SiteFooter";
 import AnalyticsConsent from "@/components/AnalyticsConsent";
 import { safeJsonLd } from "@/lib/jsonld";
 
@@ -71,17 +71,24 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <head>
+        <meta name="theme-color" content="#091731" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: safeJsonLd(globalJsonLd) }}
         />
       </head>
-      <body className={`${plusJakartaSans.variable} ${playfairDisplay.variable} antialiased bg-[#faf9f6] text-slate-800 flex flex-col min-h-screen`}>
-        <Navbar />
-        <main className="flex-grow">
+      <body className={`${plusJakartaSans.variable} ${playfairDisplay.variable} flex min-h-screen flex-col bg-paper text-ink antialiased`}>
+        <a
+          href="#conteudo"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-brand-900 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-white"
+        >
+          Pular para o conteúdo
+        </a>
+        <SiteHeader />
+        <main id="conteudo" className="flex-grow">
           {children}
         </main>
-        <Footer />
+        <SiteFooter />
         <AnalyticsConsent />
       </body>
     </html>
