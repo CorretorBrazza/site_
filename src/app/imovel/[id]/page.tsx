@@ -3,8 +3,7 @@ import { getImoveis } from '@/app/actions/imovel-server-actions';
 import { notFound } from 'next/navigation';
 import ImageCarousel from '@/components/ImageCarousel';
 import ShareButton from '@/components/ShareButton';
-import { BedDouble, ShowerHead, Car, Maximize, MapPin, Mail, ShieldCheck, Phone, MessageCircle } from 'lucide-react';
-import Link from 'next/link';
+import { BedDouble, ShowerHead, Maximize, MapPin, ShieldCheck, MessageCircle } from 'lucide-react';
 import TrackedWhatsAppLink from '@/components/TrackedWhatsAppLink';
 import { safeJsonLd } from '@/lib/jsonld';
 

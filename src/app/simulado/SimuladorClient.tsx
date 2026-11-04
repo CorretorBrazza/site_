@@ -182,7 +182,7 @@ export default function SimuladorClient() {
                 setIsTyping(false);
 
                 const rendaUsuario = variablesRef.current.renda || 0;
-                let d = TABELA_MCMV_2026.find(f => f.renda >= rendaUsuario) || TABELA_MCMV_2026[TABELA_MCMV_2026.length - 1];
+                const d = TABELA_MCMV_2026.find(f => f.renda >= rendaUsuario) || TABELA_MCMV_2026[TABELA_MCMV_2026.length - 1];
                 const subsidio = variablesRef.current.dependentes ? d.subsidio_com : d.subsidio_sem;
                 const total = d.financiamento + subsidio;
                 const formatar = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });

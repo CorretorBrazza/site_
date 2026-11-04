@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { ShieldAlert, Trash2, Mail, CheckCircle2, Lock, ArrowRight, FileText, Phone, HelpCircle } from 'lucide-react';
+import { ShieldAlert, Trash2, Mail, CheckCircle2, Lock, ArrowRight, FileText, HelpCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -65,7 +65,7 @@ export default function ExclusaoDadosPage() {
                     <span>Opção 1: Via E-mail Oficial</span>
                   </div>
                   <p className="text-xs text-slate-600 leading-relaxed">
-                    Envie um e-mail para nossa equipe de privacidade com o assunto <strong>"Solicitação de Exclusão de Dados (LGPD)"</strong> contendo seu nome, e-mail cadastrado ou telefone.
+                    Envie um e-mail para nossa equipe de privacidade com o assunto <strong>&ldquo;Solicitação de Exclusão de Dados (LGPD)&rdquo;</strong> contendo seu nome, e-mail cadastrado ou telefone.
                   </p>
                 </div>
                 <a
@@ -84,7 +84,7 @@ export default function ExclusaoDadosPage() {
                     <span>Opção 2: Pelo Painel do Corretor</span>
                   </div>
                   <p className="text-xs text-slate-600 leading-relaxed">
-                    Acesse seu painel com sua conta, vá na lista de imóveis e utilize o botão <strong>"Excluir Anúncio"</strong> para apagar dados e fotos imediatamente dos servidores.
+                    Acesse seu painel com sua conta, vá na lista de imóveis e utilize o botão <strong>&ldquo;Excluir Anúncio&rdquo;</strong> para apagar dados e fotos imediatamente dos servidores.
                   </p>
                 </div>
                 <Link

@@ -9,7 +9,6 @@ import {
   Coins,
   HardDrive,
   Sparkles,
-  Plus,
   Send,
   CheckCircle2,
   AlertCircle,
@@ -23,7 +22,6 @@ import {
   EyeOff,
   Cpu,
   Zap,
-  Activity,
   Key,
   Trash2,
   ExternalLink,
@@ -373,7 +371,7 @@ export default function AdminDashboardPage() {
       } else {
         setErroIa(json.message || 'Falha ao processar texto bruto com IA.');
       }
-    } catch (err) {
+    } catch {
       setErroIa('Erro de conexão ao servidor.');
     } finally {
       setProcessandoIa(false);
@@ -456,7 +454,7 @@ export default function AdminDashboardPage() {
       } else {
         setErroConvite(json.message || 'Falha ao enviar convite.');
       }
-    } catch (err) {
+    } catch {
       setErroConvite('Erro de conexão ao servidor no Railway.');
     } finally {
       setEnviandoConvite(false);

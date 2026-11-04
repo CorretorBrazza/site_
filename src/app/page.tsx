@@ -1,15 +1,11 @@
 import Link from 'next/link';
-import { Building2, Search, Sparkles, MapPin, CheckCircle2, ArrowRight, Home as HomeIcon, Key, ShieldCheck, Zap } from 'lucide-react';
+import { Search, Sparkles, MapPin, CheckCircle2, ArrowRight, Home as HomeIcon, Key } from 'lucide-react';
 import { getImoveis } from '@/app/actions/imovel-server-actions';
-import CardImovel from '@/components/CardImovel';
-import { processarEOrdenarImoveis } from '@/utils/imovelSorting';
 import HomeLiveSection from '@/components/HomeLiveSection';
 import { safeJsonLd } from '@/lib/jsonld';
 
 export default async function Home() {
   const { imoveis: allImoveis, fallback: catalogoFallback } = await getImoveis();
-  const imoveisAtivos = allImoveis.filter(i => i.status === 'Ativo');
-  const destaques = processarEOrdenarImoveis(imoveisAtivos).slice(0, 6);
 
   const jsonLd = {
     '@context': 'https://schema.org',

@@ -44,7 +44,7 @@ export default function CadastroPage() {
       } else {
         setErrorMsg(json.message || json.error || 'Erro ao realizar cadastro.');
       }
-    } catch (err: any) {
+    } catch {
       setErrorMsg('Erro de conexão ao enviar o cadastro. Tente novamente.');
     } finally {
       setLoading(false);

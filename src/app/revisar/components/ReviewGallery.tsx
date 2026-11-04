@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Image as ImageIcon, Sparkles, Check, Crown } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Image as ImageIcon, Sparkles, Check, Crown, X } from 'lucide-react';
 
 interface ReviewGalleryProps {
   fotos: Array<string | { url: string }>;
@@ -19,6 +19,22 @@ export function ReviewGallery({
   disabled = false,
 }: ReviewGalleryProps) {
   const [selectedPhotoModal, setSelectedPhotoModal] = useState<string | null>(null);
+
+  /**
+   * O zoom era só de mouse: `<img onClick>` não recebe foco, não responde a
+   * Enter/Espaço e o leitor de tela nem anuncia que a foto amplia. Fechar
+   * também dependia de clique. Aqui o modal ganha ESC e o gatilho vira botão.
+   */
+  useEffect(() => {
+    if (!selectedPhotoModal) return undefined;
+
+    const aoTeclar = (evento: KeyboardEvent) => {
+      if (evento.key === 'Escape') setSelectedPhotoModal(null);
+    };
+
+    window.addEventListener('keydown', aoTeclar);
+    return () => window.removeEventListener('keydown', aoTeclar);
+  }, [selectedPhotoModal]);
 
   // Normaliza: aceita string ou objeto {url}
   const urls: string[] = (fotos || [])
@@ -50,13 +66,19 @@ export function ReviewGallery({
 
       {/* Foto de Capa em Destaque */}
       <div className="relative rounded-2xl overflow-hidden bg-slate-900 border border-slate-200 aspect-[16/10] sm:aspect-[16/9] shadow-inner">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={fotoPrincipal}
-          alt="Foto de capa do anúncio"
-          className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
+        <button
+          type="button"
           onClick={() => setSelectedPhotoModal(fotoPrincipal)}
-        />
+          aria-label="Ampliar a foto de capa do anúncio"
+          className="block w-full h-full"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={fotoPrincipal}
+            alt="Foto de capa do anúncio"
+            className="w-full h-full object-cover cursor-zoom-in hover:scale-105 transition-transform duration-300"
+          />
+        </button>
         <div className="absolute top-3 left-3 bg-blue-600/90 backdrop-blur-sm text-white text-[11px] font-black px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-md uppercase tracking-wider">
           <Crown className="w-3.5 h-3.5 text-amber-300" />
           Foto de Capa Ativa
@@ -113,9 +135,20 @@ export function ReviewGallery({
       {/* Modal de Zoom de Foto */}
       {selectedPhotoModal && (
         <div
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 cursor-pointer"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Foto ampliada"
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={() => setSelectedPhotoModal(null)}
         >
+          <button
+            type="button"
+            onClick={() => setSelectedPhotoModal(null)}
+            aria-label="Fechar foto ampliada"
+            className="absolute top-4 right-4 z-10 p-2.5 rounded-full bg-white/10 text-white hover:bg-white/20"
+          >
+            <X className="w-5 h-5" aria-hidden="true" />
+          </button>
           <div className="relative max-w-4xl max-h-[90vh] overflow-hidden rounded-2xl">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={selectedPhotoModal} alt="Foto ampliada" className="w-full h-full object-contain" />

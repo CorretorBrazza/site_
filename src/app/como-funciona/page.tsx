@@ -4,21 +4,13 @@ import {
   MessageSquare,
   Sparkles,
   HardDrive,
-  ShieldCheck,
   CheckCircle2,
   ArrowRight,
   Smartphone,
   Share2,
-  Flame,
   HelpCircle,
-  AlertCircle,
   Check,
   Cpu,
-  Layers,
-  Camera,
-  Coins,
-  Video,
-  FileCheck2,
 } from 'lucide-react';
 
 export const metadata = {

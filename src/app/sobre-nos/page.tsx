@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { Award, Target, Heart, MapPin, Sparkles, MessageSquare, HardDrive, Cpu, ShieldCheck, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Sparkles, MessageSquare, Cpu, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import { safeJsonLd } from '@/lib/jsonld';
 

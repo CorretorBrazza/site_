@@ -17,7 +17,6 @@ import {
     Baby,
     Sparkles,
     Music,
-    Droplets,
     ShowerHead,
     BarChart3,
     Tv,

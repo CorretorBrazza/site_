@@ -53,7 +53,7 @@ export default function ModalRecargaCreditos({ isOpen, onClose, pacoteInicial = 
       } else {
         alert('Não foi possível gerar o pagamento. Tente outro método.');
       }
-    } catch (err) {
+    } catch {
       alert('Falha ao conectar com a API de pagamentos.');
     } finally {
       setLoading(false);

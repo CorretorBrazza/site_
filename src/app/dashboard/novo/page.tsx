@@ -1,7 +1,6 @@
-﻿'use client';
+'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import DashboardShell from '../components/DashboardShell';
 import { fetchBrokerApi } from '@/lib/api';
 
@@ -16,7 +15,6 @@ const MAX_FILE_BYTES = 10 * 1024 * 1024;
 const MAX_PHOTOS = 20;
 
 export default function NovoImovel() {
-  const router = useRouter();
   const [text, setText] = useState('');
   const [files, setFiles] = useState<File[]>([]);
   const [readyPhotos, setReadyPhotos] = useState<StagedPhoto[]>([]);

@@ -224,7 +224,7 @@ export async function fetchApi<T = any>(
 
       try {
         json = JSON.parse(text);
-      } catch (e) {
+      } catch {
         return {
           success: false,
           error: `Erro ao ler resposta da API (${res.status}). URL chamada: ${url}`,

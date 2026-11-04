@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { empreendimentos } from '@/data/empreendimentos';
-import { MapPin, Calendar, CheckCircle2, Ruler, BedDouble, Car, PlayCircle, MessageCircle, ChevronLeft, Building2, ParkingCircle, Bike, Accessibility, Navigation } from 'lucide-react';
+import { MapPin, Calendar, Ruler, BedDouble, Car, MessageCircle, ChevronLeft, Building2, ParkingCircle, Bike, Accessibility, Navigation } from 'lucide-react';
 import Link from 'next/link';
 import { safeJsonLd } from '@/lib/jsonld';
 import PropertyHeroBanner from '@/components/PropertyHeroBanner';

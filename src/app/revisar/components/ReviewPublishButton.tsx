@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { PublishResult, publishReview } from '@/lib/api';
-import { Send, AlertTriangle, Loader2, CheckCircle2, CreditCard, ArrowLeft } from 'lucide-react';
+import { Send, AlertTriangle, Loader2, CheckCircle2, CreditCard } from 'lucide-react';
 
 interface ReviewPublishButtonProps {
   tokenRef: React.MutableRefObject<string>;

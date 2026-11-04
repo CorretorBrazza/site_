@@ -48,7 +48,7 @@ function EsqueciSenhaForm() {
       } else {
         setErro(json.message || 'Ocorreu um erro ao processar a solicitação.');
       }
-    } catch (err) {
+    } catch {
       setErro('Não foi possível conectar ao servidor de e-mails.');
     } finally {
       setLoading(false);
@@ -83,7 +83,7 @@ function EsqueciSenhaForm() {
       } else {
         setErro(json.message || 'Token de redefinição inválido ou expirado.');
       }
-    } catch (err) {
+    } catch {
       setErro('Não foi possível conectar ao servidor.');
     } finally {
       setLoading(false);

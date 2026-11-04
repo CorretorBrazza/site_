@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Imovel } from '@/types/imovel';
 import { updateAnuncioForBroker } from '@/lib/api';
-import { Sparkles, ArrowLeft, Save, Trash2, ArrowLeftRight, Star, Info } from 'lucide-react';
+import { Save, Trash2, Star, Info } from 'lucide-react';
 import Link from 'next/link';
 
 interface FormEditarImovelProps {
@@ -148,8 +148,9 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
           </div>
 
           <div className="md:col-span-3">
-            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Título do Anúncio *</label>
+            <label htmlFor="campo-titulo" className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Título do Anúncio *</label>
             <input
+              id="campo-titulo"
               type="text"
               required
               className="w-full border border-slate-200 rounded-xl p-2.5 text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -161,8 +162,9 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Descrição Comercial</label>
+          <label htmlFor="campo-descricao" className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Descrição Comercial</label>
           <textarea
+            id="campo-descricao"
             rows={4}
             className="w-full border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent leading-relaxed"
             value={formData.descricao}
@@ -173,8 +175,9 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Transação</label>
+            <label htmlFor="campo-transacao" className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Transação</label>
             <select
+              id="campo-transacao"
               className="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-white font-medium"
               value={formData.transacao || ''}
               onChange={e => setFormData({ ...formData, transacao: e.target.value as any })}
@@ -187,8 +190,9 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Tipo de Imóvel</label>
+            <label htmlFor="campo-tipo" className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Tipo de Imóvel</label>
             <input
+              id="campo-tipo"
               type="text"
               className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
               value={formData.tipoImovel}
@@ -198,8 +202,9 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Nome do Condomínio / Edifício</label>
+            <label htmlFor="campo-condominio-nome" className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Nome do Condomínio / Edifício</label>
             <input
+              id="campo-condominio-nome"
               type="text"
               className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
               value={formData.condominio || ''}
@@ -219,8 +224,9 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
           <div>
-            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Quartos</label>
+            <label htmlFor="campo-quartos" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Quartos</label>
             <input
+              id="campo-quartos"
               type="number"
               min={0}
               placeholder="Não informado"
@@ -234,8 +240,9 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Suítes</label>
+            <label htmlFor="campo-suites" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Suítes</label>
             <input
+              id="campo-suites"
               type="number"
               min={0}
               placeholder="Não informado"
@@ -249,8 +256,9 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Banheiros</label>
+            <label htmlFor="campo-banheiros" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Banheiros</label>
             <input
+              id="campo-banheiros"
               type="number"
               min={0}
               placeholder="Não informado"
@@ -264,8 +272,9 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Vagas</label>
+            <label htmlFor="campo-vagas" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Vagas</label>
             <input
+              id="campo-vagas"
               type="number"
               min={0}
               placeholder="Não informado"
@@ -279,8 +288,9 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Área Útil (m²)</label>
+            <label htmlFor="campo-area-util" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Área Útil (m²)</label>
             <input
+              id="campo-area-util"
               type="number"
               min={0}
               placeholder="Não informado"
@@ -294,8 +304,9 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Área Total (m²)</label>
+            <label htmlFor="campo-area-total" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Área Total (m²)</label>
             <input
+              id="campo-area-total"
               type="number"
               min={0}
               placeholder="Não informado"
@@ -311,8 +322,9 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-slate-100">
           <div>
-            <label className="block text-xs font-bold text-blue-700 uppercase tracking-wider mb-1">Preço de Venda (R$)</label>
+            <label htmlFor="campo-preco-venda" className="block text-xs font-bold text-blue-700 uppercase tracking-wider mb-1">Preço de Venda (R$)</label>
             <input
+              id="campo-preco-venda"
               type="number"
               min={0}
               placeholder="Não informado"
@@ -323,8 +335,9 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">Preço de Locação (R$)</label>
+            <label htmlFor="campo-preco-locacao" className="block text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">Preço de Locação (R$)</label>
             <input
+              id="campo-preco-locacao"
               type="number"
               min={0}
               placeholder="Não informado"
@@ -335,8 +348,9 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Condomínio Mensal (R$)</label>
+            <label htmlFor="campo-condominio-taxa" className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Condomínio Mensal (R$)</label>
             <input
+              id="campo-condominio-taxa"
               type="number"
               min={0}
               placeholder="Não informado"
@@ -347,8 +361,9 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">IPTU Mensal (R$)</label>
+            <label htmlFor="campo-iptu" className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">IPTU Mensal (R$)</label>
             <input
+              id="campo-iptu"
               type="number"
               min={0}
               placeholder="Não informado"

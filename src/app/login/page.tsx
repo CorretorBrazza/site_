@@ -101,7 +101,7 @@ function LoginContent() {
       // Redireciona para o Dashboard preservando o parâmetro de recarga se houver
       const targetUrl = recargaParam ? `/dashboard?recarga=${encodeURIComponent(recargaParam)}` : '/dashboard';
       router.push(targetUrl);
-    } catch (err: any) {
+    } catch {
       setErro('Não foi possível conectar ao servidor. Verifique sua conexão.');
     } finally {
       setLoading(false);

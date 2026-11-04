@@ -1,6 +1,6 @@
 'use client';
 
-import { ShieldCheck, Download, Sparkles, Image as ImageIcon } from 'lucide-react';
+import { ShieldCheck, Download, Sparkles } from 'lucide-react';
 
 interface BannerBackupGamificacaoProps {
   totalFotosBackup: number;

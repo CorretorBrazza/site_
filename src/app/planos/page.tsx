@@ -9,12 +9,10 @@ import {
   Zap,
   ShieldCheck,
   ArrowRight,
-  Building2,
   HardDrive,
   MessageSquare,
   HelpCircle,
   Calculator,
-  Coins,
   Clock,
 } from 'lucide-react';
 

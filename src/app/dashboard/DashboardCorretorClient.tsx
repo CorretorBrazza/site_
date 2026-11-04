@@ -287,7 +287,9 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
       window.removeEventListener('focus', aoFocarJanela);
       document.removeEventListener('visibilitychange', aoFocarJanela);
     };
-  }, []);
+    // `router` é estável no App Router; incluí-lo satisfaz a regra sem recriar o
+    // listener a cada render.
+  }, [router]);
 
       const handleLogout = async () => {
         // Expirar o cookie httpOnly e obrigatorio: ele nao morre com o localStorage.
