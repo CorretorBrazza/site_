@@ -11,6 +11,7 @@ import ContactModal from '@/components/ContactModal';
 import TabelaImoveis from './TabelaImoveis';
 import PainelConhecimentoRegional from './components/PainelConhecimentoRegional';
 import DashboardShell from './components/DashboardShell';
+import { AppShellDesktop } from '@/components/app/AppShell';
 import { TabId } from './components/BottomNavMobile';
 import { ShieldCheck, LogOut, RefreshCw, Building2, CheckCircle2, Clock3, CircleAlert, MessageCircle, Coins, ChevronRight, Sparkles, MapPin, Mail } from 'lucide-react';
 
@@ -478,9 +479,9 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
         )}
       </DashboardShell>
 
-      {/* ============================ DESKTOP: INALTERADO ============================ */}
-      <div className="hidden md:block py-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto space-y-8">
+      {/* Desktop: sidebar do AppShell + conteúdo */}
+      <AppShellDesktop activeTab={activeTab} onTabChange={setActiveTab} usuario={usuario}>
+        <div className="max-w-7xl mx-auto space-y-8 py-8 px-4 sm:px-6 lg:px-8">
 
           {/* Top Header — Clean Light Style */}
           <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 relative overflow-hidden">
@@ -575,7 +576,7 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
             <TabelaImoveis imoveis={listaImoveis} />
           </div>
         </div>
-      </div>
+      </AppShellDesktop>
 
       {/* Modal de Recarga Mercado Pago */}
       <ModalRecargaCreditos
