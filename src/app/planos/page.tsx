@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { safeJsonLd } from '@/lib/jsonld';
+import { fetchApi } from '@/lib/api';
 import {
   Sparkles,
   Check,
@@ -16,18 +17,100 @@ import {
   Clock,
 } from 'lucide-react';
 
+/**
+ * Preços canônicos.
+ *
+ * A fonte da verdade é a API (`GET /payments/pacotes`, que lê
+ * `PACOTES_CREDITO` em `shared/constants.ts`) — é ela que o checkout cobra.
+ * O site mantinha os valores duplicados no JSX, então mudar o preço na API
+ * deixava a página comercial anunciando um valor e o Mercado Pago cobrando
+ * outro. Aqui a página passa a LER da API e usa estes valores apenas como
+ * fallback (se a API estiver fora, é melhor mostrar o preço vigente conhecido
+ * do que travar a página).
+ */
+type PacoteCredito = {
+  id: string;
+  nome: string;
+  creditos: number;
+  preco: number;
+  valorUnitario: number;
+  descontoPorcentagem: number;
+  descontoDescricao?: string;
+};
+
+type MapaPacotes = Record<'start' | 'pro' | 'elite', PacoteCredito>;
+
+const PACOTES_FALLBACK: MapaPacotes = {
+  start: {
+    id: 'start',
+    nome: 'Pacote Start (1 Crédito)',
+    creditos: 1,
+    preco: 12.9,
+    valorUnitario: 12.9,
+    descontoPorcentagem: 0,
+  },
+  pro: {
+    id: 'pro',
+    nome: 'Pacote Pro (3 Créditos)',
+    creditos: 3,
+    preco: 33.9,
+    valorUnitario: 11.3,
+    descontoPorcentagem: 12,
+  },
+  elite: {
+    id: 'elite',
+    nome: 'Pacote Elite (10 Créditos)',
+    creditos: 10,
+    preco: 89.9,
+    valorUnitario: 8.99,
+    descontoPorcentagem: 30,
+  },
+};
+
+/** Formata em reais; centralizado para não repetir `toFixed`/`replace` no JSX. */
+const brl = (valor: number): string =>
+  Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
 export default function PlanosPage() {
   const [captacoesMensais, setCaptacoesMensais] = useState(5);
+  const [pacotes, setPacotes] = useState<MapaPacotes>(PACOTES_FALLBACK);
 
-  // Cálculos da Calculadora de Economia
-  // Preço avulso base: R$ 12,90
-  // Para 5 imóveis: Pacote Elite (R$ 89,90 = R$ 8,99/unidade) ou Pro (R$ 33,90 para 3)
-  const custoAvulso = captacoesMensais * 12.9;
-  const custoComPacote = captacoesMensais >= 10
-    ? (captacoesMensais * 8.99)
-    : captacoesMensais >= 3
-    ? ((Math.floor(captacoesMensais / 3) * 33.9) + ((captacoesMensais % 3) * 12.9))
-    : (captacoesMensais * 12.9);
+  // Sincroniza os preços com a API (a mesma que cobra no checkout).
+  useEffect(() => {
+    let ativo = true;
+
+    fetchApi<PacoteCredito[]>('/payments/pacotes')
+      .then((res) => {
+        if (!ativo || !res.success || !Array.isArray(res.data)) return;
+
+        const mapa: MapaPacotes = { ...PACOTES_FALLBACK };
+        for (const pacote of res.data) {
+          if (pacote && (pacote.id === 'start' || pacote.id === 'pro' || pacote.id === 'elite')) {
+            mapa[pacote.id] = { ...mapa[pacote.id], ...pacote };
+          }
+        }
+        setPacotes(mapa);
+      })
+      .catch(() => {
+        // Falha de rede: mantém o fallback. A página continua vendendo.
+      });
+
+    return () => {
+      ativo = false;
+    };
+  }, []);
+
+  const start = pacotes.start;
+  const pro = pacotes.pro;
+  const elite = pacotes.elite;
+
+  // Cálculos da Calculadora de Economia (valores vindos da API)
+  const custoAvulso = captacoesMensais * start.preco;
+  const custoComPacote = captacoesMensais >= elite.creditos
+    ? (captacoesMensais * elite.valorUnitario)
+    : captacoesMensais >= pro.creditos
+    ? ((Math.floor(captacoesMensais / pro.creditos) * pro.preco) + ((captacoesMensais % pro.creditos) * start.preco))
+    : (captacoesMensais * start.preco);
 
   const economiaReais = Math.max(0, custoAvulso - custoComPacote);
   const horasEconomizadas = captacoesMensais * 2.5; // ~2.5 horas por imóvel economizadas com redação, fotos e mídias
@@ -153,7 +236,7 @@ export default function PlanosPage() {
                 <div className="bg-slate-950/80 border border-slate-800 p-4 rounded-2xl space-y-1">
                   <span className="text-[11px] text-slate-400 font-bold uppercase block">Custo Médio por Imóvel</span>
                   <div className="text-xl font-black text-white">
-                    R$ {(custoComPacote / captacoesMensais).toFixed(2).replace('.', ',')}
+                    {brl(custoComPacote / captacoesMensais)}
                   </div>
                   <span className="text-[10px] text-emerald-400 font-semibold">Menor que 1 cafezinho</span>
                 </div>
@@ -161,7 +244,7 @@ export default function PlanosPage() {
                 <div className="bg-slate-950/80 border border-slate-800 p-4 rounded-2xl space-y-1">
                   <span className="text-[11px] text-slate-400 font-bold uppercase block">Economia em Pacotes</span>
                   <div className="text-xl font-black text-emerald-400">
-                    {economiaReais > 0 ? `R$ ${economiaReais.toFixed(2).replace('.', ',')}` : 'Plano Individual'}
+                    {economiaReais > 0 ? brl(economiaReais) : 'Plano Individual'}
                   </div>
                   <span className="text-[10px] text-slate-400 font-semibold">com descontos progressivos</span>
                 </div>
@@ -185,7 +268,7 @@ export default function PlanosPage() {
             <span className="text-2xl shrink-0">💎</span>
             <div>
               <strong className="text-white font-extrabold block text-sm mb-0.5">Todos os planos entregam 100% dos recursos da plataforma</strong>
-              <span>Não há ferramentas bloqueadas nem recursos limitados por pacote. A única diferença é que comprando mais créditos de uma vez, você ganha <strong>desconto progressivo no valor por imóvel</strong> (de R$ 12,90 até R$ 8,99 por anúncio).</span>
+              <span>Não há ferramentas bloqueadas nem recursos limitados por pacote. A única diferença é que comprando mais créditos de uma vez, você ganha <strong>desconto progressivo no valor por imóvel</strong> (de {brl(start.preco)} até {brl(elite.valorUnitario)} por anúncio).</span>
             </div>
           </div>
         </section>
@@ -205,10 +288,10 @@ export default function PlanosPage() {
                 <div>
                   <h3 className="text-2xl font-black text-white">1 Crédito</h3>
                   <div className="flex items-baseline gap-1 mt-2">
-                    <span className="text-4xl font-black text-white">R$ 12,90</span>
+                    <span className="text-4xl font-black text-white">{brl(start.preco)}</span>
                     <span className="text-xs text-slate-400 font-medium">/ pagamento único</span>
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">R$ 12,90 por imóvel • Ideal para publicar 1 imóvel avulso por 90 dias.</p>
+                  <p className="text-xs text-slate-400 mt-1">{brl(start.preco)} por imóvel • Ideal para publicar 1 imóvel avulso por 90 dias.</p>
                 </div>
 
                 <div className="border-t border-slate-800 pt-6 space-y-3 text-xs text-slate-300 font-medium">
@@ -248,7 +331,7 @@ export default function PlanosPage() {
                   href="/login?recarga=start"
                   className="w-full py-3.5 px-4 bg-slate-800 hover:bg-slate-700 text-white font-extrabold rounded-xl text-xs transition-all flex items-center justify-center gap-2 border border-slate-700"
                 >
-                  <span>Comprar Pacote Start (R$ 12,90)</span>
+                  <span>Comprar Pacote Start ({brl(start.preco)})</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <div className="flex items-center justify-center gap-1.5 text-[10px] text-slate-400 font-semibold">
@@ -273,13 +356,13 @@ export default function PlanosPage() {
                 <div>
                   <h3 className="text-2xl font-black text-white">3 Créditos</h3>
                   <div className="flex items-baseline gap-1 mt-2">
-                    <span className="text-4xl font-black text-amber-400">R$ 33,90</span>
+                    <span className="text-4xl font-black text-amber-400">{brl(pro.preco)}</span>
                     <span className="text-xs text-slate-400 font-medium">/ pagamento único</span>
                   </div>
                   <div className="inline-flex items-center gap-1.5 bg-emerald-950 text-emerald-300 border border-emerald-800 text-[11px] font-bold px-2.5 py-0.5 rounded-md mt-1">
-                    <span>12% OFF • R$ 11,30 por crédito</span>
+                    <span>{pro.descontoPorcentagem}% OFF • {brl(pro.valorUnitario)} por crédito</span>
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">Economize R$ 4,80 • Custo por anúncio menor que um café!</p>
+                  <p className="text-xs text-slate-400 mt-1">Economize {brl(start.preco * pro.creditos - pro.preco)} • Custo por anúncio menor que um café!</p>
                 </div>
 
                 <div className="border-t border-slate-800/80 pt-6 space-y-3 text-xs text-slate-200 font-medium">
@@ -320,7 +403,7 @@ export default function PlanosPage() {
                   className="w-full py-4 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-lg"
                 >
                   <Zap className="w-4 h-4 fill-white" />
-                  <span>Comprar Pacote Pro (R$ 33,90)</span>
+                  <span>Comprar Pacote Pro ({brl(pro.preco)})</span>
                 </Link>
 
                 <div className="flex items-center justify-center gap-1.5 text-[10px] text-slate-400 font-semibold">
@@ -341,13 +424,13 @@ export default function PlanosPage() {
                 <div>
                   <h3 className="text-2xl font-black text-white">10 Créditos</h3>
                   <div className="flex items-baseline gap-1 mt-2">
-                    <span className="text-4xl font-black text-white">R$ 89,90</span>
+                    <span className="text-4xl font-black text-white">{brl(elite.preco)}</span>
                     <span className="text-xs text-slate-400 font-medium">/ pagamento único</span>
                   </div>
                   <div className="inline-block bg-emerald-950 text-emerald-300 border border-emerald-800 text-[11px] font-bold px-2.5 py-0.5 rounded-md mt-1">
-                    30% OFF • R$ 8,99 por crédito
+                    {elite.descontoPorcentagem}% OFF • {brl(elite.valorUnitario)} por crédito
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">Economia Máxima de R$ 39,10 • Ideal para corretores ativos.</p>
+                  <p className="text-xs text-slate-400 mt-1">Economia Máxima de {brl(start.preco * elite.creditos - elite.preco)} • Ideal para corretores ativos.</p>
                 </div>
 
                 <div className="border-t border-slate-800 pt-6 space-y-3 text-xs text-slate-300 font-medium">
@@ -387,7 +470,7 @@ export default function PlanosPage() {
                   href="/login?recarga=elite"
                   className="w-full py-3.5 px-4 bg-slate-800 hover:bg-slate-700 text-white font-extrabold rounded-xl text-xs transition-all flex items-center justify-center gap-2 border border-slate-700"
                 >
-                  <span>Comprar Pacote Elite (R$ 89,90)</span>
+                  <span>Comprar Pacote Elite ({brl(elite.preco)})</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <div className="flex items-center justify-center gap-1.5 text-[10px] text-slate-400 font-semibold">

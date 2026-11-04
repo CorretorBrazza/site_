@@ -204,6 +204,8 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                           <img
                             src={fotoCapa}
                             alt={imovel.titulo}
+                            loading="lazy"
+                            decoding="async"
                             className="w-14 h-14 rounded-xl object-cover border border-slate-200 shadow-sm group-hover:scale-105 transition-transform"
                           />
                         ) : (
@@ -364,6 +366,8 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                       <img
                         src={fotoCapa}
                         alt={imovel.titulo}
+                        loading="lazy"
+                        decoding="async"
                         className="w-20 h-20 rounded-xl object-cover border border-slate-200 shadow-sm"
                       />
                     ) : (
