@@ -207,12 +207,6 @@ export default function AdminDashboardPage() {
     return () => { cancelado = true; };
   }, []);
 
-  useEffect(() => {
-    if (adminToken) {
-      carregarDadosAdmin();
-    }
-  }, [adminToken]);
-
   const handleLoginAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
     setErroAuth(null);
@@ -325,6 +319,12 @@ export default function AdminDashboardPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (adminToken) {
+      carregarDadosAdmin();
+    }
+  }, [adminToken]);
 
   const handleExcluirAnuncioAdmin = async (adId: string, titulo: string) => {
     if (!adminToken) return;

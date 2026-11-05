@@ -40,9 +40,11 @@ export function useReviewAutosave({
   // React DevTools e em qualquer render intermediário.
   const controladorRef = useRef<ControladorAutosave | null>(null);
   const onVersionUpdateRef = useRef(onVersionUpdate);
+  // eslint-disable-next-line react-hooks/refs
   onVersionUpdateRef.current = onVersionUpdate;
 
   if (controladorRef.current === null) {
+    // eslint-disable-next-line react-hooks/refs
     controladorRef.current = new ControladorAutosave({
       lerToken: () => tokenRef.current,
       salvar: autosaveReview,
@@ -59,7 +61,8 @@ export function useReviewAutosave({
     });
   }
 
-  const controlador = controladorRef.current;
+  // eslint-disable-next-line react-hooks/refs
+  const controlador = controladorRef.current!;
 
   // Debounce novo precisa de controladora nova: o `debounceMs` fica congelado na construção.
   useEffect(() => {
