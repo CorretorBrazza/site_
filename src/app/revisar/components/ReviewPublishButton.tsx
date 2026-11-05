@@ -56,14 +56,14 @@ export function ReviewPublishButton({
   return (
     <>
       {/* Botão Principal no rodapé da página */}
-      <div className="sticky bottom-4 z-40 bg-white/90 backdrop-blur-md border border-slate-200 rounded-3xl p-4 shadow-xl">
+      <div className="sticky bottom-4 z-40 bg-white/90 backdrop-blur-md border border-line rounded-3xl p-4 shadow-xl">
         <button
           type="button"
           disabled={disabled || isPublishing}
           onClick={handleOpenConfirm}
-          className="w-full min-h-[56px] py-4 px-6 bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white text-base font-extrabold rounded-2xl flex items-center justify-center gap-3 shadow-lg shadow-emerald-600/30 transition-all disabled:opacity-50 disabled:pointer-events-none"
+          className="w-full min-h-[56px] py-4 px-6 bg-success hover:bg-success active:scale-98 text-white text-base font-extrabold rounded-2xl flex items-center justify-center gap-3 shadow-lg shadow-success/20/30 transition-all disabled:opacity-50 disabled:pointer-events-none"
         >
-          <Send className="w-5 h-5 text-emerald-100" />
+          <Send className="w-5 h-5 text-success" />
           <span>Aprovar e publicar anúncio</span>
         </button>
       </div>
@@ -71,33 +71,33 @@ export function ReviewPublishButton({
       {/* Modal de Confirmação */}
       {showModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-200">
-            <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto text-emerald-600 border border-emerald-200">
+          <div className="bg-white border border-line rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-14 h-14 bg-success/10 rounded-2xl flex items-center justify-center mx-auto text-success border border-success/30">
               <CheckCircle2 className="w-8 h-8" />
             </div>
 
             <div className="text-center space-y-2">
-              <h3 className="text-lg font-black text-slate-900">
+              <h3 className="text-lg font-black text-brand-900">
                 Confirmar Publicação
               </h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Você está prestes a publicar este anúncio (<strong className="text-slate-900 font-bold">{referencia}</strong>). Será utilizado <strong>1 crédito</strong> do seu saldo.
+              <p className="text-xs text-ink leading-relaxed">
+                Você está prestes a publicar este anúncio (<strong className="text-brand-900 font-bold">{referencia}</strong>). Será utilizado <strong>1 crédito</strong> do seu saldo.
               </p>
             </div>
 
             {/* Mensagem de Erro / Saldo */}
             {errorMessage && (
-              <div className="p-4 bg-red-50 border border-red-200 rounded-2xl text-left space-y-2">
+              <div className="p-4 bg-danger/10 border border-danger/30 rounded-2xl text-left space-y-2">
                 <div className="flex items-start gap-2">
-                  <AlertTriangle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
-                  <p className="text-xs font-bold text-red-800">{errorMessage}</p>
+                  <AlertTriangle className="w-4 h-4 text-danger shrink-0 mt-0.5" />
+                  <p className="text-xs font-bold text-danger">{errorMessage}</p>
                 </div>
 
                 {errorCode === 'SALDO_INSUFICIENTE' && (
                   <div className="pt-2">
                     <Link
                       href="/planos"
-                      className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-600 text-white rounded-xl text-xs font-bold shadow hover:bg-blue-700 transition-colors"
+                      className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-brand-900 text-white rounded-xl text-xs font-bold shadow hover:bg-brand-800 transition-colors"
                     >
                       <CreditCard className="w-4 h-4" />
                       Recarregar Créditos Agora
@@ -113,7 +113,7 @@ export function ReviewPublishButton({
                 type="button"
                 disabled={isPublishing}
                 onClick={() => setShowModal(false)}
-                className="flex-1 min-h-[48px] py-3 px-4 border border-slate-300 text-slate-700 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-50 transition-colors"
+                className="flex-1 min-h-[48px] py-3 px-4 border border-line text-ink rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-paper transition-colors"
               >
                 Voltar
               </button>
@@ -122,7 +122,7 @@ export function ReviewPublishButton({
                 type="button"
                 disabled={isPublishing}
                 onClick={handleConfirmPublish}
-                className="flex-1 min-h-[48px] py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-extrabold uppercase tracking-wider shadow-md flex items-center justify-center gap-2 transition-all active:scale-98 disabled:opacity-50"
+                className="flex-1 min-h-[48px] py-3 px-4 bg-success hover:bg-success text-white rounded-xl text-xs font-extrabold uppercase tracking-wider shadow-md flex items-center justify-center gap-2 transition-all active:scale-98 disabled:opacity-50"
               >
                 {isPublishing ? (
                   <>

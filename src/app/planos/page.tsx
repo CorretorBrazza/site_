@@ -163,7 +163,7 @@ export default function PlanosPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between">
+    <div className="min-h-screen bg-brand-950 text-white flex flex-col justify-between">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(faqJsonLd) }}
@@ -171,31 +171,31 @@ export default function PlanosPage() {
       <main className="flex-1">
 
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-b from-slate-900 via-blue-950 to-slate-950 py-16 px-4 text-center overflow-hidden border-b border-slate-800">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+        <section className="relative bg-gradient-to-b from-brand-900 via-brand-800 to-brand-950 py-16 px-4 text-center overflow-hidden border-b border-brand-700">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-brand-900/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 max-w-4xl mx-auto space-y-4">
-            <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold uppercase tracking-wider">
-              <Sparkles className="w-4 h-4 text-yellow-300 fill-yellow-300" />
+            <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-900/20 border border-brand-700/30 text-gold-400 text-xs font-bold uppercase tracking-wider">
+              <Sparkles className="w-4 h-4 text-gold fill-gold" />
               Tabela Oficial de Créditos & Pacotes
             </span>
             <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">
               Anuncie com Inteligência Artificial e Alta Visibilidade
             </h1>
-            <p className="text-sm md:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-sm md:text-base text-muted-80 max-w-2xl mx-auto leading-relaxed">
               Cada crédito permite publicar 1 imóvel por 90 dias com legenda comercial enriquecida via IA, Media Kit de 5 canais e 1 ano de backup de fotos na nuvem.
             </p>
 
             <div className="pt-2 flex flex-wrap justify-center gap-3">
-              <span className="bg-emerald-950 text-emerald-300 border border-emerald-800 text-xs font-extrabold px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-md">
+              <span className="bg-success text-success border border-success/50 text-xs font-extrabold px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-md">
                 🎁 Novos Corretores Ganham 1 Crédito Grátis ao se cadastrar!
               </span>
 
               <Link
                 href="/demo"
-                className="bg-blue-950/80 text-blue-300 border border-blue-800 text-xs font-bold px-4 py-1.5 rounded-full flex items-center gap-1.5 hover:bg-blue-900 transition-colors"
+                className="bg-brand-800/80 text-gold-400 border border-brand-700 text-xs font-bold px-4 py-1.5 rounded-full flex items-center gap-1.5 hover:bg-brand-800 transition-colors"
               >
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <Sparkles className="w-3.5 h-3.5 text-gold" />
                 <span>Testar Simulador de IA sem compromisso</span>
               </Link>
             </div>
@@ -204,21 +204,21 @@ export default function PlanosPage() {
 
         {/* CALCULADORA INTERATIVA DE ECONOMIA */}
         <section className="max-w-4xl mx-auto px-4 -mt-6 relative z-20">
-          <div className="bg-gradient-to-r from-slate-900 via-blue-950/70 to-slate-900 border border-blue-800/60 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
-            <div className="flex items-center gap-3 border-b border-slate-800 pb-4">
-              <div className="w-10 h-10 rounded-2xl bg-blue-600/20 border border-blue-500/30 text-blue-400 flex items-center justify-center font-black">
+          <div className="bg-gradient-to-r from-brand-900 via-brand-800/70 to-brand-900 border border-brand-700/60 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+            <div className="flex items-center gap-3 border-b border-brand-700 pb-4">
+              <div className="w-10 h-10 rounded-2xl bg-brand-900/20 border border-brand-700/30 text-gold-400 flex items-center justify-center font-black">
                 <Calculator className="w-5 h-5" />
               </div>
               <div>
                 <h3 className="text-lg sm:text-xl font-black text-white">Calculadora de Produtividade & Economia</h3>
-                <p className="text-xs text-slate-300">Descubra quanto você economiza em tempo e dinheiro anunciando com IA</p>
+                <p className="text-xs text-muted-80">Descubra quanto você economiza em tempo e dinheiro anunciando com IA</p>
               </div>
             </div>
 
             <div className="space-y-4">
               <div className="flex justify-between items-center text-xs font-bold">
-                <span className="text-slate-300 uppercase tracking-wider">Quantos imóveis você capta por mês?</span>
-                <span className="text-base font-black text-amber-400 bg-amber-950/60 border border-amber-800/80 px-3 py-1 rounded-xl">
+                <span className="text-muted-80 uppercase tracking-wider">Quantos imóveis você capta por mês?</span>
+                <span className="text-base font-black text-gold bg-gold/60 border border-gold/50/80 px-3 py-1 rounded-xl">
                   {captacoesMensais} {captacoesMensais === 1 ? 'imóvel' : 'imóveis'} / mês
                 </span>
               </div>
@@ -229,33 +229,33 @@ export default function PlanosPage() {
                 max="20"
                 value={captacoesMensais}
                 onChange={(e) => setCaptacoesMensais(Number(e.target.value))}
-                className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                className="w-full h-2 bg-brand-800 rounded-lg appearance-none cursor-pointer accent-brand-800"
               />
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 text-center">
-                <div className="bg-slate-950/80 border border-slate-800 p-4 rounded-2xl space-y-1">
-                  <span className="text-[11px] text-slate-400 font-bold uppercase block">Custo Médio por Imóvel</span>
+                <div className="bg-brand-950/80 border border-brand-700 p-4 rounded-2xl space-y-1">
+                  <span className="text-[11px] text-muted font-bold uppercase block">Custo Médio por Imóvel</span>
                   <div className="text-xl font-black text-white">
                     {brl(custoComPacote / captacoesMensais)}
                   </div>
-                  <span className="text-[10px] text-emerald-400 font-semibold">Menor que 1 cafezinho</span>
+                  <span className="text-[10px] text-success font-semibold">Menor que 1 cafezinho</span>
                 </div>
 
-                <div className="bg-slate-950/80 border border-slate-800 p-4 rounded-2xl space-y-1">
-                  <span className="text-[11px] text-slate-400 font-bold uppercase block">Economia em Pacotes</span>
-                  <div className="text-xl font-black text-emerald-400">
+                <div className="bg-brand-950/80 border border-brand-700 p-4 rounded-2xl space-y-1">
+                  <span className="text-[11px] text-muted font-bold uppercase block">Economia em Pacotes</span>
+                  <div className="text-xl font-black text-success">
                     {economiaReais > 0 ? brl(economiaReais) : 'Plano Individual'}
                   </div>
-                  <span className="text-[10px] text-slate-400 font-semibold">com descontos progressivos</span>
+                  <span className="text-[10px] text-muted font-semibold">com descontos progressivos</span>
                 </div>
 
-                <div className="bg-slate-950/80 border border-slate-800 p-4 rounded-2xl space-y-1">
-                  <span className="text-[11px] text-slate-400 font-bold uppercase block">Tempo Poupado com a IA</span>
-                  <div className="text-xl font-black text-amber-400 flex items-center justify-center gap-1">
+                <div className="bg-brand-950/80 border border-brand-700 p-4 rounded-2xl space-y-1">
+                  <span className="text-[11px] text-muted font-bold uppercase block">Tempo Poupado com a IA</span>
+                  <div className="text-xl font-black text-gold flex items-center justify-center gap-1">
                     <Clock className="w-4 h-4" />
                     <span>~{horasEconomizadas.toFixed(0)} horas</span>
                   </div>
-                  <span className="text-[10px] text-slate-400 font-semibold">livres para fechar visitas</span>
+                  <span className="text-[10px] text-muted font-semibold">livres para fechar visitas</span>
                 </div>
               </div>
             </div>
@@ -264,7 +264,7 @@ export default function PlanosPage() {
 
         {/* BANNER CLARIFICADOR DE RECURSOS IGUAIS */}
         <section className="max-w-4xl mx-auto px-4 mt-8">
-          <div className="bg-gradient-to-r from-blue-950/80 via-slate-900 to-indigo-950/80 border border-blue-800/60 rounded-2xl p-4 sm:p-5 flex items-center gap-3.5 shadow-lg text-xs text-slate-200">
+          <div className="bg-gradient-to-r from-brand-800/80 via-brand-900 to-brand-800/80 border border-brand-700/60 rounded-2xl p-4 sm:p-5 flex items-center gap-3.5 shadow-lg text-xs text-white-90">
             <span className="text-2xl shrink-0">💎</span>
             <div>
               <strong className="text-white font-extrabold block text-sm mb-0.5">Todos os planos entregam 100% dos recursos da plataforma</strong>
@@ -278,49 +278,49 @@ export default function PlanosPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
 
             {/* PACOTE START */}
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 flex flex-col justify-between hover:border-slate-700 transition-all relative">
+            <div className="bg-brand-900 border border-brand-700 rounded-3xl p-8 flex flex-col justify-between hover:border-brand-700 transition-all relative">
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Pacote Unitário</span>
-                  <span className="bg-slate-800 text-slate-300 text-[10px] font-bold px-2.5 py-1 rounded-full">START</span>
+                  <span className="text-xs font-bold text-muted uppercase tracking-wider">Pacote Unitário</span>
+                  <span className="bg-brand-800 text-white-70 text-[10px] font-bold px-2.5 py-1 rounded-full">START</span>
                 </div>
 
                 <div>
                   <h3 className="text-2xl font-black text-white">1 Crédito</h3>
                   <div className="flex items-baseline gap-1 mt-2">
                     <span className="text-4xl font-black text-white">{brl(start.preco)}</span>
-                    <span className="text-xs text-slate-400 font-medium">/ pagamento único</span>
+                    <span className="text-xs text-muted font-medium">/ pagamento único</span>
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">{brl(start.preco)} por imóvel • Ideal para publicar 1 imóvel avulso por 90 dias.</p>
+                  <p className="text-xs text-muted mt-1">{brl(start.preco)} por imóvel • Ideal para publicar 1 imóvel avulso por 90 dias.</p>
                 </div>
 
-                <div className="border-t border-slate-800 pt-6 space-y-3 text-xs text-slate-300 font-medium">
+                <div className="border-t border-brand-700 pt-6 space-y-3 text-xs text-muted-80 font-medium">
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span><strong>1 Anúncio Ativo por 90 Dias</strong></span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>Redação Comercial Completa com IA</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>Media Kit para 5 Canais (Insta, Whats, Portais)</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>Até 20 Fotos em Alta Resolução</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>1 Ano (365 Dias) de Backup na Nuvem</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>Contatos de Clientes Direto no seu WhatsApp</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>Créditos NUNCA Expiram no Saldo</span>
                   </div>
                 </div>
@@ -329,69 +329,69 @@ export default function PlanosPage() {
               <div className="pt-8 space-y-3">
                 <Link
                   href="/login?recarga=start"
-                  className="w-full py-3.5 px-4 bg-slate-800 hover:bg-slate-700 text-white font-extrabold rounded-xl text-xs transition-all flex items-center justify-center gap-2 border border-slate-700"
+                  className="w-full py-3.5 px-4 bg-brand-800 hover:bg-brand-800 text-white font-extrabold rounded-xl text-xs transition-all flex items-center justify-center gap-2 border border-brand-700"
                 >
                   <span>Comprar Pacote Start ({brl(start.preco)})</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
-                <div className="flex items-center justify-center gap-1.5 text-[10px] text-slate-400 font-semibold">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <div className="flex items-center justify-center gap-1.5 text-[10px] text-muted font-semibold">
+                  <ShieldCheck className="w-3.5 h-3.5 text-success" />
                   <span>Pix ou Cartão • Mercado Pago</span>
                 </div>
               </div>
             </div>
 
             {/* PACOTE PRO (MAIS POPULAR) */}
-            <div className="bg-gradient-to-b from-blue-950/80 to-slate-900 border-2 border-blue-500 rounded-3xl p-8 flex flex-col justify-between shadow-2xl relative">
-              <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 text-xs font-black uppercase tracking-wider px-4 py-1 rounded-full shadow-lg">
+            <div className="bg-gradient-to-b from-brand-800/80 to-brand-900 border-2 border-brand-700 rounded-3xl p-8 flex flex-col justify-between shadow-2xl relative">
+              <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-gold to-gold text-brand-950 text-xs font-black uppercase tracking-wider px-4 py-1 rounded-full shadow-lg">
                 ★ Mais Escolhido
               </span>
 
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">Mais Popular (12% OFF)</span>
-                  <span className="bg-blue-600/30 text-blue-300 border border-blue-500/40 text-[10px] font-bold px-2.5 py-1 rounded-full">PRO</span>
+                  <span className="text-xs font-bold text-gold-400 uppercase tracking-wider">Mais Popular (12% OFF)</span>
+                  <span className="bg-brand-900/30 text-gold-400 border border-brand-700/40 text-[10px] font-bold px-2.5 py-1 rounded-full">PRO</span>
                 </div>
 
                 <div>
                   <h3 className="text-2xl font-black text-white">3 Créditos</h3>
                   <div className="flex items-baseline gap-1 mt-2">
-                    <span className="text-4xl font-black text-amber-400">{brl(pro.preco)}</span>
-                    <span className="text-xs text-slate-400 font-medium">/ pagamento único</span>
+                    <span className="text-4xl font-black text-gold">{brl(pro.preco)}</span>
+                    <span className="text-xs text-muted font-medium">/ pagamento único</span>
                   </div>
-                  <div className="inline-flex items-center gap-1.5 bg-emerald-950 text-emerald-300 border border-emerald-800 text-[11px] font-bold px-2.5 py-0.5 rounded-md mt-1">
+                  <div className="inline-flex items-center gap-1.5 bg-success text-success border border-success/50 text-[11px] font-bold px-2.5 py-0.5 rounded-md mt-1">
                     <span>{pro.descontoPorcentagem}% OFF • {brl(pro.valorUnitario)} por crédito</span>
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">Economize {brl(start.preco * pro.creditos - pro.preco)} • Custo por anúncio menor que um café!</p>
+                  <p className="text-xs text-muted mt-1">Economize {brl(start.preco * pro.creditos - pro.preco)} • Custo por anúncio menor que um café!</p>
                 </div>
 
-                <div className="border-t border-slate-800/80 pt-6 space-y-3 text-xs text-slate-200 font-medium">
+                <div className="border-t border-brand-700/80 pt-6 space-y-3 text-xs text-line font-medium">
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span><strong>3 Anúncios Ativos por 90 Dias Cada</strong></span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>Redação Comercial Completa com IA</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>Media Kit para 5 Canais (Insta, Whats, Portais)</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>Até 20 Fotos em Alta Resolução por Imóvel</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>1 Ano (365 Dias) de Backup na Nuvem</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>Contatos de Clientes Direto no seu WhatsApp</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>Créditos NUNCA Expiram no Saldo</span>
                   </div>
                 </div>
@@ -400,66 +400,66 @@ export default function PlanosPage() {
               <div className="pt-8 space-y-3">
                 <Link
                   href="/login?recarga=pro"
-                  className="w-full py-4 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-lg"
+                  className="w-full py-4 px-4 bg-gradient-to-r from-brand-900 to-brand-900 hover:from-brand-900 hover:to-brand-900 text-white font-extrabold rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-lg"
                 >
                   <Zap className="w-4 h-4 fill-white" />
                   <span>Comprar Pacote Pro ({brl(pro.preco)})</span>
                 </Link>
 
-                <div className="flex items-center justify-center gap-1.5 text-[10px] text-slate-400 font-semibold">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <div className="flex items-center justify-center gap-1.5 text-[10px] text-muted font-semibold">
+                  <ShieldCheck className="w-3.5 h-3.5 text-success" />
                   <span>Pix ou Cartão • Mercado Pago</span>
                 </div>
               </div>
             </div>
 
             {/* PACOTE ELITE */}
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 flex flex-col justify-between hover:border-slate-700 transition-all relative">
+            <div className="bg-brand-900 border border-brand-700 rounded-3xl p-8 flex flex-col justify-between hover:border-brand-700 transition-all relative">
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">Melhor Custo-Benefício (30% OFF)</span>
-                  <span className="bg-amber-950 text-amber-300 border border-amber-800 text-[10px] font-bold px-2.5 py-1 rounded-full">ELITE</span>
+                  <span className="text-xs font-bold text-gold uppercase tracking-wider">Melhor Custo-Benefício (30% OFF)</span>
+                  <span className="bg-gold text-gold border border-gold/50 text-[10px] font-bold px-2.5 py-1 rounded-full">ELITE</span>
                 </div>
 
                 <div>
                   <h3 className="text-2xl font-black text-white">10 Créditos</h3>
                   <div className="flex items-baseline gap-1 mt-2">
                     <span className="text-4xl font-black text-white">{brl(elite.preco)}</span>
-                    <span className="text-xs text-slate-400 font-medium">/ pagamento único</span>
+                    <span className="text-xs text-muted font-medium">/ pagamento único</span>
                   </div>
-                  <div className="inline-block bg-emerald-950 text-emerald-300 border border-emerald-800 text-[11px] font-bold px-2.5 py-0.5 rounded-md mt-1">
+                  <div className="inline-block bg-success text-success border border-success/50 text-[11px] font-bold px-2.5 py-0.5 rounded-md mt-1">
                     {elite.descontoPorcentagem}% OFF • {brl(elite.valorUnitario)} por crédito
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">Economia Máxima de {brl(start.preco * elite.creditos - elite.preco)} • Ideal para corretores ativos.</p>
+                  <p className="text-xs text-muted mt-1">Economia Máxima de {brl(start.preco * elite.creditos - elite.preco)} • Ideal para corretores ativos.</p>
                 </div>
 
-                <div className="border-t border-slate-800 pt-6 space-y-3 text-xs text-slate-300 font-medium">
+                <div className="border-t border-brand-700 pt-6 space-y-3 text-xs text-muted-80 font-medium">
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span><strong>10 Anúncios Ativos por 90 Dias Cada</strong></span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>Redação Comercial Completa com IA</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>Media Kit para 5 Canais (Insta, Whats, Portais)</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>Até 20 Fotos em Alta Resolução por Imóvel</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>1 Ano (365 Dias) de Backup na Nuvem</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>Contatos de Clientes Direto no seu WhatsApp</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>Créditos NUNCA Expiram no Saldo</span>
                   </div>
                 </div>
@@ -468,13 +468,13 @@ export default function PlanosPage() {
               <div className="pt-8 space-y-3">
                 <Link
                   href="/login?recarga=elite"
-                  className="w-full py-3.5 px-4 bg-slate-800 hover:bg-slate-700 text-white font-extrabold rounded-xl text-xs transition-all flex items-center justify-center gap-2 border border-slate-700"
+                  className="w-full py-3.5 px-4 bg-brand-800 hover:bg-brand-800 text-white font-extrabold rounded-xl text-xs transition-all flex items-center justify-center gap-2 border border-brand-700"
                 >
                   <span>Comprar Pacote Elite ({brl(elite.preco)})</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
-                <div className="flex items-center justify-center gap-1.5 text-[10px] text-slate-400 font-semibold">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <div className="flex items-center justify-center gap-1.5 text-[10px] text-muted font-semibold">
+                  <ShieldCheck className="w-3.5 h-3.5 text-success" />
                   <span>Pix ou Cartão • Mercado Pago</span>
                 </div>
               </div>
@@ -484,40 +484,40 @@ export default function PlanosPage() {
         </section>
 
         {/* Diferenciais da Tecnologia */}
-        <section className="bg-slate-900 border-y border-slate-800 py-16 px-4">
+        <section className="bg-brand-900 border-y border-brand-700 py-16 px-4">
           <div className="max-w-5xl mx-auto space-y-8">
             <div className="text-center space-y-2">
               <h2 className="text-2xl md:text-3xl font-black text-white">Por que anunciar no Imóveis Taboão?</h2>
-              <p className="text-xs md:text-sm text-slate-400">Tecnologia desenvolvida sob medida para corretores e imobiliárias da região.</p>
+              <p className="text-xs md:text-sm text-muted">Tecnologia desenvolvida sob medida para corretores e imobiliárias da região.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-slate-300">
-              <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800 space-y-3">
-                <div className="w-10 h-10 bg-blue-600/20 border border-blue-500/30 rounded-xl flex items-center justify-center text-blue-400">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-muted-80">
+              <div className="bg-brand-950 p-6 rounded-2xl border border-brand-700 space-y-3">
+                <div className="w-10 h-10 bg-brand-900/20 border border-brand-700/30 rounded-xl flex items-center justify-center text-gold-400">
                   <MessageSquare className="w-5 h-5" />
                 </div>
                 <h3 className="text-base font-bold text-white">Envio 100% por WhatsApp</h3>
-                <p className="text-slate-400 leading-relaxed">
+                <p className="text-muted leading-relaxed">
                   Envie fotos e um texto simples pelo WhatsApp Oficial (11) 98916-1897. Nossa IA compõe o anúncio comercial completo em segundos.
                 </p>
               </div>
 
-              <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800 space-y-3">
-                <div className="w-10 h-10 bg-purple-600/20 border border-purple-500/30 rounded-xl flex items-center justify-center text-purple-400">
+              <div className="bg-brand-950 p-6 rounded-2xl border border-brand-700 space-y-3">
+                <div className="w-10 h-10 bg-brand-900/20 border border-brand-700/30 rounded-xl flex items-center justify-center text-gold-400">
                   <HardDrive className="w-5 h-5" />
                 </div>
                 <h3 className="text-base font-bold text-white">Acervo de Fotos na Nuvem</h3>
-                <p className="text-slate-400 leading-relaxed">
+                <p className="text-muted leading-relaxed">
                   Suas fotos originais ficam armazenadas na Nuvem Imóveis Taboão por 1 ano (365 dias) para você baixar quando quiser.
                 </p>
               </div>
 
-              <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800 space-y-3">
-                <div className="w-10 h-10 bg-emerald-600/20 border border-emerald-500/30 rounded-xl flex items-center justify-center text-emerald-400">
+              <div className="bg-brand-950 p-6 rounded-2xl border border-brand-700 space-y-3">
+                <div className="w-10 h-10 bg-success/20 border border-success/50/30 rounded-xl flex items-center justify-center text-success">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <h3 className="text-base font-bold text-white">Créditos NUNCA Expiram</h3>
-                <p className="text-slate-400 leading-relaxed">
+                <p className="text-muted leading-relaxed">
                   Pague apenas pelos créditos que usar via Pix ou Cartão pelo Mercado Pago. Seus créditos comprados <strong>nunca expiram no saldo</strong> e ficam salvos para uso futuro.
                 </p>
               </div>
@@ -529,43 +529,43 @@ export default function PlanosPage() {
         <section className="max-w-4xl mx-auto px-4 py-16 space-y-8">
           <div className="text-center space-y-2">
             <h2 className="text-2xl font-black text-white flex items-center justify-center gap-2">
-              <HelpCircle className="w-6 h-6 text-amber-500" />
+              <HelpCircle className="w-6 h-6 text-gold" />
               Perguntas Frequentes sobre Créditos
             </h2>
           </div>
 
-          <div className="space-y-4 text-xs text-slate-300">
-            <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-2">
+          <div className="space-y-4 text-xs text-muted-80">
+            <div className="bg-brand-900 border border-brand-700 p-5 rounded-2xl space-y-2">
               <strong className="block text-sm font-bold text-white">Os créditos que eu comprar têm prazo de validade para uso?</strong>
-              <p className="text-slate-400 leading-relaxed">
+              <p className="text-muted leading-relaxed">
                 <strong>Não! Os créditos NUNCA expiram na sua conta.</strong> Se você adquirir o Pacote Pro (3 créditos) e usar apenas 1 hoje, os outros 2 créditos continuarão disponíveis no seu saldo no Dashboard por tempo indeterminado até você decidir publicar novos imóveis.
               </p>
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-2">
+            <div className="bg-brand-900 border border-brand-700 p-5 rounded-2xl space-y-2">
               <strong className="block text-sm font-bold text-white">E se eu descartar ou cancelar um imóvel na tela de aprovação?</strong>
-              <p className="text-slate-400 leading-relaxed">
+              <p className="text-muted leading-relaxed">
                 <strong>Nenhum crédito é debitado!</strong> O crédito só é consumido no momento em que você clica em &quot;Aprovar &amp; Publicar&quot;. Se descartar o anúncio, seu saldo permanece 100% intacto.
               </p>
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-2">
+            <div className="bg-brand-900 border border-brand-700 p-5 rounded-2xl space-y-2">
               <strong className="block text-sm font-bold text-white">Como funciona o crédito grátis de boas-vindas?</strong>
-              <p className="text-slate-400 leading-relaxed">
-                Ao criar sua conta no portal via <Link href="/cadastro" className="text-blue-400 underline">página de cadastro</Link> ou ao iniciar conversa no WhatsApp Oficial, você recebe <strong>1 crédito cortesia</strong> imediatamente em seu saldo para publicar seu primeiro imóvel por 90 dias sem nenhum custo.
+              <p className="text-muted leading-relaxed">
+                Ao criar sua conta no portal via <Link href="/cadastro" className="text-gold-400 underline">página de cadastro</Link> ou ao iniciar conversa no WhatsApp Oficial, você recebe <strong>1 crédito cortesia</strong> imediatamente em seu saldo para publicar seu primeiro imóvel por 90 dias sem nenhum custo.
               </p>
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-2">
+            <div className="bg-brand-900 border border-brand-700 p-5 rounded-2xl space-y-2">
               <strong className="block text-sm font-bold text-white">Quanto tempo dura a publicação de um imóvel?</strong>
-              <p className="text-slate-400 leading-relaxed">
+              <p className="text-muted leading-relaxed">
                 Cada crédito ativado mantém o imóvel publicado no portal durante <strong>90 dias consecutivos</strong>. Se o imóvel for vendido ou alugado antes, você pode marcá-lo no painel.
               </p>
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-2">
+            <div className="bg-brand-900 border border-brand-700 p-5 rounded-2xl space-y-2">
               <strong className="block text-sm font-bold text-white">Quais as formas de pagamento aceitas no Checkout?</strong>
-              <p className="text-slate-400 leading-relaxed">
+              <p className="text-muted leading-relaxed">
                 Processamos pagamentos com <strong>liberação instantânea via Pix</strong> (QR Code e Copia e Cola) e <strong>Cartão de Crédito/Débito</strong> em ambiente criptografado e certificado pelo Mercado Pago.
               </p>
             </div>

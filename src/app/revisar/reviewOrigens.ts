@@ -77,7 +77,7 @@ const DESENHOS: Record<OrigemExibida, DesenhoOrigem> = {
   CORRETOR: {
     rotulo: 'Corretor',
     descricao: 'Você escreveu isso na revisão.',
-    classe: `${BASE} bg-blue-100 text-blue-800`,
+    classe: `${BASE} bg-brand-900/5 text-brand-800`,
     confirmado: true,
     exigeConfirmacao: false,
     indicaConflito: false,
@@ -87,7 +87,7 @@ const DESENHOS: Record<OrigemExibida, DesenhoOrigem> = {
   VALIDADO: {
     rotulo: 'Validado',
     descricao: 'Confirmado por uma fonte externa confiável.',
-    classe: `${BASE} bg-teal-100 text-teal-800`,
+    classe: `${BASE} bg-success/10 text-success`,
     confirmado: true,
     exigeConfirmacao: false,
     indicaConflito: false,
@@ -97,7 +97,7 @@ const DESENHOS: Record<OrigemExibida, DesenhoOrigem> = {
   DECLARADO: {
     rotulo: 'Declarado',
     descricao: 'Saiu do texto que você enviou.',
-    classe: `${BASE} bg-emerald-100 text-emerald-800`,
+    classe: `${BASE} bg-success/10 text-success`,
     confirmado: true,
     exigeConfirmacao: false,
     indicaConflito: false,
@@ -107,7 +107,7 @@ const DESENHOS: Record<OrigemExibida, DesenhoOrigem> = {
   VISUAL: {
     rotulo: 'Foto',
     descricao: 'Visto na foto, sem menção no seu texto. Confirme se é esse o imóvel.',
-    classe: `${BASE} bg-purple-100 text-purple-800`,
+    classe: `${BASE} bg-brand-900/5 text-brand-800`,
     confirmado: false,
     exigeConfirmacao: true,
     indicaConflito: false,
@@ -117,7 +117,7 @@ const DESENHOS: Record<OrigemExibida, DesenhoOrigem> = {
   INFERIDO: {
     rotulo: 'Inferido',
     descricao: 'Deduzido por uma regra do sistema, não escrito por você.',
-    classe: `${BASE} bg-amber-100 text-amber-800`,
+    classe: `${BASE} bg-gold/10 text-gold`,
     confirmado: false,
     exigeConfirmacao: false,
     indicaConflito: false,
@@ -127,7 +127,7 @@ const DESENHOS: Record<OrigemExibida, DesenhoOrigem> = {
   A_VALIDAR: {
     rotulo: 'A confirmar',
     descricao: 'A extração não achou respaldo para este valor. Confirme ou corrija.',
-    classe: `${BASE} bg-orange-100 text-orange-900 ring-1 ring-orange-300`,
+    classe: `${BASE} bg-gold/10 text-gold ring-1 ring-gold/40`,
     confirmado: false,
     exigeConfirmacao: true,
     indicaConflito: false,
@@ -137,7 +137,7 @@ const DESENHOS: Record<OrigemExibida, DesenhoOrigem> = {
   CONFLITANTE: {
     rotulo: 'Conflito',
     descricao: 'Duas informações do anúncio se contradizem. Escolha o valor correto.',
-    classe: `${BASE} bg-red-100 text-red-800 ring-1 ring-red-300`,
+    classe: `${BASE} bg-danger/10 text-danger ring-1 ring-danger/40`,
     confirmado: false,
     exigeConfirmacao: true,
     indicaConflito: true,
@@ -147,7 +147,7 @@ const DESENHOS: Record<OrigemExibida, DesenhoOrigem> = {
   NAO_INFORMADO: {
     rotulo: 'Não informado',
     descricao: 'Este dado não apareceu no texto nem nas fotos.',
-    classe: `${BASE} bg-slate-100 text-slate-600 border border-dashed border-slate-300`,
+    classe: `${BASE} bg-paper text-ink border border-dashed border-line`,
     confirmado: false,
     exigeConfirmacao: true,
     indicaConflito: false,
@@ -157,7 +157,7 @@ const DESENHOS: Record<OrigemExibida, DesenhoOrigem> = {
   NAO_APLICAVEL: {
     rotulo: 'Não se aplica',
     descricao: 'Este campo não vale para este tipo de imóvel.',
-    classe: `${BASE} bg-slate-50 text-slate-400 border border-slate-200`,
+    classe: `${BASE} bg-paper text-muted border border-line`,
     confirmado: true,
     exigeConfirmacao: false,
     indicaConflito: false,
@@ -168,7 +168,7 @@ const DESENHOS: Record<OrigemExibida, DesenhoOrigem> = {
   A_CONFIRMAR: {
     rotulo: 'A confirmar',
     descricao: 'Procedência não reconhecida pelo sistema. Confira antes de publicar.',
-    classe: `${BASE} bg-orange-50 text-orange-900 ring-1 ring-orange-200`,
+    classe: `${BASE} bg-gold/10 text-gold ring-1 ring-gold/40`,
     confirmado: false,
     exigeConfirmacao: true,
     indicaConflito: false,

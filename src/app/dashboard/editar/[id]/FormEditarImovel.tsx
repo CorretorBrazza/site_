@@ -130,30 +130,30 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       {/* Seção 1: Informações Principais */}
-      <section className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
-        <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+      <section className="bg-white p-6 rounded-2xl border border-line shadow-xs space-y-4">
+        <h2 className="text-base font-bold text-brand-900 border-b border-line pb-3 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-brand-900"></span>
           Informações Principais
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
-            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Referência</label>
+            <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">Referência</label>
             <input
               type="text"
               disabled
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-mono text-sm font-bold text-slate-700 cursor-not-allowed"
+              className="w-full bg-paper border border-line rounded-xl p-2.5 font-mono text-sm font-bold text-ink cursor-not-allowed"
               value={formData.referencia}
             />
           </div>
 
           <div className="md:col-span-3">
-            <label htmlFor="campo-titulo" className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Título do Anúncio *</label>
+            <label htmlFor="campo-titulo" className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">Título do Anúncio *</label>
             <input
               id="campo-titulo"
               type="text"
               required
-              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full border border-line rounded-xl p-2.5 text-sm font-medium focus:ring-2 focus:ring-brand-700 focus:border-transparent"
               value={formData.titulo}
               onChange={e => setFormData({ ...formData, titulo: e.target.value })}
               placeholder="Ex: Apartamento 2 Dormitórios no Condomínio Pitangueiras 2"
@@ -162,11 +162,11 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
         </div>
 
         <div>
-          <label htmlFor="campo-descricao" className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Descrição Comercial</label>
+          <label htmlFor="campo-descricao" className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">Descrição Comercial</label>
           <textarea
             id="campo-descricao"
             rows={4}
-            className="w-full border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent leading-relaxed"
+            className="w-full border border-line rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-700 focus:border-transparent leading-relaxed"
             value={formData.descricao}
             onChange={e => setFormData({ ...formData, descricao: e.target.value })}
             placeholder="Descreva os diferenciais, acabamento, vista e condições do imóvel..."
@@ -175,10 +175,10 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label htmlFor="campo-transacao" className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Transação</label>
+            <label htmlFor="campo-transacao" className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">Transação</label>
             <select
               id="campo-transacao"
-              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-white font-medium"
+              className="w-full border border-line rounded-xl p-2.5 text-sm bg-white font-medium"
               value={formData.transacao || ''}
               onChange={e => setFormData({ ...formData, transacao: e.target.value as any })}
             >
@@ -190,11 +190,11 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
           </div>
 
           <div>
-            <label htmlFor="campo-tipo" className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Tipo de Imóvel</label>
+            <label htmlFor="campo-tipo" className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">Tipo de Imóvel</label>
             <input
               id="campo-tipo"
               type="text"
-              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              className="w-full border border-line rounded-xl p-2.5 text-sm"
               value={formData.tipoImovel}
               onChange={e => setFormData({ ...formData, tipoImovel: e.target.value })}
               placeholder="Ex: Apartamento, Casa, Terreno, Galpão"
@@ -202,11 +202,11 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
           </div>
 
           <div>
-            <label htmlFor="campo-condominio-nome" className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Nome do Condomínio / Edifício</label>
+            <label htmlFor="campo-condominio-nome" className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">Nome do Condomínio / Edifício</label>
             <input
               id="campo-condominio-nome"
               type="text"
-              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              className="w-full border border-line rounded-xl p-2.5 text-sm"
               value={formData.condominio || ''}
               onChange={e => setFormData({ ...formData, condominio: e.target.value })}
               placeholder="Ex: Condomínio Pitangueiras 2"
@@ -216,21 +216,21 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
       </section>
 
       {/* Seção 2: Características e Valores */}
-      <section className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
-        <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
+      <section className="bg-white p-6 rounded-2xl border border-line shadow-xs space-y-4">
+        <h2 className="text-base font-bold text-brand-900 border-b border-line pb-3 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-success"></span>
           Características e Valores
         </h2>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
           <div>
-            <label htmlFor="campo-quartos" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Quartos</label>
+            <label htmlFor="campo-quartos" className="block text-[11px] font-bold text-muted uppercase tracking-wider mb-1">Quartos</label>
             <input
               id="campo-quartos"
               type="number"
               min={0}
               placeholder="Não informado"
-              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              className="w-full border border-line rounded-xl p-2.5 text-sm"
               value={formData.caracteristicas.quartos ?? ''}
               onChange={e => setFormData({
                 ...formData,
@@ -240,13 +240,13 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
           </div>
 
           <div>
-            <label htmlFor="campo-suites" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Suítes</label>
+            <label htmlFor="campo-suites" className="block text-[11px] font-bold text-muted uppercase tracking-wider mb-1">Suítes</label>
             <input
               id="campo-suites"
               type="number"
               min={0}
               placeholder="Não informado"
-              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              className="w-full border border-line rounded-xl p-2.5 text-sm"
               value={formData.caracteristicas.suites ?? ''}
               onChange={e => setFormData({
                 ...formData,
@@ -256,13 +256,13 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
           </div>
 
           <div>
-            <label htmlFor="campo-banheiros" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Banheiros</label>
+            <label htmlFor="campo-banheiros" className="block text-[11px] font-bold text-muted uppercase tracking-wider mb-1">Banheiros</label>
             <input
               id="campo-banheiros"
               type="number"
               min={0}
               placeholder="Não informado"
-              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              className="w-full border border-line rounded-xl p-2.5 text-sm"
               value={formData.caracteristicas.banheiros ?? ''}
               onChange={e => setFormData({
                 ...formData,
@@ -272,13 +272,13 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
           </div>
 
           <div>
-            <label htmlFor="campo-vagas" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Vagas</label>
+            <label htmlFor="campo-vagas" className="block text-[11px] font-bold text-muted uppercase tracking-wider mb-1">Vagas</label>
             <input
               id="campo-vagas"
               type="number"
               min={0}
               placeholder="Não informado"
-              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              className="w-full border border-line rounded-xl p-2.5 text-sm"
               value={formData.caracteristicas.vagas ?? ''}
               onChange={e => setFormData({
                 ...formData,
@@ -288,13 +288,13 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
           </div>
 
           <div>
-            <label htmlFor="campo-area-util" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Área Útil (m²)</label>
+            <label htmlFor="campo-area-util" className="block text-[11px] font-bold text-muted uppercase tracking-wider mb-1">Área Útil (m²)</label>
             <input
               id="campo-area-util"
               type="number"
               min={0}
               placeholder="Não informado"
-              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              className="w-full border border-line rounded-xl p-2.5 text-sm"
               value={formData.caracteristicas.areaUtil ?? ''}
               onChange={e => setFormData({
                 ...formData,
@@ -304,13 +304,13 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
           </div>
 
           <div>
-            <label htmlFor="campo-area-total" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Área Total (m²)</label>
+            <label htmlFor="campo-area-total" className="block text-[11px] font-bold text-muted uppercase tracking-wider mb-1">Área Total (m²)</label>
             <input
               id="campo-area-total"
               type="number"
               min={0}
               placeholder="Não informado"
-              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              className="w-full border border-line rounded-xl p-2.5 text-sm"
               value={formData.caracteristicas.areaTotal ?? ''}
               onChange={e => setFormData({
                 ...formData,
@@ -320,54 +320,54 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-slate-100">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-line">
           <div>
-            <label htmlFor="campo-preco-venda" className="block text-xs font-bold text-blue-700 uppercase tracking-wider mb-1">Preço de Venda (R$)</label>
+            <label htmlFor="campo-preco-venda" className="block text-xs font-bold text-brand-800 uppercase tracking-wider mb-1">Preço de Venda (R$)</label>
             <input
               id="campo-preco-venda"
               type="number"
               min={0}
               placeholder="Não informado"
-              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm font-bold text-blue-900"
+              className="w-full border border-line rounded-xl p-2.5 text-sm font-bold text-brand-800"
               value={formData.precoVenda ?? ''}
               onChange={e => setFormData({ ...formData, precoVenda: e.target.value === '' ? undefined : Number(e.target.value) })}
             />
           </div>
 
           <div>
-            <label htmlFor="campo-preco-locacao" className="block text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">Preço de Locação (R$)</label>
+            <label htmlFor="campo-preco-locacao" className="block text-xs font-bold text-success uppercase tracking-wider mb-1">Preço de Locação (R$)</label>
             <input
               id="campo-preco-locacao"
               type="number"
               min={0}
               placeholder="Não informado"
-              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm font-bold text-emerald-900"
+              className="w-full border border-line rounded-xl p-2.5 text-sm font-bold text-success"
               value={formData.precoLocacao ?? ''}
               onChange={e => setFormData({ ...formData, precoLocacao: e.target.value === '' ? undefined : Number(e.target.value) })}
             />
           </div>
 
           <div>
-            <label htmlFor="campo-condominio-taxa" className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Condomínio Mensal (R$)</label>
+            <label htmlFor="campo-condominio-taxa" className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">Condomínio Mensal (R$)</label>
             <input
               id="campo-condominio-taxa"
               type="number"
               min={0}
               placeholder="Não informado"
-              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              className="w-full border border-line rounded-xl p-2.5 text-sm"
               value={formData.valorCondominio ?? ''}
               onChange={e => setFormData({ ...formData, valorCondominio: e.target.value === '' ? undefined : Number(e.target.value) })}
             />
           </div>
 
           <div>
-            <label htmlFor="campo-iptu" className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">IPTU Mensal (R$)</label>
+            <label htmlFor="campo-iptu" className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">IPTU Mensal (R$)</label>
             <input
               id="campo-iptu"
               type="number"
               min={0}
               placeholder="Não informado"
-              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              className="w-full border border-line rounded-xl p-2.5 text-sm"
               value={formData.iptuMensal ?? ''}
               onChange={e => setFormData({ ...formData, iptuMensal: e.target.value === '' ? undefined : Number(e.target.value) })}
             />
@@ -376,30 +376,30 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
       </section>
 
       {/* Seção 3: Localização */}
-      <section className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
-        <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-violet-600"></span>
+      <section className="bg-white p-6 rounded-2xl border border-line shadow-xs space-y-4">
+        <h2 className="text-base font-bold text-brand-900 border-b border-line pb-3 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-brand-900"></span>
           Localização e Endereço
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="md:col-span-3">
-            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Logradouro / Rua</label>
+            <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">Logradouro / Rua</label>
             <input
               type="text"
               placeholder="Ex: Estrada das Olarias"
-              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              className="w-full border border-line rounded-xl p-2.5 text-sm"
               value={formData.endereco.rua}
               onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, rua: e.target.value } })}
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Número</label>
+            <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">Número</label>
             <input
               type="text"
               placeholder="Ex: 500"
-              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              className="w-full border border-line rounded-xl p-2.5 text-sm"
               value={formData.endereco.numero}
               onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, numero: e.target.value } })}
             />
@@ -408,45 +408,45 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <div>
-            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Bairro</label>
+            <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">Bairro</label>
             <input
               type="text"
               placeholder="Ex: Jardim Guida"
-              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              className="w-full border border-line rounded-xl p-2.5 text-sm"
               value={formData.endereco.bairro}
               onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, bairro: e.target.value } })}
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Cidade</label>
+            <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">Cidade</label>
             <input
               type="text"
               placeholder="Ex: Taboão da Serra"
-              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              className="w-full border border-line rounded-xl p-2.5 text-sm"
               value={formData.endereco.cidade}
               onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, cidade: e.target.value } })}
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Estado (UF)</label>
+            <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">Estado (UF)</label>
             <input
               type="text"
               placeholder="Ex: SP"
               maxLength={2}
-              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm uppercase"
+              className="w-full border border-line rounded-xl p-2.5 text-sm uppercase"
               value={formData.endereco.estado}
               onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, estado: e.target.value } })}
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">CEP</label>
+            <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1">CEP</label>
             <input
               type="text"
               placeholder="Ex: 06765-000"
-              className="w-full border border-slate-200 rounded-xl p-2.5 text-sm"
+              className="w-full border border-line rounded-xl p-2.5 text-sm"
               value={formData.endereco.cep}
               onChange={e => setFormData({ ...formData, endereco: { ...formData.endereco, cep: e.target.value } })}
             />
@@ -455,30 +455,30 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
       </section>
 
       {/* Seção 4: Gerenciamento de Fotos */}
-      <section className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
-        <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
-          <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+      <section className="bg-white p-6 rounded-2xl border border-line shadow-xs space-y-4">
+        <div className="border-b border-line pb-3 flex items-center justify-between">
+          <h2 className="text-base font-bold text-brand-900 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-gold"></span>
             Galeria e Fotos ({formData.fotos?.length || 0})
           </h2>
-          <span className="text-xs text-slate-500 font-medium">A primeira foto é a Capa principal</span>
+          <span className="text-xs text-muted font-medium">A primeira foto é a Capa principal</span>
         </div>
 
         {(!formData.fotos || formData.fotos.length === 0) ? (
-          <div className="p-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
-            <p className="text-sm font-semibold text-slate-600">Nenhuma foto anexada a este anúncio no momento.</p>
+          <div className="p-8 text-center bg-paper rounded-xl border border-dashed border-line">
+            <p className="text-sm font-semibold text-ink">Nenhuma foto anexada a este anúncio no momento.</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
             {formData.fotos.map((foto, idx) => (
               <div
                 key={`${foto}-${idx}`}
-                className={`relative group bg-slate-50 rounded-xl border-2 p-2 flex flex-col justify-between transition-all ${
-                  idx === 0 ? 'border-amber-500 shadow-xs ring-2 ring-amber-300/40' : 'border-slate-200 hover:border-blue-300'
+                className={`relative group bg-paper rounded-xl border-2 p-2 flex flex-col justify-between transition-all ${
+                  idx === 0 ? 'border-gold/50 shadow-xs ring-2 ring-gold/40/40' : 'border-line hover:border-brand-700/30'
                 }`}
               >
                 {idx === 0 && (
-                  <span className="absolute top-1.5 left-1.5 bg-amber-500 text-white font-black text-[9px] uppercase px-2 py-0.5 rounded-md shadow-xs z-10 flex items-center gap-1">
+                  <span className="absolute top-1.5 left-1.5 bg-gold text-white font-black text-[9px] uppercase px-2 py-0.5 rounded-md shadow-xs z-10 flex items-center gap-1">
                     <Star className="w-3 h-3 fill-white" /> Capa
                   </span>
                 )}
@@ -488,23 +488,23 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
                 </div>
 
                 <div className="flex flex-col gap-1.5 text-xs">
-                  <div className="flex justify-between items-center bg-slate-100 p-1 rounded-lg">
+                  <div className="flex justify-between items-center bg-paper p-1 rounded-lg">
                     <button
                       type="button"
                       onClick={() => moverFoto(idx, 'esquerda')}
                       disabled={idx === 0}
                       title="Mover para esquerda"
-                      className="p-1 text-slate-600 hover:text-blue-600 disabled:opacity-30"
+                      className="p-1 text-ink hover:text-brand-800 disabled:opacity-30"
                     >
                       ◀
                     </button>
-                    <span className="font-bold text-[11px] text-slate-500">#{idx + 1}</span>
+                    <span className="font-bold text-[11px] text-muted">#{idx + 1}</span>
                     <button
                       type="button"
                       onClick={() => moverFoto(idx, 'direita')}
                       disabled={idx === (formData.fotos?.length || 0) - 1}
                       title="Mover para direita"
-                      className="p-1 text-slate-600 hover:text-blue-600 disabled:opacity-30"
+                      className="p-1 text-ink hover:text-brand-800 disabled:opacity-30"
                     >
                       ▶
                     </button>
@@ -514,7 +514,7 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
                     <button
                       type="button"
                       onClick={() => definirComoCapa(idx)}
-                      className="w-full text-[10px] bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200 font-bold py-1 rounded-lg transition-colors"
+                      className="w-full text-[10px] bg-gold/10 text-gold hover:bg-gold/10 border border-gold/30 font-bold py-1 rounded-lg transition-colors"
                     >
                       Definir como Capa
                     </button>
@@ -523,7 +523,7 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
                   <button
                     type="button"
                     onClick={() => removerFoto(idx)}
-                    className="w-full text-[10px] text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 py-1 rounded-lg font-bold transition-colors flex items-center justify-center gap-1"
+                    className="w-full text-[10px] text-danger hover:bg-danger/10 border border-transparent hover:border-danger/30 py-1 rounded-lg font-bold transition-colors flex items-center justify-center gap-1"
                   >
                     <Trash2 className="w-3 h-3" /> Excluir
                   </button>
@@ -533,11 +533,11 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
           </div>
         )}
 
-        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-start gap-3 mt-4">
-          <Info className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-          <div className="text-xs text-blue-900 space-y-1">
+        <div className="bg-brand-900/5 border border-brand-700/30 rounded-xl p-4 flex items-start gap-3 mt-4">
+          <Info className="w-5 h-5 text-brand-800 shrink-0 mt-0.5" />
+          <div className="text-xs text-brand-800 space-y-1">
             <p className="font-bold">Como adicionar novas fotos?</p>
-            <p className="text-blue-700 leading-relaxed">
+            <p className="text-brand-800 leading-relaxed">
               Para incluir fotos em alta resolução com otimização automática e geração do Media Kit por IA, envie as imagens pelo fluxo de captação no WhatsApp informando a referência <strong>{formData.referencia}</strong>.
             </p>
           </div>
@@ -550,7 +550,7 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
           type="submit"
           disabled={loading}
           className={`flex-1 text-white py-3.5 px-6 rounded-xl font-black text-sm uppercase tracking-wider shadow-sm flex items-center justify-center gap-2 transition-all ${
-            loading ? 'bg-slate-400 cursor-wait' : 'bg-blue-600 hover:bg-blue-700 active:scale-[0.99]'
+            loading ? 'bg-muted cursor-wait' : 'bg-brand-900 hover:bg-brand-800 active:scale-[0.99]'
           }`}
         >
           <Save className="w-4 h-4" />
@@ -559,7 +559,7 @@ export default function FormEditarImovel({ imovel }: FormEditarImovelProps) {
 
         <Link
           href="/dashboard"
-          className="px-6 py-3.5 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl font-bold text-sm text-center transition-colors"
+          className="px-6 py-3.5 bg-paper text-ink hover:bg-line rounded-xl font-bold text-sm text-center transition-colors"
         >
           Cancelar
         </Link>

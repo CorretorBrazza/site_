@@ -20,25 +20,25 @@ interface DashboardCorretorClientProps {
 }
 
 const workflowMeta: Record<string, { label: string; tone: string; nextAction: string }> = {
-  RECEIVED: { label: 'Recebido', tone: 'text-blue-300 border-blue-800 bg-blue-950/60', nextAction: 'Aguarde o início do processamento.' },
-  INGESTED: { label: 'Organizando dados', tone: 'text-blue-300 border-blue-800 bg-blue-950/60', nextAction: 'Estamos preparando fotos e informações.' },
-  EXTRACTION_DONE: { label: 'Analisando imóvel', tone: 'text-indigo-300 border-indigo-800 bg-indigo-950/60', nextAction: 'A IA está estruturando os dados do imóvel.' },
-  KNOWLEDGE_DONE: { label: 'Criando Media Kit', tone: 'text-violet-300 border-violet-800 bg-violet-950/60', nextAction: 'A copy e os materiais comerciais estão sendo gerados.' },
-  PENDING_APPROVAL: { label: 'Aguardando sua aprovação', tone: 'text-amber-300 border-amber-800 bg-amber-950/60', nextAction: 'Abra o link enviado no WhatsApp, revise e aprove.' },
-  QUEUED_FOR_REVIEW: { label: 'Atualização em revisão', tone: 'text-amber-300 border-amber-800 bg-amber-950/60', nextAction: 'Aguarde a nova versão de aprovação.' },
-  AWAITING_CREDITS: { label: 'Aguardando crédito', tone: 'text-rose-300 border-rose-800 bg-rose-950/60', nextAction: 'Recarregue créditos para gerar o link de aprovação.' },
-  APPROVED: { label: 'Finalizando publicação', tone: 'text-emerald-300 border-emerald-800 bg-emerald-950/60', nextAction: 'Estamos concluindo a entrega do anúncio.' },
-  DELIVERED: { label: 'Publicado', tone: 'text-emerald-300 border-emerald-800 bg-emerald-950/60', nextAction: 'Use seu Media Kit e divulgue o imóvel.' },
-  PUBLISHED: { label: 'Publicado', tone: 'text-emerald-300 border-emerald-800 bg-emerald-950/60', nextAction: 'Use seu Media Kit e divulgue o imóvel.' },
-  REJECTED: { label: 'Precisa de ajuste', tone: 'text-rose-300 border-rose-800 bg-rose-950/60', nextAction: 'Revise os dados e solicite uma nova aprovação.' },
-  EXPIRED: { label: 'Anúncio expirado', tone: 'text-rose-300 border-rose-800 bg-rose-950/60', nextAction: 'Reative o anúncio com um crédito.' },
-  DELETED: { label: 'Excluído', tone: 'text-slate-400 border-slate-700 bg-slate-900', nextAction: 'Este anúncio foi excluído e não será processado.' },
+  RECEIVED: { label: 'Recebido', tone: 'text-gold-400 border-brand-700 bg-brand-800/60', nextAction: 'Aguarde o início do processamento.' },
+  INGESTED: { label: 'Organizando dados', tone: 'text-gold-400 border-brand-700 bg-brand-800/60', nextAction: 'Estamos preparando fotos e informações.' },
+  EXTRACTION_DONE: { label: 'Analisando imóvel', tone: 'text-gold-400 border-brand-700 bg-brand-800/60', nextAction: 'A IA está estruturando os dados do imóvel.' },
+  KNOWLEDGE_DONE: { label: 'Criando Media Kit', tone: 'text-gold-400 border-brand-700 bg-brand-800/60', nextAction: 'A copy e os materiais comerciais estão sendo gerados.' },
+  PENDING_APPROVAL: { label: 'Aguardando sua aprovação', tone: 'text-gold border-gold/50 bg-gold/60', nextAction: 'Abra o link enviado no WhatsApp, revise e aprove.' },
+  QUEUED_FOR_REVIEW: { label: 'Atualização em revisão', tone: 'text-gold border-gold/50 bg-gold/60', nextAction: 'Aguarde a nova versão de aprovação.' },
+  AWAITING_CREDITS: { label: 'Aguardando crédito', tone: 'text-danger border-danger/50 bg-danger/60', nextAction: 'Recarregue créditos para gerar o link de aprovação.' },
+  APPROVED: { label: 'Finalizando publicação', tone: 'text-success border-success/50 bg-success/60', nextAction: 'Estamos concluindo a entrega do anúncio.' },
+  DELIVERED: { label: 'Publicado', tone: 'text-success border-success/50 bg-success/60', nextAction: 'Use seu Media Kit e divulgue o imóvel.' },
+  PUBLISHED: { label: 'Publicado', tone: 'text-success border-success/50 bg-success/60', nextAction: 'Use seu Media Kit e divulgue o imóvel.' },
+  REJECTED: { label: 'Precisa de ajuste', tone: 'text-danger border-danger/50 bg-danger/60', nextAction: 'Revise os dados e solicite uma nova aprovação.' },
+  EXPIRED: { label: 'Anúncio expirado', tone: 'text-danger border-danger/50 bg-danger/60', nextAction: 'Reative o anúncio com um crédito.' },
+  DELETED: { label: 'Excluído', tone: 'text-white-60 border-brand-700 bg-brand-900', nextAction: 'Este anúncio foi excluído e não será processado.' },
 };
 
 function getWorkflowMeta(status?: string) {
   return workflowMeta[String(status || '').toUpperCase()] || {
     label: 'Em processamento',
-    tone: 'text-slate-300 border-slate-700 bg-slate-900',
+    tone: 'text-white-70 border-brand-700 bg-brand-900',
     nextAction: 'Acompanhe o processamento; se demorar, atualize a página.',
   };
 }
@@ -316,17 +316,17 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
   const inicialUsuario = (usuario?.nome?.[0] || 'C').toUpperCase();
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="min-h-screen bg-paper text-brand-900">
 
       {/* ============================ MOBILE: APP SHELL ============================ */}
       <DashboardShell activeTab={activeTab} onTabChange={setActiveTab} usuario={usuario} loading={loading}>
         {activeTab === 'inicio' && (
           <div className="p-3.5 space-y-3.5">
             <div className="flex items-center justify-between">
-              <h1 className="text-lg font-extrabold text-slate-900 tracking-tight">
+              <h1 className="text-lg font-extrabold text-brand-900 tracking-tight">
                 {usuario ? `Olá, ${usuario.nome}` : 'Painel do Corretor'}
               </h1>
-              <span className="bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-black px-2.5 py-1 rounded-full flex items-center gap-1 shadow-xs uppercase tracking-wider">
+              <span className="bg-brand-900/5 text-brand-800 border border-brand-700/30 text-[10px] font-black px-2.5 py-1 rounded-full flex items-center gap-1 shadow-xs uppercase tracking-wider">
                 <ShieldCheck className="w-3 h-3" /> {usuario?.plano_atual?.toUpperCase() || 'START'}
               </span>
             </div>
@@ -338,45 +338,45 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
             />
 
             <div className="grid grid-cols-2 gap-2">
-              <div className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
-                <div className="text-[9px] font-black uppercase tracking-wider text-emerald-700 flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-emerald-600" /> Publicados</div>
-                <div className="text-xl font-black text-slate-900 mt-1">{workSummary.publicados}</div>
+              <div className="bg-white border border-line rounded-2xl p-3 shadow-sm">
+                <div className="text-[9px] font-black uppercase tracking-wider text-success flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-success" /> Publicados</div>
+                <div className="text-xl font-black text-brand-900 mt-1">{workSummary.publicados}</div>
               </div>
-              <div className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
-                <div className="text-[9px] font-black uppercase tracking-wider text-amber-700 flex items-center gap-1"><Clock3 className="w-3 h-3 text-amber-600" /> Aprovação</div>
-                <div className="text-xl font-black text-slate-900 mt-1">{workSummary.aprovacao}</div>
+              <div className="bg-white border border-line rounded-2xl p-3 shadow-sm">
+                <div className="text-[9px] font-black uppercase tracking-wider text-gold flex items-center gap-1"><Clock3 className="w-3 h-3 text-gold" /> Aprovação</div>
+                <div className="text-xl font-black text-brand-900 mt-1">{workSummary.aprovacao}</div>
               </div>
-              <div className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
-                <div className="text-[9px] font-black uppercase tracking-wider text-blue-700 flex items-center gap-1"><RefreshCw className="w-3 h-3 text-blue-600" /> Processando</div>
-                <div className="text-xl font-black text-slate-900 mt-1">{workSummary.processando}</div>
+              <div className="bg-white border border-line rounded-2xl p-3 shadow-sm">
+                <div className="text-[9px] font-black uppercase tracking-wider text-brand-800 flex items-center gap-1"><RefreshCw className="w-3 h-3 text-brand-800" /> Processando</div>
+                <div className="text-xl font-black text-brand-900 mt-1">{workSummary.processando}</div>
               </div>
-              <div className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
-                <div className="text-[9px] font-black uppercase tracking-wider text-rose-700 flex items-center gap-1"><CircleAlert className="w-3 h-3 text-rose-600" /> Atenção</div>
-                <div className="text-xl font-black text-slate-900 mt-1">{workSummary.atencao}</div>
+              <div className="bg-white border border-line rounded-2xl p-3 shadow-sm">
+                <div className="text-[9px] font-black uppercase tracking-wider text-danger flex items-center gap-1"><CircleAlert className="w-3 h-3 text-danger" /> Atenção</div>
+                <div className="text-xl font-black text-brand-900 mt-1">{workSummary.atencao}</div>
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl p-4 flex gap-3 shadow-sm">
-              <div className="shrink-0 p-2 h-fit rounded-xl bg-blue-50 border border-blue-200 text-blue-600"><MessageCircle className="w-5 h-5" /></div>
+            <div className="bg-white border border-line rounded-2xl p-4 flex gap-3 shadow-sm">
+              <div className="shrink-0 p-2 h-fit rounded-xl bg-brand-900/5 border border-brand-700/30 text-brand-800"><MessageCircle className="w-5 h-5" /></div>
               <div className="min-w-0">
-                <p className="text-[9px] uppercase tracking-wider font-black text-blue-600">Próxima ação</p>
-                <h2 className="text-sm font-bold text-slate-900 mt-0.5 truncate">{nextItem ? `${nextItem.referencia} — ${nextItemMeta?.label}` : 'Envie seu primeiro imóvel pelo WhatsApp'}</h2>
-                <p className="text-xs text-slate-600 mt-0.5 line-clamp-2">{nextItem ? nextItemMeta?.nextAction : 'Envie fotos e as informações principais do imóvel para iniciarmos seu Media Kit.'}</p>
+                <p className="text-[9px] uppercase tracking-wider font-black text-brand-800">Próxima ação</p>
+                <h2 className="text-sm font-bold text-brand-900 mt-0.5 truncate">{nextItem ? `${nextItem.referencia} — ${nextItemMeta?.label}` : 'Envie seu primeiro imóvel pelo WhatsApp'}</h2>
+                <p className="text-xs text-ink mt-0.5 line-clamp-2">{nextItem ? nextItemMeta?.nextAction : 'Envie fotos e as informações principais do imóvel para iniciarmos seu Media Kit.'}</p>
               </div>
             </div>
 
             <button
               onClick={() => setActiveTab('bairro')}
-              className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center justify-between gap-3 text-left hover:border-violet-700 transition-colors"
+              className="w-full bg-brand-900 border border-brand-700 rounded-2xl p-4 flex items-center justify-between gap-3 text-left hover:border-brand-700 transition-colors"
             >
               <div className="flex items-center gap-3 min-w-0">
-                <div className="shrink-0 p-2 rounded-xl bg-violet-950/60 border border-violet-800 text-violet-300"><MapPin className="w-5 h-5" /></div>
+                <div className="shrink-0 p-2 rounded-xl bg-brand-800/60 border border-brand-700 text-gold-400"><MapPin className="w-5 h-5" /></div>
                 <div className="min-w-0">
                   <p className="text-sm font-bold text-white">Inteligência Local</p>
-                  <p className="text-xs text-slate-400">Contribua com informações do bairro</p>
+                  <p className="text-xs text-muted">Contribua com informações do bairro</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-slate-500 shrink-0" />
+              <ChevronRight className="w-5 h-5 text-muted shrink-0" />
             </button>
 
             <BannerBackupGamificacao
@@ -388,8 +388,8 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
 
         {activeTab === 'imoveis' && (
           <div className="p-3.5 space-y-3.5">
-            <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-blue-600" />
+            <h2 className="text-base font-bold text-brand-900 flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-brand-800" />
               Seus Imóveis ({listaImoveis.length})
             </h2>
             <TabelaImoveis imoveis={listaImoveis} />
@@ -404,34 +404,34 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
 
         {activeTab === 'conta' && (
           <div className="p-3.5 space-y-3.5">
-            <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-blue-600" />
+            <h2 className="text-base font-bold text-brand-900 flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-brand-800" />
               Minha Conta
             </h2>
 
-            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+            <div className="bg-white border border-line rounded-2xl p-4 shadow-sm">
               <div className="flex items-center gap-3">
-                <span className="w-12 h-12 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700 font-black text-lg">
+                <span className="w-12 h-12 rounded-full bg-brand-900/5 border border-brand-700/30 flex items-center justify-center text-brand-800 font-black text-lg">
                   {inicialUsuario}
                 </span>
                 <div className="min-w-0">
-                  <p className="text-sm font-black text-slate-900 truncate">{usuario?.nome || 'Corretor'}</p>
-                  <p className="text-xs text-slate-500 truncate">{usuario?.email || 'Sessão ativa'}</p>
-                  <span className="mt-1 inline-flex bg-blue-50 text-blue-700 border border-blue-200 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                  <p className="text-sm font-black text-brand-900 truncate">{usuario?.nome || 'Corretor'}</p>
+                  <p className="text-xs text-muted truncate">{usuario?.email || 'Sessão ativa'}</p>
+                  <span className="mt-1 inline-flex bg-brand-900/5 text-brand-800 border border-brand-700/30 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
                     Plano {usuario?.plano_atual?.toUpperCase() || 'START'}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-4 text-white shadow-sm flex items-center justify-between gap-3">
+            <div className="bg-gradient-to-br from-brand-900 to-brand-800 rounded-2xl p-4 text-white shadow-sm flex items-center justify-between gap-3">
               <div>
-                <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider font-black text-blue-100"><Coins className="w-3.5 h-3.5" /> Saldo de créditos</div>
+                <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider font-black text-gold-400"><Coins className="w-3.5 h-3.5" /> Saldo de créditos</div>
                 <div className="text-3xl font-black mt-1">{usuario?.saldo_creditos ?? 1}</div>
               </div>
               <button
                 onClick={() => setModalRecargaAberto(true)}
-                className="bg-white text-blue-700 font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl shadow-md"
+                className="bg-white text-brand-800 font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl shadow-md"
               >
                 Recarregar
               </button>
@@ -439,40 +439,40 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
 
             <button
               onClick={() => router.push('/planos')}
-              className="w-full bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between text-left hover:border-blue-300"
+              className="w-full bg-white border border-line rounded-2xl p-4 shadow-sm flex items-center justify-between text-left hover:border-brand-700/30"
             >
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-600"><Sparkles className="w-5 h-5" /></div>
+                <div className="p-2 rounded-xl bg-gold/10 border border-gold/30 text-gold"><Sparkles className="w-5 h-5" /></div>
                 <div>
-                  <p className="text-sm font-bold text-slate-900">Planos e Preços</p>
-                  <p className="text-xs text-slate-500">Conheça o Start, Pro e Elite</p>
+                  <p className="text-sm font-bold text-brand-900">Planos e Preços</p>
+                  <p className="text-xs text-muted">Conheça o Start, Pro e Elite</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-slate-400" />
+              <ChevronRight className="w-5 h-5 text-muted" />
             </button>
 
             <button
               onClick={() => setModalContatoAberto(true)}
-              className="w-full bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between text-left hover:border-blue-300"
+              className="w-full bg-white border border-line rounded-2xl p-4 shadow-sm flex items-center justify-between text-left hover:border-brand-700/30"
             >
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-blue-50 border border-blue-200 text-blue-600"><Mail className="w-5 h-5" /></div>
+                <div className="p-2 rounded-xl bg-brand-900/5 border border-brand-700/30 text-brand-800"><Mail className="w-5 h-5" /></div>
                 <div>
-                  <p className="text-sm font-bold text-slate-900">Contato</p>
-                  <p className="text-xs text-slate-500">Atendimento e Ouvidoria</p>
+                  <p className="text-sm font-bold text-brand-900">Contato</p>
+                  <p className="text-xs text-muted">Atendimento e Ouvidoria</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-slate-400" />
+              <ChevronRight className="w-5 h-5 text-muted" />
             </button>
 
             <button
               onClick={handleLogout}
-              className="w-full bg-white border border-rose-200 rounded-2xl p-4 shadow-sm flex items-center gap-3 text-left hover:border-rose-300"
+              className="w-full bg-white border border-danger/30 rounded-2xl p-4 shadow-sm flex items-center gap-3 text-left hover:border-danger/50"
             >
-              <div className="p-2 rounded-xl bg-rose-50 text-rose-600"><LogOut className="w-5 h-5" /></div>
+              <div className="p-2 rounded-xl bg-danger/10 text-danger"><LogOut className="w-5 h-5" /></div>
               <div>
-                <p className="text-sm font-bold text-rose-700">Encerrar Sessão</p>
-                <p className="text-xs text-slate-500">Sair do painel com segurança</p>
+                <p className="text-sm font-bold text-danger">Encerrar Sessão</p>
+                <p className="text-xs text-muted">Sair do painel com segurança</p>
               </div>
             </button>
           </div>
@@ -484,17 +484,17 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
         <div className="max-w-7xl mx-auto space-y-8 py-8 px-4 sm:px-6 lg:px-8">
 
           {/* Top Header — Clean Light Style */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 relative overflow-hidden">
+          <div className="bg-white border border-line rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 relative overflow-hidden">
             <div className="relative z-10 space-y-2">
               <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-brand-900 tracking-tight">
                   {usuario ? `Olá, ${usuario.nome}` : 'Painel do Corretor'}
                 </h1>
-                <span className="bg-blue-50 text-blue-700 border border-blue-200 text-xs font-black px-3 py-1 rounded-full flex items-center gap-1 shadow-xs uppercase tracking-wider">
+                <span className="bg-brand-900/5 text-brand-800 border border-brand-700/30 text-xs font-black px-3 py-1 rounded-full flex items-center gap-1 shadow-xs uppercase tracking-wider">
                   <ShieldCheck className="w-4 h-4" /> PLANO {usuario?.plano_atual?.toUpperCase() || 'START'}
                 </span>
               </div>
-              <p className="text-slate-500 text-xs sm:text-sm font-medium">
+              <p className="text-muted text-xs sm:text-sm font-medium">
                 {usuario ? `Sessão ativa: ${usuario.email}` : 'Gerencie seus anúncios, Media Kits de IA e backups de fotos em nuvem.'}
               </p>
             </div>
@@ -503,15 +503,15 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
               <button
                 onClick={() => window.location.reload()}
                 title="Atualizar Dados"
-                className="p-3 bg-slate-50 border border-slate-200 text-slate-600 hover:text-blue-600 hover:border-blue-300 rounded-xl transition-all shadow-xs"
+                className="p-3 bg-paper border border-line text-ink hover:text-brand-800 hover:border-brand-700/30 rounded-xl transition-all shadow-xs"
               >
-                <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin text-blue-600' : ''}`} />
+                <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin text-brand-800' : ''}`} />
               </button>
 
               <button
                 onClick={handleLogout}
                 title="Encerrar Sessão Segura"
-                className="p-3 bg-slate-50 border border-slate-200 text-slate-500 hover:text-red-600 hover:border-red-300 rounded-xl transition-all shadow-xs"
+                className="p-3 bg-paper border border-line text-muted hover:text-danger hover:border-danger/50 rounded-xl transition-all shadow-xs"
               >
                 <LogOut className="w-5 h-5" />
               </button>
@@ -527,34 +527,34 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
 
           {/* Central de trabalho: fila, exceções e próxima ação */}
           <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-              <div className="text-[10px] font-black uppercase tracking-wider text-emerald-700 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Publicados</div>
-              <div className="text-2xl font-black text-slate-900 mt-2">{workSummary.publicados}</div>
+            <div className="bg-white border border-line rounded-2xl p-4 shadow-sm">
+              <div className="text-[10px] font-black uppercase tracking-wider text-success flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-success" /> Publicados</div>
+              <div className="text-2xl font-black text-brand-900 mt-2">{workSummary.publicados}</div>
             </div>
-            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-              <div className="text-[10px] font-black uppercase tracking-wider text-amber-700 flex items-center gap-1.5"><Clock3 className="w-3.5 h-3.5 text-amber-600" /> Aprovação</div>
-              <div className="text-2xl font-black text-slate-900 mt-2">{workSummary.aprovacao}</div>
+            <div className="bg-white border border-line rounded-2xl p-4 shadow-sm">
+              <div className="text-[10px] font-black uppercase tracking-wider text-gold flex items-center gap-1.5"><Clock3 className="w-3.5 h-3.5 text-gold" /> Aprovação</div>
+              <div className="text-2xl font-black text-brand-900 mt-2">{workSummary.aprovacao}</div>
             </div>
-            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-              <div className="text-[10px] font-black uppercase tracking-wider text-blue-700 flex items-center gap-1.5"><RefreshCw className="w-3.5 h-3.5 text-blue-600" /> Processando</div>
-              <div className="text-2xl font-black text-slate-900 mt-2">{workSummary.processando}</div>
+            <div className="bg-white border border-line rounded-2xl p-4 shadow-sm">
+              <div className="text-[10px] font-black uppercase tracking-wider text-brand-800 flex items-center gap-1.5"><RefreshCw className="w-3.5 h-3.5 text-brand-800" /> Processando</div>
+              <div className="text-2xl font-black text-brand-900 mt-2">{workSummary.processando}</div>
             </div>
-            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-              <div className="text-[10px] font-black uppercase tracking-wider text-rose-700 flex items-center gap-1.5"><CircleAlert className="w-3.5 h-3.5 text-rose-600" /> Sua atenção</div>
-              <div className="text-2xl font-black text-slate-900 mt-2">{workSummary.atencao}</div>
+            <div className="bg-white border border-line rounded-2xl p-4 shadow-sm">
+              <div className="text-[10px] font-black uppercase tracking-wider text-danger flex items-center gap-1.5"><CircleAlert className="w-3.5 h-3.5 text-danger" /> Sua atenção</div>
+              <div className="text-2xl font-black text-brand-900 mt-2">{workSummary.atencao}</div>
             </div>
           </section>
 
-          <section className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col md:flex-row gap-4 md:items-center md:justify-between shadow-sm">
+          <section className="bg-white border border-line rounded-2xl p-5 flex flex-col md:flex-row gap-4 md:items-center md:justify-between shadow-sm">
             <div className="flex gap-3">
-              <div className="shrink-0 p-2.5 h-fit rounded-xl bg-blue-50 border border-blue-200 text-blue-600"><MessageCircle className="w-5 h-5" /></div>
+              <div className="shrink-0 p-2.5 h-fit rounded-xl bg-brand-900/5 border border-brand-700/30 text-brand-800"><MessageCircle className="w-5 h-5" /></div>
               <div>
-                <p className="text-[10px] uppercase tracking-wider font-black text-blue-600">Próxima ação</p>
-                <h2 className="text-base font-bold text-slate-900 mt-1">{nextItem ? `${nextItem.referencia} — ${nextItemMeta?.label}` : 'Envie seu primeiro imóvel pelo WhatsApp'}</h2>
-                <p className="text-sm text-slate-600 mt-1">{nextItem ? nextItemMeta?.nextAction : 'Envie fotos e as informações principais do imóvel para iniciarmos seu Media Kit.'}</p>
+                <p className="text-[10px] uppercase tracking-wider font-black text-brand-800">Próxima ação</p>
+                <h2 className="text-base font-bold text-brand-900 mt-1">{nextItem ? `${nextItem.referencia} — ${nextItemMeta?.label}` : 'Envie seu primeiro imóvel pelo WhatsApp'}</h2>
+                <p className="text-sm text-ink mt-1">{nextItem ? nextItemMeta?.nextAction : 'Envie fotos e as informações principais do imóvel para iniciarmos seu Media Kit.'}</p>
               </div>
             </div>
-            <button onClick={() => window.location.reload()} className="text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:border-blue-500 hover:text-blue-600 transition-colors">Atualizar status</button>
+            <button onClick={() => window.location.reload()} className="text-xs font-bold px-4 py-2.5 rounded-xl border border-line text-ink hover:border-brand-700 hover:text-brand-800 transition-colors">Atualizar status</button>
           </section>
 
           {/* Banner da Central de Fotos & Backups */}
@@ -566,8 +566,8 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
           {/* Tabela de Imóveis do Corretor */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-blue-600" />
+              <h2 className="text-xl font-bold text-brand-900 flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-brand-800" />
                 Seus Imóveis Cadastrados ({listaImoveis.length})
               </h2>
             </div>

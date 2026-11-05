@@ -86,13 +86,13 @@ export function ReviewDataSection({
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm space-y-5">
+    <div className="bg-white border border-line rounded-3xl p-5 sm:p-6 shadow-sm space-y-5">
       <div className="flex items-center justify-between">
-        <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-          <Building2 className="w-5 h-5 text-blue-600" />
+        <h2 className="text-base font-extrabold text-brand-900 flex items-center gap-2">
+          <Building2 className="w-5 h-5 text-brand-800" />
           <span>Ficha e Dados do Imóvel</span>
         </h2>
-        <span className="text-[11px] font-bold text-slate-400">Toque no lápis para corrigir</span>
+        <span className="text-[11px] font-bold text-muted">Toque no lápis para corrigir</span>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -121,19 +121,19 @@ export function ReviewDataSection({
               key={item.campo}
               className={`p-3.5 rounded-2xl border transition-all ${
                 erroLocal
-                  ? 'border-red-400 bg-red-50/60 shadow-sm'
+                  ? 'border-danger/50 bg-danger/10/60 shadow-sm'
                   : isCriticoApto
-                  ? 'border-amber-400 bg-amber-50/50 shadow-sm'
+                  ? 'border-gold/50 bg-gold/10/50 shadow-sm'
                   : isNaoInformado
-                  ? 'border-slate-200 bg-slate-50/70'
-                  : 'border-slate-200 bg-white'
+                  ? 'border-line bg-paper/70'
+                  : 'border-line bg-white'
               }`}
             >
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-bold text-slate-500 flex items-center gap-1">
+                <span className="text-xs font-bold text-muted flex items-center gap-1">
                   {item.rotulo}
                   {isCriticoApto && (
-                    <span className="text-amber-600 font-extrabold text-[10px] flex items-center gap-0.5">
+                    <span className="text-gold font-extrabold text-[10px] flex items-center gap-0.5">
                       <AlertCircle className="w-3 h-3" /> Crítico
                     </span>
                   )}
@@ -146,7 +146,7 @@ export function ReviewDataSection({
                     <button
                       type="button"
                       onClick={() => startEdit(item, valorAtual)}
-                      className="p-1 text-slate-400 hover:text-blue-600 rounded-lg hover:bg-slate-100 transition-colors"
+                      className="p-1 text-muted hover:text-brand-800 rounded-lg hover:bg-paper transition-colors"
                       title={`Editar ${item.rotulo}`}
                       aria-label={`Editar ${item.rotulo}`}
                     >
@@ -173,16 +173,16 @@ export function ReviewDataSection({
                     placeholder={
                       ehCampoNumerico(item.campo) ? 'Ex.: 350.000 ou 350000' : `Informe ${item.rotulo.toLowerCase()}`
                     }
-                    className={`w-full text-sm font-semibold text-slate-900 border rounded-xl px-3 py-2 bg-white focus:outline-none focus:ring-2 ${
+                    className={`w-full text-sm font-semibold text-brand-900 border rounded-xl px-3 py-2 bg-white focus:outline-none focus:ring-2 ${
                       erroLocal
-                        ? 'border-red-400 focus:ring-red-600/30'
-                        : 'border-blue-400 focus:ring-blue-600/30'
+                        ? 'border-danger/50 focus:ring-danger/40/30'
+                        : 'border-brand-700 focus:ring-brand-700/30'
                     }`}
                     autoFocus
                   />
 
                   {erroLocal && (
-                    <p className="text-[11px] font-bold text-red-600 flex items-start gap-1">
+                    <p className="text-[11px] font-bold text-danger flex items-start gap-1">
                       <AlertCircle className="w-3 h-3 mt-px shrink-0" />
                       {erroLocal}
                     </p>
@@ -194,14 +194,14 @@ export function ReviewDataSection({
                     <button
                       type="button"
                       onClick={cancelEdit}
-                      className="text-xs text-slate-500 font-bold px-2 py-1 rounded hover:bg-slate-100"
+                      className="text-xs text-muted font-bold px-2 py-1 rounded hover:bg-paper"
                     >
                       Cancelar
                     </button>
                     <button
                       type="button"
                       onClick={() => saveEdit(item)}
-                      className="text-xs bg-blue-600 text-white font-bold px-3 py-1 rounded-lg flex items-center gap-1 hover:bg-blue-700"
+                      className="text-xs bg-brand-900 text-white font-bold px-3 py-1 rounded-lg flex items-center gap-1 hover:bg-brand-800"
                     >
                       <Check className="w-3.5 h-3.5" /> Salvar
                     </button>
@@ -211,7 +211,7 @@ export function ReviewDataSection({
                 <div className="space-y-1">
                   <p
                     className={`text-sm font-bold ${
-                      isNaoInformado ? 'text-amber-700 italic font-medium' : 'text-slate-900'
+                      isNaoInformado ? 'text-gold italic font-medium' : 'text-brand-900'
                     }`}
                   >
                     {valorExibido}
@@ -222,7 +222,7 @@ export function ReviewDataSection({
                   {origem.exigeConfirmacao && (
                     <p
                       className={`text-[11px] font-semibold leading-snug ${
-                        origem.indicaConflito ? 'text-rose-700' : 'text-amber-700'
+                        origem.indicaConflito ? 'text-danger' : 'text-gold'
                       }`}
                     >
                       {origem.descricao}
@@ -233,14 +233,14 @@ export function ReviewDataSection({
                     <button
                       type="button"
                       onClick={() => startEdit(item, valorAtual)}
-                      className="text-[11px] font-extrabold inline-flex items-center gap-1 text-blue-600 hover:text-blue-800"
+                      className="text-[11px] font-extrabold inline-flex items-center gap-1 text-brand-800 hover:text-brand-800"
                     >
                       {origem.indicaConflito ? 'Resolver conflito' : 'Confirmar ou corrigir'}
                     </button>
                   )}
 
                   {erroDoServidor && (
-                    <p className="text-[11px] font-bold text-red-600 flex items-start gap-1">
+                    <p className="text-[11px] font-bold text-danger flex items-start gap-1">
                       <AlertCircle className="w-3 h-3 mt-px shrink-0" />
                       {erroDoServidor}
                     </p>
@@ -254,25 +254,25 @@ export function ReviewDataSection({
 
       {/* Legenda das origens. Sem ela, o corretor vê seis cores e nenhuma explicação do que
           significam, e a distinção entre "pode publicar" e "precisa confirmar" se perde. */}
-      <details className="text-[11px] text-slate-500">
-        <summary className="cursor-pointer font-bold text-slate-400 hover:text-slate-600">
+      <details className="text-[11px] text-muted">
+        <summary className="cursor-pointer font-bold text-muted hover:text-ink">
           O que significam estas etiquetas?
         </summary>
         <ul className="mt-2 space-y-1.5 pl-1">
           <li className="flex items-start gap-2">
-            <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded shrink-0">
+            <span className="bg-success/10 text-success text-[10px] font-bold px-2 py-0.5 rounded shrink-0">
               Confirmado
             </span>
             <span>Você declarou ou a extração leu com alta confiança. Pode publicar assim.</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded shrink-0">
+            <span className="bg-gold/10 text-gold text-[10px] font-bold px-2 py-0.5 rounded shrink-0">
               A confirmar
             </span>
             <span>Encontramos o valor, mas com pouca confiança. Abra e confira antes de aprovar.</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="bg-rose-100 text-rose-800 text-[10px] font-bold px-2 py-0.5 rounded shrink-0">
+            <span className="bg-danger/10 text-danger text-[10px] font-bold px-2 py-0.5 rounded shrink-0">
               Conflito
             </span>
             <span>
@@ -280,13 +280,13 @@ export function ReviewDataSection({
             </span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="bg-slate-200 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded shrink-0">
+            <span className="bg-line text-ink text-[10px] font-bold px-2 py-0.5 rounded shrink-0">
               Não se aplica
             </span>
             <span>O campo não vale para este tipo de imóvel. Não é pendência.</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded shrink-0">
+            <span className="bg-brand-900/5 text-brand-800 text-[10px] font-bold px-2 py-0.5 rounded shrink-0">
               Validado
             </span>
             <span>Confirmado por uma fonte externa confiável (ex.: geolocalização do bairro).</span>

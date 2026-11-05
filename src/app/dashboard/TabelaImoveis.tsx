@@ -15,13 +15,13 @@ interface TabelaImoveisProps {
 
 const statusMeta = (rawStatus?: string) => {
   const status = String(rawStatus || '').toUpperCase();
-  if (['DELIVERED', 'PUBLISHED', 'ATIVO'].includes(status)) return { label: 'Publicado', note: 'Pronto para divulgação', tone: 'bg-emerald-50 text-emerald-700 border-emerald-200' };
-  if (['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW'].includes(status)) return { label: 'Aguardando aprovação', note: 'Confira o link enviado no WhatsApp', tone: 'bg-amber-50 text-amber-800 border-amber-200' };
-  if (['AWAITING_CREDITS', 'SEM_SALDO'].includes(status)) return { label: 'Aguardando crédito', note: 'Recarregue para liberar a aprovação', tone: 'bg-rose-50 text-rose-700 border-rose-200' };
-  if (['REJECTED'].includes(status)) return { label: 'Precisa de ajuste', note: 'Revise e gere uma nova versão', tone: 'bg-rose-50 text-rose-700 border-rose-200' };
-  if (['EXPIRED', 'EXPIRADO'].includes(status)) return { label: 'Expirado', note: 'Reative usando 1 crédito', tone: 'bg-rose-50 text-rose-700 border-rose-200' };
-  if (['DELETED', 'DELETEED'].includes(status)) return { label: 'Excluído', note: 'Este anúncio foi excluído', tone: 'bg-slate-100 text-slate-500 border-slate-200' };
-  return { label: 'Em processamento', note: 'Estamos preparando seu anúncio', tone: 'bg-blue-50 text-blue-700 border-blue-200' };
+  if (['DELIVERED', 'PUBLISHED', 'ATIVO'].includes(status)) return { label: 'Publicado', note: 'Pronto para divulgação', tone: 'bg-success/10 text-success border-success/30' };
+  if (['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW'].includes(status)) return { label: 'Aguardando aprovação', note: 'Confira o link enviado no WhatsApp', tone: 'bg-gold/10 text-gold border-gold/30' };
+  if (['AWAITING_CREDITS', 'SEM_SALDO'].includes(status)) return { label: 'Aguardando crédito', note: 'Recarregue para liberar a aprovação', tone: 'bg-danger/10 text-danger border-danger/30' };
+  if (['REJECTED'].includes(status)) return { label: 'Precisa de ajuste', note: 'Revise e gere uma nova versão', tone: 'bg-danger/10 text-danger border-danger/30' };
+  if (['EXPIRED', 'EXPIRADO'].includes(status)) return { label: 'Expirado', note: 'Reative usando 1 crédito', tone: 'bg-danger/10 text-danger border-danger/30' };
+  if (['DELETED', 'DELETEED'].includes(status)) return { label: 'Excluído', note: 'Este anúncio foi excluído', tone: 'bg-paper text-muted border-line' };
+  return { label: 'Em processamento', note: 'Estamos preparando seu anúncio', tone: 'bg-brand-900/5 text-brand-800 border-brand-700/30' };
 };
 
 /**
@@ -114,18 +114,18 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
   });
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+    <div className="bg-white rounded-3xl border border-line shadow-sm overflow-hidden">
       {/* Barra de Filtros */}
-      <div className="p-4 sm:p-5 border-b border-slate-200 flex flex-wrap items-center justify-between gap-4 bg-slate-50">
+      <div className="p-4 sm:p-5 border-b border-line flex flex-wrap items-center justify-between gap-4 bg-paper">
         <div className="flex items-center gap-3">
-          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Filtrar por:</span>
-          <div className="inline-flex p-1 bg-white rounded-xl border border-slate-200 text-xs font-semibold shadow-xs">
+          <span className="text-xs font-bold text-muted uppercase tracking-wider">Filtrar por:</span>
+          <div className="inline-flex p-1 bg-white rounded-xl border border-line text-xs font-semibold shadow-xs">
             <button
               onClick={() => setFiltroTransacao('Todos')}
               className={`px-3.5 py-1.5 rounded-lg transition-all ${
                 filtroTransacao === 'Todos'
-                  ? 'bg-blue-600 text-white font-extrabold shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-brand-900 text-white font-extrabold shadow-sm'
+                  : 'text-ink hover:text-brand-900'
               }`}
             >
               Todos ({imoveis.length})
@@ -134,8 +134,8 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
               onClick={() => setFiltroTransacao('Venda')}
               className={`px-3.5 py-1.5 rounded-lg transition-all ${
                 filtroTransacao === 'Venda'
-                  ? 'bg-blue-600 text-white font-extrabold shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-brand-900 text-white font-extrabold shadow-sm'
+                  : 'text-ink hover:text-brand-900'
               }`}
             >
               Venda
@@ -144,8 +144,8 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
               onClick={() => setFiltroTransacao('Locação')}
               className={`px-3.5 py-1.5 rounded-lg transition-all ${
                 filtroTransacao === 'Locação'
-                  ? 'bg-blue-600 text-white font-extrabold shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-brand-900 text-white font-extrabold shadow-sm'
+                  : 'text-ink hover:text-brand-900'
               }`}
             >
               Locação
@@ -153,8 +153,8 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
           </div>
         </div>
 
-        <span className="text-xs text-slate-500 font-semibold">
-          Exibindo <strong className="text-slate-900 font-bold">{imoveisFiltrados.length}</strong> de <strong className="text-slate-900 font-bold">{imoveis.length}</strong> imóveis
+        <span className="text-xs text-muted font-semibold">
+          Exibindo <strong className="text-brand-900 font-bold">{imoveisFiltrados.length}</strong> de <strong className="text-brand-900 font-bold">{imoveis.length}</strong> imóveis
         </span>
       </div>
 
@@ -163,7 +163,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
           {/* Desktop: tabela completa (hidden no mobile) */}
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left border-collapse hidden md:table">
-            <thead className="bg-slate-100 text-slate-700 uppercase text-[11px] font-extrabold tracking-wider border-b border-slate-200">
+            <thead className="bg-paper text-ink uppercase text-[11px] font-extrabold tracking-wider border-b border-line">
               <tr>
                 <th className="px-5 py-4 w-20 text-center">Foto Capa</th>
                 <th className="px-5 py-4">Ref</th>
@@ -174,7 +174,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                 <th className="px-5 py-4 text-right">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-slate-800 text-xs">
+            <tbody className="divide-y divide-line text-ink text-xs">
               {imoveisFiltrados.map((imovel) => {
                 const fotoCapa = escolherFotoCapa(imovel.fotos, imovel.capa_index);
                 const rawStatus = String(imovel.workflow_status || imovel.status || '').toUpperCase();
@@ -195,7 +195,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                   : formatCurrency(imovel.precoVenda || imovel.precoLocacao);
 
                 return (
-                  <tr key={imovel.id} className="hover:bg-slate-50 transition-colors">
+                  <tr key={imovel.id} className="hover:bg-paper transition-colors">
                     
                     {/* Foto Capa + Badge de Contagem */}
                     <td className="px-5 py-4 text-center">
@@ -206,34 +206,34 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                             alt={imovel.titulo}
                             loading="lazy"
                             decoding="async"
-                            className="w-14 h-14 rounded-xl object-cover border border-slate-200 shadow-sm group-hover:scale-105 transition-transform"
+                            className="w-14 h-14 rounded-xl object-cover border border-line shadow-sm group-hover:scale-105 transition-transform"
                           />
                         ) : (
-                          <div className="w-14 h-14 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 text-[10px] font-bold">
+                          <div className="w-14 h-14 rounded-xl bg-paper border border-line flex items-center justify-center text-muted text-[10px] font-bold">
                             Sem foto
                           </div>
                         )}
-                        <span className="absolute -bottom-1 -right-1 bg-blue-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-md shadow-sm">
+                        <span className="absolute -bottom-1 -right-1 bg-brand-900 text-white text-[9px] font-black px-1.5 py-0.5 rounded-md shadow-sm">
                           {imovel.fotos?.length || 0} 📷
                         </span>
                       </div>
                     </td>
 
                     {/* Referência */}
-                    <td className="px-5 py-4 font-mono font-black text-blue-600 uppercase text-sm">
+                    <td className="px-5 py-4 font-mono font-black text-brand-800 uppercase text-sm">
                       {imovel.referencia}
                     </td>
 
                     {/* Título & Bairro */}
                     <td className="px-6 py-4">
-                      <div className="font-bold text-slate-900 line-clamp-2 max-w-xs">{imovel.titulo}</div>
-                      <div className="text-[11px] text-slate-500 mt-1 font-semibold flex items-center gap-1.5">
-                        <span className="text-blue-600 font-bold">{imovel.transacao}</span> • <span>{imovel.bairro}</span>
+                      <div className="font-bold text-brand-900 line-clamp-2 max-w-xs">{imovel.titulo}</div>
+                      <div className="text-[11px] text-muted mt-1 font-semibold flex items-center gap-1.5">
+                        <span className="text-brand-800 font-bold">{imovel.transacao}</span> • <span>{imovel.bairro}</span>
                       </div>
                     </td>
 
                     {/* Valor */}
-                    <td className="px-5 py-4 font-black text-emerald-600 whitespace-nowrap text-sm">
+                    <td className="px-5 py-4 font-black text-success whitespace-nowrap text-sm">
                       {valorExibicao}
                     </td>
 
@@ -243,8 +243,8 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                         <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider shadow-xs border ${status.tone}`}>
                           {status.label}
                         </span>
-                        <span className="text-[10px] text-slate-500 flex items-center gap-1 max-w-40 font-medium">
-                          {isAtivo ? <Clock className="w-3 h-3 text-slate-400" /> : <CircleAlert className="w-3 h-3 text-slate-400" />} {isAtivo ? '90 dias de validade' : status.note}
+                        <span className="text-[10px] text-muted flex items-center gap-1 max-w-40 font-medium">
+                          {isAtivo ? <Clock className="w-3 h-3 text-muted" /> : <CircleAlert className="w-3 h-3 text-muted" />} {isAtivo ? '90 dias de validade' : status.note}
                         </span>
                       </div>
                     </td>
@@ -255,7 +255,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
                           <button
                             onClick={() => setMediaKitModal({ isOpen: true, referencia: imovel.referencia, mediaKit: (imovel as any).media_kit || null })}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-black transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap"
+                            className="bg-brand-900 hover:bg-brand-800 text-white px-3 py-1.5 rounded-xl text-xs font-black transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap"
                           >
                             <Sparkles className="w-3.5 h-3.5" />
                             Media Kit IA
@@ -263,14 +263,14 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
 
                           <button
                             onClick={() => setAcervoModal({ isOpen: true, adId: imovel.id, referencia: imovel.referencia })}
-                            className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap shadow-xs"
+                            className="bg-white hover:bg-paper text-ink border border-line px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap shadow-xs"
                           >
-                            <HardDrive className="w-3.5 h-3.5 text-blue-600" />
+                            <HardDrive className="w-3.5 h-3.5 text-brand-800" />
                             Fotos R2
                           </button>
                         </div>
                       ) : (
-                        <div className="text-[11px] text-slate-400 font-medium flex items-center gap-1">
+                        <div className="text-[11px] text-muted font-medium flex items-center gap-1">
                           <Sparkles className="w-3.5 h-3.5 opacity-50" />
                           <span>Liberado após aprovação</span>
                         </div>
@@ -286,7 +286,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                               onClick={() => handleCopiarLink(imovel)}
                               title="Copiar Link do Anúncio"
                               className={`p-2 rounded-xl transition-colors ${
-                                copiadoLinkId === imovel.id ? 'text-emerald-600 bg-emerald-50' : 'text-slate-500 hover:text-blue-600 hover:bg-slate-100'
+                                copiadoLinkId === imovel.id ? 'text-success bg-success/10' : 'text-muted hover:text-brand-800 hover:bg-paper'
                               }`}
                             >
                               {copiadoLinkId === imovel.id ? <Check className="w-4 h-4" /> : <Link2 className="w-4 h-4" />}
@@ -295,7 +295,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                               href={linkPublicoDoImovel(imovel)}
                               target="_blank"
                               title="Visualizar Anúncio no Site"
-                              className="p-2 text-slate-500 hover:text-blue-600 hover:bg-slate-100 rounded-xl transition-colors"
+                              className="p-2 text-muted hover:text-brand-800 hover:bg-paper rounded-xl transition-colors"
                             >
                               <ExternalLink className="w-4 h-4" />
                             </Link>
@@ -306,7 +306,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                           <Link
                             href={`/dashboard/editar/${imovel.id}`}
                             title="Editar Anúncio"
-                            className="p-2 text-slate-500 hover:text-blue-600 hover:bg-slate-100 rounded-xl transition-colors"
+                            className="p-2 text-muted hover:text-brand-800 hover:bg-paper rounded-xl transition-colors"
                           >
                             <Edit className="w-4 h-4" />
                           </Link>
@@ -317,7 +317,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                             onClick={() => handleRenovar(imovel.id, imovel.referencia)}
                             disabled={renovandoId === imovel.id}
                             title={isExpirado ? 'Reativar por 90 dias (1 crédito)' : `Renovar por 90 dias (1 crédito)${imovel.dias_restantes != null ? ` — restam ${imovel.dias_restantes} dias` : ''}`}
-                            className={`p-2 rounded-xl transition-colors ${isExpirado ? 'text-amber-600 hover:text-amber-700 hover:bg-amber-50' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'}`}
+                            className={`p-2 rounded-xl transition-colors ${isExpirado ? 'text-gold hover:text-gold hover:bg-gold/10' : 'text-muted hover:text-ink hover:bg-paper'}`}
                           >
                             <RefreshCw className={`w-4 h-4 ${renovandoId === imovel.id ? 'animate-spin' : ''}`} />
                           </button>
@@ -327,7 +327,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                           <button
                             onClick={() => setExclusaoModal({ isOpen: true, adId: imovel.id, referencia: imovel.referencia })}
                             title="Excluir Anúncio"
-                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                            className="p-2 text-muted hover:text-danger hover:bg-danger/10 rounded-xl transition-colors"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -342,7 +342,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
         </div>
 
         {/* Mobile: Cards de Imóvel (block md:hidden) */}
-        <div className="block md:hidden divide-y divide-slate-100">
+        <div className="block md:hidden divide-y divide-line">
           {imoveisFiltrados.map((imovel) => {
             const fotoCapa = escolherFotoCapa(imovel.fotos, imovel.capa_index);
             const rawStatus = String(imovel.workflow_status || imovel.status || '').toUpperCase();
@@ -368,30 +368,30 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                         alt={imovel.titulo}
                         loading="lazy"
                         decoding="async"
-                        className="w-20 h-20 rounded-xl object-cover border border-slate-200 shadow-sm"
+                        className="w-20 h-20 rounded-xl object-cover border border-line shadow-sm"
                       />
                     ) : (
-                      <div className="w-20 h-20 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 text-[10px] font-bold text-center p-1">
+                      <div className="w-20 h-20 rounded-xl bg-paper border border-line flex items-center justify-center text-muted text-[10px] font-bold text-center p-1">
                         Sem foto
                       </div>
                     )}
-                    <span className="absolute -bottom-1.5 -right-1.5 bg-blue-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-md shadow-sm">
+                    <span className="absolute -bottom-1.5 -right-1.5 bg-brand-900 text-white text-[9px] font-black px-1.5 py-0.5 rounded-md shadow-sm">
                       {imovel.fotos?.length || 0} 📷
                     </span>
                   </div>
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
-                      <span className="font-mono font-black text-blue-600 uppercase text-xs leading-tight">
+                      <span className="font-mono font-black text-brand-800 uppercase text-xs leading-tight">
                         {imovel.referencia}
                       </span>
                       <span className={`px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider border whitespace-nowrap ${status.tone}`}>
                         {status.label}
                       </span>
                     </div>
-                    <p className="text-[13px] font-bold text-slate-900 line-clamp-2 mt-1">{imovel.titulo}</p>
-                    <p className="text-[11px] text-slate-500 mt-1 font-semibold flex items-center gap-1.5">
-                      <span className="text-blue-600 font-bold">{imovel.transacao}</span>
+                    <p className="text-[13px] font-bold text-brand-900 line-clamp-2 mt-1">{imovel.titulo}</p>
+                    <p className="text-[11px] text-muted mt-1 font-semibold flex items-center gap-1.5">
+                      <span className="text-brand-800 font-bold">{imovel.transacao}</span>
                       <span className="truncate">• {imovel.bairro}</span>
                     </p>
                   </div>
@@ -399,9 +399,9 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
 
                 {/* Destaque: Preço */}
                 <div className="flex items-baseline justify-between gap-2">
-                  <span className="text-xl font-black text-emerald-600">{valorExibicao}</span>
-                  <span className="text-[10px] text-slate-500 flex items-center gap-1 shrink-0">
-                    {isAtivo ? <Clock className="w-3 h-3 text-slate-400" /> : <CircleAlert className="w-3 h-3 text-slate-400" />}
+                  <span className="text-xl font-black text-success">{valorExibicao}</span>
+                  <span className="text-[10px] text-muted flex items-center gap-1 shrink-0">
+                    {isAtivo ? <Clock className="w-3 h-3 text-muted" /> : <CircleAlert className="w-3 h-3 text-muted" />}
                     {isAtivo ? '90 dias' : status.note}
                   </span>
                 </div>
@@ -412,21 +412,21 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                     <>
                       <button
                         onClick={() => setMediaKitModal({ isOpen: true, referencia: imovel.referencia, mediaKit: (imovel as any).media_kit || null })}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-[11px] font-black transition-all shadow-sm flex items-center gap-1.5"
+                        className="bg-brand-900 hover:bg-brand-800 text-white px-3 py-1.5 rounded-xl text-[11px] font-black transition-all shadow-sm flex items-center gap-1.5"
                       >
                         <Sparkles className="w-3.5 h-3.5" />
                         Media Kit IA
                       </button>
                       <button
                         onClick={() => setAcervoModal({ isOpen: true, adId: imovel.id, referencia: imovel.referencia })}
-                        className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all flex items-center gap-1.5 shadow-xs"
+                        className="bg-white hover:bg-paper text-ink border border-line px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all flex items-center gap-1.5 shadow-xs"
                       >
-                        <HardDrive className="w-3.5 h-3.5 text-blue-600" />
+                        <HardDrive className="w-3.5 h-3.5 text-brand-800" />
                         Fotos R2
                       </button>
                     </>
                   ) : (
-                    <span className="text-[10px] text-slate-400 font-medium flex items-center gap-1">
+                    <span className="text-[10px] text-muted font-medium flex items-center gap-1">
                       <Sparkles className="w-3.5 h-3.5 opacity-50" />
                       Liberado após aprovação
                     </span>
@@ -438,7 +438,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                         onClick={() => handleCopiarLink(imovel)}
                         title="Copiar Link do Anúncio"
                         className={`p-2 rounded-xl transition-colors ${
-                          copiadoLinkId === imovel.id ? 'text-emerald-600 bg-emerald-50' : 'text-slate-500 hover:text-blue-600 hover:bg-slate-100'
+                          copiadoLinkId === imovel.id ? 'text-success bg-success/10' : 'text-muted hover:text-brand-800 hover:bg-paper'
                         }`}
                       >
                         {copiadoLinkId === imovel.id ? <Check className="w-4 h-4" /> : <Link2 className="w-4 h-4" />}
@@ -447,7 +447,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                         href={linkPublicoDoImovel(imovel)}
                         target="_blank"
                         title="Visualizar Anúncio no Site"
-                        className="p-2 text-slate-500 hover:text-blue-600 hover:bg-slate-100 rounded-xl transition-colors"
+                        className="p-2 text-muted hover:text-brand-800 hover:bg-paper rounded-xl transition-colors"
                       >
                         <ExternalLink className="w-4 h-4" />
                       </Link>
@@ -458,7 +458,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                     <Link
                       href={`/dashboard/editar/${imovel.id}`}
                       title="Editar Anúncio"
-                      className="p-2 text-slate-500 hover:text-blue-600 hover:bg-slate-100 rounded-xl transition-colors"
+                      className="p-2 text-muted hover:text-brand-800 hover:bg-paper rounded-xl transition-colors"
                     >
                       <Edit className="w-4 h-4" />
                     </Link>
@@ -469,7 +469,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                       onClick={() => handleRenovar(imovel.id, imovel.referencia)}
                       disabled={renovandoId === imovel.id}
                       title={isExpirado ? 'Reativar por 90 dias (1 crédito)' : `Renovar por 90 dias (1 crédito)${imovel.dias_restantes != null ? ` — restam ${imovel.dias_restantes} dias` : ''}`}
-                      className={`p-2 rounded-xl transition-colors ${isExpirado ? 'text-amber-600 hover:text-amber-700 hover:bg-amber-50' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'}`}
+                      className={`p-2 rounded-xl transition-colors ${isExpirado ? 'text-gold hover:text-gold hover:bg-gold/10' : 'text-muted hover:text-ink hover:bg-paper'}`}
                     >
                       <RefreshCw className={`w-4 h-4 ${renovandoId === imovel.id ? 'animate-spin' : ''}`} />
                     </button>
@@ -479,7 +479,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                     <button
                       onClick={() => setExclusaoModal({ isOpen: true, adId: imovel.id, referencia: imovel.referencia })}
                       title="Excluir Anúncio"
-                      className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors ml-auto"
+                      className="p-2 text-muted hover:text-danger hover:bg-danger/10 rounded-xl transition-colors ml-auto"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -491,10 +491,10 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
         </div>
         </>
       ) : (
-        <div className="p-12 text-center text-slate-500 space-y-3">
-          <p className="text-sm font-bold text-slate-700">Seu painel ainda não tem imóveis com esse filtro.</p>
-          <p className="text-xs text-slate-500 max-w-md mx-auto">Envie fotos e os dados principais pelo WhatsApp para iniciar a captação, gerar o Media Kit e receber o link de aprovação.</p>
-          <Link href="/como-funciona" className="text-blue-600 font-extrabold text-xs uppercase tracking-wider inline-block hover:underline">
+        <div className="p-12 text-center text-muted space-y-3">
+          <p className="text-sm font-bold text-ink">Seu painel ainda não tem imóveis com esse filtro.</p>
+          <p className="text-xs text-muted max-w-md mx-auto">Envie fotos e os dados principais pelo WhatsApp para iniciar a captação, gerar o Media Kit e receber o link de aprovação.</p>
+          <Link href="/como-funciona" className="text-brand-800 font-extrabold text-xs uppercase tracking-wider inline-block hover:underline">
             Ver como criar meu primeiro anúncio
           </Link>
         </div>

@@ -34,7 +34,7 @@ export default function PropertyTabsSection({
     return (
         <section className="max-w-7xl mx-auto px-4 py-12">
             {/* Tabs Navigation */}
-            <div className="flex flex-wrap gap-2 md:gap-4 mb-8 border-b border-gray-200 pb-4">
+            <div className="flex flex-wrap gap-2 md:gap-4 mb-8 border-b border-line pb-4">
                 {tabs.map((tab) => {
                     const Icon = tab.icon;
                     return (
@@ -44,10 +44,10 @@ export default function PropertyTabsSection({
                             disabled={tab.disabled}
                             className={`flex items-center gap-2 px-4 py-3 rounded-lg font-semibold transition-all ${
                                 activeTab === tab.id
-                                    ? 'bg-blue-600 text-white shadow-lg'
+                                    ? 'bg-brand-900 text-white shadow-lg'
                                     : tab.disabled
-                                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                    : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                                    ? 'bg-paper text-muted cursor-not-allowed'
+                                    : 'bg-white text-ink hover:bg-paper border border-line'
                             }`}
                         >
                             <Icon size={18} />
@@ -63,11 +63,11 @@ export default function PropertyTabsSection({
                 {/* Gallery Tab */}
                 {activeTab === 'gallery' && (
                     <div className="p-6 md:p-10">
-                        <h2 className="text-2xl font-bold mb-6 text-gray-900">Galeria de Imagens</h2>
-                        <div className="rounded-xl overflow-hidden shadow-lg aspect-video md:aspect-[16/9] bg-gray-100">
+                        <h2 className="text-2xl font-bold mb-6 text-brand-900">Galeria de Imagens</h2>
+                        <div className="rounded-xl overflow-hidden shadow-lg aspect-video md:aspect-[16/9] bg-paper">
                             <ImageCarousel images={images} alt={propertyName} />
                         </div>
-                        <p className="text-sm text-gray-600 mt-4">
+                        <p className="text-sm text-ink mt-4">
                             Total de {images.length} imagens - Clique nas setas para navegar ou use os pontos abaixo
                         </p>
                     </div>
@@ -76,7 +76,7 @@ export default function PropertyTabsSection({
                 {/* Plants Tab */}
                 {activeTab === 'plants' && plantImages.length > 0 && (
                     <div className="p-6 md:p-10">
-                        <h2 className="text-2xl font-bold mb-6 text-gray-900">Plantas do Empreendimento</h2>
+                        <h2 className="text-2xl font-bold mb-6 text-brand-900">Plantas do Empreendimento</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {plantImages.map((image, index) => (
                                 <div key={index} className="rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
@@ -94,7 +94,7 @@ export default function PropertyTabsSection({
                 {/* Tour Virtual Tab */}
                 {activeTab === 'tour' && virtualTourUrl && (
                     <div className="p-6 md:p-10">
-                        <h2 className="text-2xl font-bold mb-6 text-gray-900">Tour Virtual</h2>
+                        <h2 className="text-2xl font-bold mb-6 text-brand-900">Tour Virtual</h2>
                         <div className="rounded-lg overflow-hidden shadow-lg aspect-video">
                             <iframe
                                 src={virtualTourUrl}
@@ -104,7 +104,7 @@ export default function PropertyTabsSection({
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             />
                         </div>
-                        <p className="text-sm text-gray-600 mt-4">
+                        <p className="text-sm text-ink mt-4">
                             Explore o empreendimento em 360° - Use o mouse ou dedos para navegar
                         </p>
                     </div>
@@ -113,7 +113,7 @@ export default function PropertyTabsSection({
                 {/* Ficha Técnica Tab */}
                 {activeTab === 'tech' && fichaUrl && (
                     <div className="p-6 md:p-10">
-                        <h2 className="text-2xl font-bold mb-6 text-gray-900">Ficha Técnica</h2>
+                        <h2 className="text-2xl font-bold mb-6 text-brand-900">Ficha Técnica</h2>
                         <div className="rounded-lg overflow-hidden shadow-lg aspect-[4/3] md:aspect-auto">
                             <iframe
                                 src={fichaUrl}
@@ -126,7 +126,7 @@ export default function PropertyTabsSection({
                             href={fichaUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-block mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+                            className="inline-block mt-4 px-6 py-2 bg-brand-900 text-white rounded-lg hover:bg-brand-800 transition-colors font-semibold"
                         >
                             Abrir em tela cheia
                         </a>
@@ -136,7 +136,7 @@ export default function PropertyTabsSection({
                 {/* Croqui Tab */}
                 {activeTab === 'croqui' && croquiUrl && (
                     <div className="p-6 md:p-10">
-                        <h2 className="text-2xl font-bold mb-6 text-gray-900">Croqui do Empreendimento</h2>
+                        <h2 className="text-2xl font-bold mb-6 text-brand-900">Croqui do Empreendimento</h2>
                         <div className="rounded-lg overflow-hidden shadow-lg">
                             <iframe
                                 src={croquiUrl}
@@ -149,7 +149,7 @@ export default function PropertyTabsSection({
                             href={croquiUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-block mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+                            className="inline-block mt-4 px-6 py-2 bg-brand-900 text-white rounded-lg hover:bg-brand-800 transition-colors font-semibold"
                         >
                             Abrir em tela cheia
                         </a>

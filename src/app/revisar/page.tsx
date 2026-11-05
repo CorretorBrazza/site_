@@ -87,14 +87,14 @@ function PendenciasConfirmacao({
   if (total === 0 && respondidas >= totalPerguntas) return null;
 
   return (
-    <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-5 shadow-sm space-y-2">
-      <h3 className="text-xs font-extrabold text-slate-700">Antes de publicar</h3>
-      <ul className="space-y-1.5 text-[11px] text-slate-600">
+    <div className="bg-white border border-line rounded-3xl p-4 sm:p-5 shadow-sm space-y-2">
+      <h3 className="text-xs font-extrabold text-ink">Antes de publicar</h3>
+      <ul className="space-y-1.5 text-[11px] text-ink">
         {obrigatoriosVazios.length > 0 && (
           <li className="flex items-start gap-2">
-            <AlertCircle className="w-3.5 h-3.5 text-amber-500 mt-px shrink-0" />
+            <AlertCircle className="w-3.5 h-3.5 text-gold mt-px shrink-0" />
             <span>
-              <strong className="font-extrabold text-slate-800">
+              <strong className="font-extrabold text-ink">
                 {obrigatoriosVazios.length}
               </strong>{' '}
               campo(s) obrigatório(s) sem valor.
@@ -103,27 +103,27 @@ function PendenciasConfirmacao({
         )}
         {aValidar.length > 0 && (
           <li className="flex items-start gap-2">
-            <AlertCircle className="w-3.5 h-3.5 text-amber-500 mt-px shrink-0" />
+            <AlertCircle className="w-3.5 h-3.5 text-gold mt-px shrink-0" />
             <span>
-              <strong className="font-extrabold text-slate-800">{aValidar.length}</strong> campo(s) que a
+              <strong className="font-extrabold text-ink">{aValidar.length}</strong> campo(s) que a
               extração marcou para você conferir.
             </span>
           </li>
         )}
         {emConflito.length > 0 && (
           <li className="flex items-start gap-2">
-            <AlertCircle className="w-3.5 h-3.5 text-rose-500 mt-px shrink-0" />
+            <AlertCircle className="w-3.5 h-3.5 text-danger mt-px shrink-0" />
             <span>
-              <strong className="font-extrabold text-slate-800">{emConflito.length}</strong> campo(s) com
+              <strong className="font-extrabold text-ink">{emConflito.length}</strong> campo(s) com
               versões divergentes entre as fontes.
             </span>
           </li>
         )}
         {totalPerguntas > respondidas && (
           <li className="flex items-start gap-2">
-            <AlertCircle className="w-3.5 h-3.5 text-slate-400 mt-px shrink-0" />
+            <AlertCircle className="w-3.5 h-3.5 text-muted mt-px shrink-0" />
             <span>
-              <strong className="font-extrabold text-slate-800">
+              <strong className="font-extrabold text-ink">
                 {totalPerguntas - respondidas}
               </strong>{' '}
               pergunta(s) ainda sem resposta.
@@ -445,14 +445,14 @@ export default function RevisarPage() {
   // ==========================================
   if (estado === 'carregando') {
     return (
-      <div className="min-h-screen bg-slate-50 text-slate-800 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-paper text-ink flex items-center justify-center p-6">
         <div className="text-center space-y-4 max-w-xs">
-          <div className="w-16 h-16 bg-blue-50 border border-blue-200 rounded-3xl flex items-center justify-center mx-auto text-blue-600 shadow-sm">
+          <div className="w-16 h-16 bg-brand-900/5 border border-brand-700/30 rounded-3xl flex items-center justify-center mx-auto text-brand-800 shadow-sm">
             <Loader2 className="w-8 h-8 animate-spin" />
           </div>
           <div className="space-y-1">
-            <h2 className="text-base font-extrabold text-slate-900">Abrindo seu anúncio...</h2>
-            <p className="text-xs text-slate-500 font-medium">Carregando dados, fotos e perguntas inteligentes.</p>
+            <h2 className="text-base font-extrabold text-brand-900">Abrindo seu anúncio...</h2>
+            <p className="text-xs text-muted font-medium">Carregando dados, fotos e perguntas inteligentes.</p>
           </div>
         </div>
       </div>
@@ -464,21 +464,21 @@ export default function RevisarPage() {
   // ==========================================
   if (estado === 'invalido') {
     return (
-      <div className="min-h-screen bg-slate-50 text-slate-800 flex items-center justify-center p-6">
-        <div className="bg-white border border-red-200 rounded-3xl p-8 text-center shadow-xl space-y-5 max-w-md w-full">
-          <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto text-red-600 border border-red-200">
+      <div className="min-h-screen bg-paper text-ink flex items-center justify-center p-6">
+        <div className="bg-white border border-danger/30 rounded-3xl p-8 text-center shadow-xl space-y-5 max-w-md w-full">
+          <div className="w-16 h-16 bg-danger/10 rounded-2xl flex items-center justify-center mx-auto text-danger border border-danger/30">
             <AlertTriangle className="w-8 h-8" />
           </div>
           <div className="space-y-2">
-            <h1 className="text-xl font-black text-slate-900">Link indisponível ou expirado</h1>
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <h1 className="text-xl font-black text-brand-900">Link indisponível ou expirado</h1>
+            <p className="text-xs text-ink leading-relaxed">
               Este Link Dinâmico não está mais ativo. Ele pode ter sido publicado, ter expirado ou sido substituído por uma versão mais recente.
             </p>
           </div>
           <div className="pt-2">
             <Link
               href="/"
-              className="w-full inline-flex items-center justify-center px-6 py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-xs font-black uppercase tracking-wider shadow-md transition-colors"
+              className="w-full inline-flex items-center justify-center px-6 py-3.5 bg-brand-900 hover:bg-brand-800 text-white rounded-2xl text-xs font-black uppercase tracking-wider shadow-md transition-colors"
             >
               Ir para a Página Inicial
             </Link>
@@ -493,14 +493,14 @@ export default function RevisarPage() {
   // ==========================================
   if (estado === 'indisponivel') {
     return (
-      <div className="min-h-screen bg-slate-50 text-slate-800 flex items-center justify-center p-6">
-        <div className="bg-white border border-amber-200 rounded-3xl p-8 text-center shadow-xl space-y-5 max-w-md w-full">
-          <div className="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center mx-auto text-amber-600 border border-amber-200">
+      <div className="min-h-screen bg-paper text-ink flex items-center justify-center p-6">
+        <div className="bg-white border border-gold/30 rounded-3xl p-8 text-center shadow-xl space-y-5 max-w-md w-full">
+          <div className="w-16 h-16 bg-gold/10 rounded-2xl flex items-center justify-center mx-auto text-gold border border-gold/30">
             <Clock className="w-8 h-8" />
           </div>
           <div className="space-y-2">
-            <h1 className="text-xl font-black text-slate-900">Instabilidade temporária</h1>
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <h1 className="text-xl font-black text-brand-900">Instabilidade temporária</h1>
+            <p className="text-xs text-ink leading-relaxed">
               Não conseguimos conectar com o servidor neste instante. Seu link continua 100% válido.
             </p>
           </div>
@@ -508,14 +508,14 @@ export default function RevisarPage() {
             <button
               type="button"
               onClick={tentarNovamente}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-xs font-black uppercase tracking-wider shadow-md transition-colors"
+              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-brand-900 hover:bg-brand-800 text-white rounded-2xl text-xs font-black uppercase tracking-wider shadow-md transition-colors"
             >
               <RefreshCw className="w-4 h-4" />
               <span>Tentar novamente</span>
             </button>
             <Link
               href="/"
-              className="inline-flex items-center justify-center px-6 py-3.5 border border-slate-300 text-slate-700 rounded-2xl text-xs font-black uppercase tracking-wider hover:bg-slate-50 transition-colors"
+              className="inline-flex items-center justify-center px-6 py-3.5 border border-line text-ink rounded-2xl text-xs font-black uppercase tracking-wider hover:bg-paper transition-colors"
             >
               Voltar
             </Link>
@@ -530,46 +530,46 @@ export default function RevisarPage() {
   // ==========================================
   if (estado === 'publicado' && publishResult) {
     return (
-      <div className="min-h-screen bg-slate-50 text-slate-800 flex items-center justify-center p-4 sm:p-6">
-        <div className="bg-white border border-emerald-200 rounded-3xl p-6 sm:p-8 text-center shadow-2xl space-y-6 max-w-lg w-full animate-in fade-in zoom-in-95 duration-300">
-          <div className="w-20 h-20 bg-emerald-50 rounded-3xl flex items-center justify-center mx-auto text-emerald-600 border border-emerald-200 shadow-inner">
+      <div className="min-h-screen bg-paper text-ink flex items-center justify-center p-4 sm:p-6">
+        <div className="bg-white border border-success/30 rounded-3xl p-6 sm:p-8 text-center shadow-2xl space-y-6 max-w-lg w-full animate-in fade-in zoom-in-95 duration-300">
+          <div className="w-20 h-20 bg-success/10 rounded-3xl flex items-center justify-center mx-auto text-success border border-success/30 shadow-inner">
             <CheckCircle2 className="w-10 h-10" />
           </div>
 
           <div className="space-y-2">
-            <span className="bg-emerald-100 text-emerald-800 text-xs font-black px-3 py-1 rounded-xl uppercase tracking-wider">
+            <span className="bg-success/10 text-success text-xs font-black px-3 py-1 rounded-xl uppercase tracking-wider">
               REF: {publishResult.referencia}
             </span>
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-2xl font-black text-brand-900 tracking-tight">
               Anúncio Publicado com Sucesso!
             </h1>
-            <p className="text-xs text-slate-600 leading-relaxed max-w-sm mx-auto">
+            <p className="text-xs text-ink leading-relaxed max-w-sm mx-auto">
               Seu imóvel já está ativo no portal e o Media Kit completo foi gerado. 1 crédito foi debitado.
             </p>
           </div>
 
-          <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-left space-y-2 text-xs">
-            <div className="flex justify-between items-center text-slate-600">
+          <div className="p-4 bg-paper border border-line rounded-2xl text-left space-y-2 text-xs">
+            <div className="flex justify-between items-center text-ink">
               <span className="font-semibold">Saldo restante:</span>
-              <span className="font-extrabold text-slate-900">{publishResult.saldo_restante} crédito(s)</span>
+              <span className="font-extrabold text-brand-900">{publishResult.saldo_restante} crédito(s)</span>
             </div>
-            <div className="flex justify-between items-center text-slate-600">
+            <div className="flex justify-between items-center text-ink">
               <span className="font-semibold">Status:</span>
-              <span className="font-bold text-emerald-700">ATIVO NO PORTAL</span>
+              <span className="font-bold text-success">ATIVO NO PORTAL</span>
             </div>
           </div>
 
           <div className="flex flex-col gap-3 pt-2">
             <Link
               href="/dashboard"
-              className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-sm font-extrabold shadow-lg shadow-blue-600/30 transition-all active:scale-98"
+              className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 bg-brand-900 hover:bg-brand-800 text-white rounded-2xl text-sm font-extrabold shadow-lg shadow-brand-900/20/30 transition-all active:scale-98"
             >
               <span>Acessar Painel do Corretor</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               href="/"
-              className="w-full inline-flex items-center justify-center py-3 px-6 border border-slate-200 text-slate-600 hover:text-slate-900 rounded-2xl text-xs font-bold transition-colors"
+              className="w-full inline-flex items-center justify-center py-3 px-6 border border-line text-ink hover:text-brand-900 rounded-2xl text-xs font-bold transition-colors"
             >
               Ir para a Página Inicial
             </Link>
@@ -585,20 +585,20 @@ export default function RevisarPage() {
   if (!session) return null;
 
   return (
-    <div className="min-h-screen bg-slate-100 text-slate-900 py-6 px-3 sm:px-6">
+    <div className="min-h-screen bg-paper text-brand-900 py-6 px-3 sm:px-6">
       <main className="max-w-2xl mx-auto space-y-5 pb-16">
         {/* Painel de conflito. Aparece acima de tudo e não some sozinho: a retentativa automática
             é no máximo uma, e se ela falhar o caminho é o corretor recarregar. Um 409 silencioso
             deixaria a tela "salvando" para sempre. */}
         {saveState === 'conflict' && (
-          <div className="bg-amber-50 border border-amber-300 rounded-3xl p-4 sm:p-5 shadow-sm space-y-3">
+          <div className="bg-gold/10 border border-gold/50 rounded-3xl p-4 sm:p-5 shadow-sm space-y-3">
             <div className="flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+              <AlertTriangle className="w-5 h-5 text-gold shrink-0 mt-0.5" />
               <div className="space-y-1 flex-1">
-                <h2 className="text-sm font-extrabold text-amber-900">
+                <h2 className="text-sm font-extrabold text-gold">
                   Este anúncio mudou em outro lugar
                 </h2>
-                <p className="text-[11px] text-amber-800 leading-relaxed">
+                <p className="text-[11px] text-gold leading-relaxed">
                   {autosaveError ||
                     'Outra pessoa editou este anúncio enquanto você trabalhava. Recarregue para pegar a versão mais recente — o que você já digitou será reenviado automaticamente.'}
                 </p>
@@ -607,7 +607,7 @@ export default function RevisarPage() {
             <button
               type="button"
               onClick={handleResolverConflito}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-2xl text-[11px] font-black uppercase tracking-wider shadow-sm transition-colors"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gold hover:bg-gold text-white rounded-2xl text-[11px] font-black uppercase tracking-wider shadow-sm transition-colors"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Recarregar e reaplicar</span>

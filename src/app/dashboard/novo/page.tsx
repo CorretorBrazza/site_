@@ -193,11 +193,11 @@ export default function NovoImovel() {
     <DashboardShell activeTab="imoveis" backRoute="/dashboard" showChildrenOnDesktop>
       <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Novo imóvel</h1>
-          <p className="text-gray-600 text-sm">Envie texto livre e até 20 fotos; a IA processará o anúncio.</p>
+          <h1 className="text-3xl font-bold text-brand-900">Novo imóvel</h1>
+          <p className="text-ink text-sm">Envie texto livre e até 20 fotos; a IA processará o anúncio.</p>
         </div>
 
-        <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
+        <section className="bg-white p-6 rounded-xl border border-line shadow-sm space-y-4">
           <textarea
             value={text}
             onChange={(event) => setText(event.target.value)}
@@ -218,18 +218,18 @@ export default function NovoImovel() {
               type="button"
               onClick={stageFiles}
               disabled={uploading || files.length === 0}
-              className="px-4 py-2 rounded-lg bg-gray-900 text-white disabled:opacity-50"
+              className="px-4 py-2 rounded-lg bg-brand-900 text-white disabled:opacity-50"
             >
               {uploading ? 'Enviando fotos...' : `Preparar ${files.length || 0} foto(s)`}
             </button>
           </div>
 
           {files.length > 0 && (
-            <ul className="text-sm text-gray-600 space-y-1">
+            <ul className="text-sm text-ink space-y-1">
               {files.map((file, index) => (
                 <li key={`${file.name}-${index}`} className="flex justify-between gap-2">
                   <span>{file.name}</span>
-                  <button type="button" className="text-red-600" onClick={() => removeFile(index)}>
+                  <button type="button" className="text-danger" onClick={() => removeFile(index)}>
                     remover
                   </button>
                 </li>
@@ -239,7 +239,7 @@ export default function NovoImovel() {
 
           {readyPhotos.length > 0 && (
             <div className="space-y-2">
-              <p className="text-sm font-medium text-gray-700">{readyPhotos.length} foto(s) pronta(s)</p>
+              <p className="text-sm font-medium text-ink">{readyPhotos.length} foto(s) pronta(s)</p>
               <div className="grid grid-cols-3 gap-2">
                 {readyPhotos.map((photo) => (
                   <div key={photo.photoId} className="relative">
@@ -247,7 +247,7 @@ export default function NovoImovel() {
                     <button
                       type="button"
                       onClick={() => removeReadyPhoto(photo.photoId)}
-                      className="absolute right-1 top-1 rounded bg-white/90 px-1 text-xs text-red-600"
+                      className="absolute right-1 top-1 rounded bg-white/90 px-1 text-xs text-danger"
                     >
                       ×
                     </button>
@@ -261,16 +261,16 @@ export default function NovoImovel() {
             type="button"
             onClick={processIntake}
             disabled={!canProcess}
-            className="px-5 py-2 rounded-lg bg-blue-600 text-white disabled:opacity-50"
+            className="px-5 py-2 rounded-lg bg-brand-900 text-white disabled:opacity-50"
           >
             {processing ? 'Processando...' : 'Processar'}
           </button>
 
-          {!canProcess && disabledReason ? <p className="text-sm text-gray-600">{disabledReason}</p> : null}
-          {message ? <p className="text-sm text-gray-700">{message}</p> : null}
+          {!canProcess && disabledReason ? <p className="text-sm text-ink">{disabledReason}</p> : null}
+          {message ? <p className="text-sm text-ink">{message}</p> : null}
         </section>
 
-        <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+        <section className="bg-white p-6 rounded-xl border border-line shadow-sm">
           <h2 className="text-lg font-bold mb-4">Histórico</h2>
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">

@@ -75,10 +75,10 @@ function Wine({ size = 24 }: { size?: number }) {
 export default function AmenitiesGrid({ amenities }: AmenitiesGridProps) {
     return (
         <section className="max-w-7xl mx-auto px-4 py-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-brand-900 mb-4 text-center">
                 Recursos e Lazer
             </h2>
-            <p className="text-center text-gray-600 mb-10 max-w-2xl mx-auto">
+            <p className="text-center text-ink mb-10 max-w-2xl mx-auto">
                 Mais de {amenities.length} opções de amenidades para você aproveitar ao máximo sua qualidade de vida
             </p>
 
@@ -86,14 +86,14 @@ export default function AmenitiesGrid({ amenities }: AmenitiesGridProps) {
                 {amenities.map((amenity, index) => (
                     <div
                         key={index}
-                        className="group bg-white rounded-2xl p-6 shadow-md hover:shadow-xl hover:scale-105 transition-all flex flex-col items-center text-center hover:bg-blue-50 cursor-pointer"
+                        className="group bg-white rounded-2xl p-6 shadow-md hover:shadow-xl hover:scale-105 transition-all flex flex-col items-center text-center hover:bg-brand-900/5 cursor-pointer"
                     >
-                        <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-blue-600 group-hover:text-white transition-all">
-                            <span className="text-blue-600 group-hover:text-white">
+                        <div className="w-14 h-14 bg-brand-900/5 rounded-full flex items-center justify-center mb-3 group-hover:bg-brand-900 group-hover:text-white transition-all">
+                            <span className="text-brand-800 group-hover:text-white">
                                 {amenityIcons[amenity] || <Zap size={24} />}
                             </span>
                         </div>
-                        <p className="font-semibold text-gray-900 text-sm group-hover:text-blue-600 transition-colors">
+                        <p className="font-semibold text-brand-900 text-sm group-hover:text-brand-800 transition-colors">
                             {amenity}
                         </p>
                     </div>

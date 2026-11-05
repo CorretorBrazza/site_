@@ -12,7 +12,7 @@ interface ContactModalProps {
 }
 
 const campoBase =
-  'w-full px-4 py-3 rounded-xl border border-slate-700 bg-slate-950 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 text-xs md:text-sm';
+  'w-full px-4 py-3 rounded-xl border border-brand-700 bg-brand-950 text-white placeholder:text-white-50 focus:outline-none focus:border-gold/50 text-xs md:text-sm';
 
 export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [formData, setFormData] = useState({
@@ -105,28 +105,28 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         aria-modal="true"
         aria-labelledby="contact-modal-title"
         tabIndex={-1}
-        className="bg-gradient-to-b from-slate-900 to-slate-950 max-w-lg w-full max-h-[92dvh] flex flex-col shadow-2xl relative border border-slate-800 rounded-3xl overflow-hidden animate-in fade-in zoom-in duration-200 my-auto focus:outline-none"
+        className="bg-gradient-to-b from-brand-900 to-brand-950 max-w-lg w-full max-h-[92dvh] flex flex-col shadow-2xl relative border border-brand-700 rounded-3xl overflow-hidden animate-in fade-in zoom-in duration-200 my-auto focus:outline-none"
       >
         
         {/* Header Modal */}
-        <div className="bg-gradient-to-r from-slate-950 via-[#0b132b] to-slate-950 border-b border-slate-800 p-4 sm:p-6 relative shrink-0">
+        <div className="bg-gradient-to-r from-brand-950 via-[#0b132b] to-brand-950 border-b border-brand-700 p-4 sm:p-6 relative shrink-0">
           <button
             onClick={onClose}
             aria-label="Fechar formulário de contato"
-            className="absolute top-3 right-3 sm:top-5 sm:right-5 p-2 text-slate-400 hover:text-white rounded-full hover:bg-slate-800 transition-all z-10"
+            className="absolute top-3 right-3 sm:top-5 sm:right-5 p-2 text-white-60 hover:text-white rounded-full hover:bg-brand-800 transition-all z-10"
             title="Fechar"
           >
             <X className="w-5 h-5" aria-hidden="true" />
           </button>
 
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px] font-extrabold uppercase tracking-wider">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gold/10 border border-gold/50/30 text-gold text-[10px] font-extrabold uppercase tracking-wider">
             <Mail className="w-3 h-3" aria-hidden="true" />
             Atendimento &amp; Ouvidoria
           </span>
           <h3 id="contact-modal-title" className="text-lg sm:text-xl font-black text-white tracking-tight mt-2 pr-8">
             Fale Conosco
           </h3>
-          <p className="text-[11px] sm:text-xs text-slate-400 mt-1 pr-8">
+          <p className="text-[11px] sm:text-xs text-muted mt-1 pr-8">
             Preencha o formulário e nossa equipe responderá por e-mail o mais breve possível.
           </p>
         </div>
@@ -134,9 +134,9 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         {/* Corpo do Formulário */}
         <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4">
           {status === 'success' ? (
-            <div className="bg-emerald-950/80 border border-emerald-800 text-emerald-200 p-6 rounded-2xl space-y-3">
+            <div className="bg-success/80 border border-success/50 text-success p-6 rounded-2xl space-y-3">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="text-emerald-400" size={22} />
+                <CheckCircle2 className="text-success" size={22} />
                 <span className="font-bold text-sm sm:text-base">Mensagem Enviada com Sucesso!</span>
               </div>
               <p className="text-xs leading-relaxed">
@@ -144,7 +144,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               </p>
               <button
                 onClick={() => setStatus('idle')}
-                className="text-xs font-bold text-emerald-400 underline hover:text-emerald-300 pt-2"
+                className="text-xs font-bold text-success underline hover:text-success pt-2"
               >
                 Enviar outra mensagem
               </button>
@@ -161,7 +161,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               />
 
               <div>
-                <label htmlFor="cm-nome" className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                <label htmlFor="cm-nome" className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-1">
                   Nome Completo *
                 </label>
                 <input
@@ -178,7 +178,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="cm-email" className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                  <label htmlFor="cm-email" className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-1">
                     E-mail *
                   </label>
                   <input
@@ -193,7 +193,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   />
                 </div>
                 <div>
-                  <label htmlFor="cm-telefone" className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                  <label htmlFor="cm-telefone" className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-1">
                     Telefone / Celular *
                   </label>
                   <input
@@ -210,7 +210,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               </div>
 
               <div>
-                <label htmlFor="cm-assunto" className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                <label htmlFor="cm-assunto" className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-1">
                   Assunto *
                 </label>
                 <select
@@ -232,7 +232,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               </div>
 
               <div>
-                <label htmlFor="cm-mensagem" className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                <label htmlFor="cm-mensagem" className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-1">
                   Texto da Mensagem *
                 </label>
                 <textarea
@@ -247,22 +247,22 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 />
               </div>
 
-              <label className="flex items-start gap-2 text-[11px] leading-relaxed text-slate-400">
+              <label className="flex items-start gap-2 text-[11px] leading-relaxed text-muted">
                 <input
                   type="checkbox"
                   checked={consentimento}
                   onChange={(event) => setConsentimento(event.target.checked)}
-                  className="mt-0.5 accent-amber-500"
+                  className="mt-0.5 accent-gold"
                   required
                 />
                 <span>
                   Autorizo o uso dos meus dados para receber resposta sobre esta mensagem, conforme a{' '}
-                  <a href="/politica-de-privacidade" target="_blank" className="font-bold text-amber-400 underline">Política de Privacidade</a>.
+                  <a href="/politica-de-privacidade" target="_blank" className="font-bold text-gold underline">Política de Privacidade</a>.
                 </span>
               </label>
 
               {status === 'error' && (
-                <div className="flex items-center gap-2 text-xs text-red-200 bg-red-950/80 p-3 rounded-xl border border-red-800">
+                <div className="flex items-center gap-2 text-xs text-danger bg-danger/80 p-3 rounded-xl border border-danger/50">
                   <AlertCircle size={16} />
                   <span>Ocorreu um erro ao enviar sua mensagem. Tente novamente.</span>
                 </div>
@@ -271,14 +271,14 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               <button
                 type="submit"
                 disabled={status === 'submitting' || !consentimento}
-                className="w-full bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-slate-950 font-black py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider disabled:opacity-50"
+                className="w-full bg-gradient-to-r from-gold via-gold to-gold hover:from-gold hover:to-gold text-brand-950 font-black py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider disabled:opacity-50"
               >
                 <Send size={16} />
                 {status === 'submitting' ? 'Enviando...' : 'Enviar Mensagem'}
               </button>
 
-              <div className="flex items-center justify-center gap-2 text-[11px] text-slate-500 pt-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+              <div className="flex items-center justify-center gap-2 text-[11px] text-muted pt-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-success" />
                 Seus dados são usados apenas para responder esta mensagem (LGPD).
               </div>
             </form>
@@ -286,11 +286,11 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="p-3 sm:p-4 bg-slate-950 border-t border-slate-800 shrink-0">
+        <div className="p-3 sm:p-4 bg-brand-950 border-t border-brand-700 shrink-0">
           <button
             type="button"
             onClick={() => onClose()}
-            className="w-full py-2.5 text-xs font-bold text-slate-300 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/70 rounded-xl transition-colors"
+            className="w-full py-2.5 text-xs font-bold text-white-70 bg-brand-800/60 hover:bg-brand-800 border border-brand-700/70 rounded-xl transition-colors"
           >
             Fechar
           </button>

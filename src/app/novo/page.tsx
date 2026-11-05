@@ -21,12 +21,12 @@ export default async function HomeNovo() {
   return (
     <div>
       {catalogoFallback && (
-        <div className="bg-amber-50 border-b border-amber-200 text-amber-900 text-xs sm:text-sm font-semibold px-4 py-2.5 text-center">
+        <div className="bg-gold/10 border-b border-gold/30 text-gold text-xs sm:text-sm font-semibold px-4 py-2.5 text-center">
           Estamos com instabilidade no catálogo — os imóveis abaixo podem estar desatualizados. Tente novamente em instantes.
         </div>
       )}
       {/* Hero Section */}
-      <section className="relative h-[500px] flex items-center justify-center bg-blue-900 overflow-hidden">
+      <section className="relative h-[500px] flex items-center justify-center bg-brand-800 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
             src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=1920" 
@@ -39,20 +39,20 @@ export default async function HomeNovo() {
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
             Encontre o imóvel perfeito em Taboão da Serra
           </h1>
-          <p className="text-xl mb-8 text-gray-200">
+          <p className="text-xl mb-8 text-line">
             Milhares de opções para você morar bem ou investir com segurança.
           </p>
           
           <div className="flex flex-col md:flex-row gap-4 justify-center">
             <Link 
               href="/venda" 
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-bold transition-all shadow-lg"
+              className="bg-brand-900 hover:bg-brand-800 text-white px-8 py-3 rounded-lg font-bold transition-all shadow-lg"
             >
               Quero Comprar
             </Link>
             <Link 
               href="/locacao" 
-              className="bg-white hover:bg-gray-100 text-blue-900 px-8 py-3 rounded-lg font-bold transition-all shadow-lg"
+              className="bg-white hover:bg-paper text-brand-800 px-8 py-3 rounded-lg font-bold transition-all shadow-lg"
             >
               Quero Alugar
             </Link>
@@ -64,10 +64,10 @@ export default async function HomeNovo() {
       <section className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
         <div className="flex justify-between items-end mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900">Imóveis em Destaque</h2>
-            <p className="text-gray-600 mt-2">As melhores oportunidades selecionadas para você.</p>
+            <h2 className="text-3xl font-bold text-brand-900">Imóveis em Destaque</h2>
+            <p className="text-ink mt-2">As melhores oportunidades selecionadas para você.</p>
           </div>
-          <Link href="/venda" className="text-blue-600 font-semibold hover:underline hidden md:block">
+          <Link href="/venda" className="text-brand-800 font-semibold hover:underline hidden md:block">
             Ver todos os imóveis &rarr;
           </Link>
         </div>
@@ -79,30 +79,30 @@ export default async function HomeNovo() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-10 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-            <p className="text-gray-500">Nenhum imóvel em destaque no momento.</p>
+          <div className="text-center py-10 bg-paper rounded-xl border-2 border-dashed border-line">
+            <p className="text-muted">Nenhum imóvel em destaque no momento.</p>
           </div>
         )}
         
         <div className="mt-12 text-center md:hidden">
-          <Link href="/venda" className="inline-block bg-white border border-blue-600 text-blue-600 px-6 py-2 rounded-lg font-semibold">
+          <Link href="/venda" className="inline-block bg-white border border-brand-700 text-brand-800 px-6 py-2 rounded-lg font-semibold">
             Ver todos os imóveis
           </Link>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="bg-gray-100 py-16">
+      <section className="bg-paper py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Quer vender ou alugar seu imóvel?</h2>
-          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+          <h2 className="text-3xl font-bold text-brand-900 mb-4">Quer vender ou alugar seu imóvel?</h2>
+          <p className="text-lg text-ink mb-8 max-w-2xl mx-auto">
             Anuncie conosco e tenha a melhor visibilidade da região com atendimento personalizado e seguro.
           </p>
           <a 
             href="https://wa.me/5511932785602" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="bg-green-600 hover:bg-green-700 text-white px-10 py-4 rounded-full font-bold text-lg shadow-md transition-all inline-flex items-center gap-2"
+            className="bg-success hover:bg-success text-white px-10 py-4 rounded-full font-bold text-lg shadow-md transition-all inline-flex items-center gap-2"
           >
             <span>Falar com um Especialista</span>
           </a>

@@ -57,7 +57,7 @@ export default function EmpreendimentoCard({
                             {name}
                         </h3>
                     </Link>
-                    <div className="flex items-start gap-1.5 text-slate-500">
+                    <div className="flex items-start gap-1.5 text-muted">
                         <MapPin size={15} className="text-accent shrink-0 mt-0.5" />
                         <span className="text-[13px] leading-snug line-clamp-2 font-medium">{address}</span>
                     </div>
@@ -67,20 +67,20 @@ export default function EmpreendimentoCard({
                     {amenities.slice(0, 3).map((amenity) => (
                         <span
                             key={amenity}
-                            className="text-[11px] font-semibold text-slate-600 bg-slate-50 border border-black/5 px-3 py-1 rounded-lg uppercase tracking-wider"
+                            className="text-[11px] font-semibold text-ink bg-paper border border-black/5 px-3 py-1 rounded-lg uppercase tracking-wider"
                         >
                             {amenity}
                         </span>
                     ))}
                     {amenities.length > 3 && (
-                        <span className="text-[11px] font-semibold text-slate-400 py-1 px-1.5">
+                        <span className="text-[11px] font-semibold text-muted py-1 px-1.5">
                             +{amenities.length - 3}
                         </span>
                     )}
                 </div>
 
                 <div className="mb-6">
-                    <span className="inline-block border border-black/5 text-primary bg-slate-50/50 px-4 py-1.5 rounded-lg text-[13px] font-semibold">
+                    <span className="inline-block border border-black/5 text-primary bg-paper/50 px-4 py-1.5 rounded-lg text-[13px] font-semibold">
                         {dormitorios}
                     </span>
                 </div>

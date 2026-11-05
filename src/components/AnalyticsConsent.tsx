@@ -76,12 +76,12 @@ export default function AnalyticsConsent() {
     <aside
       role="dialog"
       aria-label="Preferências de privacidade"
-      className="fixed inset-x-3 bottom-3 z-[90] mx-auto max-w-3xl rounded-2xl border border-slate-700 bg-slate-950/95 p-4 text-slate-100 shadow-2xl backdrop-blur-md sm:inset-x-6 sm:p-5"
+      className="fixed inset-x-3 bottom-3 z-[90] mx-auto max-w-3xl rounded-2xl border border-brand-700 bg-brand-950/95 p-4 text-white shadow-2xl backdrop-blur-md sm:inset-x-6 sm:p-5"
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-xs leading-relaxed text-slate-300 sm:max-w-xl">
+        <p className="text-xs leading-relaxed text-muted-80 sm:max-w-xl">
           Usamos cookies e tecnologias semelhantes para medir audiência, melhorar o portal e avaliar campanhas. Você pode aceitar ou recusar a medição não essencial. Consulte a{' '}
-          <Link href="/politica-de-privacidade" className="font-bold text-amber-400 underline hover:text-amber-300">
+          <Link href="/politica-de-privacidade" className="font-bold text-gold underline hover:text-gold">
             Política de Privacidade
           </Link>.
         </p>
@@ -89,14 +89,14 @@ export default function AnalyticsConsent() {
           <button
             type="button"
             onClick={() => decide('rejected')}
-            className="rounded-xl border border-slate-700 px-3 py-2 text-xs font-bold text-slate-300 transition hover:border-slate-500 hover:text-white"
+            className="rounded-xl border border-brand-700 px-3 py-2 text-xs font-bold text-muted-80 transition hover:border-muted/40 hover:text-white"
           >
             Recusar
           </button>
           <button
             type="button"
             onClick={() => decide('accepted')}
-            className="rounded-xl bg-amber-500 px-3 py-2 text-xs font-black text-slate-950 transition hover:bg-amber-400"
+            className="rounded-xl bg-gold px-3 py-2 text-xs font-black text-brand-950 transition hover:bg-gold"
           >
             Aceitar medição
           </button>

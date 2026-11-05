@@ -707,14 +707,14 @@ export default function SimuladorClient() {
                     <header className="flex justify-between items-center px-6 py-4 border-b border-black/5 bg-[#faf9f6]">
                         <div className="flex items-center gap-3 bg-white px-3 py-1.5 rounded-lg border border-black/5 shadow-xs">
                             <img src="/images/simulado/logo-caixa.jpg" alt="CAIXA" className="h-6 object-contain" />
-                            <img src="/images/simulado/logo-mcmv.png" alt="MCMV" className="h-6 object-contain border-l border-slate-200 pl-3" />
+                            <img src="/images/simulado/logo-mcmv.png" alt="MCMV" className="h-6 object-contain border-l border-line pl-3" />
                         </div>
-                        <span className="text-[12px] font-bold text-slate-400 tracking-wider uppercase">Simulador de Viabilidade</span>
+                        <span className="text-[12px] font-bold text-muted tracking-wider uppercase">Simulador de Viabilidade</span>
                     </header>
 
                     <section className="hero">
                         <h1 className="font-serif italic font-semibold text-accent text-5xl mb-4">Até quando?</h1>
-                        <p className="text-slate-300 text-base leading-relaxed">
+                        <p className="text-muted-80 text-base leading-relaxed">
                             Até quando você vai pagar o aluguel de outra pessoa? Planeje a conquista do seu próprio espaço e descubra o valor aproximado do seu financiamento.
                         </p>
                     </section>
@@ -725,29 +725,29 @@ export default function SimuladorClient() {
                             <div className="benefit-icon text-accent">💰</div>
                             <div className="benefit-text">
                                 <h3 className="text-primary font-semibold text-sm mb-1">Até quando no aluguel?</h3>
-                                <p className="text-slate-500 text-xs">Mensalidades que sobem todos os anos sem gerar nenhum patrimônio para você. Direcione esse valor para o que é seu.</p>
+                                <p className="text-muted text-xs">Mensalidades que sobem todos os anos sem gerar nenhum patrimônio para você. Direcione esse valor para o que é seu.</p>
                             </div>
                         </div>
                         <div className="benefit-item">
                             <div className="benefit-icon text-accent">🔓</div>
                             <div className="benefit-text">
                                 <h3 className="text-primary font-semibold text-sm mb-1">Até quando sem autonomia?</h3>
-                                <p className="text-slate-500 text-xs">Regras de terceiros, restrições para reformas ou animais. Conquiste a total liberdade de ter um lar com a sua cara.</p>
+                                <p className="text-muted text-xs">Regras de terceiros, restrições para reformas ou animais. Conquiste a total liberdade de ter um lar com a sua cara.</p>
                             </div>
                         </div>
                         <div className="benefit-item">
                             <div className="benefit-icon text-accent">👨‍👩‍👧‍👦</div>
                             <div className="benefit-text">
                                 <h3 className="text-primary font-semibold text-sm mb-1">Até quando sem estabilidade?</h3>
-                                <p className="text-slate-500 text-xs">Dê a segurança e estabilidade que a sua família merece, livre das preocupações com renovações ou reajustes contratuais.</p>
+                                <p className="text-muted text-xs">Dê a segurança e estabilidade que a sua família merece, livre das preocupações com renovações ou reajustes contratuais.</p>
                             </div>
                         </div>
                     </section>
 
                     <section className="section bg-[#faf9f6] border-y border-black/5">
                         <h2 className="section-title font-serif text-primary text-lg font-semibold mb-4">A casa própria é viável</h2>
-                        <p className="text-slate-500 text-sm mb-4 font-medium">Pelo programa <strong>Minha Casa Minha Vida</strong> e o crédito facilitado da <strong>CAIXA Econômica Federal</strong>, as condições são exclusivas:</p>
-                        <ul className="space-y-2.5 text-sm text-slate-650 font-medium">
+                        <p className="text-muted text-sm mb-4 font-medium">Pelo programa <strong>Minha Casa Minha Vida</strong> e o crédito facilitado da <strong>CAIXA Econômica Federal</strong>, as condições são exclusivas:</p>
+                        <ul className="space-y-2.5 text-sm text-ink font-medium">
                             <li className="flex items-center gap-2">✓ Taxas de juros significativamente reduzidas</li>
                             <li className="flex items-center gap-2">✓ Subsídios do governo (um desconto real na sua entrada!)</li>
                             <li className="flex items-center gap-2">✓ Parcelas dimensionadas para caber no seu orçamento</li>

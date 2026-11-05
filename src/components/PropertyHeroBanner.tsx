@@ -12,18 +12,18 @@ export default function PropertyHeroBanner({ property, logoUrl }: PropertyHeroBa
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'Lançamento':
-                return 'bg-yellow-500 text-white';
+                return 'bg-gold text-white';
             case 'Em Construção':
-                return 'bg-blue-600 text-white';
+                return 'bg-brand-900 text-white';
             case 'Pronto para Morar':
-                return 'bg-green-600 text-white';
+                return 'bg-success text-white';
             default:
-                return 'bg-gray-600 text-white';
+                return 'bg-ink text-white';
         }
     };
 
     return (
-        <div className="relative w-full h-96 md:h-[500px] bg-gradient-to-br from-blue-600 to-blue-900 overflow-hidden group">
+        <div className="relative w-full h-96 md:h-[500px] bg-gradient-to-br from-brand-900 to-brand-800 overflow-hidden group">
             {/* Background Video or Image */}
             {property.videoUrl ? (
                 <div className="absolute inset-0 w-full h-full">

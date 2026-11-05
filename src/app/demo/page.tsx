@@ -101,20 +101,20 @@ export default function DemoPage() {
   const output = selectedPreset.output;
 
   return (
-    <div className="bg-slate-950 min-h-screen text-slate-100 pb-20">
+    <div className="bg-brand-950 min-h-screen text-white pb-20">
       {/* Header / Hero */}
-      <div className="bg-gradient-to-b from-slate-950 via-blue-950/60 to-slate-950 text-white pt-14 pb-12 px-4 text-center relative overflow-hidden border-b border-slate-800">
+      <div className="bg-gradient-to-b from-brand-950 via-brand-800/60 to-brand-950 text-white pt-14 pb-12 px-4 text-center relative overflow-hidden border-b border-brand-700">
         <div className="max-w-4xl mx-auto space-y-4 relative z-10">
-          <span className="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-extrabold px-3.5 py-1 rounded-full uppercase tracking-wider">
-            <Sparkles className="w-4 h-4 text-amber-400" />
+          <span className="inline-flex items-center gap-2 bg-brand-900/20 border border-brand-700/30 text-gold-400 text-xs font-extrabold px-3.5 py-1 rounded-full uppercase tracking-wider">
+            <Sparkles className="w-4 h-4 text-gold" />
             Simulador Interativo de IA (Sem Login Necessário)
           </span>
 
           <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
-            Veja a IA Criar um <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500">Media Kit Completo</span> em Segundos
+            Veja a IA Criar um <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold via-gold to-gold">Media Kit Completo</span> em Segundos
           </h1>
 
-          <p className="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+          <p className="text-muted-80 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
             Selecione uma captação de exemplo abaixo para ver o que o corretor enviou e o conteúdo completo de 5 canais que nosso robô gera instantaneamente.
           </p>
         </div>
@@ -123,7 +123,7 @@ export default function DemoPage() {
       <div className="max-w-6xl mx-auto px-4 mt-8 space-y-8">
         {/* Seletor de Exemplos */}
         <div className="space-y-3">
-          <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-400">
+          <label className="block text-xs font-extrabold uppercase tracking-wider text-muted">
             1. Escolha uma Captação de Exemplo para Simular:
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -133,8 +133,8 @@ export default function DemoPage() {
                 onClick={() => handleSelectPreset(preset)}
                 className={`p-4 rounded-2xl border text-left transition-all text-xs font-bold ${
                   selectedPreset.id === preset.id
-                    ? 'bg-blue-600/20 border-blue-500 text-white shadow-lg shadow-blue-600/10'
-                    : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'
+                    ? 'bg-brand-900/20 border-brand-700 text-white shadow-lg shadow-brand-900/20/10'
+                    : 'bg-brand-900 border-brand-700 text-white-70 hover:border-brand-700'
                 }`}
               >
                 {preset.label}
@@ -144,31 +144,31 @@ export default function DemoPage() {
         </div>
 
         {/* Input Box / Preview do Texto do WhatsApp (Apenas Visualização) */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
+        <div className="bg-brand-900 border border-brand-700 rounded-3xl p-6 shadow-xl space-y-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-300 uppercase tracking-wider">
-              <Smartphone className="w-4 h-4 text-emerald-400" />
+            <div className="flex items-center gap-2 text-xs font-bold text-muted-80 uppercase tracking-wider">
+              <Smartphone className="w-4 h-4 text-success" />
               <span>O que o corretor mandou no WhatsApp (Texto Bruto):</span>
             </div>
-            <span className="text-[10px] bg-slate-800 text-slate-400 px-2.5 py-0.5 rounded font-mono">
+            <span className="text-[10px] bg-brand-800 text-white-60 px-2.5 py-0.5 rounded font-mono">
               Exemplo Real
             </span>
           </div>
 
-          <div className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-5 text-xs sm:text-sm text-slate-200 font-mono leading-relaxed select-text shadow-inner">
+          <div className="w-full bg-brand-950 border border-brand-700 rounded-2xl p-5 text-xs sm:text-sm text-white-90 font-mono leading-relaxed select-text shadow-inner">
             {selectedPreset.rawText}
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
-            <span className="text-xs text-slate-400 flex items-center gap-1.5">
-              <Cpu className="w-4 h-4 text-blue-400" />
+            <span className="text-xs text-muted flex items-center gap-1.5">
+              <Cpu className="w-4 h-4 text-gold-400" />
               Extração Visual + RAG Regional (Taboão da Serra & Região)
             </span>
 
             <button
               onClick={handleSimulate}
               disabled={isSimulating}
-              className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
+              className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-success to-success hover:from-success hover:to-success text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
               {isSimulating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
               <span>{isSimulating ? 'Gerando Media Kit...' : '🚀 Simular Media Kit Deste Imóvel'}</span>
@@ -177,10 +177,10 @@ export default function DemoPage() {
         </div>
 
         {/* Resultado: Media Kit Multi-Canal */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+        <div className="bg-brand-900 border border-brand-700 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-brand-700 pb-4">
             <div>
-              <div className="inline-flex items-center gap-1.5 text-xs font-black text-amber-400 uppercase tracking-wider mb-1">
+              <div className="inline-flex items-center gap-1.5 text-xs font-black text-gold uppercase tracking-wider mb-1">
                 <Sparkles className="w-4 h-4" /> Resultado Instantâneo do Robô
               </div>
               <h3 className="text-xl font-black text-white">
@@ -189,11 +189,11 @@ export default function DemoPage() {
             </div>
 
             {/* Abas de Navegação de Canais */}
-            <div className="flex flex-wrap gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
+            <div className="flex flex-wrap gap-1 bg-brand-950 p-1 rounded-xl border border-brand-700">
               <button
                 onClick={() => setActiveTab('instagram')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
-                  activeTab === 'instagram' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
+                  activeTab === 'instagram' ? 'bg-brand-900 text-white' : 'text-muted hover:text-white'
                 }`}
               >
                 <Instagram className="w-3.5 h-3.5" />
@@ -202,7 +202,7 @@ export default function DemoPage() {
               <button
                 onClick={() => setActiveTab('whatsapp')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
-                  activeTab === 'whatsapp' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
+                  activeTab === 'whatsapp' ? 'bg-brand-900 text-white' : 'text-muted hover:text-white'
                 }`}
               >
                 <MessageSquare className="w-3.5 h-3.5" />
@@ -211,7 +211,7 @@ export default function DemoPage() {
               <button
                 onClick={() => setActiveTab('portal')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
-                  activeTab === 'portal' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
+                  activeTab === 'portal' ? 'bg-brand-900 text-white' : 'text-muted hover:text-white'
                 }`}
               >
                 <FileText className="w-3.5 h-3.5" />
@@ -220,7 +220,7 @@ export default function DemoPage() {
               <button
                 onClick={() => setActiveTab('roteiro')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
-                  activeTab === 'roteiro' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
+                  activeTab === 'roteiro' ? 'bg-brand-900 text-white' : 'text-muted hover:text-white'
                 }`}
               >
                 <Video className="w-3.5 h-3.5" />
@@ -229,7 +229,7 @@ export default function DemoPage() {
               <button
                 onClick={() => setActiveTab('tags')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
-                  activeTab === 'tags' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
+                  activeTab === 'tags' ? 'bg-brand-900 text-white' : 'text-muted hover:text-white'
                 }`}
               >
                 <Hash className="w-3.5 h-3.5" />
@@ -242,16 +242,16 @@ export default function DemoPage() {
           {activeTab === 'instagram' && (
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-xs text-slate-400 font-bold">Copy com gancho, emojis, preço e hashtags locais:</span>
+                <span className="text-xs text-muted font-bold">Copy com gancho, emojis, preço e hashtags locais:</span>
                 <button
                   onClick={() => handleCopy(output.instagram, 'insta')}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-bold transition-colors"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-brand-800 hover:bg-brand-800 text-white-90 rounded-lg text-xs font-bold transition-colors"
                 >
-                  {copiedKey === 'insta' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copiedKey === 'insta' ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
                   <span>{copiedKey === 'insta' ? 'Copiado!' : 'Copiar Legenda'}</span>
                 </button>
               </div>
-              <pre className="bg-slate-950 border border-slate-800 rounded-2xl p-5 text-xs text-slate-300 font-sans whitespace-pre-wrap leading-relaxed">
+              <pre className="bg-brand-950 border border-brand-700 rounded-2xl p-5 text-xs text-white-70 font-sans whitespace-pre-wrap leading-relaxed">
                 {output.instagram}
               </pre>
             </div>
@@ -261,16 +261,16 @@ export default function DemoPage() {
           {activeTab === 'whatsapp' && (
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-xs text-slate-400 font-bold">Texto estruturado com marcadores para envio a clientes:</span>
+                <span className="text-xs text-muted font-bold">Texto estruturado com marcadores para envio a clientes:</span>
                 <button
                   onClick={() => handleCopy(output.whatsapp, 'wa')}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-bold transition-colors"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-brand-800 hover:bg-brand-800 text-white-90 rounded-lg text-xs font-bold transition-colors"
                 >
-                  {copiedKey === 'wa' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copiedKey === 'wa' ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
                   <span>{copiedKey === 'wa' ? 'Copiado!' : 'Copiar Texto WhatsApp'}</span>
                 </button>
               </div>
-              <pre className="bg-slate-950 border border-slate-800 rounded-2xl p-5 text-xs text-emerald-300 font-mono whitespace-pre-wrap leading-relaxed">
+              <pre className="bg-brand-950 border border-brand-700 rounded-2xl p-5 text-xs text-success font-mono whitespace-pre-wrap leading-relaxed">
                 {output.whatsapp}
               </pre>
             </div>
@@ -280,15 +280,15 @@ export default function DemoPage() {
           {activeTab === 'portal' && (
             <div className="space-y-4 text-xs">
               <div className="space-y-1.5">
-                <span className="font-bold text-slate-400 uppercase text-[10px]">Título Comercial Otimizado:</span>
-                <div className="bg-slate-950 border border-slate-800 p-3.5 rounded-xl font-bold text-white text-sm">
+                <span className="font-bold text-muted uppercase text-[10px]">Título Comercial Otimizado:</span>
+                <div className="bg-brand-950 border border-brand-700 p-3.5 rounded-xl font-bold text-white text-sm">
                   {output.titulo}
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <span className="font-bold text-slate-400 uppercase text-[10px]">Descrição Enriquecida para Portais (Sem Alucinações):</span>
-                <pre className="bg-slate-950 border border-slate-800 rounded-2xl p-5 text-slate-300 font-sans whitespace-pre-wrap leading-relaxed">
+                <span className="font-bold text-muted uppercase text-[10px]">Descrição Enriquecida para Portais (Sem Alucinações):</span>
+                <pre className="bg-brand-950 border border-brand-700 rounded-2xl p-5 text-white-70 font-sans whitespace-pre-wrap leading-relaxed">
                   {output.portalDesc}
                 </pre>
               </div>
@@ -298,13 +298,13 @@ export default function DemoPage() {
           {/* Conteúdo Aba Roteiro */}
           {activeTab === 'roteiro' && (
             <div className="space-y-3">
-              <span className="text-xs text-slate-400 font-bold block">Roteiro de Teleprompter para Gravação de Stories ou Reels:</span>
+              <span className="text-xs text-muted font-bold block">Roteiro de Teleprompter para Gravação de Stories ou Reels:</span>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {output.roteiro.map((cena, idx) => (
-                  <div key={idx} className="bg-slate-950 border border-slate-800 p-4 rounded-2xl space-y-2">
-                    <span className="text-[11px] font-black text-amber-400 uppercase block">{cena.cena}</span>
-                    <p className="text-xs text-slate-200 leading-relaxed italic">&quot;{cena.fala}&quot;</p>
-                    <div className="text-[10px] bg-slate-900 border border-slate-800 p-2 rounded-lg text-slate-400">
+                  <div key={idx} className="bg-brand-950 border border-brand-700 p-4 rounded-2xl space-y-2">
+                    <span className="text-[11px] font-black text-gold uppercase block">{cena.cena}</span>
+                    <p className="text-xs text-line leading-relaxed italic">&quot;{cena.fala}&quot;</p>
+                    <div className="text-[10px] bg-brand-900 border border-brand-700 p-2 rounded-lg text-white-60">
                       <strong>Texto na tela:</strong> {cena.textoTela}
                     </div>
                   </div>
@@ -316,10 +316,10 @@ export default function DemoPage() {
           {/* Conteúdo Aba Tags */}
           {activeTab === 'tags' && (
             <div className="space-y-3">
-              <span className="text-xs text-slate-400 font-bold block">Palavras-chave regionais para rankear no Google:</span>
+              <span className="text-xs text-muted font-bold block">Palavras-chave regionais para rankear no Google:</span>
               <div className="flex flex-wrap gap-2">
                 {output.tags.map((tag, idx) => (
-                  <span key={idx} className="bg-slate-950 border border-slate-800 text-blue-300 text-xs px-3 py-1.5 rounded-xl font-mono">
+                  <span key={idx} className="bg-brand-950 border border-brand-700 text-gold-400 text-xs px-3 py-1.5 rounded-xl font-mono">
                     #{tag}
                   </span>
                 ))}
@@ -329,8 +329,8 @@ export default function DemoPage() {
         </div>
 
         {/* Big CTA Lead Magnet */}
-        <div className="bg-gradient-to-r from-blue-950 via-indigo-950 to-slate-900 border-2 border-blue-500/50 rounded-3xl p-8 sm:p-10 text-center shadow-2xl space-y-5">
-          <span className="inline-flex items-center gap-2 bg-emerald-950 text-emerald-300 border border-emerald-800 text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-wider">
+        <div className="bg-gradient-to-r from-brand-800 via-brand-800 to-brand-900 border-2 border-brand-700/50 rounded-3xl p-8 sm:p-10 text-center shadow-2xl space-y-5">
+          <span className="inline-flex items-center gap-2 bg-success text-success border border-success/50 text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-wider">
             🎁 1 Crédito Grátis Liberado para Novos Corretores
           </span>
 
@@ -338,7 +338,7 @@ export default function DemoPage() {
             Quer Gerar o Media Kit do Seu Imóvel Real Agora?
           </h3>
 
-          <p className="text-slate-300 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed">
+          <p className="text-muted-80 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed">
             Basta enviar as fotos e o texto do seu imóvel pelo WhatsApp oficial. Não precisa de cartão nem mensalidade para começar.
           </p>
 
@@ -347,7 +347,7 @@ export default function DemoPage() {
               href="https://wa.me/5511989161897?text=Ol%C3%A1%2C%20quero%20testar%20meu%20cr%C3%A9dito%20gr%C3%A1tis%20de%20Media%20Kit"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-2xl shadow-xl transition-all text-xs uppercase tracking-wider flex items-center gap-2"
+              className="px-8 py-4 bg-success hover:bg-success text-white font-black rounded-2xl shadow-xl transition-all text-xs uppercase tracking-wider flex items-center gap-2"
             >
               <MessageSquare className="w-4 h-4 fill-white" />
               <span>Enviar Imóvel no WhatsApp (11) 98916-1897</span>
@@ -355,10 +355,10 @@ export default function DemoPage() {
 
             <Link
               href="/planos"
-              className="px-8 py-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-2xl border border-slate-700 transition-all text-xs flex items-center gap-2"
+              className="px-8 py-4 bg-brand-900 hover:bg-brand-800 text-white font-bold rounded-2xl border border-brand-700 transition-all text-xs flex items-center gap-2"
             >
               <span>Ver Pacotes de Créditos</span>
-              <ArrowRight className="w-4 h-4 text-amber-400" />
+              <ArrowRight className="w-4 h-4 text-gold" />
             </Link>
           </div>
         </div>

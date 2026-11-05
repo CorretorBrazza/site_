@@ -17,7 +17,7 @@ export default function ImageCarousel({ images, alt }: ImageCarouselProps) {
 
     if (!images || images.length === 0) {
         return (
-            <div className="w-full h-[300px] md:h-[500px] bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl flex items-center justify-center text-gray-500 shadow-lg">
+            <div className="w-full h-[300px] md:h-[500px] bg-gradient-to-br from-line to-muted-80 rounded-2xl flex items-center justify-center text-muted shadow-lg">
                 <div className="text-center">
                     <p className="text-lg font-semibold">Sem fotos disponíveis</p>
                 </div>
@@ -80,14 +80,14 @@ export default function ImageCarousel({ images, alt }: ImageCarouselProps) {
                     <>
                         <button
                             onClick={prevSlide}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white backdrop-blur-sm p-2 md:p-3 rounded-full text-gray-900 shadow-lg opacity-0 md:opacity-100 group-hover:opacity-100 transition-all duration-200 hover:scale-110 z-20"
+                            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white backdrop-blur-sm p-2 md:p-3 rounded-full text-brand-900 shadow-lg opacity-0 md:opacity-100 group-hover:opacity-100 transition-all duration-200 hover:scale-110 z-20"
                             aria-label="Foto anterior"
                         >
                             <ChevronLeft size={24} strokeWidth={3} />
                         </button>
                         <button
                             onClick={nextSlide}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white backdrop-blur-sm p-2 md:p-3 rounded-full text-gray-900 shadow-lg opacity-0 md:opacity-100 group-hover:opacity-100 transition-all duration-200 hover:scale-110 z-20"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white backdrop-blur-sm p-2 md:p-3 rounded-full text-brand-900 shadow-lg opacity-0 md:opacity-100 group-hover:opacity-100 transition-all duration-200 hover:scale-110 z-20"
                             aria-label="Próxima foto"
                         >
                             <ChevronRight size={24} strokeWidth={3} />

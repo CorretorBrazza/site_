@@ -70,24 +70,24 @@ function DefinirSenhaForm() {
 
   if (carregando) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <p className="text-slate-500 text-sm">Carregando...</p>
+      <div className="min-h-screen bg-paper flex items-center justify-center">
+        <p className="text-muted text-sm">Carregando...</p>
       </div>
     );
   }
 
   if (!token) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-paper flex items-center justify-center px-4">
         <div className="bg-white rounded-2xl shadow p-8 max-w-md text-center">
-          <h1 className="text-xl font-bold text-slate-800 mb-2">Link inválido</h1>
-          <p className="text-sm text-slate-600 mb-6">
+          <h1 className="text-xl font-bold text-ink mb-2">Link inválido</h1>
+          <p className="text-sm text-ink mb-6">
             Este link não tem código de acesso. Ele chega junto da mensagem de
             conclusão do cadastro no WhatsApp.
           </p>
           <a
             href="/login"
-            className="inline-block bg-slate-900 text-white px-6 py-3 rounded-xl text-sm font-semibold"
+            className="inline-block bg-brand-900 text-white px-6 py-3 rounded-xl text-sm font-semibold"
           >
             Ir para o login
           </a>
@@ -97,16 +97,16 @@ function DefinirSenhaForm() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-paper flex items-center justify-center px-4 py-12">
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
-        <h1 className="text-2xl font-bold text-slate-900 mb-1">Criar sua senha</h1>
-        <p className="text-sm text-slate-500 mb-6">
+        <h1 className="text-2xl font-bold text-brand-900 mb-1">Criar sua senha</h1>
+        <p className="text-sm text-muted mb-6">
           É só sua primeira senha de acesso ao painel.
         </p>
 
         <form onSubmit={submeter} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="senha">
+            <label className="block text-sm font-medium text-ink mb-1" htmlFor="senha">
               Senha
             </label>
             <input
@@ -117,13 +117,13 @@ function DefinirSenhaForm() {
               minLength={8}
               required
               autoComplete="new-password"
-              className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+              className="w-full border border-line rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-900"
               placeholder="mínimo 8 caracteres"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="confirmar">
+            <label className="block text-sm font-medium text-ink mb-1" htmlFor="confirmar">
               Repita a senha
             </label>
             <input
@@ -134,12 +134,12 @@ function DefinirSenhaForm() {
               minLength={8}
               required
               autoComplete="new-password"
-              className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+              className="w-full border border-line rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-900"
             />
           </div>
 
           {erro && (
-            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+            <p className="text-sm text-danger bg-danger/10 border border-danger/30 rounded-lg px-3 py-2">
               {erro}
             </p>
           )}
@@ -147,7 +147,7 @@ function DefinirSenhaForm() {
           <button
             type="submit"
             disabled={enviando}
-            className="w-full bg-slate-900 text-white py-3 rounded-xl text-sm font-semibold disabled:opacity-60"
+            className="w-full bg-brand-900 text-white py-3 rounded-xl text-sm font-semibold disabled:opacity-60"
           >
             {enviando ? 'Criando...' : 'Criar senha e entrar'}
           </button>
@@ -163,7 +163,7 @@ export default function DefinirSenhaPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-slate-50 flex items-center justify-center text-slate-500 text-sm">
+        <div className="min-h-screen bg-paper flex items-center justify-center text-muted text-sm">
           Carregando...
         </div>
       }

@@ -8,7 +8,7 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
 const WEB3FORMS_ACCESS_KEY = '7d915857-c79e-4ff4-b507-ac4edaa6ce5c';
 
 const campoBase =
-  'w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-950 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 text-xs md:text-sm';
+  'w-full px-4 py-3 rounded-xl border border-brand-700 bg-brand-950 text-white placeholder:text-white-50 focus:outline-none focus:border-gold/50 text-xs md:text-sm';
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -115,13 +115,13 @@ export default function ContactForm() {
   };
 
   return (
-    <div className="bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl space-y-6">
+    <div className="bg-brand-900 p-6 sm:p-8 rounded-3xl border border-brand-700 shadow-2xl space-y-6">
       <h3 className="text-xl font-black text-white">Envie uma Mensagem</h3>
 
       {status === 'success' ? (
-        <div className="bg-emerald-950/80 border border-emerald-800 text-emerald-200 p-6 rounded-2xl space-y-3">
+        <div className="bg-success/80 border border-success/50 text-success p-6 rounded-2xl space-y-3">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="text-emerald-400" size={22} />
+            <CheckCircle2 className="text-success" size={22} />
             <span className="font-bold text-base">Mensagem Enviada com Sucesso!</span>
           </div>
           <p className="text-xs leading-relaxed">
@@ -129,7 +129,7 @@ export default function ContactForm() {
           </p>
           <button
             onClick={() => setStatus('idle')}
-            className="text-xs font-bold text-emerald-400 underline hover:text-emerald-300 pt-2"
+            className="text-xs font-bold text-success underline hover:text-success pt-2"
           >
             Enviar outra mensagem
           </button>
@@ -147,7 +147,7 @@ export default function ContactForm() {
             className="absolute -left-[9999px] h-px w-px opacity-0"
           />
           <div>
-            <label htmlFor="nome" className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+            <label htmlFor="nome" className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-1">
               Nome Completo *
             </label>
             <input
@@ -164,7 +164,7 @@ export default function ContactForm() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="email" className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+              <label htmlFor="email" className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-1">
                 E-mail *
               </label>
               <input
@@ -179,7 +179,7 @@ export default function ContactForm() {
               />
             </div>
             <div>
-              <label htmlFor="telefone" className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+              <label htmlFor="telefone" className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-1">
                 Telefone / Celular *
               </label>
               <input
@@ -196,7 +196,7 @@ export default function ContactForm() {
           </div>
 
           <div>
-            <label htmlFor="assunto" className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+            <label htmlFor="assunto" className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-1">
               Assunto *
             </label>
             <select
@@ -218,7 +218,7 @@ export default function ContactForm() {
           </div>
 
           <div>
-            <label htmlFor="mensagem" className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+            <label htmlFor="mensagem" className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-1">
               Texto da Mensagem *
             </label>
             <textarea
@@ -233,22 +233,22 @@ export default function ContactForm() {
             />
           </div>
 
-          <label className="flex items-start gap-2 text-[11px] leading-relaxed text-slate-400">
+          <label className="flex items-start gap-2 text-[11px] leading-relaxed text-muted">
             <input
               type="checkbox"
               checked={consentimento}
               onChange={(event) => setConsentimento(event.target.checked)}
-              className="mt-0.5 accent-amber-500"
+              className="mt-0.5 accent-gold"
               required
             />
             <span>
               Autorizo o uso dos meus dados para receber resposta sobre esta mensagem, conforme a{' '}
-              <a href="/politica-de-privacidade" target="_blank" className="font-bold text-amber-400 underline">Política de Privacidade</a>.
+              <a href="/politica-de-privacidade" target="_blank" className="font-bold text-gold underline">Política de Privacidade</a>.
             </span>
           </label>
 
           {status === 'error' && (
-            <div className="flex items-center gap-2 text-xs text-red-200 bg-red-950/80 p-3 rounded-xl border border-red-800">
+            <div className="flex items-center gap-2 text-xs text-danger bg-danger/80 p-3 rounded-xl border border-danger/50">
               <AlertCircle size={16} />
               <span>Ocorreu um erro ao enviar. Tente novamente ou envie por e-mail.</span>
             </div>
@@ -257,7 +257,7 @@ export default function ContactForm() {
           <button
             type="submit"
             disabled={status === 'submitting' || !consentimento}
-            className="w-full bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-slate-950 font-black py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider disabled:opacity-50"
+            className="w-full bg-gradient-to-r from-gold via-gold to-gold hover:from-gold hover:to-gold text-brand-950 font-black py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider disabled:opacity-50"
           >
             <Send size={16} />
             {status === 'submitting' ? 'Enviando...' : 'Enviar Mensagem'}

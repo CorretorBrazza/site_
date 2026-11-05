@@ -31,21 +31,21 @@ export default function Navbar() {
     };
 
   return (
-    <nav className="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 transition-colors shadow-xs">
+    <nav className="bg-white/95 backdrop-blur-md border-b border-line sticky top-0 z-50 transition-colors shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
 
           {/* Logo Principal */}
           <div className="flex-shrink-0">
             <Link href="/" className="group flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 flex items-center justify-center text-white shadow-md shadow-blue-600/20 group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-900 via-brand-800 to-brand-800 flex items-center justify-center text-white shadow-md shadow-brand-900/20/20 group-hover:scale-105 transition-transform">
                 <Building2 className="w-6 h-6 text-white" />
               </div>
               <div className="flex flex-col">
-                <span className="text-xl md:text-2xl font-black text-slate-900 tracking-tight leading-none group-hover:text-blue-600 transition-colors">
-                  Imóveis <span className="text-blue-600">Taboão</span>
+                <span className="text-xl md:text-2xl font-black text-brand-900 tracking-tight leading-none group-hover:text-brand-800 transition-colors">
+                  Imóveis <span className="text-brand-800">Taboão</span>
                 </span>
-                <span className="text-[10px] font-bold text-slate-500 tracking-wider leading-none mt-1 uppercase">
+                <span className="text-[10px] font-bold text-muted tracking-wider leading-none mt-1 uppercase">
                   Taboão da Serra e imediações
                 </span>
               </div>
@@ -56,32 +56,32 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-6">
             <Link
               href="/venda"
-              className="text-slate-700 hover:text-blue-600 font-bold text-sm transition-colors py-2"
+              className="text-ink hover:text-brand-800 font-bold text-sm transition-colors py-2"
             >
               Comprar
             </Link>
             <Link
               href="/locacao"
-              className="text-slate-700 hover:text-blue-600 font-bold text-sm transition-colors py-2"
+              className="text-ink hover:text-brand-800 font-bold text-sm transition-colors py-2"
             >
               Alugar
             </Link>
             <Link
               href="/como-funciona"
-              className="text-slate-700 hover:text-blue-600 font-bold text-sm transition-colors py-2"
+              className="text-ink hover:text-brand-800 font-bold text-sm transition-colors py-2"
             >
               Como Funciona
             </Link>
             <Link
               href="/demo"
-              className="text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg font-bold text-xs transition-colors flex items-center gap-1 border border-blue-200"
+              className="text-brand-800 hover:text-brand-800 bg-brand-900/5 hover:bg-brand-900/5 px-3 py-1.5 rounded-lg font-bold text-xs transition-colors flex items-center gap-1 border border-brand-700/30"
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>Testar IA Demo</span>
             </Link>
             <Link
               href="/planos"
-              className="text-slate-700 hover:text-blue-600 font-bold text-sm transition-colors py-2"
+              className="text-ink hover:text-brand-800 font-bold text-sm transition-colors py-2"
             >
               Planos & Preços
             </Link>
@@ -90,7 +90,7 @@ export default function Navbar() {
               <div className="flex items-center gap-2">
                 <Link
                   href="/dashboard"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-extrabold transition-all shadow-md shadow-blue-600/20 flex items-center gap-2"
+                  className="bg-brand-900 hover:bg-brand-800 text-white px-5 py-2.5 rounded-xl text-sm font-extrabold transition-all shadow-md shadow-brand-900/20/20 flex items-center gap-2"
                 >
                   <LayoutDashboard className="w-4 h-4" />
                   <span>Meu Painel ({usuario.nome?.split(' ')[0] || 'Corretor'})</span>
@@ -98,7 +98,7 @@ export default function Navbar() {
                 <button
                   onClick={handleLogout}
                   title="Sair da Conta"
-                  className="p-2.5 text-slate-400 hover:text-red-600 hover:bg-slate-100 rounded-xl transition-colors"
+                  className="p-2.5 text-muted hover:text-danger hover:bg-paper rounded-xl transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
                 </button>
@@ -106,7 +106,7 @@ export default function Navbar() {
             ) : (
               <Link
                 href="/login"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl text-sm font-extrabold transition-all shadow-md shadow-blue-600/20 flex items-center gap-2"
+                className="bg-brand-900 hover:bg-brand-800 text-white px-6 py-2.5 rounded-xl text-sm font-extrabold transition-all shadow-md shadow-brand-900/20/20 flex items-center gap-2"
               >
                 <User className="w-4 h-4" />
                 <span>Entrar / Cadastrar-se</span>
@@ -119,7 +119,7 @@ export default function Navbar() {
             {usuario ? (
               <Link
                 href="/dashboard"
-                className="bg-blue-600 text-white px-3 py-2 rounded-xl font-bold text-xs flex items-center gap-1 shadow-sm"
+                className="bg-brand-900 text-white px-3 py-2 rounded-xl font-bold text-xs flex items-center gap-1 shadow-sm"
               >
                 <LayoutDashboard className="w-4 h-4" />
                 <span>Painel</span>
@@ -127,7 +127,7 @@ export default function Navbar() {
             ) : (
               <Link
                 href="/login"
-                className="bg-blue-600 text-white px-3.5 py-2 rounded-xl font-bold text-xs flex items-center gap-1 shadow-sm"
+                className="bg-brand-900 text-white px-3.5 py-2 rounded-xl font-bold text-xs flex items-center gap-1 shadow-sm"
               >
                 <User className="w-4 h-4" />
                 <span>Entrar</span>
@@ -137,7 +137,7 @@ export default function Navbar() {
             <button
               onClick={() => setIsOpen(!isOpen)}
               aria-label="Abrir Menu"
-              className="p-2 text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl transition-colors"
+              className="p-2 text-ink hover:text-brand-900 bg-paper hover:bg-line border border-line rounded-xl transition-colors"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -147,16 +147,16 @@ export default function Navbar() {
 
       {/* Drawer Menu Mobile */}
       {isOpen && (
-        <div className="md:hidden bg-white border-b border-slate-200 absolute w-full left-0 animate-in fade-in slide-in-from-top-4 duration-300 shadow-2xl z-50">
+        <div className="md:hidden bg-white border-b border-line absolute w-full left-0 animate-in fade-in slide-in-from-top-4 duration-300 shadow-2xl z-50">
           <div className="px-4 py-6 space-y-3">
-            <div className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-2 mb-1">
+            <div className="text-[11px] font-bold text-muted uppercase tracking-widest px-2 mb-1">
               Imóveis em Taboão da Serra e imediações
             </div>
 
             <Link
               href="/venda"
               onClick={() => setIsOpen(false)}
-              className="block text-base font-bold text-slate-800 hover:text-blue-600 py-3 px-3 rounded-xl hover:bg-slate-50 border-b border-slate-100 transition-colors"
+              className="block text-base font-bold text-ink hover:text-brand-800 py-3 px-3 rounded-xl hover:bg-paper border-b border-line transition-colors"
             >
               🏠 Comprar Imóveis
             </Link>
@@ -164,7 +164,7 @@ export default function Navbar() {
             <Link
               href="/locacao"
               onClick={() => setIsOpen(false)}
-              className="block text-base font-bold text-slate-800 hover:text-blue-600 py-3 px-3 rounded-xl hover:bg-slate-50 border-b border-slate-100 transition-colors"
+              className="block text-base font-bold text-ink hover:text-brand-800 py-3 px-3 rounded-xl hover:bg-paper border-b border-line transition-colors"
             >
               🔑 Alugar Imóveis
             </Link>
@@ -172,7 +172,7 @@ export default function Navbar() {
             <Link
               href="/como-funciona"
               onClick={() => setIsOpen(false)}
-              className="block text-base font-bold text-slate-800 hover:text-blue-600 py-3 px-3 rounded-xl hover:bg-slate-50 border-b border-slate-100 transition-colors"
+              className="block text-base font-bold text-ink hover:text-brand-800 py-3 px-3 rounded-xl hover:bg-paper border-b border-line transition-colors"
             >
               💡 Como Funciona
             </Link>
@@ -180,16 +180,16 @@ export default function Navbar() {
             <Link
               href="/demo"
               onClick={() => setIsOpen(false)}
-              className="block text-base font-bold text-blue-600 bg-blue-50 py-3 px-3 rounded-xl border-b border-blue-100 transition-colors flex items-center justify-between"
+              className="block text-base font-bold text-brand-800 bg-brand-900/5 py-3 px-3 rounded-xl border-b border-brand-700/30 transition-colors flex items-center justify-between"
             >
               <span>✨ Testar IA Demo (Interativo)</span>
-              <Sparkles className="w-4 h-4 text-blue-600" />
+              <Sparkles className="w-4 h-4 text-brand-800" />
             </Link>
 
             <Link
               href="/planos"
               onClick={() => setIsOpen(false)}
-              className="block text-base font-bold text-slate-800 hover:text-blue-600 py-3 px-3 rounded-xl hover:bg-slate-50 border-b border-slate-100 transition-colors"
+              className="block text-base font-bold text-ink hover:text-brand-800 py-3 px-3 rounded-xl hover:bg-paper border-b border-line transition-colors"
             >
               🏷️ Planos & Preços
             </Link>
@@ -200,14 +200,14 @@ export default function Navbar() {
                   <Link
                     href="/dashboard"
                     onClick={() => setIsOpen(false)}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3.5 rounded-xl font-black text-center block shadow-lg text-sm uppercase tracking-wider flex items-center justify-center gap-2"
+                    className="w-full bg-brand-900 hover:bg-brand-800 text-white py-3.5 rounded-xl font-black text-center block shadow-lg text-sm uppercase tracking-wider flex items-center justify-center gap-2"
                   >
                     <LayoutDashboard className="w-4 h-4" />
                     <span>Acessar Meu Painel ({usuario.nome?.split(' ')[0] || 'Corretor'})</span>
                   </Link>
                   <button
                     onClick={() => { setIsOpen(false); handleLogout(); }}
-                    className="w-full bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-600 py-3 rounded-xl font-bold text-center block text-xs transition-colors"
+                    className="w-full bg-paper hover:bg-danger/10 text-ink hover:text-danger py-3 rounded-xl font-bold text-center block text-xs transition-colors"
                   >
                     Encerrar Sessão
                   </button>
@@ -216,7 +216,7 @@ export default function Navbar() {
                 <Link
                   href="/login"
                   onClick={() => setIsOpen(false)}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3.5 rounded-xl font-black text-center block shadow-lg text-sm uppercase tracking-wider"
+                  className="w-full bg-brand-900 hover:bg-brand-800 text-white py-3.5 rounded-xl font-black text-center block shadow-lg text-sm uppercase tracking-wider"
                 >
                   Entrar / Criar Minha Conta
                 </Link>

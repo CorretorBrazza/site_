@@ -43,11 +43,11 @@ export function ReviewGallery({
 
   if (urls.length === 0) {
     return (
-      <div className="bg-white border border-slate-200 rounded-3xl p-6 text-center shadow-sm space-y-3">
-        <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto text-slate-400">
+      <div className="bg-white border border-line rounded-3xl p-6 text-center shadow-sm space-y-3">
+        <div className="w-12 h-12 bg-paper rounded-2xl flex items-center justify-center mx-auto text-muted">
           <ImageIcon className="w-6 h-6" />
         </div>
-        <p className="text-xs text-slate-500 font-semibold">Nenhuma foto encontrada para este anúncio.</p>
+        <p className="text-xs text-muted font-semibold">Nenhuma foto encontrada para este anúncio.</p>
       </div>
     );
   }
@@ -55,17 +55,17 @@ export function ReviewGallery({
   const fotoPrincipal = urls[capaIndex] || urls[0];
 
   return (
-    <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
+    <div className="bg-white border border-line rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-          <ImageIcon className="w-5 h-5 text-blue-600" />
+        <h2 className="text-base font-extrabold text-brand-900 flex items-center gap-2">
+          <ImageIcon className="w-5 h-5 text-brand-800" />
           <span>Fotos do Imóvel ({urls.length})</span>
         </h2>
-        <span className="text-[11px] font-bold text-slate-400">Toque em uma foto para definir como capa</span>
+        <span className="text-[11px] font-bold text-muted">Toque em uma foto para definir como capa</span>
       </div>
 
       {/* Foto de Capa em Destaque */}
-      <div className="relative rounded-2xl overflow-hidden bg-slate-900 border border-slate-200 aspect-[16/10] sm:aspect-[16/9] shadow-inner">
+      <div className="relative rounded-2xl overflow-hidden bg-brand-900 border border-line aspect-[16/10] sm:aspect-[16/9] shadow-inner">
         <button
           type="button"
           onClick={() => setSelectedPhotoModal(fotoPrincipal)}
@@ -79,15 +79,15 @@ export function ReviewGallery({
             className="w-full h-full object-cover cursor-zoom-in hover:scale-105 transition-transform duration-300"
           />
         </button>
-        <div className="absolute top-3 left-3 bg-blue-600/90 backdrop-blur-sm text-white text-[11px] font-black px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-md uppercase tracking-wider">
-          <Crown className="w-3.5 h-3.5 text-amber-300" />
+        <div className="absolute top-3 left-3 bg-brand-900/90 backdrop-blur-sm text-white text-[11px] font-black px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-md uppercase tracking-wider">
+          <Crown className="w-3.5 h-3.5 text-gold" />
           Foto de Capa Ativa
         </div>
       </div>
 
       {/* Grid de Seleção de Capa */}
       <div className="space-y-2">
-        <p className="text-xs font-bold text-slate-700">Selecione a foto principal (Capa):</p>
+        <p className="text-xs font-bold text-ink">Selecione a foto principal (Capa):</p>
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
           {urls.map((foto, idx) => {
             const isSelected = idx === capaIndex;
@@ -101,23 +101,23 @@ export function ReviewGallery({
                 onClick={() => onSelectCover(idx)}
                 className={`group relative rounded-xl overflow-hidden aspect-square border-2 transition-all duration-200 text-left ${
                   isSelected
-                    ? 'border-blue-600 ring-2 ring-blue-600/30 scale-95 shadow-md'
-                    : 'border-slate-200 hover:border-blue-400 opacity-80 hover:opacity-100'
+                    ? 'border-brand-700 ring-2 ring-brand-700/30 scale-95 shadow-md'
+                    : 'border-line hover:border-brand-700 opacity-80 hover:opacity-100'
                 }`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={foto} alt={`Foto ${idx + 1}`} className="w-full h-full object-cover" />
 
                 {isSelected && (
-                  <div className="absolute inset-0 bg-blue-900/30 flex items-center justify-center">
-                    <span className="bg-blue-600 text-white rounded-full p-1 shadow-md">
+                  <div className="absolute inset-0 bg-brand-800/30 flex items-center justify-center">
+                    <span className="bg-brand-900 text-white rounded-full p-1 shadow-md">
                       <Check className="w-4 h-4 stroke-[3]" />
                     </span>
                   </div>
                 )}
 
                 {isIaSuggested && !isSelected && (
-                  <div className="absolute top-1 right-1 bg-amber-500 text-slate-900 text-[9px] font-black px-1.5 py-0.5 rounded-md shadow flex items-center gap-0.5">
+                  <div className="absolute top-1 right-1 bg-gold text-brand-900 text-[9px] font-black px-1.5 py-0.5 rounded-md shadow flex items-center gap-0.5">
                     <Sparkles className="w-2.5 h-2.5" />
                     IA
                   </div>
