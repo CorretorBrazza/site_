@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -46,3 +47,13 @@ next-env.d.ts
 # Arquivos locais de desenvolvimento e logs de build
 build_output.txt
 run_dev.bat
+
+# Artefatos locais de auditoria (não fazem parte do produto)
+03_estrutura_frontend.txt
+04_frontend_completo.txt
+analisar_04_frontend.ps1
+*auditoria*.txt
+relatorio_04_frontend.txt
+validar_pos_refatoracao.bat
+
+gerar_auditoria.py
