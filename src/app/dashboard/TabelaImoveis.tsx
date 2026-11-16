@@ -11,517 +11,261 @@ import { HardDrive, RefreshCw, Trash2, Edit, Sparkles, Clock, ExternalLink, Circ
 
 interface TabelaImoveisProps {
   imoveis: Imovel[];
+  saldoDisponivel?: number;
 }
 
 const statusMeta = (rawStatus?: string) => {
   const status = String(rawStatus || '').toUpperCase();
   if (['DELIVERED', 'PUBLISHED', 'ATIVO'].includes(status)) return { label: 'Publicado', note: 'Pronto para divulgação', tone: 'bg-success/10 text-success border-success/30' };
   if (['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW'].includes(status)) return { label: 'Aguardando aprovação', note: 'Confira o link enviado no WhatsApp', tone: 'bg-gold/10 text-gold border-gold/30' };
-  if (['AWAITING_CREDITS', 'SEM_SALDO'].includes(status)) return { label: 'Aguardando crédito', note: 'Recarregue para liberar a aprovação', tone: 'bg-danger/10 text-danger border-danger/30' };
-  if (['REJECTED'].includes(status)) return { label: 'Precisa de ajuste', note: 'Revise e gere uma nova versão', tone: 'bg-danger/10 text-danger border-danger/30' };
-  if (['EXPIRED', 'EXPIRADO'].includes(status)) return { label: 'Expirado', note: 'Reative usando 1 crédito', tone: 'bg-danger/10 text-danger border-danger/30' };
-  if (['DELETED', 'DELETEED'].includes(status)) return { label: 'Excluído', note: 'Este anúncio foi excluído', tone: 'bg-paper text-muted border-line' };
-  return { label: 'Em processamento', note: 'Estamos preparando seu anúncio', tone: 'bg-brand-900/5 text-brand-800 border-brand-700/30' };
+  if (['AWAITING_CREDITS', 'SEM_SALDO'].includes(status)) return { label: 'Aguardando liberação', note: 'Verifique saldo disponível ou reprocessamento', tone: 'bg-danger/10 text-danger border-danger/30' };
+  if (status === 'EXPIRED') return { label: 'Expirado', note: 'Renove para voltar ao ar', tone: 'bg-muted/10 text-muted border-muted/30' };
+  if (['FAILED', 'REJECTED'].includes(status)) return { label: 'Com pendência', note: 'Revise os dados antes de publicar', tone: 'bg-danger/10 text-danger border-danger/30' };
+  return { label: 'Em análise', note: 'Estamos preparando este anúncio', tone: 'bg-brand-800/5 text-brand-900 border-line' };
 };
 
-/**
- * Escolhe a foto de capa respeitando o índice definido no Link Dinâmico.
- * O índice é normalizado antes de indexar: `NaN`, negativos, fracionários e
- * valores maiores que a lista caem na primeira foto, e anúncio sem foto não
- * gera acesso fora do vetor.
- */
-const escolherFotoCapa = (fotos: string[] | undefined, indice?: number): string | null => {
-  const lista = Array.isArray(fotos) ? fotos : [];
-  if (lista.length === 0) return null;
-  const bruto = Number(indice ?? 0);
-  const indiceSeguro = Number.isFinite(bruto) ? Math.trunc(bruto) : 0;
-  const indiceLimitado = Math.min(Math.max(0, indiceSeguro), lista.length - 1);
-  return lista[indiceLimitado] ?? lista[0] ?? null;
-};
-
-export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
-  const [filtroTransacao, setFiltroTransacao] = useState<'Todos' | 'Venda' | 'Locação'>('Todos');
-  const [renovandoId, setRenovandoId] = useState<string | null>(null);
-  const [copiadoLinkId, setCopiadoLinkId] = useState<string | null>(null);
-
-  // Estados dos modais
-  const [exclusaoModal, setExclusaoModal] = useState<{ isOpen: boolean; adId: string; referencia: string }>({
-    isOpen: false,
-    adId: '',
-    referencia: '',
-  });
-
-  const [acervoModal, setAcervoModal] = useState<{ isOpen: boolean; adId: string; referencia: string }>({
-    isOpen: false,
-    adId: '',
-    referencia: '',
-  });
-
-  const [mediaKitModal, setMediaKitModal] = useState<{ isOpen: boolean; referencia: string; mediaKit: any }>({
-    isOpen: false,
-    referencia: '',
-    mediaKit: null,
-  });
-
-  const handleRenovar = async (adId: string, ref: string) => {
-    if (!confirm(`Deseja reativar o imóvel ${ref} por mais 90 dias usando 1 crédito?`)) return;
-
-    setRenovandoId(adId);
-    try {
-      const json = await fetchBrokerApi('/anuncios/renovar', {
-        method: 'POST',
-        body: JSON.stringify({ ad_id: adId }),
-      });
-      if (json.success) {
-        alert(json.message || 'Anúncio renovado por mais 90 dias!');
-        window.location.reload();
-      } else {
-        alert(json.message || 'Saldo insuficiente para renovar.');
-      }
-    } catch {
-      alert('Erro ao renovar anúncio.');
-    } finally {
-      setRenovandoId(null);
-    }
-  };
-
-  const formatCurrency = (val?: number | null) => {
-    if (!val) return 'Consulte';
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
-  };
-
-  // Link público amigável: usa a referência (imutável) em vez do token/UUID do anúncio.
-  const linkPublicoDoImovel = (imovel: Imovel) =>
-    `/imovel/${encodeURIComponent(imovel.referencia || imovel.id)}`;
+export default function TabelaImoveis({ imoveis, saldoDisponivel }: TabelaImoveisProps) {
+  const [selecionadoParaExcluir, setSelecionadoParaExcluir] = useState<Imovel | null>(null);
+  const [selecionadoParaBackup, setSelecionadoParaBackup] = useState<Imovel | null>(null);
+  const [selecionadoParaIA, setSelecionadoParaIA] = useState<Imovel | null>(null);
+  const [linkCopiadoId, setLinkCopiadoId] = useState<string | null>(null);
+  const [loadingIA, setLoadingIA] = useState<string | null>(null);
 
   const handleCopiarLink = async (imovel: Imovel) => {
-    const url = `${window.location.origin}${linkPublicoDoImovel(imovel)}`;
+    const referencia = imovel.referencia || imovel.id;
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://imoveistaboao.com.br';
+    const link = `${baseUrl}/imovel/${referencia}`;
     try {
-      await navigator.clipboard.writeText(url);
-      setCopiadoLinkId(imovel.id);
-      setTimeout(() => setCopiadoLinkId(null), 2500);
+      await navigator.clipboard.writeText(link);
+      setLinkCopiadoId(imovel.id);
+      setTimeout(() => setLinkCopiadoId(null), 2500);
     } catch {
-      window.prompt('Não foi possível copiar automaticamente — selecione e copie o link abaixo:', url);
+      // fallback
     }
   };
 
-  const imoveisFiltrados = imoveis.filter((imovel) => {
-    if (filtroTransacao === 'Todos') return true;
-    const raw = String(imovel.transacao || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-    if (filtroTransacao === 'Venda') return raw.includes('venda') || raw.includes('compra') || Boolean(imovel.precoVenda);
-    if (filtroTransacao === 'Locação') return raw.includes('loca') || raw.includes('alug') || Boolean(imovel.precoLocacao);
-    return true;
-  });
+  const handleAcaoIA = async (imovel: Imovel) => {
+    setLoadingIA(imovel.id);
+    try {
+      const res = await fetchBrokerApi(`/me/anuncios/${imovel.id}/regenerar`, {
+        method: 'POST',
+      });
 
-  return (
-    <div className="bg-white rounded-3xl border border-line shadow-sm overflow-hidden">
-      {/* Barra de Filtros */}
-      <div className="p-4 sm:p-5 border-b border-line flex flex-wrap items-center justify-between gap-4 bg-paper">
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-bold text-muted uppercase tracking-wider">Filtrar por:</span>
-          <div className="inline-flex p-1 bg-white rounded-xl border border-line text-xs font-semibold shadow-xs">
-            <button
-              onClick={() => setFiltroTransacao('Todos')}
-              className={`px-3.5 py-1.5 rounded-lg transition-all ${
-                filtroTransacao === 'Todos'
-                  ? 'bg-brand-900 text-white font-extrabold shadow-sm'
-                  : 'text-ink hover:text-brand-900'
-              }`}
-            >
-              Todos ({imoveis.length})
-            </button>
-            <button
-              onClick={() => setFiltroTransacao('Venda')}
-              className={`px-3.5 py-1.5 rounded-lg transition-all ${
-                filtroTransacao === 'Venda'
-                  ? 'bg-brand-900 text-white font-extrabold shadow-sm'
-                  : 'text-ink hover:text-brand-900'
-              }`}
-            >
-              Venda
-            </button>
-            <button
-              onClick={() => setFiltroTransacao('Locação')}
-              className={`px-3.5 py-1.5 rounded-lg transition-all ${
-                filtroTransacao === 'Locação'
-                  ? 'bg-brand-900 text-white font-extrabold shadow-sm'
-                  : 'text-ink hover:text-brand-900'
-              }`}
-            >
-              Locação
-            </button>
+      if (res.success) {
+        const msg = res.data?.message || '✅ Texto otimizado gerado com sucesso! A página será recarregada para exibir as atualizações.';
+        alert(msg);
+        window.location.reload();
+      } else {
+        alert('❌ Erro ao regenerar com IA: ' + (res.error || 'Falha de comunicação.'));
+      }
+    } catch (err: any) {
+      alert('❌ Falha na requisição: ' + err.message);
+    } finally {
+      setLoadingIA(null);
+    }
+  };
+
+  const temSaldoDisponivel = Number(saldoDisponivel ?? 1) > 0;
+
+  if (imoveis.length === 0) {
+    return (
+      <div className="bg-white border border-line rounded-3xl shadow-sm overflow-hidden">
+        <div className="p-8 sm:p-10 text-center space-y-4">
+          <div className="w-14 h-14 rounded-2xl bg-brand-900/5 border border-brand-700/20 flex items-center justify-center mx-auto">
+            <Sparkles className="w-7 h-7 text-brand-800" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-lg font-bold text-brand-900">Nenhum imóvel no painel ainda</h3>
+            <p className="text-sm text-muted max-w-md mx-auto">
+              Envie seu primeiro imóvel para acompanhar status, aprovação, publicação e vitrine em um só lugar.
+            </p>
+          </div>
+          <div className="pt-1">
+            <Link href="/dashboard/novo" className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-900 text-white text-sm font-bold hover:bg-brand-800 transition-colors">
+              <Sparkles className="w-4 h-4" /> Cadastrar primeiro imóvel
+            </Link>
           </div>
         </div>
+      </div>
+    );
+  }
 
-        <span className="text-xs text-muted font-semibold">
-          Exibindo <strong className="text-brand-900 font-bold">{imoveisFiltrados.length}</strong> de <strong className="text-brand-900 font-bold">{imoveis.length}</strong> imóveis
-        </span>
+  return (
+    <div className="bg-white border border-line rounded-3xl shadow-sm overflow-hidden text-brand-900">
+      <div className="p-4 sm:p-6 border-b border-line flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-paper/50">
+        <div>
+          <h3 className="text-lg font-bold text-brand-900">Acompanhamento de Imóveis</h3>
+          <p className="text-xs text-muted mt-1">Status claro para saber o que está publicado, pendente ou aguardando ação.</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-[11px] text-muted bg-white border border-line rounded-full px-3 py-1">
+            {imoveis.length} {imoveis.length === 1 ? 'imóvel' : 'imóveis'}
+          </span>
+          <button onClick={() => window.location.reload()} className="p-2 rounded-xl border border-line hover:bg-brand-50 transition-colors" title="Atualizar lista" aria-label="Atualizar lista">
+            <RefreshCw className="w-4 h-4 text-muted" />
+          </button>
+        </div>
       </div>
 
-      {imoveisFiltrados.length > 0 ? (
-        <>
-          {/* Desktop: tabela completa (hidden no mobile) */}
-          <div className="hidden md:block overflow-x-auto">
-            <table className="w-full text-left border-collapse hidden md:table">
-            <thead className="bg-paper text-ink uppercase text-[11px] font-extrabold tracking-wider border-b border-line">
-              <tr>
-                <th className="px-5 py-4 w-20 text-center">Foto Capa</th>
-                <th className="px-5 py-4">Ref</th>
-                <th className="px-6 py-4">Imóvel / Detalhes</th>
-                <th className="px-5 py-4">Valor</th>
-                <th className="px-5 py-4">Status / Validade</th>
-                <th className="px-6 py-4">Media Kit & Acervo</th>
-                <th className="px-5 py-4 text-right">Ações</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-line text-ink text-xs">
-              {imoveisFiltrados.map((imovel) => {
-                const fotoCapa = escolherFotoCapa(imovel.fotos, imovel.capa_index);
-                const rawStatus = String(imovel.workflow_status || imovel.status || '').toUpperCase();
-                // A expiracao e CALCULADA pela API, nunca gravada no documento: nenhum
-                // codigo escreve 'EXPIRED'. Ler so o status deixava o botao de renovar
-                // permanentemente invisivel, e o anuncio saia do ar sem caminho de volta.
-                const isExpirado = ['EXPIRED', 'EXPIRADO'].includes(rawStatus) || imovel.expirado === true;
-                // Renovar e possivel enquanto o anuncio estiver no ar e a regra de
-                // validade estiver ativa, mesmo antes de vencer.
-                const podeRenovar = imovel.pode_renovar === true;
-                const isAtivo = ['DELIVERED', 'PUBLISHED', 'ATIVO'].includes(rawStatus);
-                const isExcluido = ['DELETED', 'DELETEED'].includes(rawStatus);
-                const status = statusMeta(isExpirado ? 'EXPIRED' : rawStatus);
-                const rawTransacao = String(imovel.transacao || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-                const isLoc = rawTransacao.includes('loca') || rawTransacao.includes('alug');
-                const valorExibicao = isLoc
-                  ? formatCurrency(imovel.precoLocacao || imovel.precoVenda)
-                  : formatCurrency(imovel.precoVenda || imovel.precoLocacao);
+      {/* Mobile-first: cards */}
+      <div className="md:hidden divide-y divide-line">
+        {imoveis.map((imovel) => {
+          const statusInfo = statusMeta(imovel.status as string);
+          const isAtivo = ['DELIVERED', 'PUBLISHED', 'ATIVO'].includes(String(imovel.status || '').toUpperCase());
+          const isAwaiting = ['AWAITING_CREDITS', 'SEM_SALDO'].includes(String(imovel.status || '').toUpperCase());
+          const isPendingApproval = ['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW'].includes(String(imovel.status || '').toUpperCase());
+          const referencia = imovel.referencia || imovel.id;
 
-                return (
-                  <tr key={imovel.id} className="hover:bg-paper transition-colors">
-                    
-                    {/* Foto Capa + Badge de Contagem */}
-                    <td className="px-5 py-4 text-center">
-                      <div className="relative inline-block group">
-                        {fotoCapa ? (
-                          <img
-                            src={fotoCapa}
-                            alt={imovel.titulo}
-                            loading="lazy"
-                            decoding="async"
-                            className="w-14 h-14 rounded-xl object-cover border border-line shadow-sm group-hover:scale-105 transition-transform"
-                          />
-                        ) : (
-                          <div className="w-14 h-14 rounded-xl bg-paper border border-line flex items-center justify-center text-muted text-[10px] font-bold">
-                            Sem foto
-                          </div>
-                        )}
-                        <span className="absolute -bottom-1 -right-1 bg-brand-900 text-white text-[9px] font-black px-1.5 py-0.5 rounded-md shadow-sm">
-                          {imovel.fotos?.length || 0} 📷
-                        </span>
-                      </div>
-                    </td>
+          return (
+            <div key={imovel.id} className="p-4 space-y-3">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-bold text-sm text-brand-900 leading-snug line-clamp-2">
+                    {imovel.titulo || `Imóvel ${referencia}`}
+                  </p>
+                  <p className="text-[11px] text-muted mt-1">Ref: {referencia} • {imovel.endereco?.bairro || 'Taboão da Serra'}</p>
+                </div>
+                <span className={`shrink-0 px-2.5 py-1 rounded-full text-[10px] font-bold border ${statusInfo.tone}`}>
+                  {statusInfo.label}
+                </span>
+              </div>
 
-                    {/* Referência */}
-                    <td className="px-5 py-4 font-mono font-black text-brand-800 uppercase text-sm">
-                      {imovel.referencia}
-                    </td>
+              <div className="text-[11px] text-muted leading-snug">
+                {statusInfo.note}
+                {isAwaiting && !temSaldoDisponivel ? ' (saldo disponível insuficiente)' : ''}
+                {isAwaiting && temSaldoDisponivel ? ' (há saldo disponível; pode exigir nova tentativa/reprocessamento)' : ''}
+              </div>
 
-                    {/* Título & Bairro */}
-                    <td className="px-6 py-4">
-                      <div className="font-bold text-brand-900 line-clamp-2 max-w-xs">{imovel.titulo}</div>
-                      <div className="text-[11px] text-muted mt-1 font-semibold flex items-center gap-1.5">
-                        <span className="text-brand-800 font-bold">{imovel.transacao}</span> • <span>{imovel.bairro}</span>
-                      </div>
-                    </td>
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                {isAtivo ? (
+                  <Link href={`/imovel/${referencia}`} target="_blank" className="col-span-2 inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-brand-900 text-white text-xs font-bold">
+                    <ExternalLink className="w-4 h-4" /> Ver anúncio publicado
+                  </Link>
+                ) : (
+                  <div className="col-span-2 inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-paper border border-line text-xs font-semibold text-muted">
+                    <CircleAlert className="w-4 h-4" />
+                    {isPendingApproval ? 'Aguardando sua aprovação' : isAwaiting ? 'Aguardando liberação/publicação' : 'Em processamento'}
+                  </div>
+                )}
 
-                    {/* Valor */}
-                    <td className="px-5 py-4 font-black text-success whitespace-nowrap text-sm">
-                      {valorExibicao}
-                    </td>
+                <button onClick={() => handleCopiarLink(imovel)} className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50">
+                  {linkCopiadoId === imovel.id ? <Check className="w-4 h-4 text-success" /> : <Link2 className="w-4 h-4" />}
+                  {linkCopiadoId === imovel.id ? 'Copiado' : 'Copiar link'}
+                </button>
+                <button onClick={() => setSelecionadoParaIA(imovel)} disabled={loadingIA === imovel.id} className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50 disabled:opacity-50">
+                  {loadingIA === imovel.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                  IA
+                </button>
+                <button onClick={() => setSelecionadoParaBackup(imovel)} className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50">
+                  <HardDrive className="w-4 h-4" /> Fotos
+                </button>
+                <Link href={`/dashboard/imoveis/${imovel.id}`} className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50">
+                  <Edit className="w-4 h-4" /> Editar
+                </Link>
+              </div>
+            </div>
+          );
+        })}
+      </div>
 
-                    {/* Status / Validade */}
-                    <td className="px-5 py-4">
-                      <div className="flex flex-col gap-1 items-start">
-                        <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider shadow-xs border ${status.tone}`}>
-                          {status.label}
-                        </span>
-                        <span className="text-[10px] text-muted flex items-center gap-1 max-w-40 font-medium">
-                          {isAtivo ? <Clock className="w-3 h-3 text-muted" /> : <CircleAlert className="w-3 h-3 text-muted" />} {isAtivo ? '90 dias de validade' : status.note}
-                        </span>
-                      </div>
-                    </td>
-
-                    {/* Media Kit e acervo */}
-                    <td className="px-6 py-4">
-                      {isAtivo ? (
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-                          <button
-                            onClick={() => setMediaKitModal({ isOpen: true, referencia: imovel.referencia, mediaKit: (imovel as any).media_kit || null })}
-                            className="bg-brand-900 hover:bg-brand-800 text-white px-3 py-1.5 rounded-xl text-xs font-black transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap"
-                          >
-                            <Sparkles className="w-3.5 h-3.5" />
-                            Media Kit IA
-                          </button>
-
-                          <button
-                            onClick={() => setAcervoModal({ isOpen: true, adId: imovel.id, referencia: imovel.referencia })}
-                            className="bg-white hover:bg-paper text-ink border border-line px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap shadow-xs"
-                          >
-                            <HardDrive className="w-3.5 h-3.5 text-brand-800" />
-                            Fotos R2
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="text-[11px] text-muted font-medium flex items-center gap-1">
-                          <Sparkles className="w-3.5 h-3.5 opacity-50" />
-                          <span>Liberado após aprovação</span>
-                        </div>
-                      )}
-                    </td>
-
-                    {/* Ações */}
-                    <td className="px-5 py-4 text-right whitespace-nowrap">
-                      <div className="flex items-center justify-end gap-1.5">
-                        {isAtivo && (
-                          <>
-                            <button
-                              onClick={() => handleCopiarLink(imovel)}
-                              title="Copiar Link do Anúncio"
-                              className={`p-2 rounded-xl transition-colors ${
-                                copiadoLinkId === imovel.id ? 'text-success bg-success/10' : 'text-muted hover:text-brand-800 hover:bg-paper'
-                              }`}
-                            >
-                              {copiadoLinkId === imovel.id ? <Check className="w-4 h-4" /> : <Link2 className="w-4 h-4" />}
-                            </button>
-                            <Link
-                              href={linkPublicoDoImovel(imovel)}
-                              target="_blank"
-                              title="Visualizar Anúncio no Site"
-                              className="p-2 text-muted hover:text-brand-800 hover:bg-paper rounded-xl transition-colors"
-                            >
-                              <ExternalLink className="w-4 h-4" />
-                            </Link>
-                          </>
-                        )}
-
-                        {!isExcluido && (
-                          <Link
-                            href={`/dashboard/editar/${imovel.id}`}
-                            title="Editar Anúncio"
-                            className="p-2 text-muted hover:text-brand-800 hover:bg-paper rounded-xl transition-colors"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Link>
-                        )}
-
-                        {(isExpirado || podeRenovar) && (
-                          <button
-                            onClick={() => handleRenovar(imovel.id, imovel.referencia)}
-                            disabled={renovandoId === imovel.id}
-                            title={isExpirado ? 'Reativar por 90 dias (1 crédito)' : `Renovar por 90 dias (1 crédito)${imovel.dias_restantes != null ? ` — restam ${imovel.dias_restantes} dias` : ''}`}
-                            className={`p-2 rounded-xl transition-colors ${isExpirado ? 'text-gold hover:text-gold hover:bg-gold/10' : 'text-muted hover:text-ink hover:bg-paper'}`}
-                          >
-                            <RefreshCw className={`w-4 h-4 ${renovandoId === imovel.id ? 'animate-spin' : ''}`} />
-                          </button>
-                        )}
-
-                        {!isExcluido && (
-                          <button
-                            onClick={() => setExclusaoModal({ isOpen: true, adId: imovel.id, referencia: imovel.referencia })}
-                            title="Excluir Anúncio"
-                            className="p-2 text-muted hover:text-danger hover:bg-danger/10 rounded-xl transition-colors"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Mobile: Cards de Imóvel (block md:hidden) */}
-        <div className="block md:hidden divide-y divide-line">
-          {imoveisFiltrados.map((imovel) => {
-            const fotoCapa = escolherFotoCapa(imovel.fotos, imovel.capa_index);
-            const rawStatus = String(imovel.workflow_status || imovel.status || '').toUpperCase();
-            const isExpirado = ['EXPIRED', 'EXPIRADO'].includes(rawStatus) || imovel.expirado === true;
-            const podeRenovar = imovel.pode_renovar === true;
-            const isAtivo = ['DELIVERED', 'PUBLISHED', 'ATIVO'].includes(rawStatus);
-            const isExcluido = ['DELETED', 'DELETEED'].includes(rawStatus);
-            const status = statusMeta(isExpirado ? 'EXPIRED' : rawStatus);
-            const rawTransacao = String(imovel.transacao || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-            const isLoc = rawTransacao.includes('loca') || rawTransacao.includes('alug');
-            const valorExibicao = isLoc
-              ? formatCurrency(imovel.precoLocacao || imovel.precoVenda)
-              : formatCurrency(imovel.precoVenda || imovel.precoLocacao);
-
-            return (
-              <div key={`m-${imovel.id}`} className="p-4 flex flex-col gap-3 bg-white">
-                {/* Topo / Info */}
-                <div className="flex gap-3">
-                  <div className="relative shrink-0">
-                    {fotoCapa ? (
-                      <img
-                        src={fotoCapa}
-                        alt={imovel.titulo}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-20 h-20 rounded-xl object-cover border border-line shadow-sm"
-                      />
-                    ) : (
-                      <div className="w-20 h-20 rounded-xl bg-paper border border-line flex items-center justify-center text-muted text-[10px] font-bold text-center p-1">
-                        Sem foto
+      {/* Desktop: tabela */}
+      <div className="hidden md:block overflow-x-auto">
+        <table className="w-full text-left text-sm text-ink min-w-[860px]">
+          <thead className="bg-paper text-brand-900 border-b border-line">
+            <tr>
+              <th className="p-4 font-bold">Imóvel / Status</th>
+              <th className="p-4 font-bold">Detalhes</th>
+              <th className="p-4 font-bold text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-line">
+            {imoveis.map((imovel) => {
+              const statusInfo = statusMeta(imovel.status as string);
+              const isAtivo = ['DELIVERED', 'PUBLISHED', 'ATIVO'].includes(String(imovel.status || '').toUpperCase());
+              const isAwaiting = ['AWAITING_CREDITS', 'SEM_SALDO'].includes(String(imovel.status || '').toUpperCase());
+              const referencia = imovel.referencia || imovel.id;
+              return (
+                <tr key={imovel.id} className="hover:bg-brand-50/50 transition-colors">
+                  <td className="p-4 align-top">
+                    <div className="font-bold text-brand-900 mb-1 line-clamp-2">{imovel.titulo || `Imóvel ${referencia}`}</div>
+                    <div className="text-xs text-muted">Ref: {referencia}</div>
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${statusInfo.tone}`}>{statusInfo.label}</span>
+                      <span className="text-[11px] text-muted">{statusInfo.note}</span>
+                    </div>
+                    {isAwaiting && (
+                      <div className="mt-1 text-[11px] text-muted">
+                        {temSaldoDisponivel ? 'Há saldo disponível; se persistir, tente reprocessar/atualizar.' : 'Saldo disponível insuficiente no momento.'}
                       </div>
                     )}
-                    <span className="absolute -bottom-1.5 -right-1.5 bg-brand-900 text-white text-[9px] font-black px-1.5 py-0.5 rounded-md shadow-sm">
-                      {imovel.fotos?.length || 0} 📷
-                    </span>
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2">
-                      <span className="font-mono font-black text-brand-800 uppercase text-xs leading-tight">
-                        {imovel.referencia}
-                      </span>
-                      <span className={`px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider border whitespace-nowrap ${status.tone}`}>
-                        {status.label}
-                      </span>
+                  </td>
+                  <td className="p-4 align-top">
+                    <div className="space-y-1 text-xs">
+                      <div className="flex items-center gap-2"><span className="text-muted">Bairro:</span><span className="font-medium">{imovel.endereco?.bairro || 'Taboão da Serra'}</span></div>
+                      <div className="flex items-center gap-2"><span className="text-muted">Tipo:</span><span className="font-medium">{imovel.tipoImovel || imovel.tipo || '-'}</span></div>
+                      <div className="flex items-center gap-2"><span className="text-muted">Transação:</span><span className="font-medium">{imovel.transacao || '-'}</span></div>
                     </div>
-                    <p className="text-[13px] font-bold text-brand-900 line-clamp-2 mt-1">{imovel.titulo}</p>
-                    <p className="text-[11px] text-muted mt-1 font-semibold flex items-center gap-1.5">
-                      <span className="text-brand-800 font-bold">{imovel.transacao}</span>
-                      <span className="truncate">• {imovel.bairro}</span>
-                    </p>
-                  </div>
-                </div>
-
-                {/* Destaque: Preço */}
-                <div className="flex items-baseline justify-between gap-2">
-                  <span className="text-xl font-black text-success">{valorExibicao}</span>
-                  <span className="text-[10px] text-muted flex items-center gap-1 shrink-0">
-                    {isAtivo ? <Clock className="w-3 h-3 text-muted" /> : <CircleAlert className="w-3 h-3 text-muted" />}
-                    {isAtivo ? '90 dias' : status.note}
-                  </span>
-                </div>
-
-                {/* Rodapé de Ações */}
-                <div className="flex items-center gap-2 flex-wrap">
-                  {isAtivo ? (
-                    <>
-                      <button
-                        onClick={() => setMediaKitModal({ isOpen: true, referencia: imovel.referencia, mediaKit: (imovel as any).media_kit || null })}
-                        className="bg-brand-900 hover:bg-brand-800 text-white px-3 py-1.5 rounded-xl text-[11px] font-black transition-all shadow-sm flex items-center gap-1.5"
-                      >
-                        <Sparkles className="w-3.5 h-3.5" />
-                        Media Kit IA
+                  </td>
+                  <td className="p-4 align-top">
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {isAtivo ? (
+                        <Link href={`/imovel/${referencia}`} target="_blank" className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-brand-900 text-white text-xs font-bold">
+                          <ExternalLink className="w-4 h-4" /> Ver
+                        </Link>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-paper border border-line text-xs font-semibold text-muted">
+                          <Clock className="w-4 h-4" /> Pendente
+                        </span>
+                      )}
+                      <button onClick={() => handleCopiarLink(imovel)} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50">
+                        {linkCopiadoId === imovel.id ? <Check className="w-4 h-4 text-success" /> : <Link2 className="w-4 h-4" />}
                       </button>
-                      <button
-                        onClick={() => setAcervoModal({ isOpen: true, adId: imovel.id, referencia: imovel.referencia })}
-                        className="bg-white hover:bg-paper text-ink border border-line px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all flex items-center gap-1.5 shadow-xs"
-                      >
-                        <HardDrive className="w-3.5 h-3.5 text-brand-800" />
-                        Fotos R2
+                      <button onClick={() => setSelecionadoParaIA(imovel)} disabled={loadingIA === imovel.id} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50 disabled:opacity-50" title="Regenerar com IA">
+                        {loadingIA === imovel.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                       </button>
-                    </>
-                  ) : (
-                    <span className="text-[10px] text-muted font-medium flex items-center gap-1">
-                      <Sparkles className="w-3.5 h-3.5 opacity-50" />
-                      Liberado após aprovação
-                    </span>
-                  )}
-
-                  {isAtivo && (
-                    <>
-                      <button
-                        onClick={() => handleCopiarLink(imovel)}
-                        title="Copiar Link do Anúncio"
-                        className={`p-2 rounded-xl transition-colors ${
-                          copiadoLinkId === imovel.id ? 'text-success bg-success/10' : 'text-muted hover:text-brand-800 hover:bg-paper'
-                        }`}
-                      >
-                        {copiadoLinkId === imovel.id ? <Check className="w-4 h-4" /> : <Link2 className="w-4 h-4" />}
+                      <button onClick={() => setSelecionadoParaBackup(imovel)} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50" title="Fotos / acervo">
+                        <HardDrive className="w-4 h-4" />
                       </button>
-                      <Link
-                        href={linkPublicoDoImovel(imovel)}
-                        target="_blank"
-                        title="Visualizar Anúncio no Site"
-                        className="p-2 text-muted hover:text-brand-800 hover:bg-paper rounded-xl transition-colors"
-                      >
-                        <ExternalLink className="w-4 h-4" />
+                      <Link href={`/dashboard/imoveis/${imovel.id}`} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50" title="Editar">
+                        <Edit className="w-4 h-4" />
                       </Link>
-                    </>
-                  )}
+                      <button onClick={() => setSelecionadoParaExcluir(imovel)} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-danger/20 text-danger text-xs font-semibold hover:bg-danger/5" title="Excluir">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
 
-                  {!isExcluido && (
-                    <Link
-                      href={`/dashboard/editar/${imovel.id}`}
-                      title="Editar Anúncio"
-                      className="p-2 text-muted hover:text-brand-800 hover:bg-paper rounded-xl transition-colors"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Link>
-                  )}
-
-                  {(isExpirado || podeRenovar) && (
-                    <button
-                      onClick={() => handleRenovar(imovel.id, imovel.referencia)}
-                      disabled={renovandoId === imovel.id}
-                      title={isExpirado ? 'Reativar por 90 dias (1 crédito)' : `Renovar por 90 dias (1 crédito)${imovel.dias_restantes != null ? ` — restam ${imovel.dias_restantes} dias` : ''}`}
-                      className={`p-2 rounded-xl transition-colors ${isExpirado ? 'text-gold hover:text-gold hover:bg-gold/10' : 'text-muted hover:text-ink hover:bg-paper'}`}
-                    >
-                      <RefreshCw className={`w-4 h-4 ${renovandoId === imovel.id ? 'animate-spin' : ''}`} />
-                    </button>
-                  )}
-
-                  {!isExcluido && (
-                    <button
-                      onClick={() => setExclusaoModal({ isOpen: true, adId: imovel.id, referencia: imovel.referencia })}
-                      title="Excluir Anúncio"
-                      className="p-2 text-muted hover:text-danger hover:bg-danger/10 rounded-xl transition-colors ml-auto"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-        </>
-      ) : (
-        <div className="p-12 text-center text-muted space-y-3">
-          <p className="text-sm font-bold text-ink">Seu painel ainda não tem imóveis com esse filtro.</p>
-          <p className="text-xs text-muted max-w-md mx-auto">Envie fotos e os dados principais pelo WhatsApp para iniciar a captação, gerar o Media Kit e receber o link de aprovação.</p>
-          <Link href="/como-funciona" className="text-brand-800 font-extrabold text-xs uppercase tracking-wider inline-block hover:underline">
-            Ver como criar meu primeiro anúncio
-          </Link>
-        </div>
+      {selecionadoParaExcluir && (
+        <ModalExclusaoInteligente
+          isOpen={!!selecionadoParaExcluir}
+          adId={selecionadoParaExcluir.id}
+          referencia={String(selecionadoParaExcluir.referencia || selecionadoParaExcluir.id)}
+          onClose={() => setSelecionadoParaExcluir(null)}
+          onSuccess={() => window.location.reload()}
+        />
       )}
-
-      {/* Modais existentes */}
-      <ModalExclusaoInteligente
-        isOpen={exclusaoModal.isOpen}
-        onClose={() => setExclusaoModal({ isOpen: false, adId: '', referencia: '' })}
-        adId={exclusaoModal.adId}
-        referencia={exclusaoModal.referencia}
-        onSuccess={() => window.location.reload()}
-      />
-
-      <ModalAcervoFotos
-        isOpen={acervoModal.isOpen}
-        onClose={() => setAcervoModal({ isOpen: false, adId: '', referencia: '' })}
-        adId={acervoModal.adId}
-        referencia={acervoModal.referencia}
-      />
-
-      <ModalMediaKit
-        isOpen={mediaKitModal.isOpen}
-        onClose={() => setMediaKitModal({ isOpen: false, referencia: '', mediaKit: null })}
-        referencia={mediaKitModal.referencia}
-        mediaKit={mediaKitModal.mediaKit}
-      />
+      {selecionadoParaBackup && (
+        <ModalAcervoFotos
+          isOpen={!!selecionadoParaBackup}
+          adId={selecionadoParaBackup.id}
+          referencia={String(selecionadoParaBackup.referencia || selecionadoParaBackup.id)}
+          onClose={() => setSelecionadoParaBackup(null)}
+        />
+      )}
+      {selecionadoParaIA && (
+        <ModalMediaKit
+          isOpen={!!selecionadoParaIA}
+          referencia={String(selecionadoParaIA.referencia || selecionadoParaIA.id)}
+          mediaKit={(selecionadoParaIA as any).media_kit || (selecionadoParaIA as any).mediaKit || null}
+          onClose={() => setSelecionadoParaIA(null)}
+        />
+      )}
     </div>
   );
 }

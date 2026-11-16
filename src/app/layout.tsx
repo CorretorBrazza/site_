@@ -20,6 +20,13 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://imoveistaboao.com.br'),
   title: "Imóveis Taboão | Sua casa em Taboão da Serra",
   description: "Encontre imóveis para comprar, alugar ou anunciar em Taboão da Serra e imediações.",
+  manifest: '/manifest.webmanifest',
+  applicationName: 'Imóveis Taboão',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Imóveis Taboão',
+  },
   openGraph: {
     title: "Imóveis Taboão | Sua casa em Taboão da Serra",
     description: "Encontre imóveis para comprar, alugar ou anunciar em Taboão da Serra e imediações.",
@@ -72,6 +79,8 @@ export default function RootLayout({
     <html lang="pt-BR" suppressHydrationWarning>
       <head>
         <meta name="theme-color" content="#091731" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <link rel="manifest" href="/manifest.webmanifest" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: safeJsonLd(globalJsonLd) }}

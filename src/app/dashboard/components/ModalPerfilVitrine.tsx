@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Camera, Check, Copy, ExternalLink, MessageCircle, Save, Sparkles, UserCheck } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Camera, Check, Copy, ExternalLink, Save, Sparkles, UserCheck } from 'lucide-react';
 import { atualizarPerfilCorretor } from '@/lib/api';
 
 interface ModalPerfilVitrineProps {
@@ -20,6 +20,18 @@ interface ModalPerfilVitrineProps {
   onPerfilAtualizado: (novoPerfil: any) => void;
 }
 
+function gerarSlugLocal(nome?: string, codigo: string = 'BRA') {
+  const nomeLimpo = (nome || 'corretor')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  const codLimpo = (codigo || 'BRA').toLowerCase().replace(/[^a-z0-9]/g, '');
+  return `${nomeLimpo || 'corretor'}-${codLimpo || 'bra'}`;
+}
+
 export default function ModalPerfilVitrine({
   aberto,
   onClose,
@@ -36,9 +48,20 @@ export default function ModalPerfilVitrine({
   const [copiado, setCopiado] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!aberto) return;
+    setNome(usuario?.nome || '');
+    setTelefone(usuario?.telefone || '');
+    setCreci(usuario?.creci || '');
+    setApresentacao(usuario?.apresentacao || '');
+    setFotoUrl(usuario?.foto_perfil_url || '');
+    setErro(null);
+    setMensagemSucesso(false);
+  }, [aberto, usuario]);
+
   if (!aberto) return null;
 
-  const slugCorretor = usuario?.slug || (usuario?.nome ? usuario.nome.toLowerCase().replace(/[^a-z0-9]/g, '-') : 'corretor');
+  const slugCorretor = (usuario?.slug || '').trim().toLowerCase() || gerarSlugLocal(nome || usuario?.nome, usuario?.codigo_corretor || 'BRA');
   const vitrineUrl = typeof window !== 'undefined'
     ? `${window.location.origin}/corretor/${slugCorretor}`
     : `/corretor/${slugCorretor}`;
@@ -61,54 +84,65 @@ export default function ModalPerfilVitrine({
 
     try {
       const res = await atualizarPerfilCorretor({
-        nome,
-        telefone,
-        creci,
-        apresentacao,
-        foto_perfil_url: fotoUrl,
+        nome: nome.trim() || undefined,
+        telefone: telefone.trim() || undefined,
+        creci: creci.trim() || undefined,
+        apresentacao: apresentacao.trim() || undefined,
+        foto_perfil_url: fotoUrl.trim() || undefined,
+        slug: slugCorretor || undefined,
       });
 
       if (res.success && res.data) {
         setMensagemSucesso(true);
         onPerfilAtualizado(res.data);
+        try {
+          const cached = localStorage.getItem('user_info');
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            localStorage.setItem('user_info', JSON.stringify({ ...parsed, ...res.data }));
+          }
+        } catch {
+          // noop
+        }
         setTimeout(() => setMensagemSucesso(false), 3000);
       } else {
         setErro(res.error || 'Falha ao salvar perfil.');
       }
     } catch (err: any) {
-      setErro(err.message || 'Erro inesperado.');
+      setErro(err?.message || 'Erro inesperado.');
     } finally {
       setSalvando(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl bg-brand-900 border border-brand-700/80 rounded-2xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="relative w-full sm:max-w-2xl bg-brand-900 border border-brand-700/80 rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden max-h-[96vh] sm:max-h-[92vh] flex flex-col">
         {/* Header do Modal */}
-        <div className="px-6 py-4 border-b border-brand-700/60 bg-brand-850 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gold/15 border border-gold/30 flex items-center justify-center text-gold">
+        <div className="px-4 sm:px-6 py-4 border-b border-brand-700/60 bg-brand-850 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-9 h-9 rounded-xl bg-gold/15 border border-gold/30 flex items-center justify-center text-gold shrink-0">
               <UserCheck className="w-5 h-5" />
             </div>
-            <div>
-              <h3 className="text-lg font-bold text-white">Minha Vitrine Pública</h3>
+            <div className="min-w-0">
+              <h3 className="text-base sm:text-lg font-bold text-white leading-tight">Minha Vitrine Pública</h3>
               <p className="text-xs text-white-60">Personalize sua página exclusiva de anúncios</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-white-60 hover:text-white p-2 rounded-lg hover:bg-brand-700/50 transition-colors"
+            className="text-white-60 hover:text-white p-2 rounded-lg hover:bg-brand-700/50 transition-colors shrink-0"
+            aria-label="Fechar"
           >
             ✕
           </button>
         </div>
 
         {/* Corpo com scroll */}
-        <div className="p-6 overflow-y-auto space-y-6">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-5 sm:space-y-6">
           {/* Card do Link da Vitrine */}
           <div className="p-4 rounded-xl bg-gradient-to-r from-brand-800 to-brand-750 border border-gold/30 shadow-inner">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between gap-2 mb-2">
               <span className="text-xs font-semibold uppercase tracking-wider text-gold flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" /> Seu Link Exclusivo de Divulgação
               </span>
@@ -116,7 +150,7 @@ export default function ModalPerfilVitrine({
                 href={`/corretor/${slugCorretor}`}
                 target="_blank"
                 rel="noreferrer"
-                className="text-xs text-white-80 hover:text-white flex items-center gap-1 underline underline-offset-2"
+                className="text-xs text-white-80 hover:text-white flex items-center gap-1 underline underline-offset-2 shrink-0"
               >
                 Abrir vitrine <ExternalLink className="w-3 h-3" />
               </a>
@@ -126,12 +160,12 @@ export default function ModalPerfilVitrine({
                 type="text"
                 readOnly
                 value={vitrineUrl}
-                className="flex-1 bg-brand-950/80 border border-brand-700 rounded-lg px-3 py-2 text-xs text-white-90 font-mono truncate"
+                className="flex-1 bg-brand-950/80 border border-brand-700 rounded-lg px-3 py-2 text-xs text-white-90 font-mono truncate min-w-0"
               />
               <button
                 type="button"
                 onClick={handleCopiarLink}
-                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 shrink-0 ${
+                className={`px-4 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 shrink-0 ${
                   copiado
                     ? 'bg-success text-brand-950'
                     : 'bg-gold hover:bg-gold-400 text-brand-950'
@@ -142,7 +176,7 @@ export default function ModalPerfilVitrine({
               </button>
             </div>
             <p className="text-[11px] text-white-60 mt-2">
-              Ideal para colocar na bio do seu Instagram, enviar no WhatsApp ou compartilhar com clientes!
+              Compartilhe no Instagram, WhatsApp ou bio. O link usa seu slug público atualizado.
             </p>
           </div>
 
@@ -166,8 +200,8 @@ export default function ModalPerfilVitrine({
               <label className="block text-xs font-semibold text-white-80 mb-2">
                 Foto de Perfil (URL da Imagem)
               </label>
-              <div className="flex items-center gap-4">
-                <div className="relative w-16 h-16 rounded-full border-2 border-gold/40 bg-brand-800 overflow-hidden shrink-0 flex items-center justify-center">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-gold/40 bg-brand-800 overflow-hidden shrink-0 flex items-center justify-center">
                   {fotoUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -180,16 +214,16 @@ export default function ModalPerfilVitrine({
                     <Camera className="w-6 h-6 text-white-40" />
                   )}
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <input
                     type="url"
                     value={fotoUrl}
                     onChange={(e) => setFotoUrl(e.target.value)}
                     placeholder="https://exemplo.com/sua-foto.jpg"
-                    className="w-full bg-brand-800 border border-brand-700 rounded-lg px-3 py-2 text-sm text-white placeholder-white-40 focus:outline-none focus:border-gold"
+                    className="w-full bg-brand-800 border border-brand-700 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white-40 focus:outline-none focus:border-gold"
                   />
                   <p className="text-[11px] text-white-50 mt-1">
-                    Cole o link direto da sua foto profissional (hospedada no Cloudinary, Google Drive público ou site).
+                    Cole o link direto da sua foto profissional (Cloudinary, Drive público, site etc.).
                   </p>
                 </div>
               </div>
@@ -206,7 +240,7 @@ export default function ModalPerfilVitrine({
                   onChange={(e) => setNome(e.target.value)}
                   required
                   placeholder="Ex: Carlos Silva"
-                  className="w-full bg-brand-800 border border-brand-700 rounded-lg px-3 py-2 text-sm text-white placeholder-white-40 focus:outline-none focus:border-gold"
+                  className="w-full bg-brand-800 border border-brand-700 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white-40 focus:outline-none focus:border-gold"
                 />
               </div>
 
@@ -219,7 +253,7 @@ export default function ModalPerfilVitrine({
                   value={creci}
                   onChange={(e) => setCreci(e.target.value)}
                   placeholder="Ex: 184.290-F"
-                  className="w-full bg-brand-800 border border-brand-700 rounded-lg px-3 py-2 text-sm text-white placeholder-white-40 focus:outline-none focus:border-gold"
+                  className="w-full bg-brand-800 border border-brand-700 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white-40 focus:outline-none focus:border-gold"
                 />
               </div>
             </div>
@@ -233,7 +267,7 @@ export default function ModalPerfilVitrine({
                 value={telefone}
                 onChange={(e) => setTelefone(e.target.value)}
                 placeholder="(11) 98765-4321"
-                className="w-full bg-brand-800 border border-brand-700 rounded-lg px-3 py-2 text-sm text-white placeholder-white-40 focus:outline-none focus:border-gold"
+                className="w-full bg-brand-800 border border-brand-700 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white-40 focus:outline-none focus:border-gold"
               />
               <p className="text-[11px] text-white-50 mt-1">
                 Os botões da sua vitrine enviarão os clientes diretamente para este número.
@@ -249,7 +283,7 @@ export default function ModalPerfilVitrine({
                 value={apresentacao}
                 onChange={(e) => setApresentacao(e.target.value)}
                 placeholder="Ex: Especialista no mercado imobiliário de Taboão da Serra e região há mais de 8 anos. Atendimento personalizado para compra, venda e locação segura do seu imóvel."
-                className="w-full bg-brand-800 border border-brand-700 rounded-lg px-3 py-2 text-sm text-white placeholder-white-40 focus:outline-none focus:border-gold"
+                className="w-full bg-brand-800 border border-brand-700 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white-40 focus:outline-none focus:border-gold"
               />
               <p className="text-[11px] text-white-50 mt-1">
                 Aparecerá com destaque no topo da sua vitrine pública.
@@ -257,18 +291,18 @@ export default function ModalPerfilVitrine({
             </div>
 
             {/* Ações do Formulário */}
-            <div className="pt-2 flex justify-end gap-3">
+            <div className="pt-2 flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2.5 rounded-lg border border-brand-700 text-white-70 hover:text-white text-sm font-medium transition-colors"
+                className="w-full sm:w-auto px-4 py-2.5 rounded-lg border border-brand-700 text-white-70 hover:text-white text-sm font-medium transition-colors"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={salvando}
-                className="px-6 py-2.5 rounded-lg bg-gold hover:bg-gold-400 text-brand-950 font-bold text-sm flex items-center gap-2 transition-all disabled:opacity-50"
+                className="w-full sm:w-auto px-6 py-2.5 rounded-lg bg-gold hover:bg-gold-400 text-brand-950 font-bold text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50"
               >
                 <Save className="w-4 h-4" />
                 {salvando ? 'Salvando...' : 'Salvar Alterações'}

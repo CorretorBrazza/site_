@@ -17,630 +17,469 @@ import { TabId } from './components/BottomNavMobile';
 import { ShieldCheck, LogOut, RefreshCw, Building2, CheckCircle2, Clock3, CircleAlert, MessageCircle, Coins, ChevronRight, Sparkles, MapPin, Mail } from 'lucide-react';
 
 interface DashboardCorretorClientProps {
-  imoveis?: Imovel[];
+  initialImoveis?: Imovel[];
+  initialUsuario?: any;
 }
 
-const workflowMeta: Record<string, { label: string; tone: string; nextAction: string }> = {
-  RECEIVED: { label: 'Recebido', tone: 'text-gold-400 border-brand-700 bg-brand-800/60', nextAction: 'Aguarde o início do processamento.' },
-  INGESTED: { label: 'Organizando dados', tone: 'text-gold-400 border-brand-700 bg-brand-800/60', nextAction: 'Estamos preparando fotos e informações.' },
-  EXTRACTION_DONE: { label: 'Analisando imóvel', tone: 'text-gold-400 border-brand-700 bg-brand-800/60', nextAction: 'A IA está estruturando os dados do imóvel.' },
-  KNOWLEDGE_DONE: { label: 'Criando Media Kit', tone: 'text-gold-400 border-brand-700 bg-brand-800/60', nextAction: 'A copy e os materiais comerciais estão sendo gerados.' },
-  PENDING_APPROVAL: { label: 'Aguardando sua aprovação', tone: 'text-gold border-gold/50 bg-gold/60', nextAction: 'Abra o link enviado no WhatsApp, revise e aprove.' },
-  QUEUED_FOR_REVIEW: { label: 'Atualização em revisão', tone: 'text-gold border-gold/50 bg-gold/60', nextAction: 'Aguarde a nova versão de aprovação.' },
-  AWAITING_CREDITS: { label: 'Aguardando crédito', tone: 'text-danger border-danger/50 bg-danger/60', nextAction: 'Recarregue créditos para gerar o link de aprovação.' },
-  APPROVED: { label: 'Finalizando publicação', tone: 'text-success border-success/50 bg-success/60', nextAction: 'Estamos concluindo a entrega do anúncio.' },
-  DELIVERED: { label: 'Publicado', tone: 'text-success border-success/50 bg-success/60', nextAction: 'Use seu Media Kit e divulgue o imóvel.' },
-  PUBLISHED: { label: 'Publicado', tone: 'text-success border-success/50 bg-success/60', nextAction: 'Use seu Media Kit e divulgue o imóvel.' },
-  REJECTED: { label: 'Precisa de ajuste', tone: 'text-danger border-danger/50 bg-danger/60', nextAction: 'Revise os dados e solicite uma nova aprovação.' },
-  EXPIRED: { label: 'Anúncio expirado', tone: 'text-danger border-danger/50 bg-danger/60', nextAction: 'Reative o anúncio com um crédito.' },
-  DELETED: { label: 'Excluído', tone: 'text-white-60 border-brand-700 bg-brand-900', nextAction: 'Este anúncio foi excluído e não será processado.' },
-};
+type WorkflowMeta = { label: string; tone: string; nextAction: string };
 
-function getWorkflowMeta(status?: string) {
-  return workflowMeta[String(status || '').toUpperCase()] || {
-    label: 'Em processamento',
-    tone: 'text-white-70 border-brand-700 bg-brand-900',
-    nextAction: 'Acompanhe o processamento; se demorar, atualize a página.',
-  };
+function asNumber(value: any, fallback = 0): number {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
 }
 
-export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }: DashboardCorretorClientProps) {
+function workflowMeta(status?: string): WorkflowMeta {
+  const normalized = String(status || '').toUpperCase();
+  if (['DELIVERED', 'PUBLISHED', 'ATIVO'].includes(normalized)) {
+    return { label: 'Publicado', tone: 'bg-success/10 text-success border-success/30', nextAction: 'Monitorar leads e renovar quando necessário.' };
+  }
+  if (['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW'].includes(normalized)) {
+    return { label: 'Aguardando aprovação', tone: 'bg-gold/10 text-gold border-gold/30', nextAction: 'Revisar e aprovar o link enviado no WhatsApp.' };
+  }
+  if (['AWAITING_CREDITS', 'SEM_SALDO'].includes(normalized)) {
+    return { label: 'Aguardando liberação', tone: 'bg-danger/10 text-danger border-danger/30', nextAction: 'Verificar saldo disponível e concluir a publicação/liberação.' };
+  }
+  if (['FAILED', 'REJECTED'].includes(normalized)) {
+    return { label: 'Com pendência', tone: 'bg-danger/10 text-danger border-danger/30', nextAction: 'Revisar pendências e reenviar/processar novamente.' };
+  }
+  return { label: 'Em análise', tone: 'bg-brand-800/5 text-brand-900 border-line', nextAction: 'Aguardando processamento da equipe/IA.' };
+}
+
+export default function DashboardCorretorClient({
+  initialImoveis = [],
+  initialUsuario = null
+}: DashboardCorretorClientProps) {
   const router = useRouter();
-  const [modalRecargaAberto, setModalRecargaAberto] = useState(false);
-  const [modalContatoAberto, setModalContatoAberto] = useState(false);
-  const [modalVitrineAberto, setModalVitrineAberto] = useState(false);
-  const [usuario, setUsuario] = useState<{
-    email: string;
-    nome: string;
-    saldo_creditos: number;
-    plano_atual: string;
-    telefone?: string;
-    foto_perfil_url?: string;
-    apresentacao?: string;
-    creci?: string;
-    slug?: string;
-    codigo_corretor?: string;
-  } | null>(null);
-  const [listaImoveis, setListaImoveis] = useState<Imovel[]>(initialImoveis);
-  const [loading, setLoading] = useState(true);
-  const [pacoteInicialModal, setPacoteInicialModal] = useState<'start' | 'pro' | 'elite'>('pro');
+  const [imoveis, setImoveis] = useState<Imovel[]>(initialImoveis);
+  const [usuario, setUsuario] = useState(initialUsuario);
   const [activeTab, setActiveTab] = useState<TabId>('inicio');
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [recarregaAberta, setRecarregaAberta] = useState(false);
+  const [perfilVitrineAberto, setPerfilVitrineAberto] = useState(false);
+  const [ultimoSync, setUltimoSync] = useState<Date | null>(null);
 
-  // Evita disparos concorrentes do carregamento (montagem + refetch no focus).
-  const carregandoEmVoo = useRef(false);
+  const anunciosCountRef = useRef(imoveis.length);
+  const saldoRef = useRef(asNumber(initialUsuario?.saldo_creditos, 0));
 
   useEffect(() => {
-    // Checa se há um parâmetro recarga na URL (ex: ?recarga=pro) vindo da página /planos
-    if (typeof window !== 'undefined') {
-      const urlParams = new URLSearchParams(window.location.search);
+    anunciosCountRef.current = imoveis.length;
+  }, [imoveis.length]);
 
-      // Link de auto-login legado: o WhatsApp enviava /dashboard?token=<magic token>.
-      // O painel não faz troca de token — delega para /login, que é o único lugar que
-      // valida o token com a API e persiste a sessão devolvida. Assim não existe uma
-      // credencial não validada em localStorage nem lógica de auth duplicada.
-      const legacyToken = urlParams.get('token') || urlParams.get('auth_token');
-      if (legacyToken) {
-        const destino = new URLSearchParams();
-        destino.set('token', legacyToken);
-        const recargaLegada = urlParams.get('recarga');
-        if (recargaLegada) destino.set('recarga', recargaLegada);
-        router.replace(`/login?${destino.toString()}`);
-        return;
-      }
+  useEffect(() => {
+    saldoRef.current = asNumber(usuario?.saldo_creditos, 0);
+  }, [usuario?.saldo_creditos]);
 
-      const recargaParam = urlParams.get('recarga');
-      if (recargaParam === 'start' || recargaParam === 'pro' || recargaParam === 'elite') {
-        setPacoteInicialModal(recargaParam);
-        setModalRecargaAberto(true);
-      }
+  const handleLogout = async () => {
+    await logoutBrokerSession();
+    router.push('/login');
+  };
 
-      // Abre direto na aba indicada (ex: ?aba=imoveis vindo das páginas internas)
-      const abaParam = urlParams.get('aba');
-      if (abaParam === 'inicio' || abaParam === 'imoveis' || abaParam === 'bairro' || abaParam === 'conta') {
-        setActiveTab(abaParam);
-      }
-    }
+  useEffect(() => {
+    let isMounted = true;
+    let pollId: ReturnType<typeof setInterval> | null = null;
 
-    // A sessão JWT é a única fonte de identidade; user_info serve apenas para exibição provisória.
-      // A sessao vive em cookie httpOnly, invisivel ao JS. O que sobra no storage
-      // e o perfil, so para a UI nao piscar no primeiro render. Quem decide se a
-      // sessao ainda vale e a API: um 401 manda o usuario para /login.
-      //
-      // Todo o acesso ao storage fica dentro do try: `getItem` pode lançar
-      // SecurityError (armazenamento bloqueado, modo privado, política de
-      // terceiros). Fora do try, o erro matava o effect no meio e o `finally`
-      // nunca rodava — o painel ficava no spinner para sempre.
-      let savedUser: string | null = null;
+    const carregarDados = async (opts?: { silent?: boolean }) => {
+      const silent = !!opts?.silent;
+      if (silent) setRefreshing(true);
+
       try {
-        savedUser = localStorage.getItem('user_info');
-      } catch {
-        savedUser = null;
-      }
-    if (savedUser) {
-      try {
-        setUsuario(JSON.parse(savedUser));
-      } catch {
-        try {
-          localStorage.removeItem('user_info');
-        } catch {
-          // Sem storage disponível não há o que limpar.
-        }
-      }
-    }
-
-      // Sem perfil no storage, nao ha sessao a tentar. Se o cookie httpOnly ainda
-      // estiver valido mas o storage foi limpo, a API responde 401 no primeiro
-      // fetch e o usuario e levado para /login — o mesmo caminho de antes.
-      if (!savedUser) {
-        setUsuario(null);
-        setListaImoveis([]);
-        setLoading(false);
-        router.replace('/login');
-      return;
-    }
-
-    async function carregarDadosPainel() {
-      if (carregandoEmVoo.current) return;
-      carregandoEmVoo.current = true;
-      setLoading(true);
-      try {
-        // Busca perfil pela sessão autenticada para ter saldo real de créditos.
-        const jsonPerfil = await fetchBrokerApi('/corretor/me');
-        if (jsonPerfil.success && jsonPerfil.data) {
-          const perfil = jsonPerfil.data;
-          const userUpdated = {
-            nome: perfil.nome || perfil.nome_guerra || 'Corretor',
-            email: perfil.email || '',
-            saldo_creditos: perfil.saldo_creditos ?? 0,
-            plano_atual: perfil.plano_atual || 'START',
-            telefone: perfil.telefone || '',
-            foto_perfil_url: perfil.foto_perfil_url || '',
-            apresentacao: perfil.apresentacao || '',
-            creci: perfil.creci || '',
-            slug: perfil.slug || '',
-            codigo_corretor: perfil.codigo_corretor || 'BRA',
-          };
-          setUsuario(userUpdated);
-          localStorage.setItem('user_info', JSON.stringify(userUpdated));
-        } else {
-          // Apenas desloga se o erro for comprovadamente de autenticação inválida ou expirada.
-          // Em instabilidade temporária (502, 503 ou offline), mantém a sessão com o cache local.
-          const errText = String(jsonPerfil.error || '').toLowerCase();
-          const isAuthError = errText.includes('expirad') ||
-            errText.includes('sessão') ||
-            errText.includes('sessao') ||
-            errText.includes('unauthorized') ||
-            errText.includes('token') ||
-            errText.includes('não autorizado');
-
-          if (isAuthError) {
-            localStorage.removeItem('user_info');
-            localStorage.removeItem('auth_token');
-            setUsuario(null);
-            setListaImoveis([]);
-            router.replace('/login');
-            return;
+        const userCache = typeof window !== 'undefined' ? localStorage.getItem('user_info') : null;
+        if (!userCache) {
+          if (isMounted) {
+            setLoadError(null);
+            setLoading(false);
           }
+          router.push('/login');
+          return;
         }
 
-        // Busca anúncios do corretor autenticado; não há e-mail controlável na requisição.
-        const jsonAnuncios = await fetchBrokerApi('/me/anuncios?limit=100', { cache: 'no-store' });
+        try {
+          if (!silent) {
+            const parsedCache = JSON.parse(userCache);
+            setUsuario((prev: any) => prev || parsedCache);
+          }
+        } catch {
+          router.push('/login');
+          return;
+        }
 
-        if (jsonAnuncios.success && Array.isArray(jsonAnuncios.data)) {
-          const mapped: Imovel[] = jsonAnuncios.data.map((item: any) => {
-            const ref = item.dados_refinados || item.dados_brutos || {};
-            const fotosArray = (item.fotos || []).map((f: any) =>
-              typeof f === 'string' ? f : f.url_optimized || f.url || f.url_original
-            );
+        const [profileRes, listRes] = await Promise.allSettled([
+          fetchBrokerApi('/corretor/me'),
+          fetchBrokerApi('/me/anuncios'),
+        ]);
 
-            // Mapeamento amigável de status para o painel
-            let statusExibicao: any = 'Em Análise';
-            const stUpper = (item.status || '').toUpperCase();
-            if (stUpper === 'DELIVERED' || stUpper === 'PUBLISHED' || stUpper === 'ATIVO') {
-              statusExibicao = 'Ativo';
-            } else if (stUpper === 'PENDING_APPROVAL' || stUpper === 'INGEST_APPROVED' || stUpper === 'APPROVED') {
-              statusExibicao = 'Em Análise';
-            } else {
-              statusExibicao = item.status || 'Em Análise';
+        let hadNonAuthError = false;
+        const errorMessages: string[] = [];
+
+        if (profileRes.status === 'fulfilled') {
+          const userRes = profileRes.value as any;
+          if (userRes.success && userRes.data) {
+            const normalizedUser = userRes.data;
+            setUsuario(normalizedUser);
+            try {
+              localStorage.setItem('user_info', JSON.stringify(normalizedUser));
+            } catch {
+              // noop
             }
-
-            const rawTransacao = String(ref.transacao || item.transacao || ref.finalidade || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-            const isLoc = rawTransacao.includes('loca') || rawTransacao.includes('alug');
-            const isVen = rawTransacao.includes('venda') || rawTransacao.includes('compra');
-            const finalTransacao = isLoc && isVen ? 'Venda e Locação' : (isLoc ? 'Locação' : (isVen ? 'Venda' : (ref.precoLocacao || item.precoLocacao ? 'Locação' : 'Venda')));
-
-            const finalPrecoLocacao = ref.precoLocacao !== undefined && ref.precoLocacao !== null && ref.precoLocacao !== ''
-              ? Number(ref.precoLocacao)
-              : (item.precoLocacao || ref.precoPacote || item.precoPacote || (isLoc ? (ref.preco || item.preco) : null) || null);
-
-            const finalPrecoVenda = ref.precoVenda !== undefined && ref.precoVenda !== null && ref.precoVenda !== ''
-              ? Number(ref.precoVenda)
-              : (item.precoVenda || (isVen ? (ref.preco || item.preco) : null) || null);
-
-            // Validade e capa são CALCULADAS/enviadas pela API. O objeto `Imovel` é
-            // montado por allowlist: sem este mapeamento explícito os campos caem
-            // no vazio e o painel perde o botão de renovar, o aviso de dias
-            // restantes e a capa escolhida no Link Dinâmico.
-            const expirado = Boolean(item.expirado);
-            const podeRenovar = Boolean(item.pode_renovar);
-            const diasRestantes = typeof item.dias_restantes === 'number' ? item.dias_restantes : null;
-            const expiresAt = item.expires_at ?? null;
-            // A publicação grava `capa_index` na raiz de `dados_refinados`. O
-            // clamp final acontece em `TabelaImoveis`, que conhece o tamanho da
-            // lista de fotos; aqui só se garante que o valor é inteiro.
-            const capaIndexBruto = Number(item.dados_refinados?.capa_index);
-            const capaIndex = Number.isInteger(capaIndexBruto) ? capaIndexBruto : 0;
-
-            return {
-              id: item.ad_id || item.id || item.referencia?.toLowerCase() || 'anuncio-sem-id',
-              referencia: item.referencia || 'BRA0000',
-              titulo: ref.titulo || item.media_kit?.titulo_seo || `Imóvel ${item.referencia}`,
-              tipoImovel: ref.tipoImovel || ref.tipo || 'Imóvel',
-              tipo: ref.tipo || ref.tipoImovel || 'Imóvel',
-              transacao: finalTransacao,
-              precoVenda: finalPrecoVenda ? Number(finalPrecoVenda) : null,
-              precoLocacao: finalPrecoLocacao ? Number(finalPrecoLocacao) : null,
-              condominio: ref.condominio || null,
-              iptu: ref.iptu || null,
-              bairro: ref.bairro || ref.endereco?.bairro || '',
-              cidade: ref.cidade || ref.endereco?.cidade || '',
-              endereco: {
-                rua: ref.rua || ref.endereco?.rua || '',
-                numero: ref.numero || ref.endereco?.numero || '',
-                bairro: ref.bairro || ref.endereco?.bairro || '',
-                cidade: ref.cidade || ref.endereco?.cidade || '',
-                estado: ref.estado || ref.endereco?.estado || 'SP',
-                cep: ref.cep || ref.endereco?.cep || '',
-              },
-              fotos: fotosArray,
-              caracteristicas: {
-                quartos: ref.quartos ?? ref.caracteristicas?.quartos ?? null,
-                suites: ref.suites ?? ref.caracteristicas?.suites ?? null,
-                banheiros: ref.banheiros ?? ref.caracteristicas?.banheiros ?? null,
-                vagas: ref.vagas ?? ref.caracteristicas?.vagas ?? null,
-                areaUtil: ref.areaUtil ?? ref.caracteristicas?.areaUtil ?? null,
-              },
-              descricao: ref.descricao || item.media_kit?.legenda_social || '',
-
-              status: statusExibicao,
-              workflow_status: stUpper || 'RECEIVED',
-              estagio: Number(item.estagio || 0),
-              destaque: true,
-              media_kit: item.media_kit || null,
-              approval_url: item.approval_url || null,
-              expirado,
-              pode_renovar: podeRenovar,
-              dias_restantes: diasRestantes,
-              expires_at: expiresAt,
-              capa_index: capaIndex,
-              createdAt: item.created_at?._seconds
-                ? new Date(item.created_at._seconds * 1000).toISOString()
-                : item.created_at || new Date().toISOString(),
-              updatedAt: item.updated_at?._seconds
-                ? new Date(item.updated_at._seconds * 1000).toISOString()
-                : item.updated_at || new Date().toISOString(),
-            };
-          });
-
-          setListaImoveis(mapped);
+          } else if (userRes?.error?.includes('Sessão expirada') || userRes?.error?.includes('login')) {
+            if (isMounted) setLoadError(null);
+            await logoutBrokerSession();
+            router.push('/login');
+            return;
+          } else if (userRes?.error) {
+            hadNonAuthError = true;
+            errorMessages.push(`Perfil: ${userRes.error}`);
+          }
+        } else {
+          hadNonAuthError = true;
+          errorMessages.push('Perfil: falha ao carregar dados do corretor.');
         }
-      } catch (err) {
-        console.error('Erro ao carregar dados do painel do corretor:', err);
+
+        if (listRes.status === 'fulfilled') {
+          const adsRes = listRes.value as any;
+          if (adsRes.success && Array.isArray(adsRes.data)) {
+            const nextAds = adsRes.data;
+            setImoveis(nextAds);
+            anunciosCountRef.current = nextAds.length;
+          } else if (adsRes?.error && !adsRes?.error?.includes('Sessão expirada')) {
+            hadNonAuthError = true;
+            errorMessages.push(`Imóveis: ${adsRes.error}`);
+          }
+        } else {
+          hadNonAuthError = true;
+          errorMessages.push('Imóveis: falha ao carregar sua lista de anúncios.');
+        }
+
+        if (isMounted) {
+          setUltimoSync(new Date());
+          setLoadError(hadNonAuthError ? errorMessages.join(' ') : null);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dashboard corretor:', error);
+        if (isMounted) {
+          setLoadError('Não foi possível atualizar o painel agora. Verifique sua conexão e tente novamente.');
+        }
       } finally {
-        setLoading(false);
-        carregandoEmVoo.current = false;
+        if (isMounted) {
+          setLoading(false);
+          setRefreshing(false);
+        }
       }
-    }
-
-    carregarDadosPainel();
-
-    // Refetch no focus/volta à aba: o saldo e o status dos anúncios podem ter mudado
-    // em outra aba (ex.: publicação feita no Link Dinâmico). A guarda `carregandoEmVoo`
-    // evita requisões concorrentes com a carga inicial ou entre focos repetidos.
-    // `visibilitychange` dispara ao sair E ao voltar; só recarrega quando fica visível.
-    const aoFocarJanela = () => {
-      if (document.visibilityState === 'visible') carregarDadosPainel();
     };
-    window.addEventListener('focus', aoFocarJanela);
-    document.addEventListener('visibilitychange', aoFocarJanela);
+
+    carregarDados();
+
+    pollId = setInterval(async () => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'hidden') return;
+      await carregarDados({ silent: true });
+    }, 15000);
+
     return () => {
-      window.removeEventListener('focus', aoFocarJanela);
-      document.removeEventListener('visibilitychange', aoFocarJanela);
+      isMounted = false;
+      if (pollId) clearInterval(pollId);
     };
-    // `router` é estável no App Router; incluí-lo satisfaz a regra sem recriar o
-    // listener a cada render.
   }, [router]);
 
-      const handleLogout = async () => {
-        // Expirar o cookie httpOnly e obrigatorio: ele nao morre com o localStorage.
-        await logoutBrokerSession();
-        router.push('/login');
-    };
+  const saldoCreditos = asNumber(usuario?.saldo_creditos, 0);
+  const creditosReservados = asNumber(usuario?.creditos_reservados, 0);
+  const saldoDisponivel = Math.max(0, asNumber(usuario?.saldo_disponivel, saldoCreditos - creditosReservados));
 
-  const totalFotosReal = (listaImoveis || []).reduce((acc, item) => acc + (item.fotos?.length || 0), 0);
-  const totalMegas = totalFotosReal * 2.5;
-  const espacoTexto = totalMegas >= 1024 ? `${(totalMegas / 1024).toFixed(1)} GB` : `${totalMegas.toFixed(0)} MB`;
-  const workSummary = listaImoveis.reduce((summary, item) => {
-    const status = String(item.workflow_status || '').toUpperCase();
-    if (status === 'DELETEED' || status === 'DELETED') return summary;
-    if (status === 'DELIVERED' || status === 'PUBLISHED') summary.publicados += 1;
-    else if (status === 'PENDING_APPROVAL' || status === 'QUEUED_FOR_REVIEW') summary.aprovacao += 1;
-    else if (status === 'REJECTED' || status === 'EXPIRED') summary.atencao += 1;
-    else summary.processando += 1;
-    return summary;
-  }, { publicados: 0, aprovacao: 0, processando: 0, atencao: 0 });
-  const nextItem = listaImoveis.find((item) => ['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW', 'AWAITING_CREDITS', 'REJECTED', 'EXPIRED'].includes(String(item.workflow_status || '').toUpperCase()))
-    || listaImoveis.find((item) => !['DELETED', 'DELETEED', 'DELIVERED', 'PUBLISHED'].includes(String(item.workflow_status || '').toUpperCase()));
-  const nextItemMeta = nextItem ? getWorkflowMeta(nextItem.workflow_status) : null;
-  const inicialUsuario = (usuario?.nome?.[0] || 'C').toUpperCase();
+  const anunciosPublicados = imoveis.filter((i) => ['DELIVERED', 'PUBLISHED', 'ATIVO'].includes(String(i.status || '').toUpperCase()));
+  const anunciosPendentes = imoveis.filter((i) => ['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW', 'AWAITING_CREDITS', 'SEM_SALDO', 'EXTRACTION_ONLY', 'PROCESSING', 'SUBMITTED'].includes(String(i.status || '').toUpperCase()));
+  const anunciosComPendencia = imoveis.filter((i) => ['FAILED', 'REJECTED', 'AWAITING_CREDITS', 'SEM_SALDO'].includes(String(i.status || '').toUpperCase()));
+  const aguardandoAprovacao = imoveis.filter((i) => ['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW'].includes(String(i.status || '').toUpperCase()));
+  const aguardandoCredito = imoveis.filter((i) => ['AWAITING_CREDITS', 'SEM_SALDO'].includes(String(i.status || '').toUpperCase()));
+  const prioridade = imoveis.find((i) => ['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW', 'AWAITING_CREDITS', 'FAILED'].includes(String(i.status || '').toUpperCase())) || imoveis[0] || null;
+  const prioridadeMeta = workflowMeta(prioridade?.status as string | undefined);
+  const primeiroNome = (usuario?.nome || 'Corretor').split(' ')[0];
+  const slugVitrine = (usuario?.slug || '').trim().toLowerCase();
 
-  return (
-    <div className="min-h-screen bg-paper text-brand-900">
+  if (loading && !usuario) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-paper text-brand-900">
+        <div className="flex flex-col items-center gap-3">
+          <RefreshCw className="w-8 h-8 animate-spin text-gold" />
+          <span className="text-sm font-medium">Carregando seu painel...</span>
+        </div>
+      </div>
+    );
+  }
 
-      {/* ============================ MOBILE: APP SHELL ============================ */}
-      <DashboardShell activeTab={activeTab} onTabChange={setActiveTab} usuario={usuario} loading={loading}>
-        {activeTab === 'inicio' && (
-          <div className="p-3.5 space-y-3.5">
-            <div className="flex items-center justify-between">
-              <h1 className="text-lg font-extrabold text-brand-900 tracking-tight">
-                {usuario ? `Olá, ${usuario.nome}` : 'Painel do Corretor'}
-              </h1>
-              <span className="bg-brand-900/5 text-brand-800 border border-brand-700/30 text-[10px] font-black px-2.5 py-1 rounded-full flex items-center gap-1 shadow-xs uppercase tracking-wider">
-                <ShieldCheck className="w-3 h-3" /> {usuario?.plano_atual?.toUpperCase() || 'START'}
-              </span>
+  const dashboardContent = (
+    <>
+      {loadError && (
+        <div className="rounded-2xl border border-danger/20 bg-danger/5 px-4 py-3 text-sm text-danger flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-start gap-2 min-w-0">
+            <CircleAlert className="w-4 h-4 mt-0.5 shrink-0" />
+            <div>
+              <p className="font-semibold">Não foi possível atualizar tudo agora</p>
+              <p className="text-xs sm:text-sm opacity-90 break-words">{loadError}</p>
             </div>
-
-            <HeaderSaldoCreditos
-              saldoCreditos={usuario?.saldo_creditos ?? 1}
-              planoAtual={usuario?.plano_atual || 'Start'}
-              onAbrirRecarga={() => setModalRecargaAberto(true)}
-            />
-
-            <div className="grid grid-cols-2 gap-2">
-              <div className="bg-white border border-line rounded-2xl p-3 shadow-sm">
-                <div className="text-[9px] font-black uppercase tracking-wider text-success flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-success" /> Publicados</div>
-                <div className="text-xl font-black text-brand-900 mt-1">{workSummary.publicados}</div>
-              </div>
-              <div className="bg-white border border-line rounded-2xl p-3 shadow-sm">
-                <div className="text-[9px] font-black uppercase tracking-wider text-gold flex items-center gap-1"><Clock3 className="w-3 h-3 text-gold" /> Aprovação</div>
-                <div className="text-xl font-black text-brand-900 mt-1">{workSummary.aprovacao}</div>
-              </div>
-              <div className="bg-white border border-line rounded-2xl p-3 shadow-sm">
-                <div className="text-[9px] font-black uppercase tracking-wider text-brand-800 flex items-center gap-1"><RefreshCw className="w-3 h-3 text-brand-800" /> Processando</div>
-                <div className="text-xl font-black text-brand-900 mt-1">{workSummary.processando}</div>
-              </div>
-              <div className="bg-white border border-line rounded-2xl p-3 shadow-sm">
-                <div className="text-[9px] font-black uppercase tracking-wider text-danger flex items-center gap-1"><CircleAlert className="w-3 h-3 text-danger" /> Atenção</div>
-                <div className="text-xl font-black text-brand-900 mt-1">{workSummary.atencao}</div>
-              </div>
-            </div>
-
-            <div className="bg-white border border-line rounded-2xl p-4 flex gap-3 shadow-sm">
-              <div className="shrink-0 p-2 h-fit rounded-xl bg-brand-900/5 border border-brand-700/30 text-brand-800"><MessageCircle className="w-5 h-5" /></div>
-              <div className="min-w-0">
-                <p className="text-[9px] uppercase tracking-wider font-black text-brand-800">Próxima ação</p>
-                <h2 className="text-sm font-bold text-brand-900 mt-0.5 truncate">{nextItem ? `${nextItem.referencia} — ${nextItemMeta?.label}` : 'Envie seu primeiro imóvel pelo WhatsApp'}</h2>
-                <p className="text-xs text-ink mt-0.5 line-clamp-2">{nextItem ? nextItemMeta?.nextAction : 'Envie fotos e as informações principais do imóvel para iniciarmos seu Media Kit.'}</p>
-              </div>
-            </div>
-
-            <button
-              onClick={() => setActiveTab('bairro')}
-              className="w-full bg-brand-900 border border-brand-700 rounded-2xl p-4 flex items-center justify-between gap-3 text-left hover:border-brand-700 transition-colors"
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="shrink-0 p-2 rounded-xl bg-brand-800/60 border border-brand-700 text-gold-400"><MapPin className="w-5 h-5" /></div>
-                <div className="min-w-0">
-                  <p className="text-sm font-bold text-white">Inteligência Local</p>
-                  <p className="text-xs text-muted">Contribua com informações do bairro</p>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-muted shrink-0" />
-            </button>
-
-            <BannerBackupGamificacao
-              totalFotosBackup={totalFotosReal}
-              espacoTexto={espacoTexto}
-            />
           </div>
-        )}
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="inline-flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-white border border-danger/20 text-danger text-xs font-bold hover:bg-danger/10 transition-colors shrink-0"
+          >
+            <RefreshCw className="w-3.5 h-3.5" /> Tentar novamente
+          </button>
+        </div>
+      )}
 
-        {activeTab === 'imoveis' && (
-          <div className="p-3.5 space-y-3.5">
-            <h2 className="text-base font-bold text-brand-900 flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-brand-800" />
-              Seus Imóveis ({listaImoveis.length})
-            </h2>
-            <TabelaImoveis imoveis={listaImoveis} />
-          </div>
-        )}
-
-        {activeTab === 'bairro' && (
-          <div className="p-3.5">
-            <PainelConhecimentoRegional />
-          </div>
-        )}
-
-        {activeTab === 'conta' && (
-          <div className="p-3.5 space-y-3.5">
-            <h2 className="text-base font-bold text-brand-900 flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-brand-800" />
-              Minha Conta
-            </h2>
-
-            <div className="bg-white border border-line rounded-2xl p-4 shadow-sm">
-              <div className="flex items-center gap-3">
-                <span className="w-12 h-12 rounded-full bg-brand-900/5 border border-brand-700/30 flex items-center justify-center text-brand-800 font-black text-lg overflow-hidden">
-                  {usuario?.foto_perfil_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={usuario.foto_perfil_url} alt={usuario.nome} className="w-full h-full object-cover" />
-                  ) : (
-                    inicialUsuario
-                  )}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-black text-brand-900 truncate">{usuario?.nome || 'Corretor'}</p>
-                  <p className="text-xs text-muted truncate">{usuario?.email || 'Sessão ativa'}</p>
-                  <span className="mt-1 inline-flex bg-brand-900/5 text-brand-800 border border-brand-700/30 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
-                    Plano {usuario?.plano_atual?.toUpperCase() || 'START'}
-                  </span>
+      {activeTab === 'inicio' && (
+        <div className="space-y-5 sm:space-y-6">
+          <section className="bg-white border border-line rounded-3xl p-4 sm:p-6 shadow-sm">
+            <div className="flex items-start justify-between gap-4">
+              <div className="space-y-2 min-w-0">
+                <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-gold bg-gold/10 border border-gold/20 rounded-full px-3 py-1">
+                  <Sparkles className="w-3.5 h-3.5" /> Painel do corretor
                 </div>
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-brand-900 leading-tight">Olá, {primeiroNome}</h1>
+                <p className="text-sm text-muted max-w-2xl">
+                  Acompanhe publicação, aprovação, saldo disponível e sua vitrine em um só lugar.
+                </p>
               </div>
-              <button
-                onClick={() => setModalVitrineAberto(true)}
-                className="mt-3 w-full py-2 px-3 rounded-xl bg-gold/15 border border-gold/40 text-brand-900 text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-gold/25 transition-colors"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-gold" /> Personalizar Minha Vitrine
-              </button>
-            </div>
-
-            <div className="bg-gradient-to-br from-brand-900 to-brand-800 rounded-2xl p-4 text-white shadow-sm flex items-center justify-between gap-3">
-              <div>
-                <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider font-black text-gold-400"><Coins className="w-3.5 h-3.5" /> Saldo de créditos</div>
-                <div className="text-3xl font-black mt-1">{usuario?.saldo_creditos ?? 1}</div>
-              </div>
-              <button
-                onClick={() => setModalRecargaAberto(true)}
-                className="bg-white text-brand-800 font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl shadow-md"
-              >
-                Recarregar
-              </button>
-            </div>
-
-            <button
-              onClick={() => router.push('/planos')}
-              className="w-full bg-white border border-line rounded-2xl p-4 shadow-sm flex items-center justify-between text-left hover:border-brand-700/30"
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-gold/10 border border-gold/30 text-gold"><Sparkles className="w-5 h-5" /></div>
-                <div>
-                  <p className="text-sm font-bold text-brand-900">Planos e Preços</p>
-                  <p className="text-xs text-muted">Conheça o Start, Pro e Elite</p>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-muted" />
-            </button>
-
-            <button
-              onClick={() => setModalContatoAberto(true)}
-              className="w-full bg-white border border-line rounded-2xl p-4 shadow-sm flex items-center justify-between text-left hover:border-brand-700/30"
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-brand-900/5 border border-brand-700/30 text-brand-800"><Mail className="w-5 h-5" /></div>
-                <div>
-                  <p className="text-sm font-bold text-brand-900">Contato</p>
-                  <p className="text-xs text-muted">Atendimento e Ouvidoria</p>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-muted" />
-            </button>
-
-            <button
-              onClick={handleLogout}
-              className="w-full bg-white border border-danger/30 rounded-2xl p-4 shadow-sm flex items-center gap-3 text-left hover:border-danger/50"
-            >
-              <div className="p-2 rounded-xl bg-danger/10 text-danger"><LogOut className="w-5 h-5" /></div>
-              <div>
-                <p className="text-sm font-bold text-danger">Encerrar Sessão</p>
-                <p className="text-xs text-muted">Sair do painel com segurança</p>
-              </div>
-            </button>
-          </div>
-        )}
-      </DashboardShell>
-
-      {/* Desktop: sidebar do AppShell + conteúdo */}
-      <AppShellDesktop activeTab={activeTab} onTabChange={setActiveTab} usuario={usuario}>
-        <div className="max-w-7xl mx-auto space-y-8 py-8 px-4 sm:px-6 lg:px-8">
-
-          {/* Top Header — Clean Light Style */}
-          <div className="bg-white border border-line rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 relative overflow-hidden">
-            <div className="relative z-10 space-y-2">
-              <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-brand-900 tracking-tight">
-                  {usuario ? `Olá, ${usuario.nome}` : 'Painel do Corretor'}
-                </h1>
-                <span className="bg-brand-900/5 text-brand-800 border border-brand-700/30 text-xs font-black px-3 py-1 rounded-full flex items-center gap-1 shadow-xs uppercase tracking-wider">
-                  <ShieldCheck className="w-4 h-4" /> PLANO {usuario?.plano_atual?.toUpperCase() || 'START'}
-                </span>
-              </div>
-              <p className="text-muted text-xs sm:text-sm font-medium">
-                {usuario ? `Sessão ativa: ${usuario.email}` : 'Gerencie seus anúncios, Media Kits de IA e backups de fotos em nuvem.'}
-              </p>
-            </div>
-
-            <div className="relative z-10 flex items-center gap-3 w-full sm:w-auto justify-end">
-              <button
-                onClick={() => setModalVitrineAberto(true)}
-                className="px-4 py-2.5 bg-gradient-to-r from-gold to-gold-400 hover:from-gold-400 hover:to-gold text-brand-950 font-bold text-xs rounded-xl shadow-xs flex items-center gap-2 transition-all"
-              >
-                <Sparkles className="w-4 h-4" /> Minha Vitrine
-              </button>
-
               <button
                 onClick={() => window.location.reload()}
-                title="Atualizar Dados"
-                className="p-3 bg-paper border border-line text-ink hover:text-brand-800 hover:border-brand-700/30 rounded-xl transition-all shadow-xs"
+                className="hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-line text-xs font-semibold text-brand-900 hover:bg-brand-50 transition-colors shrink-0"
               >
-                <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin text-brand-800' : ''}`} />
-              </button>
-
-              <button
-                onClick={handleLogout}
-                title="Encerrar Sessão Segura"
-                className="p-3 bg-paper border border-line text-muted hover:text-danger hover:border-danger/50 rounded-xl transition-all shadow-xs"
-              >
-                <LogOut className="w-5 h-5" />
+                <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} /> Atualizar
               </button>
             </div>
-          </div>
-
-          {/* Saldo de Créditos */}
-          <HeaderSaldoCreditos
-            saldoCreditos={usuario?.saldo_creditos ?? 1}
-            planoAtual={usuario?.plano_atual || 'Start'}
-            onAbrirRecarga={() => setModalRecargaAberto(true)}
-          />
-
-          {/* Central de trabalho: fila, exceções e próxima ação */}
-          <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <div className="bg-white border border-line rounded-2xl p-4 shadow-sm">
-              <div className="text-[10px] font-black uppercase tracking-wider text-success flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-success" /> Publicados</div>
-              <div className="text-2xl font-black text-brand-900 mt-2">{workSummary.publicados}</div>
-            </div>
-            <div className="bg-white border border-line rounded-2xl p-4 shadow-sm">
-              <div className="text-[10px] font-black uppercase tracking-wider text-gold flex items-center gap-1.5"><Clock3 className="w-3.5 h-3.5 text-gold" /> Aprovação</div>
-              <div className="text-2xl font-black text-brand-900 mt-2">{workSummary.aprovacao}</div>
-            </div>
-            <div className="bg-white border border-line rounded-2xl p-4 shadow-sm">
-              <div className="text-[10px] font-black uppercase tracking-wider text-brand-800 flex items-center gap-1.5"><RefreshCw className="w-3.5 h-3.5 text-brand-800" /> Processando</div>
-              <div className="text-2xl font-black text-brand-900 mt-2">{workSummary.processando}</div>
-            </div>
-            <div className="bg-white border border-line rounded-2xl p-4 shadow-sm">
-              <div className="text-[10px] font-black uppercase tracking-wider text-danger flex items-center gap-1.5"><CircleAlert className="w-3.5 h-3.5 text-danger" /> Sua atenção</div>
-              <div className="text-2xl font-black text-brand-900 mt-2">{workSummary.atencao}</div>
-            </div>
-          </section>
-
-          <section className="bg-white border border-line rounded-2xl p-5 flex flex-col md:flex-row gap-4 md:items-center md:justify-between shadow-sm">
-            <div className="flex gap-3">
-              <div className="shrink-0 p-2.5 h-fit rounded-xl bg-brand-900/5 border border-brand-700/30 text-brand-800"><MessageCircle className="w-5 h-5" /></div>
-              <div>
-                <p className="text-[10px] uppercase tracking-wider font-black text-brand-800">Próxima ação</p>
-                <h2 className="text-base font-bold text-brand-900 mt-1">{nextItem ? `${nextItem.referencia} — ${nextItemMeta?.label}` : 'Envie seu primeiro imóvel pelo WhatsApp'}</h2>
-                <p className="text-sm text-ink mt-1">{nextItem ? nextItemMeta?.nextAction : 'Envie fotos e as informações principais do imóvel para iniciarmos seu Media Kit.'}</p>
+            <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+              <div className="rounded-2xl border border-line bg-paper p-3">
+                <div className="text-[11px] uppercase tracking-wide text-muted font-bold">Publicados</div>
+                <div className="mt-1 text-xl font-extrabold text-brand-900">{anunciosPublicados.length}</div>
+              </div>
+              <div className="rounded-2xl border border-line bg-paper p-3">
+                <div className="text-[11px] uppercase tracking-wide text-muted font-bold">Em fluxo</div>
+                <div className="mt-1 text-xl font-extrabold text-brand-900">{anunciosPendentes.length}</div>
+              </div>
+              <div className="rounded-2xl border border-line bg-paper p-3">
+                <div className="text-[11px] uppercase tracking-wide text-muted font-bold">Saldo disp.</div>
+                <div className="mt-1 text-xl font-extrabold text-brand-900">{saldoDisponivel}</div>
+              </div>
+              <div className="rounded-2xl border border-line bg-paper p-3">
+                <div className="text-[11px] uppercase tracking-wide text-muted font-bold">Com pendência</div>
+                <div className="mt-1 text-xl font-extrabold text-brand-900">{anunciosComPendencia.length}</div>
               </div>
             </div>
-            <button onClick={() => window.location.reload()} className="text-xs font-bold px-4 py-2.5 rounded-xl border border-line text-ink hover:border-brand-700 hover:text-brand-800 transition-colors">Atualizar status</button>
+            {ultimoSync && (
+              <p className="mt-3 text-[11px] text-muted">Última atualização: {ultimoSync.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}{refreshing ? ' • atualizando...' : ''}</p>
+            )}
           </section>
 
-          {/* Banner da Central de Fotos & Backups */}
-          <BannerBackupGamificacao
-            totalFotosBackup={totalFotosReal}
-            espacoTexto={espacoTexto}
+          {prioridade && (
+            <section className="bg-white border border-line rounded-3xl p-4 sm:p-5 shadow-sm">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-xs font-bold uppercase tracking-wide text-muted">Próxima ação recomendada</p>
+                  <h2 className="mt-1 text-base sm:text-lg font-bold text-brand-900 line-clamp-2">
+                    {prioridade.titulo || `Imóvel ${prioridade.referencia || prioridade.id}`}
+                  </h2>
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold border ${prioridadeMeta.tone}`}>
+                      {prioridadeMeta.label}
+                    </span>
+                    <span className="text-xs text-muted">Ref: {prioridade.referencia || prioridade.id}</span>
+                  </div>
+                  <p className="mt-2 text-sm text-muted leading-relaxed">{prioridadeMeta.nextAction}</p>
+                  {aguardandoCredito.length > 0 && saldoDisponivel > 0 && (
+                    <p className="mt-2 text-xs text-brand-900 bg-gold/10 border border-gold/20 rounded-xl px-3 py-2">
+                      Você tem saldo disponível. Se algum imóvel ainda estiver aguardando liberação, atualize o painel ou siga o fluxo de processamento/reprocessamento.
+                    </p>
+                  )}
+                </div>
+                <button
+                  onClick={() => setActiveTab('imoveis')}
+                  className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-brand-900 text-white text-xs font-bold hover:bg-brand-800 transition-colors"
+                >
+                  Ver imóveis <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </section>
+          )}
+
+          <section className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <button onClick={() => router.push('/dashboard/novo')} className="bg-white border border-line rounded-2xl p-4 text-left shadow-sm hover:border-gold/40 hover:shadow-md transition-all">
+              <div className="w-10 h-10 rounded-xl bg-gold/10 border border-gold/30 flex items-center justify-center text-gold mb-3"><Building2 className="w-5 h-5" /></div>
+              <div className="font-bold text-brand-900">Novo imóvel</div>
+              <div className="text-xs text-muted mt-1">Cadastrar e enviar para processamento</div>
+            </button>
+            <button onClick={() => setActiveTab('bairro')} className="bg-white border border-line rounded-2xl p-4 text-left shadow-sm hover:border-gold/40 hover:shadow-md transition-all">
+              <div className="w-10 h-10 rounded-xl bg-brand-900/5 border border-brand-700/20 flex items-center justify-center text-brand-900 mb-3"><MapPin className="w-5 h-5" /></div>
+              <div className="font-bold text-brand-900">Conhecimento local</div>
+              <div className="text-xs text-muted mt-1">Melhorar contexto dos anúncios da região</div>
+            </button>
+            <button onClick={() => setPerfilVitrineAberto(true)} className="bg-white border border-line rounded-2xl p-4 text-left shadow-sm hover:border-gold/40 hover:shadow-md transition-all">
+              <div className="w-10 h-10 rounded-xl bg-success/10 border border-success/20 flex items-center justify-center text-success mb-3"><CheckCircle2 className="w-5 h-5" /></div>
+              <div className="font-bold text-brand-900">Minha vitrine</div>
+              <div className="text-xs text-muted mt-1">Editar perfil público e compartilhar link</div>
+            </button>
+          </section>
+
+          <HeaderSaldoCreditos
+            saldoCreditos={saldoCreditos}
+            saldoDisponivel={saldoDisponivel}
+            creditosReservados={creditosReservados}
+            planoAtual={usuario?.plano_atual || 'start'}
+            onAbrirRecarga={() => setRecarregaAberta(true)}
           />
 
-          {/* Tabela de Imóveis do Corretor */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-brand-900 flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-brand-800" />
-                Seus Imóveis Cadastrados ({listaImoveis.length})
-              </h2>
+          <BannerBackupGamificacao
+            totalFotosBackup={0}
+            espacoTexto="na nuvem"
+            onAbrirBackupModal={() => setActiveTab('imoveis')}
+          />
+
+          {(aguardandoAprovacao.length > 0 || aguardandoCredito.length > 0) && (
+            <section className="bg-white border border-line rounded-3xl p-4 sm:p-5 shadow-sm space-y-3">
+              <h3 className="font-bold text-brand-900 flex items-center gap-2"><CircleAlert className="w-4 h-4 text-gold" /> Atenções do momento</h3>
+              <div className="space-y-2">
+                {aguardandoAprovacao.slice(0, 2).map((ad) => (
+                  <div key={ad.id} className="rounded-xl border border-gold/20 bg-gold/5 px-3 py-2.5">
+                    <div className="text-sm font-semibold text-brand-900 line-clamp-1">{ad.titulo || `Imóvel ${ad.referencia || ad.id}`}</div>
+                    <div className="text-xs text-muted mt-0.5">Aguardando sua aprovação para avançar na publicação.</div>
+                  </div>
+                ))}
+                {aguardandoCredito.slice(0, 2).map((ad) => (
+                  <div key={ad.id} className="rounded-xl border border-danger/20 bg-danger/5 px-3 py-2.5">
+                    <div className="text-sm font-semibold text-brand-900 line-clamp-1">{ad.titulo || `Imóvel ${ad.referencia || ad.id}`}</div>
+                    <div className="text-xs text-muted mt-0.5">
+                      {saldoDisponivel > 0 ? 'Aguardando liberação/reprocessamento (há saldo disponível).' : 'Aguardando crédito/liberação (saldo disponível insuficiente).'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button onClick={() => setActiveTab('imoveis')} className="text-sm font-bold text-brand-900 inline-flex items-center gap-1.5 hover:text-gold transition-colors">
+                Ver todos os imóveis <ChevronRight className="w-4 h-4" />
+              </button>
+            </section>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'imoveis' && (
+        <div className="space-y-4 sm:space-y-5">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-extrabold text-brand-900">Meus imóveis</h2>
+              <p className="text-sm text-muted">Acompanhe status, aprovação e publicação de cada anúncio.</p>
+            </div>
+            <button onClick={() => router.push('/dashboard/novo')} className="inline-flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl bg-brand-900 text-white text-xs sm:text-sm font-bold hover:bg-brand-800 transition-colors">
+              <Building2 className="w-4 h-4" /> Novo
+            </button>
+          </div>
+          <TabelaImoveis imoveis={imoveis} saldoDisponivel={saldoDisponivel} />
+        </div>
+      )}
+
+      {activeTab === 'bairro' && (
+        <div className="space-y-4 sm:space-y-5">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-extrabold text-brand-900">Conhecimento regional</h2>
+            <p className="text-sm text-muted">Ajude a IA com informações locais para melhorar seus anúncios e contexto.</p>
+          </div>
+          <PainelConhecimentoRegional />
+        </div>
+      )}
+
+      {activeTab === 'conta' && (
+        <div className="space-y-4 sm:space-y-5">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-extrabold text-brand-900">Minha conta</h2>
+            <p className="text-sm text-muted">Perfil, créditos, vitrine pública e suporte.</p>
+          </div>
+
+          <section className="bg-white border border-line rounded-3xl p-4 sm:p-5 shadow-sm space-y-4">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-12 h-12 rounded-2xl bg-brand-900 text-white flex items-center justify-center font-extrabold text-lg shrink-0">
+                {primeiroNome.charAt(0).toUpperCase()}
+              </div>
+              <div className="min-w-0">
+                <p className="font-bold text-brand-900 truncate">{usuario?.nome || 'Corretor'}</p>
+                <p className="text-xs text-muted truncate">{usuario?.email || 'E-mail não informado'}</p>
+                {usuario?.telefone && <p className="text-xs text-muted truncate">{usuario.telefone}</p>}
+              </div>
             </div>
 
-            <PainelConhecimentoRegional />
-            <TabelaImoveis imoveis={listaImoveis} />
-          </div>
+            <div className="grid grid-cols-2 gap-2.5">
+              <div className="rounded-xl border border-line bg-paper p-3">
+                <div className="text-[11px] uppercase tracking-wide text-muted font-bold">Saldo disponível</div>
+                <div className="mt-1 text-lg font-extrabold text-brand-900">{saldoDisponivel}</div>
+                <div className="text-[11px] text-muted mt-0.5">Total: {saldoCreditos}{creditosReservados > 0 ? ` • Reservado: ${creditosReservados}` : ''}</div>
+              </div>
+              <div className="rounded-xl border border-line bg-paper p-3">
+                <div className="text-[11px] uppercase tracking-wide text-muted font-bold">Plano</div>
+                <div className="mt-1 text-lg font-extrabold text-brand-900 capitalize">{usuario?.plano_atual || 'start'}</div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <button onClick={() => setPerfilVitrineAberto(true)} className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-brand-900 text-white font-bold text-sm hover:bg-brand-800 transition-colors">
+                <ShieldCheck className="w-4 h-4" /> Editar perfil e vitrine
+              </button>
+              <button onClick={() => setRecarregaAberta(true)} className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-line bg-white font-bold text-sm hover:bg-brand-50 transition-colors">
+                <Coins className="w-4 h-4" /> Recarregar créditos
+              </button>
+              {slugVitrine && (
+                <button onClick={() => router.push(`/corretor/${slugVitrine}`)} className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-line bg-white font-bold text-sm hover:bg-brand-50 transition-colors sm:col-span-2">
+                  <Building2 className="w-4 h-4" /> Ver minha vitrine pública
+                </button>
+              )}
+            </div>
+          </section>
+
+          <section className="bg-white border border-line rounded-3xl p-4 sm:p-5 shadow-sm space-y-3">
+            <h3 className="font-bold text-brand-900">Suporte e ajuda</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <a href="https://wa.me/5511989161897" target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-line hover:bg-brand-50 font-semibold text-sm">
+                <MessageCircle className="w-4 h-4 text-success" /> WhatsApp do suporte
+              </a>
+              <a href="mailto:contato@colegacorretor.com.br" className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-line hover:bg-brand-50 font-semibold text-sm">
+                <Mail className="w-4 h-4" /> E-mail
+              </a>
+            </div>
+          </section>
+
+          <button onClick={handleLogout} className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-danger/20 text-danger font-bold text-sm hover:bg-danger/5 transition-colors">
+            <LogOut className="w-4 h-4" /> Sair da conta
+          </button>
         </div>
-      </AppShellDesktop>
+      )}
 
-      {/* Modal de Recarga Mercado Pago */}
       <ModalRecargaCreditos
-        isOpen={modalRecargaAberto}
-        onClose={() => setModalRecargaAberto(false)}
-        pacoteInicial={pacoteInicialModal}
+        isOpen={recarregaAberta}
+        onClose={() => setRecarregaAberta(false)}
       />
-
-      {/* Modal de Personalização da Vitrine Pública */}
       <ModalPerfilVitrine
-        aberto={modalVitrineAberto}
-        onClose={() => setModalVitrineAberto(false)}
+        aberto={perfilVitrineAberto}
+        onClose={() => setPerfilVitrineAberto(false)}
         usuario={usuario}
-        onPerfilAtualizado={(novoPerfil) => {
-          setUsuario((prev) => (prev ? { ...prev, ...novoPerfil } : novoPerfil));
-          try {
-            const currentStored = JSON.parse(localStorage.getItem('user_info') || '{}');
-            localStorage.setItem('user_info', JSON.stringify({ ...currentStored, ...novoPerfil }));
-          } catch {
-            // noop
-          }
-        }}
+        onPerfilAtualizado={(novoPerfil) => setUsuario((prev: any) => ({ ...(prev || {}), ...novoPerfil }))}
       />
-      <ContactModal
-        isOpen={modalContatoAberto}
-        onClose={() => setModalContatoAberto(false)}
-      />
-    </div>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile app shell (inclui navegação inferior) */}
+      <DashboardShell activeTab={activeTab} onTabChange={setActiveTab} usuario={usuario} loading={loading}>
+        <div className="min-h-screen bg-paper px-3 pt-3 pb-24 space-y-4 md:hidden">
+          {dashboardContent}
+        </div>
+      </DashboardShell>
+
+      {/* Desktop shell */}
+      <div className="hidden md:block min-h-screen bg-paper">
+        <AppShellDesktop activeTab={activeTab} onTabChange={setActiveTab} usuario={usuario}>
+          <div className="max-w-6xl mx-auto px-6 py-6 space-y-6">
+            {dashboardContent}
+          </div>
+        </AppShellDesktop>
+      </div>
+    </>
   );
 }
