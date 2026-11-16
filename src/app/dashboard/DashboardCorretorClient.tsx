@@ -7,6 +7,7 @@ import { fetchBrokerApi, logoutBrokerSession } from '@/lib/api';
 import HeaderSaldoCreditos from './components/HeaderSaldoCreditos';
 import BannerBackupGamificacao from './components/BannerBackupGamificacao';
 import ModalRecargaCreditos from './components/ModalRecargaCreditos';
+import ModalPerfilVitrine from './components/ModalPerfilVitrine';
 import ContactModal from '@/components/ContactModal';
 import TabelaImoveis from './TabelaImoveis';
 import PainelConhecimentoRegional from './components/PainelConhecimentoRegional';
@@ -47,7 +48,19 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
   const router = useRouter();
   const [modalRecargaAberto, setModalRecargaAberto] = useState(false);
   const [modalContatoAberto, setModalContatoAberto] = useState(false);
-  const [usuario, setUsuario] = useState<{ email: string; nome: string; saldo_creditos: number; plano_atual: string } | null>(null);
+  const [modalVitrineAberto, setModalVitrineAberto] = useState(false);
+  const [usuario, setUsuario] = useState<{
+    email: string;
+    nome: string;
+    saldo_creditos: number;
+    plano_atual: string;
+    telefone?: string;
+    foto_perfil_url?: string;
+    apresentacao?: string;
+    creci?: string;
+    slug?: string;
+    codigo_corretor?: string;
+  } | null>(null);
   const [listaImoveis, setListaImoveis] = useState<Imovel[]>(initialImoveis);
   const [loading, setLoading] = useState(true);
   const [pacoteInicialModal, setPacoteInicialModal] = useState<'start' | 'pro' | 'elite'>('pro');
@@ -140,6 +153,12 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
             email: perfil.email || '',
             saldo_creditos: perfil.saldo_creditos ?? 0,
             plano_atual: perfil.plano_atual || 'START',
+            telefone: perfil.telefone || '',
+            foto_perfil_url: perfil.foto_perfil_url || '',
+            apresentacao: perfil.apresentacao || '',
+            creci: perfil.creci || '',
+            slug: perfil.slug || '',
+            codigo_corretor: perfil.codigo_corretor || 'BRA',
           };
           setUsuario(userUpdated);
           localStorage.setItem('user_info', JSON.stringify(userUpdated));
@@ -411,10 +430,15 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
 
             <div className="bg-white border border-line rounded-2xl p-4 shadow-sm">
               <div className="flex items-center gap-3">
-                <span className="w-12 h-12 rounded-full bg-brand-900/5 border border-brand-700/30 flex items-center justify-center text-brand-800 font-black text-lg">
-                  {inicialUsuario}
+                <span className="w-12 h-12 rounded-full bg-brand-900/5 border border-brand-700/30 flex items-center justify-center text-brand-800 font-black text-lg overflow-hidden">
+                  {usuario?.foto_perfil_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={usuario.foto_perfil_url} alt={usuario.nome} className="w-full h-full object-cover" />
+                  ) : (
+                    inicialUsuario
+                  )}
                 </span>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="text-sm font-black text-brand-900 truncate">{usuario?.nome || 'Corretor'}</p>
                   <p className="text-xs text-muted truncate">{usuario?.email || 'Sessão ativa'}</p>
                   <span className="mt-1 inline-flex bg-brand-900/5 text-brand-800 border border-brand-700/30 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
@@ -422,6 +446,12 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
                   </span>
                 </div>
               </div>
+              <button
+                onClick={() => setModalVitrineAberto(true)}
+                className="mt-3 w-full py-2 px-3 rounded-xl bg-gold/15 border border-gold/40 text-brand-900 text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-gold/25 transition-colors"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-gold" /> Personalizar Minha Vitrine
+              </button>
             </div>
 
             <div className="bg-gradient-to-br from-brand-900 to-brand-800 rounded-2xl p-4 text-white shadow-sm flex items-center justify-between gap-3">
@@ -500,6 +530,13 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
             </div>
 
             <div className="relative z-10 flex items-center gap-3 w-full sm:w-auto justify-end">
+              <button
+                onClick={() => setModalVitrineAberto(true)}
+                className="px-4 py-2.5 bg-gradient-to-r from-gold to-gold-400 hover:from-gold-400 hover:to-gold text-brand-950 font-bold text-xs rounded-xl shadow-xs flex items-center gap-2 transition-all"
+              >
+                <Sparkles className="w-4 h-4" /> Minha Vitrine
+              </button>
+
               <button
                 onClick={() => window.location.reload()}
                 title="Atualizar Dados"
@@ -583,6 +620,22 @@ export default function DashboardCorretorClient({ imoveis: initialImoveis = [] }
         isOpen={modalRecargaAberto}
         onClose={() => setModalRecargaAberto(false)}
         pacoteInicial={pacoteInicialModal}
+      />
+
+      {/* Modal de Personalização da Vitrine Pública */}
+      <ModalPerfilVitrine
+        aberto={modalVitrineAberto}
+        onClose={() => setModalVitrineAberto(false)}
+        usuario={usuario}
+        onPerfilAtualizado={(novoPerfil) => {
+          setUsuario((prev) => (prev ? { ...prev, ...novoPerfil } : novoPerfil));
+          try {
+            const currentStored = JSON.parse(localStorage.getItem('user_info') || '{}');
+            localStorage.setItem('user_info', JSON.stringify({ ...currentStored, ...novoPerfil }));
+          } catch {
+            // noop
+          }
+        }}
       />
       <ContactModal
         isOpen={modalContatoAberto}

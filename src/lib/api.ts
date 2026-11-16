@@ -935,3 +935,51 @@ export async function publishReview(
     return { success: false, error: msg, code: 'ERRO_REDE' };
   }
 }
+
+/**
+ * Atualiza o perfil público do corretor (foto, bio, CRECI, contatos).
+ */
+export async function atualizarPerfilCorretor(dados: {
+  nome?: string;
+  telefone?: string;
+  foto_perfil_url?: string;
+  apresentacao?: string;
+  creci?: string;
+  slug?: string;
+}): Promise<{ success: boolean; data?: any; error?: string }> {
+  return fetchBrokerApi<any>('/corretor/me/perfil', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dados),
+  });
+}
+
+/**
+ * Busca a vitrine pública de um corretor com todos os seus imóveis ativos divididos em venda e locação.
+ */
+export async function buscarVitrinePublicaCorretor(slugOuCodigo: string): Promise<{ success: boolean; data?: any; error?: string }> {
+  const clean = encodeURIComponent(String(slugOuCodigo || '').trim());
+  const url = resolveApiUrl(`/corretores/publico/${clean}`);
+
+  try {
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' },
+      next: { revalidate: 30 }, // cache ISR curto no Next.js
+    });
+
+    const json = await res.json().catch(() => null);
+    if (!res.ok) {
+      return {
+        success: false,
+        error: json?.message || `Erro ${res.status} ao carregar vitrine`,
+      };
+    }
+
+    return { success: true, data: json?.data };
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Falha na conexão';
+    return { success: false, error: msg };
+  }
+}
+

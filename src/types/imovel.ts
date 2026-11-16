@@ -76,3 +76,27 @@ export interface Imovel {
   capa_index?: number;
 }
 
+export interface VitrineCorretorPublicaData {
+  corretor: {
+    nome: string;
+    telefone: string;
+    codigo_corretor: string;
+    slug: string;
+    foto_perfil_url?: string;
+    apresentacao?: string;
+    creci?: string;
+    total_anuncios: number;
+  };
+  imoveis: {
+    venda: Imovel[];
+    locacao: Imovel[];
+    todos: Imovel[];
+  };
+  totais: {
+    total: number;
+    venda: number;
+    locacao: number;
+  };
+}
+
+
