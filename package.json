@@ -10,8 +10,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:approval": "node --test scripts/test-approval-flow.test.ts",
-    "test:review": "node --test scripts/test-review-link-dinamico.test.ts"
+    "test:approval": "node --import tsx --test scripts/test-approval-flow.test.ts",
+    "test:review": "node --import tsx --test scripts/test-review-link-dinamico.test.ts"
   },
   "dependencies": {
     "framer-motion": "^12.35.2",
@@ -28,6 +28,7 @@
     "eslint": "^9",
     "eslint-config-next": "^16.3.1",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }
