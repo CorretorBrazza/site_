@@ -15,6 +15,7 @@ import {
 import { useReviewAutosave } from './hooks/useReviewAutosave';
 import { MAPA_CAMPO_PATCH, montarPatch } from './reviewPatch';
 import { exigeConfirmacao } from './reviewOrigens';
+import { consumirTokenDoFragmento } from './reviewToken';
 import { ReviewHeader } from './components/ReviewHeader';
 import { ReviewGallery } from './components/ReviewGallery';
 import { ReviewDataSection } from './components/ReviewDataSection';
@@ -32,30 +33,6 @@ import {
 } from 'lucide-react';
 
 type EstadoTela = 'carregando' | 'invalido' | 'indisponivel' | 'pronto' | 'publicado';
-
-/**
- * Lê o token do fragmento (#token=...).
- */
-function lerTokenDoFragmento(): string {
-  if (typeof window === 'undefined') return '';
-  const hash = window.location.hash || '';
-  if (!hash) return '';
-  try {
-    const params = new URLSearchParams(hash.startsWith('#') ? hash.slice(1) : hash);
-    return (params.get('token') || '').trim();
-  } catch {
-    return '';
-  }
-}
-
-/**
- * Remove o fragmento da URL imediatamente para proteger a credencial contra vazamentos.
- */
-function limparFragmento(): void {
-  if (typeof window === 'undefined') return;
-  if (!window.location.hash) return;
-  window.history.replaceState(null, '', window.location.pathname + window.location.search);
-}
 
 /**
  * Resumo do que ainda depende do corretor.
@@ -182,9 +159,11 @@ export default function RevisarPage() {
   }, []);
 
   useEffect(() => {
-    const token = tokenRef.current || lerTokenDoFragmento();
+    // Limpa o fragmento na mesma chamada em que lê o token, antes de qualquer
+    // requisição. Mesmo com token já em memória, a URL precisa ser limpa.
+    const tokenDoFragmento = consumirTokenDoFragmento();
+    const token = tokenRef.current || tokenDoFragmento;
     tokenRef.current = token;
-    limparFragmento();
 
     let ativo = true;
 

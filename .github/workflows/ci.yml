@@ -39,7 +39,7 @@ jobs:
         run: npm run lint
 
       - name: Rodar testes de contrato
-        run: npm run test:approval && npm run test:review && npm run test:pwa
+        run: npm run test:approval && npm run test:review && npm run test:pwa && npm run test:go-live-contract
 
       - name: Verificar tipos
         run: npx tsc --noEmit

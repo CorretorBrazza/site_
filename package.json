@@ -12,7 +12,8 @@
     "lint": "eslint",
     "test:approval": "node --import tsx --test scripts/test-approval-flow.test.ts",
     "test:review": "node --import tsx --test scripts/test-review-link-dinamico.test.ts",
-    "test:pwa": "node --import tsx --test scripts/test-pwa.test.ts"
+    "test:pwa": "node --import tsx --test scripts/test-pwa.test.ts",
+    "test:go-live-contract": "node --import tsx --test scripts/test-go-live-contract.test.ts"
   },
   "dependencies": {
     "framer-motion": "^12.35.2",
