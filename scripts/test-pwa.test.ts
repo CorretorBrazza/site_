@@ -30,7 +30,8 @@ test('manifesto declara instalacao, escopo e icones PNG nas medidas exigidas', (
 
   assert.equal(manifesto.scope, '/');
   assert.equal(manifesto.display, 'standalone');
-  assert.equal(manifesto.start_url, '/dashboard');
+  assert.equal(manifesto.start_url, '/', 'instalar pelo site abre a vitrine, nao area autenticada');
+  assert.equal(manifesto.id, '/');
   assert.equal(manifesto.lang, 'pt-BR');
 
   const any = manifesto.icons.filter((i: any) => String(i.purpose).includes('any'));

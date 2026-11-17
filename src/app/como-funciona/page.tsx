@@ -14,6 +14,9 @@ import {
 } from 'lucide-react';
 
 export const metadata = {
+  alternates: {
+    canonical: '/como-funciona/',
+  },
   title: 'Como Funciona a Tecnologia & IA | Imóveis Taboão — Ferramenta Oficial do Corretor',
   description: 'Descubra como a Inteligência Artificial e a Visão Computacional do Imóveis Taboão transformam fotos e textos brutos em Media Kits completos em 15 segundos.',
 };

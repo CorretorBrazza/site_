@@ -43,14 +43,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? corretor.apresentacao.slice(0, 160)
     : `Confira os ${totalImoveis} imóveis para venda e locação disponíveis com ${corretor.nome} em Taboão da Serra e região.`;
 
+  const urlPagina = `/corretor/${encodeURIComponent(slug)}/`;
+
   return {
     title: titulo,
     description: descricao,
+    alternates: {
+      canonical: urlPagina,
+    },
     openGraph: {
       title: titulo,
       description: descricao,
+      url: urlPagina,
+      siteName: 'Imóveis Taboão',
+      locale: 'pt_BR',
       images: corretor.foto_perfil_url ? [corretor.foto_perfil_url] : [],
       type: 'profile',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: titulo,
+      description: descricao,
+      images: corretor.foto_perfil_url ? [corretor.foto_perfil_url] : [],
     },
   };
 }

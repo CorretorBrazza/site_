@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
   Search,
@@ -13,7 +14,6 @@ import {
 } from 'lucide-react';
 import { getImoveis } from '@/app/actions/imovel-server-actions';
 import HomeLiveSection from '@/components/HomeLiveSection';
-import { safeJsonLd } from '@/lib/jsonld';
 import { Container, Section, SectionTitle } from '@/components/ui/container';
 import { ButtonLink } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -21,6 +21,12 @@ import { Input, Select } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 
 const NUMERO_WHATSAPP = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '5511989161897').replace(/\D/g, '');
+
+// O RealEstateAgent global fica no root layout (#agente). Repetir o tipo aqui
+// gerava dois agentes com telefones diferentes na mesma página.
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+};
 
 const PROVAS = [
   { icone: ShieldCheck, titulo: 'Atendimento local', texto: 'Taboão da Serra e imediações' },
@@ -32,36 +38,8 @@ const PROVAS = [
 export default async function Home() {
   const { imoveis: allImoveis, fallback: catalogoFallback } = await getImoveis();
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'RealEstateAgent',
-    'name': 'Imóveis Taboão da Serra e imediações',
-    'image': 'https://imoveistaboao.com.br/favicon.ico',
-    '@id': 'https://imoveistaboao.com.br',
-    'url': 'https://imoveistaboao.com.br',
-    'telephone': '+5511932785602',
-    'address': {
-      '@type': 'PostalAddress',
-      'streetAddress': 'Taboão da Serra e imediações',
-      'addressLocality': 'Taboão da Serra',
-      'addressRegion': 'SP',
-      'postalCode': '06750-000',
-      'addressCountry': 'BR'
-    },
-    'geo': {
-      '@type': 'GeoCoordinates',
-      'latitude': -23.6247,
-      'longitude': -46.7885
-    }
-  };
-
   return (
     <div className="flex flex-col">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
-      />
-
       {/* ---------------- HERO ---------------- */}
       <Section tone="navy" spacing="compact" className="relative overflow-hidden pt-12 sm:pt-16">
         {/* Halo dourado discreto */}

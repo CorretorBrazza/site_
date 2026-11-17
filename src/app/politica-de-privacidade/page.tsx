@@ -3,6 +3,9 @@ import { Shield, Lock, Eye, FileText, CheckCircle2 } from 'lucide-react';
 import ContactButton from '@/components/ContactButton';
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: '/politica-de-privacidade/',
+  },
   title: 'Política de Privacidade | Imóveis Taboão',
   description: 'Conheça nossa Política de Privacidade. Saiba como coletamos, usamos e protegemos seus dados pessoais de acordo com a LGPD.',
 };

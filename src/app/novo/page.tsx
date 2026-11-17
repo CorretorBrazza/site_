@@ -6,6 +6,9 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'Imóveis Novos e Lançamentos em Taboão da Serra e imediações — Imóveis Taboão',
   description: 'Confira lançamentos e novos imóveis prontos para morar em Taboão da Serra e imediações.',
+  alternates: {
+    canonical: '/novo/',
+  },
   openGraph: {
     title: 'Imóveis Novos e Lançamentos em Taboão da Serra e imediações — Imóveis Taboão',
     description: 'Confira lançamentos e novos imóveis prontos para morar em Taboão da Serra e imediações.',

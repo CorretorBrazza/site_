@@ -9,6 +9,9 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: 'Imóveis para Alugar em Taboão da Serra e imediações — Imóveis Taboão',
   description: 'Encontre as melhores opções de casas, apartamentos e salões para alugar em Taboão da Serra e imediações.',
+  alternates: {
+    canonical: '/locacao/',
+  },
   openGraph: {
     title: 'Imóveis para Alugar em Taboão da Serra e imediações — Imóveis Taboão',
     description: 'Encontre as melhores opções de casas, apartamentos e salões para alugar em Taboão da Serra e imediações.',

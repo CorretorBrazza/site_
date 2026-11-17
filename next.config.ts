@@ -180,6 +180,17 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        // Duplicata histórica da página de exclusão de dados. Sem o 301, as duas
+        // URLs competem e o canonical da segunda aponta para a primeira.
+        source: '/exclusao-dados-usuario',
+        destination: '/exclusao-de-dados',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

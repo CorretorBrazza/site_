@@ -4,6 +4,9 @@ import Link from 'next/link';
 import { safeJsonLd } from '@/lib/jsonld';
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: '/sobre-nos/',
+  },
   title: 'Sobre Nós | Imóveis Taboão — Inteligência Artificial para o Mercado Imobiliário',
   description: 'Conheça a história do Imóveis Taboão. Criado de corretor para corretor para eliminar cadastros chatos e revolucionar a divulgação imobiliária em Taboão da Serra e região.',
 };

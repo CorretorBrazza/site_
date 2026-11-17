@@ -4,6 +4,9 @@ import ContactForm from '@/components/ContactForm';
 import ContactButton from '@/components/ContactButton';
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: '/contato/',
+  },
   title: 'Fale Conosco | Imóveis Taboão da Serra e imediações',
   description: 'Entre em contato com o portal Imóveis Taboão da Serra e imediações. Atendimento via e-mail e formulário de mensagem.',
 };

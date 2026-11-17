@@ -3,6 +3,9 @@ import { FileText, AlertCircle, ShieldAlert, Scale, HelpCircle, Lock } from 'luc
 import ContactButton from '@/components/ContactButton';
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: '/termos-de-uso/',
+  },
   title: 'Termos de Uso | Imóveis Taboão',
   description: 'Leia os Termos de Uso do site Imóveis Taboão. Saiba quais são as regras de navegação, direitos autorais e limites de responsabilidade.',
 };

@@ -1,9 +1,9 @@
 {
-  "id": "/dashboard",
+  "id": "/",
   "name": "Imóveis Taboão - Painel e Portal",
   "short_name": "Imóveis Taboão",
   "description": "Portal e painel do corretor Imóveis Taboão para acompanhar imóveis, créditos e vitrine.",
-  "start_url": "/dashboard",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#091731",

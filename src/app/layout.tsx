@@ -61,6 +61,7 @@ export default function RootLayout({
   const globalJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'RealEstateAgent',
+    '@id': 'https://imoveistaboao.com.br/#agente',
     name: 'Imóveis Taboão',
     legalName: 'Colega Corretor Estratégia Imobiliária',
     taxID: '63.188.894/0001-05',
@@ -68,7 +69,7 @@ export default function RootLayout({
     description: 'Plataforma imobiliária inteligente com Inteligência Artificial para compra, venda, locação e publicação de imóveis em Taboão da Serra e região.',
     url: 'https://imoveistaboao.com.br',
     telephone: '+5511989161897',
-    image: 'https://imoveistaboao.com.br/favicon.ico',
+    image: 'https://imoveistaboao.com.br/icon-512.png',
     priceRange: 'R$ 12,90 - R$ 1.500.000',
     address: {
       '@type': 'PostalAddress',

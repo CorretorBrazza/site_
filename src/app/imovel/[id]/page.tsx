@@ -131,9 +131,15 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
     ? `https://wa.me/${phoneWithCountry}?text=${whatsappMessage}`
     : `/contato?ref=${encodeURIComponent(imovel.referencia)}`;
 
+  const endereco = imovel.endereco;
+  const logradouro = [endereco?.rua, endereco?.numero, endereco?.bairro]
+    .filter(Boolean)
+    .join(', ');
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'RealEstateListing',
+    '@id': `${urlPagina}#anuncio`,
     'name': imovel.titulo,
     'description': imovel.descricao,
     'url': urlPagina,
@@ -141,8 +147,12 @@ export default async function ImovelDetalhes({ params }: { params: Promise<{ id:
     'datePosted': imovel.createdAt,
     'address': {
       '@type': 'PostalAddress',
-      'addressLocality': imovel.endereco?.bairro || 'Taboão da Serra',
-      'addressRegion': 'SP',
+      ...(logradouro ? { 'streetAddress': logradouro } : {}),
+      // addressLocality é a CIDADE, não o bairro. Fixar Taboão da Serra aqui
+      // fazia imóveis de São Paulo/outras cidades divergirem do próprio título.
+      'addressLocality': endereco?.cidade || imovel.cidade || 'Taboão da Serra',
+      'addressRegion': endereco?.estado || 'SP',
+      ...(endereco?.cep ? { 'postalCode': endereco.cep } : {}),
       'addressCountry': 'BR'
     },
     ...(preco ? {
