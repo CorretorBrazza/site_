@@ -18,7 +18,7 @@ const statusMeta = (rawStatus?: string) => {
   const status = String(rawStatus || '').toUpperCase();
   if (['DELIVERED', 'PUBLISHED', 'ATIVO'].includes(status)) return { label: 'Publicado', note: 'Pronto para divulgação', tone: 'bg-success/10 text-success border-success/30' };
   if (['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW'].includes(status)) return { label: 'Aguardando aprovação', note: 'Confira o link enviado no WhatsApp', tone: 'bg-gold/10 text-gold border-gold/30' };
-  if (['AWAITING_CREDITS', 'SEM_SALDO'].includes(status)) return { label: 'Aguardando liberação', note: 'Com saldo disponível, use "Liberar/IA" para retomar o processamento', tone: 'bg-danger/10 text-danger border-danger/30' };
+  if (['AWAITING_CREDITS', 'SEM_SALDO'].includes(status)) return { label: 'Aguardando liberação', note: 'Com saldo disponível, use "Liberar" para retomar o processamento', tone: 'bg-danger/10 text-danger border-danger/30' };
   if (status === 'EXPIRED') return { label: 'Expirado', note: 'Renove para voltar ao ar', tone: 'bg-muted/10 text-muted border-muted/30' };
   if (['FAILED', 'REJECTED'].includes(status)) return { label: 'Com pendência', note: 'Revise os dados antes de publicar', tone: 'bg-danger/10 text-danger border-danger/30' };
   return { label: 'Em análise', note: 'Estamos preparando este anúncio', tone: 'bg-brand-800/5 text-brand-900 border-line' };
@@ -44,7 +44,11 @@ export default function TabelaImoveis({ imoveis, saldoDisponivel }: TabelaImovei
     }
   };
 
-  const handleAcaoIA = async (imovel: Imovel) => {
+  // Ação exclusiva de anúncios AWAITING_CREDITS/SEM_SALDO. O botão "IA" continua
+  // abrindo o Media Kit (que só visualiza/copia conteúdo); este é o único lugar
+  // que dispara o endpoint de liberação, para não repetir o erro de sequestrar
+  // um botão que já tinha uma função.
+  const handleLiberar = async (imovel: Imovel) => {
     setLoadingIA(imovel.id);
     try {
       const res = await fetchBrokerApi(`/me/anuncios/${imovel.id}/regenerar`, {
@@ -52,11 +56,11 @@ export default function TabelaImoveis({ imoveis, saldoDisponivel }: TabelaImovei
       });
 
       if (res.success) {
-        const msg = res.data?.message || res.message || 'Ação concluída com sucesso. Atualizando o painel...';
+        const msg = res.data?.message || res.message || 'Anúncio liberado para processamento. Atualizando o painel...';
         alert(msg);
         window.location.reload();
       } else {
-        alert('Não foi possível concluir a ação: ' + (res.error || res.message || 'Falha de comunicação.'));
+        alert('Não foi possível liberar o anúncio: ' + (res.error || res.message || 'Falha de comunicação.'));
       }
     } catch (err: any) {
       alert('Falha na requisição: ' + err.message);
@@ -133,7 +137,7 @@ export default function TabelaImoveis({ imoveis, saldoDisponivel }: TabelaImovei
               <div className="text-[11px] text-muted leading-snug">
                 {statusInfo.note}
                 {isAwaiting && !temSaldoDisponivel ? ' (saldo disponível insuficiente)' : ''}
-                {isAwaiting && temSaldoDisponivel ? ' (há saldo disponível; toque em "Liberar/IA" para retomar)' : ''}
+                {isAwaiting && temSaldoDisponivel ? ' (há saldo disponível; toque em "Liberar" para retomar)' : ''}
               </div>
 
               <div className="grid grid-cols-2 gap-2 pt-1">
@@ -148,13 +152,23 @@ export default function TabelaImoveis({ imoveis, saldoDisponivel }: TabelaImovei
                   </div>
                 )}
 
+                {isAwaiting && (
+                  <button
+                    onClick={() => handleLiberar(imovel)}
+                    disabled={!temSaldoDisponivel || loadingIA === imovel.id}
+                    className="col-span-2 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-brand-900 text-white text-xs font-bold disabled:opacity-50"
+                    title={temSaldoDisponivel ? 'Liberar com o saldo disponível' : 'Saldo disponível insuficiente'}
+                  >
+                    {loadingIA === imovel.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                    Liberar para processamento
+                  </button>
+                )}
                 <button onClick={() => handleCopiarLink(imovel)} className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50">
                   {linkCopiadoId === imovel.id ? <Check className="w-4 h-4 text-success" /> : <Link2 className="w-4 h-4" />}
                   {linkCopiadoId === imovel.id ? 'Copiado' : 'Copiar link'}
                 </button>
-                <button onClick={() => handleAcaoIA(imovel)} disabled={loadingIA === imovel.id} className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50 disabled:opacity-50">
-                  {loadingIA === imovel.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                  {isAwaiting ? 'Liberar/IA' : 'IA'}
+                <button onClick={() => setSelecionadoParaIA(imovel)} className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50">
+                  <Sparkles className="w-4 h-4" /> IA
                 </button>
                 <button onClick={() => setSelecionadoParaBackup(imovel)} className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50">
                   <HardDrive className="w-4 h-4" /> Fotos
@@ -195,7 +209,7 @@ export default function TabelaImoveis({ imoveis, saldoDisponivel }: TabelaImovei
                     </div>
                     {isAwaiting && (
                       <div className="mt-1 text-[11px] text-muted">
-                        {temSaldoDisponivel ? 'Há saldo disponível; use o botão "IA" para liberar/retomar o processamento.' : 'Saldo disponível insuficiente no momento.'}
+                        {temSaldoDisponivel ? 'Há saldo disponível; use o botão "Liberar" para retomar o processamento.' : 'Saldo disponível insuficiente no momento.'}
                       </div>
                     )}
                   </td>
@@ -217,11 +231,22 @@ export default function TabelaImoveis({ imoveis, saldoDisponivel }: TabelaImovei
                           <Clock className="w-4 h-4" /> Pendente
                         </span>
                       )}
-                      <button onClick={() => handleCopiarLink(imovel)} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50">
+                      {isAwaiting && (
+                        <button
+                          onClick={() => handleLiberar(imovel)}
+                          disabled={!temSaldoDisponivel || loadingIA === imovel.id}
+                          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-brand-900 text-white text-xs font-bold disabled:opacity-50"
+                          title={temSaldoDisponivel ? 'Liberar com o saldo disponível' : 'Saldo disponível insuficiente'}
+                        >
+                          {loadingIA === imovel.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                          Liberar
+                        </button>
+                      )}
+                      <button onClick={() => handleCopiarLink(imovel)} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50" title="Copiar link">
                         {linkCopiadoId === imovel.id ? <Check className="w-4 h-4 text-success" /> : <Link2 className="w-4 h-4" />}
                       </button>
-                      <button onClick={() => handleAcaoIA(imovel)} disabled={loadingIA === imovel.id} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50 disabled:opacity-50" title={isAwaiting ? 'Liberar/retomar com saldo disponível' : 'Regenerar com IA'}>
-                        {loadingIA === imovel.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                      <button onClick={() => setSelecionadoParaIA(imovel)} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50" title="Ver Media Kit">
+                        <Sparkles className="w-4 h-4" />
                       </button>
                       <button onClick={() => setSelecionadoParaBackup(imovel)} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50" title="Fotos / acervo">
                         <HardDrive className="w-4 h-4" />
