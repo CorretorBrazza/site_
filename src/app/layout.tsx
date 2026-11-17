@@ -4,6 +4,7 @@ import "./globals.css";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import AnalyticsConsent from "@/components/AnalyticsConsent";
+import PwaRegister from "@/components/PwaRegister";
 import { safeJsonLd } from "@/lib/jsonld";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -22,6 +23,14 @@ export const metadata: Metadata = {
   description: "Encontre imóveis para comprar, alugar ou anunciar em Taboão da Serra e imediações.",
   manifest: '/manifest.webmanifest',
   applicationName: 'Imóveis Taboão',
+  icons: {
+    icon: [
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
@@ -99,6 +108,7 @@ export default function RootLayout({
         </main>
         <SiteFooter />
         <AnalyticsConsent />
+        <PwaRegister />
       </body>
     </html>
   );
