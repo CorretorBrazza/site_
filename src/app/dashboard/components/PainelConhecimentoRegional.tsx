@@ -12,6 +12,7 @@ type Fact = {
   campo: string;
   valor: string | number | boolean | string[];
   status: string;
+  is_stale?: boolean;
   consensus_count?: number;
   conflict_count?: number;
   my_claim?: { acao: string; valor_proposto: unknown } | null;
@@ -62,7 +63,13 @@ export default function PainelConhecimentoRegional() {
 
   useEffect(() => { refresh(); }, []);
 
-  const relevantFacts = useMemo(() => facts.filter((fact) => !['ARCHIVED', 'REJECTED', 'STALE'].includes(fact.status)).slice(0, 8), [facts]);
+  // O backend não grava status STALE: ele calcula `is_stale` em tempo de leitura
+  // a partir de `valid_until` (knowledgeBase.service.ts:80-82,320). Sem isto,
+  // fato vencido aparece como válido e pode receber confirmação.
+  const relevantFacts = useMemo(
+    () => facts.filter((fact) => !['ARCHIVED', 'REJECTED', 'STALE'].includes(fact.status) && fact.is_stale !== true).slice(0, 8),
+    [facts],
+  );
 
   async function sendClaim(payload: Record<string, unknown>) {
     setSending(true);
@@ -73,7 +80,7 @@ export default function PainelConhecimentoRegional() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      if (!response.success) throw new Error(response.message || 'Não foi possível registrar a contribuição.');
+      if (!response.success) throw new Error(response.error || response.message || 'Não foi possível registrar a contribuição.');
       const result = response.data;
       const quotaNote = result.quota
         ? ` Limites: ${result.quota.proposals_this_week}/3 propostas na semana e ${result.quota.confirmations_today}/10 confirmações hoje.`

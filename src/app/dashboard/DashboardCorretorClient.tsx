@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Imovel } from '@/types/imovel';
+import { mapearAnuncioParaImovel } from '@/lib/imovelMapper';
 import { fetchBrokerApi, logoutBrokerSession } from '@/lib/api';
 import HeaderSaldoCreditos from './components/HeaderSaldoCreditos';
 import BannerBackupGamificacao from './components/BannerBackupGamificacao';
@@ -26,6 +27,29 @@ type WorkflowMeta = { label: string; tone: string; nextAction: string };
 function asNumber(value: any, fallback = 0): number {
   const n = Number(value);
   return Number.isFinite(n) ? n : fallback;
+}
+
+/**
+ * `/me/anuncios` devolve `ad_id`, mas toda a UI do painel usa `imovel.id`.
+ * Sem esta normalização o modal de exclusão chamava
+ * `/anuncios/undefined/excluir`, e o delete falhava silenciosamente.
+ *
+ * Usa o mapper único para título/endereço/fotos e mantém os campos operacionais
+ * da API (`status`, validade, media_kit, etc.), que o mapper não preserva.
+ */
+function normalizarAnuncioDoPainel(ad: any): Imovel {
+  const mapeado = mapearAnuncioParaImovel(ad);
+  return {
+    ...mapeado,
+    ...ad,
+    id: String(ad?.id || ad?.ad_id || mapeado.id),
+    status: String(ad?.status || '').toUpperCase() as unknown as Imovel['status'],
+    titulo: mapeado.titulo,
+    endereco: mapeado.endereco,
+    tipoImovel: mapeado.tipoImovel,
+    transacao: mapeado.transacao,
+    fotos: mapeado.fotos,
+  };
 }
 
 function workflowMeta(status?: string): WorkflowMeta {
@@ -140,7 +164,7 @@ export default function DashboardCorretorClient({
         if (listRes.status === 'fulfilled') {
           const adsRes = listRes.value as any;
           if (adsRes.success && Array.isArray(adsRes.data)) {
-            const nextAds = adsRes.data;
+            const nextAds: Imovel[] = adsRes.data.map(normalizarAnuncioDoPainel);
             setImoveis(nextAds);
             anunciosCountRef.current = nextAds.length;
           } else if (adsRes?.error && !adsRes?.error?.includes('Sessão expirada')) {
@@ -372,7 +396,7 @@ export default function DashboardCorretorClient({
               <Building2 className="w-4 h-4" /> Novo
             </button>
           </div>
-          <TabelaImoveis imoveis={imoveis} saldoDisponivel={saldoDisponivel} />
+          <TabelaImoveis imoveis={imoveis} />
         </div>
       )}
 

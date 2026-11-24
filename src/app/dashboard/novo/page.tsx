@@ -99,7 +99,7 @@ export default function NovoImovel() {
         });
 
         if (!sign.success || !sign.data?.uploadUrl) {
-          throw new Error(sign.message || 'Não foi possível preparar o upload da foto.');
+          throw new Error(sign.error || sign.message || 'Não foi possível preparar o upload da foto.');
         }
 
         const uploadResponse = await fetch(sign.data.uploadUrl, {
@@ -118,7 +118,7 @@ export default function NovoImovel() {
         });
 
         if (!confirm.success || !confirm.data?.urlOptimized) {
-          throw new Error(confirm.message || `Falha ao confirmar a foto ${file.name}.`);
+          throw new Error(confirm.error || confirm.message || `Falha ao confirmar a foto ${file.name}.`);
         }
 
         stagedPhotos.push({
@@ -161,10 +161,10 @@ export default function NovoImovel() {
       });
 
       if (!response.success) {
-        throw new Error(response.message || 'Falha ao processar o anúncio.');
+        throw new Error(response.error || response.message || 'Falha ao processar o anúncio.');
       }
 
-      setMessage(response.message || 'Anúncio enviado para processamento.');
+      setMessage(response.data?.message || response.message || 'Anúncio enviado para processamento.');
       setText('');
       setReadyPhotos([]);
       await loadHistory();

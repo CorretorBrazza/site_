@@ -44,7 +44,9 @@ export default function ModalExclusaoInteligente({
         onSuccess();
         onClose();
       } else {
-        alert(json.message || 'Erro ao excluir o imóvel.');
+        // fetchApi devolve falhas em `error`, não em `message`: sem isto o
+        // corretor via apenas "Erro ao excluir" e não sabia o que aconteceu.
+        alert(json.error || json.message || 'Erro ao excluir o imóvel.');
       }
     } catch {
       alert('Erro de conexão ao excluir o imóvel.');

@@ -29,16 +29,20 @@ export default function ModalAcervoFotos({
     fotos: { id: string; r2_key?: string | null; storage?: 'R2' | 'LEGACY_SOURCE'; display_url?: string; download_url: string }[];
   } | null>(null);
   const [textoAnotacao, setTextoAnotacao] = useState('');
+  const [erroAcervo, setErroAcervo] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isOpen || !adId) return;
 
     setLoading(true);
+    setErroAcervo(null);
     fetchBrokerApi(`/storage/acervo/${encodeURIComponent(adId)}`)
       .then((json) => {
         if (json.success && json.data) {
           setDadosAcervo(json.data);
           setTextoAnotacao(json.data.anotacoes_privadas || '');
+        } else {
+          setErroAcervo(json.error || json.message || null);
         }
       })
       .catch(() => {})
@@ -60,7 +64,7 @@ export default function ModalAcervoFotos({
       if (json.success) {
         alert('Anotações salvas no seu acervo!');
       } else {
-        alert(json.message || 'Erro ao salvar anotação.');
+        alert(json.error || json.message || 'Erro ao salvar anotação.');
       }
     } catch {
       alert('Erro de conexão ao salvar anotação.');
@@ -117,7 +121,9 @@ export default function ModalAcervoFotos({
                 </div>
               </div>
 
-              {dadosAcervo.fotos.length > 0 && (
+              {/* O ZIP exige fotos com r2_key (storage.controller.ts:166-169).
+                  Anúncios legados só têm URLs no fallback e devolvem 404. */}
+              {dadosAcervo.fotos.some((foto) => foto.r2_key) && (
                 <a
                   href={`/api/v1/storage/acervo/${encodeURIComponent(adId)}/download`}
                   download
@@ -190,7 +196,7 @@ export default function ModalAcervoFotos({
           </div>
         ) : (
           <div className="py-12 text-center text-muted">
-            Não foi possível carregar o acervo deste imóvel.
+            {erroAcervo || 'Não foi possível carregar o acervo deste imóvel.'}
           </div>
         )}
       </div>

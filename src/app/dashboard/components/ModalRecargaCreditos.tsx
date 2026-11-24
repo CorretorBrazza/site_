@@ -37,7 +37,7 @@ export default function ModalRecargaCreditos({ isOpen, onClose, pacoteInicial = 
       });
 
       if (!json.success) {
-        alert(json.message || 'Erro ao gerar checkout. Tente novamente.');
+        alert(json.error || json.message || 'Erro ao gerar checkout. Tente novamente.');
         return;
       }
 

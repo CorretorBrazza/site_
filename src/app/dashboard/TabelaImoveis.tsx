@@ -11,20 +11,19 @@ import { HardDrive, RefreshCw, Trash2, Edit, Sparkles, Clock, ExternalLink, Circ
 
 interface TabelaImoveisProps {
   imoveis: Imovel[];
-  saldoDisponivel?: number;
 }
 
 const statusMeta = (rawStatus?: string) => {
   const status = String(rawStatus || '').toUpperCase();
   if (['DELIVERED', 'PUBLISHED', 'ATIVO'].includes(status)) return { label: 'Publicado', note: 'Pronto para divulgação', tone: 'bg-success/10 text-success border-success/30' };
   if (['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW'].includes(status)) return { label: 'Aguardando aprovação', note: 'Confira o link enviado no WhatsApp', tone: 'bg-gold/10 text-gold border-gold/30' };
-  if (['AWAITING_CREDITS', 'SEM_SALDO'].includes(status)) return { label: 'Aguardando liberação', note: 'Com saldo disponível, use "Liberar" para retomar o processamento', tone: 'bg-danger/10 text-danger border-danger/30' };
+  if (['AWAITING_CREDITS', 'SEM_SALDO'].includes(status)) return { label: 'Aguardando liberação', note: 'Use "Liberar" para revalidar o saldo e retomar o processamento', tone: 'bg-danger/10 text-danger border-danger/30' };
   if (status === 'EXPIRED') return { label: 'Expirado', note: 'Renove para voltar ao ar', tone: 'bg-muted/10 text-muted border-muted/30' };
   if (['FAILED', 'REJECTED'].includes(status)) return { label: 'Com pendência', note: 'Revise os dados antes de publicar', tone: 'bg-danger/10 text-danger border-danger/30' };
   return { label: 'Em análise', note: 'Estamos preparando este anúncio', tone: 'bg-brand-800/5 text-brand-900 border-line' };
 };
 
-export default function TabelaImoveis({ imoveis, saldoDisponivel }: TabelaImoveisProps) {
+export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
   const [selecionadoParaExcluir, setSelecionadoParaExcluir] = useState<Imovel | null>(null);
   const [selecionadoParaBackup, setSelecionadoParaBackup] = useState<Imovel | null>(null);
   const [selecionadoParaIA, setSelecionadoParaIA] = useState<Imovel | null>(null);
@@ -69,7 +68,10 @@ export default function TabelaImoveis({ imoveis, saldoDisponivel }: TabelaImovei
     }
   };
 
-  const temSaldoDisponivel = Number(saldoDisponivel ?? 1) > 0;
+  // Não desabilitar "Liberar" pelo saldo projetado no painel: o backend
+  // revalida no momento da liberação e desconta a reserva do PRÓPRIO anúncio
+  // (credit-recovery.service.ts:87-95). Com saldo=1 e 1 reservado neste ad,
+  // o front via 0 e travava justamente o caso que o backend liberaria.
 
   if (imoveis.length === 0) {
     return (
@@ -136,8 +138,7 @@ export default function TabelaImoveis({ imoveis, saldoDisponivel }: TabelaImovei
 
               <div className="text-[11px] text-muted leading-snug">
                 {statusInfo.note}
-                {isAwaiting && !temSaldoDisponivel ? ' (saldo disponível insuficiente)' : ''}
-                {isAwaiting && temSaldoDisponivel ? ' (há saldo disponível; toque em "Liberar" para retomar)' : ''}
+                {isAwaiting ? ' (toque em "Liberar" para revalidar o saldo e retomar)' : ''}
               </div>
 
               <div className="grid grid-cols-2 gap-2 pt-1">
@@ -155,9 +156,9 @@ export default function TabelaImoveis({ imoveis, saldoDisponivel }: TabelaImovei
                 {isAwaiting && (
                   <button
                     onClick={() => handleLiberar(imovel)}
-                    disabled={!temSaldoDisponivel || loadingIA === imovel.id}
+                    disabled={loadingIA === imovel.id}
                     className="col-span-2 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-brand-900 text-white text-xs font-bold disabled:opacity-50"
-                    title={temSaldoDisponivel ? 'Liberar com o saldo disponível' : 'Saldo disponível insuficiente'}
+                    title="Revalidar saldo e liberar para processamento"
                   >
                     {loadingIA === imovel.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                     Liberar para processamento
@@ -173,9 +174,12 @@ export default function TabelaImoveis({ imoveis, saldoDisponivel }: TabelaImovei
                 <button onClick={() => setSelecionadoParaBackup(imovel)} className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50">
                   <HardDrive className="w-4 h-4" /> Fotos
                 </button>
-                <Link href={`/dashboard/imoveis/${imovel.id}`} className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50">
+                <Link href={`/dashboard/editar/${imovel.id}`} className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50">
                   <Edit className="w-4 h-4" /> Editar
                 </Link>
+                <button onClick={() => setSelecionadoParaExcluir(imovel)} className="col-span-2 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-danger/20 text-danger text-xs font-semibold hover:bg-danger/5" title="Excluir">
+                  <Trash2 className="w-4 h-4" /> Excluir anúncio
+                </button>
               </div>
             </div>
           );
@@ -209,7 +213,7 @@ export default function TabelaImoveis({ imoveis, saldoDisponivel }: TabelaImovei
                     </div>
                     {isAwaiting && (
                       <div className="mt-1 text-[11px] text-muted">
-                        {temSaldoDisponivel ? 'Há saldo disponível; use o botão "Liberar" para retomar o processamento.' : 'Saldo disponível insuficiente no momento.'}
+                        {'Use o botão "Liberar" para revalidar o saldo e retomar o processamento.'}
                       </div>
                     )}
                   </td>
@@ -234,9 +238,9 @@ export default function TabelaImoveis({ imoveis, saldoDisponivel }: TabelaImovei
                       {isAwaiting && (
                         <button
                           onClick={() => handleLiberar(imovel)}
-                          disabled={!temSaldoDisponivel || loadingIA === imovel.id}
+                          disabled={loadingIA === imovel.id}
                           className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-brand-900 text-white text-xs font-bold disabled:opacity-50"
-                          title={temSaldoDisponivel ? 'Liberar com o saldo disponível' : 'Saldo disponível insuficiente'}
+                          title="Revalidar saldo e liberar para processamento"
                         >
                           {loadingIA === imovel.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                           Liberar
@@ -251,7 +255,7 @@ export default function TabelaImoveis({ imoveis, saldoDisponivel }: TabelaImovei
                       <button onClick={() => setSelecionadoParaBackup(imovel)} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50" title="Fotos / acervo">
                         <HardDrive className="w-4 h-4" />
                       </button>
-                      <Link href={`/dashboard/imoveis/${imovel.id}`} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50" title="Editar">
+                      <Link href={`/dashboard/editar/${imovel.id}`} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-line text-xs font-semibold hover:bg-brand-50" title="Editar">
                         <Edit className="w-4 h-4" />
                       </Link>
                       <button onClick={() => setSelecionadoParaExcluir(imovel)} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-danger/20 text-danger text-xs font-semibold hover:bg-danger/5" title="Excluir">
