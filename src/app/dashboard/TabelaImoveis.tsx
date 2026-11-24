@@ -125,6 +125,10 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
           return (
             <div key={imovel.id} className="p-4 space-y-3">
               <div className="flex items-start justify-between gap-3">
+                {imovel.fotos?.[0] && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={imovel.fotos[0]} alt={`Foto de ${referencia}`} className="h-12 w-16 shrink-0 rounded-lg object-cover border border-line" />
+                )}
                 <div className="min-w-0">
                   <p className="font-bold text-sm text-brand-900 leading-snug line-clamp-2">
                     {imovel.titulo || `Imóvel ${referencia}`}
@@ -205,8 +209,16 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
               return (
                 <tr key={imovel.id} className="hover:bg-brand-50/50 transition-colors">
                   <td className="p-4 align-top">
-                    <div className="font-bold text-brand-900 mb-1 line-clamp-2">{imovel.titulo || `Imóvel ${referencia}`}</div>
-                    <div className="text-xs text-muted">Ref: {referencia}</div>
+                    <div className="flex items-start gap-3">
+                      {imovel.fotos?.[0] && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={imovel.fotos[0]} alt={`Foto de ${referencia}`} className="h-12 w-16 shrink-0 rounded-lg object-cover border border-line" />
+                      )}
+                      <div className="min-w-0">
+                        <div className="font-bold text-brand-900 mb-1 line-clamp-2">{imovel.titulo || `Imóvel ${referencia}`}</div>
+                        <div className="text-xs text-muted">Ref: {referencia}</div>
+                      </div>
+                    </div>
                     <div className="mt-2 flex flex-wrap items-center gap-2">
                       <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${statusInfo.tone}`}>{statusInfo.label}</span>
                       <span className="text-[11px] text-muted">{statusInfo.note}</span>

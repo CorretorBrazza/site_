@@ -364,8 +364,16 @@ export default function DashboardCorretorClient({
               <div className="space-y-2">
                 {aguardandoAprovacao.slice(0, 2).map((ad) => (
                   <div key={ad.id} className="rounded-xl border border-gold/20 bg-gold/5 px-3 py-2.5">
-                    <div className="text-sm font-semibold text-brand-900 line-clamp-1">{ad.titulo || `Imóvel ${ad.referencia || ad.id}`}</div>
-                    <div className="text-xs text-muted mt-0.5">Aguardando sua aprovação para avançar na publicação.</div>
+                    <div className="flex items-start gap-2.5">
+                      {ad.fotos?.[0] && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={ad.fotos[0]} alt={`Foto de ${ad.referencia || ad.id}`} className="h-10 w-14 shrink-0 rounded-lg object-cover border border-line" />
+                      )}
+                      <div className="min-w-0">
+                        <div className="text-sm font-semibold text-brand-900 line-clamp-1">{ad.titulo || `Imóvel ${ad.referencia || ad.id}`}</div>
+                        <div className="text-xs text-muted mt-0.5">Aguardando sua aprovação para avançar na publicação.</div>
+                      </div>
+                    </div>
                   </div>
                 ))}
                 {aguardandoCredito.slice(0, 2).map((ad) => (
