@@ -75,6 +75,10 @@ const imgSrc = envSources("CSP_IMG_SRC", [
 const connectSrc = envSources("CSP_CONNECT_SRC", [
   "'self'",
   apiOrigin,
+  // O upload do intake vai DIRETO do browser para o R2 com URL presigned
+  // (intake.service.ts:65). Sem esta origem o CSP bloqueia o PUT e o fetch
+  // morre com "Failed to fetch" antes de qualquer resposta da API.
+  "https://*.r2.cloudflarestorage.com",
   "https://api.web3forms.com",
   "https://www.google-analytics.com",
   "https://analytics.google.com",

@@ -102,14 +102,24 @@ export default function NovoImovel() {
           throw new Error(sign.error || sign.message || 'Não foi possível preparar o upload da foto.');
         }
 
-        const uploadResponse = await fetch(sign.data.uploadUrl, {
-          method: 'PUT',
-          body: file,
-          headers: { 'Content-Type': file.type || 'image/jpeg' },
-        });
+        let uploadResponse: Response;
+        try {
+          // Este fetch vai direto para o R2 (fora de fetchApi). Um erro de CSP,
+          // CORS ou rede chega aqui como TypeError "Failed to fetch", sem status.
+          uploadResponse = await fetch(sign.data.uploadUrl, {
+            method: 'PUT',
+            body: file,
+            headers: { 'Content-Type': file.type || 'image/jpeg' },
+          });
+        } catch (err) {
+          throw new Error(
+            `Não foi possível enviar "${file.name}" para o armazenamento ` +
+            `(${err instanceof Error ? err.message : 'erro de rede'}). Se persistir, contate o suporte.`,
+          );
+        }
 
         if (!uploadResponse.ok) {
-          throw new Error(`Falha no upload da foto ${file.name}.`);
+          throw new Error(`Falha no upload da foto ${file.name} (HTTP ${uploadResponse.status}).`);
         }
 
         const confirm = await fetchBrokerApi('/intake/photos/confirm', {
