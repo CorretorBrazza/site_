@@ -57,6 +57,11 @@ export interface Imovel {
   workflow_status?: string;
   estagio?: number;
   media_kit?: unknown;
+  conteudo_gerado?: unknown;
+  content_status?: 'PENDING' | 'GENERATING' | 'READY' | 'FAILED' | null;
+  content_error?: string | null;
+  content_generated_at?: string | null;
+  content_attempted_at?: string | null;
   approval_url?: string | null;
   /**
    * Validade calculada pela API. Vem preenchida apenas quando a regra de

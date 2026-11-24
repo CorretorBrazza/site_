@@ -344,9 +344,13 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
       {selecionadoParaIA && (
         <ModalMediaKit
           isOpen={!!selecionadoParaIA}
+          adId={selecionadoParaIA.id}
           referencia={String(selecionadoParaIA.referencia || selecionadoParaIA.id)}
-          mediaKit={(selecionadoParaIA as any).media_kit || (selecionadoParaIA as any).mediaKit || null}
+          mediaKit={(selecionadoParaIA as any).media_kit || (selecionadoParaIA as any).conteudo_gerado || null}
+          contentStatus={(selecionadoParaIA as any).content_status}
+          contentError={(selecionadoParaIA as any).content_error}
           onClose={() => setSelecionadoParaIA(null)}
+          onUpdated={() => window.location.reload()}
         />
       )}
     </div>

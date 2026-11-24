@@ -518,6 +518,14 @@ export async function getAnuncioForBroker(adId: string) {
   return fetchBrokerApi(`/me/anuncios/${encodeURIComponent(adId)}`, { method: 'GET' });
 }
 
+export async function getBrokerMediaKit(adId: string) {
+  return fetchBrokerApi(`/me/anuncios/${encodeURIComponent(adId)}/media-kit`, { method: 'GET' });
+}
+
+export async function generateBrokerMediaKit(adId: string) {
+  return fetchBrokerApi(`/me/anuncios/${encodeURIComponent(adId)}/media-kit`, { method: 'POST' });
+}
+
 export async function updateAnuncioForBroker(adId: string, data: Record<string, any>) {
   return fetchBrokerApi(`/me/anuncios/${encodeURIComponent(adId)}`, {
     method: 'PUT',
