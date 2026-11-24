@@ -983,6 +983,7 @@ export async function atualizarPerfilCorretor(dados: {
   apresentacao?: string;
   creci?: string;
   slug?: string;
+  exibir_telefone?: boolean;
 }): Promise<{ success: boolean; data?: any; error?: string }> {
   return fetchBrokerApi<any>('/corretor/me/perfil', {
     method: 'PATCH',
@@ -992,31 +993,36 @@ export async function atualizarPerfilCorretor(dados: {
 }
 
 /**
- * Busca a vitrine pública de um corretor com todos os seus imóveis ativos divididos em venda e locação.
+ * Slugs canônicos das vitrines, usados pelo sitemap.
+ *
+ * A API responde só `{ slug, atualizado_em }`: e-mail, telefone e saldo ficam
+ * fora deste endpoint público. Falha de rede não derruba o sitemap — a lista
+ * volta vazia e as demais rotas continuam indexáveis.
  */
-export async function buscarVitrinePublicaCorretor(slugOuCodigo: string): Promise<{ success: boolean; data?: any; error?: string }> {
-  const clean = encodeURIComponent(String(slugOuCodigo || '').trim());
-  const url = resolveApiUrl(`/corretores/publico/${clean}`);
-
+export async function buscarSlugsPublicosCorretores(): Promise<
+  Array<{ slug: string; atualizado_em?: string }>
+> {
   try {
-    const res = await fetch(url, {
+    const res = await fetch(`${API_BASE_URL}/corretores/publico/slugs`, {
       method: 'GET',
-      headers: { 'Accept': 'application/json' },
-      next: { revalidate: 30 }, // cache ISR curto no Next.js
+      headers: { Accept: 'application/json' },
+      next: { revalidate: 3600 },
     });
-
-    const json = await res.json().catch(() => null);
-    if (!res.ok) {
-      return {
-        success: false,
-        error: json?.message || `Erro ${res.status} ao carregar vitrine`,
-      };
-    }
-
-    return { success: true, data: json?.data };
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : 'Falha na conexão';
-    return { success: false, error: msg };
+    if (!res.ok) return [];
+    const json = await res.json();
+    const slugs = json?.data?.slugs;
+    if (!Array.isArray(slugs)) return [];
+    return slugs
+      .map((item: any) => ({
+        slug: String(item?.slug || '')
+          .trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9-]/g, ''),
+        atualizado_em: item?.atualizado_em || undefined,
+      }))
+      .filter((item: { slug: string }) => Boolean(item.slug));
+  } catch {
+    return [];
   }
 }
 

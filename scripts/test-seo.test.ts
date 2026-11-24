@@ -121,3 +121,55 @@ test('7. PWA abre na vitrine publica, nao no painel autenticado', () => {
   assert.equal(manifesto.id, '/');
   assert.equal(manifesto.scope, '/');
 });
+
+test('8. vitrine usa o slug canonico e redireciona alias', () => {
+  const pagina = ler('src/app/corretor/[slug]/page.tsx');
+  assert.match(pagina, /slugCanonicoDe\(resultado\.data, slug\)/, 'canonical vem da API');
+  assert.match(pagina, /redirect\(/, 'alias redireciona');
+  assert.match(pagina, /'replace'/, 'redirect e permanente para o mesmo destino');
+  assert.match(pagina, /nao_encontrado/, '404 distinto de indisponivel');
+  assert.match(pagina, /indisponivel/, 'erro temporario nao apaga a vitrine');
+});
+
+test('9. vitrine tem ProfilePage/Person sem repetir o agente global', () => {
+  const pagina = ler('src/app/corretor/[slug]/page.tsx');
+  assert.match(pagina, /'@type':\s*'ProfilePage'/);
+  assert.match(pagina, /'@type':\s*'Person'/);
+  assert.match(pagina, /mainEntity:/);
+  assert.doesNotMatch(pagina, /'@type':\s*'RealEstateAgent'/, 'agente so existe no layout');
+  assert.match(pagina, /safeJsonLd\(jsonLd\)/, 'JSON-LD escapado');
+  const telefone = ler('src/lib/telefone.ts');
+  assert.match(telefone, /digitos\.startsWith\('55'\)/, 'DDI nao duplicado');
+});
+
+test('10. link canonico da vitrine fica visivel e copiavel', () => {
+  const cliente = ler('src/app/corretor/[slug]/VitrineCorretorClient.tsx');
+  assert.match(cliente, /Link oficial da vitrine/);
+  assert.match(cliente, /aria-label="Link da vitrine do corretor"/);
+  assert.match(cliente, /copiarTexto\(linkVitrine\)/, 'botao copia o link canonico');
+  assert.match(cliente, /window\.location\.origin/, 'URL absoluta no navegador');
+  assert.match(cliente, /urlWhatsappCorretor\(/, 'WhatsApp passa pela normalizacao');
+  assert.doesNotMatch(cliente, /wa\.me\/55\$\{/, 'sem DDI duplicado');
+  assert.doesNotMatch(cliente, /Verificado/, 'selo fixo removido');
+  const modal = ler('src/app/dashboard/components/ModalPerfilVitrine.tsx');
+  assert.match(modal, /copiarTexto\(vitrineUrl\)/, 'painel tambem copia o link');
+  assert.match(modal, /exibir_telefone: exibirTelefone/, 'opt-out de telefone salvo');
+  assert.match(modal, /slug: slugCorretor/, 'slug editavel salvo');
+});
+
+test('11. sitemap inclui as vitrines publicas dos corretores', () => {
+  const sitemap = ler('src/app/sitemap.ts');
+  assert.match(sitemap, /buscarSlugsPublicosCorretores/, 'slugs vem da API publica');
+  assert.match(sitemap, /\/corretor\/\$\{encodeURIComponent\(slug\)\}\//, 'url canonica da vitrine');
+  const api = ler('src/lib/api.ts');
+  assert.match(api, /\/corretores\/publico\/slugs/, 'endpoint de slugs');
+  assert.doesNotMatch(api, /buscarVitrinePublicaCorretor/, 'helper morto removido');
+});
+
+test('12. vitrine tem loading e error boundary', () => {
+  const loading = ler('src/app/corretor/[slug]/loading.tsx');
+  const error = ler('src/app/corretor/[slug]/error.tsx');
+  assert.match(loading, /animate-pulse/, 'feedback de carregamento');
+  assert.match(error, /'use client'/, 'error boundary e cliente');
+  assert.match(error, /onClick=\{reset\}/, 'nova tentativa');
+});

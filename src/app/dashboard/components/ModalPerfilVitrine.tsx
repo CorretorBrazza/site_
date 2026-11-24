@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Camera, Check, Copy, ExternalLink, Save, Sparkles, UserCheck } from 'lucide-react';
+import { Camera, Check, Copy, ExternalLink, Link2, Save, UserCheck } from 'lucide-react';
 import { atualizarPerfilCorretor } from '@/lib/api';
+import { copiarTexto } from '@/lib/clipboard';
 
 interface ModalPerfilVitrineProps {
   aberto: boolean;
@@ -16,6 +17,7 @@ interface ModalPerfilVitrineProps {
     creci?: string;
     slug?: string;
     codigo_corretor?: string;
+    exibir_telefone?: boolean;
   } | null;
   onPerfilAtualizado: (novoPerfil: any) => void;
 }
@@ -43,10 +45,17 @@ export default function ModalPerfilVitrine({
   const [creci, setCreci] = useState(usuario?.creci || '');
   const [apresentacao, setApresentacao] = useState(usuario?.apresentacao || '');
   const [fotoUrl, setFotoUrl] = useState(usuario?.foto_perfil_url || '');
+  const [slug, setSlug] = useState(usuario?.slug || '');
+  const [exibirTelefone, setExibirTelefone] = useState(usuario?.exibir_telefone !== false);
+  const [origem, setOrigem] = useState('');
   const [salvando, setSalvando] = useState(false);
   const [mensagemSucesso, setMensagemSucesso] = useState(false);
   const [copiado, setCopiado] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+
+  useEffect(() => {
+    setOrigem(window.location.origin);
+  }, []);
 
   useEffect(() => {
     if (!aberto) return;
@@ -55,24 +64,22 @@ export default function ModalPerfilVitrine({
     setCreci(usuario?.creci || '');
     setApresentacao(usuario?.apresentacao || '');
     setFotoUrl(usuario?.foto_perfil_url || '');
+    setSlug(usuario?.slug || '');
+    setExibirTelefone(usuario?.exibir_telefone !== false);
     setErro(null);
     setMensagemSucesso(false);
   }, [aberto, usuario]);
 
   if (!aberto) return null;
 
-  const slugCorretor = (usuario?.slug || '').trim().toLowerCase() || gerarSlugLocal(nome || usuario?.nome, usuario?.codigo_corretor || 'BRA');
-  const vitrineUrl = typeof window !== 'undefined'
-    ? `${window.location.origin}/corretor/${slugCorretor}`
-    : `/corretor/${slugCorretor}`;
+  const slugCorretor = slug.trim().toLowerCase() || gerarSlugLocal(nome || usuario?.nome, usuario?.codigo_corretor || 'BRA');
+  const vitrineUrl = `${origem}/corretor/${slugCorretor}/`;
 
   const handleCopiarLink = async () => {
-    try {
-      await navigator.clipboard.writeText(vitrineUrl);
+    const ok = await copiarTexto(vitrineUrl);
+    if (ok) {
       setCopiado(true);
       setTimeout(() => setCopiado(false), 2500);
-    } catch {
-      // fallback
     }
   };
 
@@ -90,10 +97,12 @@ export default function ModalPerfilVitrine({
         apresentacao: apresentacao.trim() || undefined,
         foto_perfil_url: fotoUrl.trim() || undefined,
         slug: slugCorretor || undefined,
+        exibir_telefone: exibirTelefone,
       });
 
       if (res.success && res.data) {
         setMensagemSucesso(true);
+        if (res.data.slug) setSlug(res.data.slug);
         onPerfilAtualizado(res.data);
         try {
           const cached = localStorage.getItem('user_info');
@@ -144,10 +153,10 @@ export default function ModalPerfilVitrine({
           <div className="p-4 rounded-xl bg-gradient-to-r from-brand-800 to-brand-750 border border-gold/30 shadow-inner">
             <div className="flex items-center justify-between gap-2 mb-2">
               <span className="text-xs font-semibold uppercase tracking-wider text-gold flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5" /> Seu Link Exclusivo de Divulgação
+                <Link2 className="w-3.5 h-3.5" /> Link Oficial da Sua Vitrine
               </span>
               <a
-                href={`/corretor/${slugCorretor}`}
+                href={`/corretor/${slugCorretor}/`}
                 target="_blank"
                 rel="noreferrer"
                 className="text-xs text-white-80 hover:text-white flex items-center gap-1 underline underline-offset-2 shrink-0"
@@ -176,7 +185,8 @@ export default function ModalPerfilVitrine({
               </button>
             </div>
             <p className="text-[11px] text-white-60 mt-2">
-              Compartilhe no Instagram, WhatsApp ou bio. O link usa seu slug público atualizado.
+              Compartilhe no Instagram, WhatsApp ou bio. Este é o endereço canônico: links antigos
+              com seu código ou slug anterior redirecionam para ele.
             </p>
           </div>
 
@@ -271,6 +281,37 @@ export default function ModalPerfilVitrine({
               />
               <p className="text-[11px] text-white-50 mt-1">
                 Os botões da sua vitrine enviarão os clientes diretamente para este número.
+              </p>
+              <label className="mt-3 flex items-start gap-2.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={exibirTelefone}
+                  onChange={(e) => setExibirTelefone(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-[#d4af37]"
+                />
+                <span className="text-xs text-white-70">
+                  Exibir telefone na vitrine pública
+                  <span className="block text-[11px] text-white-50 mt-0.5">
+                    Desmarque para esconder o número e o botão de WhatsApp na vitrine pública.
+                  </span>
+                </span>
+              </label>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-white-80 mb-1.5">
+                Endereço da Vitrine (slug)
+              </label>
+              <input
+                type="text"
+                value={slug}
+                onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))}
+                placeholder="seu-nome-BRA"
+                className="w-full bg-brand-800 border border-brand-700 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white-40 focus:outline-none focus:border-gold font-mono"
+              />
+              <p className="text-[11px] text-white-50 mt-1">
+                Use letras sem acento, números e hífens. Se o endereço já estiver em uso, escolheremos
+                uma variação automaticamente e o link antigo continuará redirecionando.
               </p>
             </div>
 

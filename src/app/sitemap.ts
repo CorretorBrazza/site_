@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next';
 import { empreendimentos } from '@/data/empreendimentos';
 import { getImoveis } from '@/app/actions/imovel-server-actions';
+import { buscarSlugsPublicosCorretores } from '@/lib/api';
 
 export const revalidate = 3600; // Revalidar sitemap a cada hora
 
@@ -57,5 +58,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         };
     });
 
-    return [...routes, ...empreendimentoRoutes, ...imovelRoutes];
+    // Vitrines públicas dos corretores. O endpoint devolve só slugs canônicos,
+    // o que evita indexar alias (código/slug antigo) como páginas duplicadas.
+    const corretores = await buscarSlugsPublicosCorretores();
+    const corretorRoutes = corretores.map(({ slug, atualizado_em }) => {
+        const atualizado = atualizado_em ? new Date(atualizado_em) : undefined;
+        return {
+            url: `${baseUrl}/corretor/${encodeURIComponent(slug)}/`,
+            lastModified: atualizado && !Number.isNaN(atualizado.getTime()) ? atualizado : undefined,
+            changeFrequency: 'weekly' as const,
+            priority: 0.5,
+        };
+    });
+
+    return [...routes, ...empreendimentoRoutes, ...imovelRoutes, ...corretorRoutes];
 }
