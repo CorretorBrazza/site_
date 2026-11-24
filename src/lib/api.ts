@@ -693,6 +693,43 @@ export async function getReviewSession(token: string): Promise<ReviewSessionResu
 }
 
 /**
+ * Emite (ou reemite) o link de revisão e devolve a URL ao corretor autenticado.
+ *
+ * A captação feita pelo painel não tem `sender_phone`, então o aviso no WhatsApp
+ * depende do telefone cadastrado e não é um caminho confiável — nem desejável —
+ * para quem acabou de enviar as fotos aqui. O token nunca é persistido: a URL
+ * só existe nesta resposta, no momento da emissão.
+ */
+export async function requestReviewLink(
+  adId: string,
+): Promise<{ success: boolean; url?: string; error?: string }> {
+  const id = String(adId || '').trim();
+  if (!id) return { success: false, error: 'Anúncio inválido para revisão.' };
+
+  try {
+    const res = await fetchBrokerApi<{ url?: string }>(
+      `/review/${encodeURIComponent(id)}/request-link`,
+      { method: 'POST' },
+    );
+
+    if (!res.success) {
+      return { success: false, error: res.error || res.message || 'Não foi possível abrir a revisão.' };
+    }
+
+    const url = String(res.data?.url || '').trim();
+    if (!/^https:\/\//.test(url)) {
+      return { success: false, error: 'A API não devolveu um link de revisão válido.' };
+    }
+    return { success: true, url };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Falha ao abrir a revisão.',
+    };
+  }
+}
+
+/**
  * Lê o inteiro de "Conflito de edição: a versão <n> já está salva".
  *
  * Devolve `null` em vez de adivinhar quando não há número legível. Adivinhar `version + 1` seria

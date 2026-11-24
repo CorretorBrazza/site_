@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Imovel } from '@/types/imovel';
-import { fetchBrokerApi } from '@/lib/api';
+import { fetchBrokerApi, requestReviewLink } from '@/lib/api';
 import ModalExclusaoInteligente from './components/ModalExclusaoInteligente';
 import ModalAcervoFotos from './components/ModalAcervoFotos';
 import ModalMediaKit from './components/ModalMediaKit';
@@ -16,7 +16,7 @@ interface TabelaImoveisProps {
 const statusMeta = (rawStatus?: string) => {
   const status = String(rawStatus || '').toUpperCase();
   if (['DELIVERED', 'PUBLISHED', 'ATIVO'].includes(status)) return { label: 'Publicado', note: 'Pronto para divulgação', tone: 'bg-success/10 text-success border-success/30' };
-  if (['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW'].includes(status)) return { label: 'Aguardando aprovação', note: 'Confira o link enviado no WhatsApp', tone: 'bg-gold/10 text-gold border-gold/30' };
+  if (['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW'].includes(status)) return { label: 'Aguardando aprovação', note: 'Abra a revisão aqui no painel para conferir e aprovar', tone: 'bg-gold/10 text-gold border-gold/30' };
   if (['AWAITING_CREDITS', 'SEM_SALDO'].includes(status)) return { label: 'Aguardando liberação', note: 'Use "Liberar" para revalidar o saldo e retomar o processamento', tone: 'bg-danger/10 text-danger border-danger/30' };
   if (status === 'EXPIRED') return { label: 'Expirado', note: 'Renove para voltar ao ar', tone: 'bg-muted/10 text-muted border-muted/30' };
   if (['FAILED', 'REJECTED'].includes(status)) return { label: 'Com pendência', note: 'Revise os dados antes de publicar', tone: 'bg-danger/10 text-danger border-danger/30' };
@@ -29,6 +29,23 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
   const [selecionadoParaIA, setSelecionadoParaIA] = useState<Imovel | null>(null);
   const [linkCopiadoId, setLinkCopiadoId] = useState<string | null>(null);
   const [loadingIA, setLoadingIA] = useState<string | null>(null);
+  const [abrindoRevisaoId, setAbrindoRevisaoId] = useState<string | null>(null);
+  const [erroRevisao, setErroRevisao] = useState<string | null>(null);
+
+  const handleAbrirRevisao = async (imovel: Imovel) => {
+    setErroRevisao(null);
+    setAbrindoRevisaoId(imovel.id);
+    try {
+      const resultado = await requestReviewLink(imovel.id);
+      if (!resultado.success || !resultado.url) {
+        setErroRevisao(resultado.error || 'Não foi possível abrir a revisão.');
+        return;
+      }
+      window.open(resultado.url, '_blank', 'noopener,noreferrer');
+    } finally {
+      setAbrindoRevisaoId(null);
+    }
+  };
 
   const handleCopiarLink = async (imovel: Imovel) => {
     const referencia = imovel.referencia || imovel.id;
@@ -143,6 +160,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
               <div className="text-[11px] text-muted leading-snug">
                 {statusInfo.note}
                 {isAwaiting ? ' (toque em "Liberar" para revalidar o saldo e retomar)' : ''}
+                {erroRevisao && <span className="block mt-1 text-danger">{erroRevisao}</span>}
               </div>
 
               <div className="grid grid-cols-2 gap-2 pt-1">
@@ -150,10 +168,22 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                   <Link href={`/imovel/${referencia}`} target="_blank" className="col-span-2 inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-brand-900 text-white text-xs font-bold">
                     <ExternalLink className="w-4 h-4" /> Ver anúncio publicado
                   </Link>
+                ) : isPendingApproval ? (
+                  <button
+                    onClick={() => handleAbrirRevisao(imovel)}
+                    disabled={abrindoRevisaoId === imovel.id}
+                    className="col-span-2 inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-gold text-brand-900 text-xs font-bold disabled:opacity-50"
+                    title="Abre a tela de revisão com as fotos deste imóvel"
+                  >
+                    {abrindoRevisaoId === imovel.id
+                      ? <RefreshCw className="w-4 h-4 animate-spin" />
+                      : <ExternalLink className="w-4 h-4" />}
+                    {abrindoRevisaoId === imovel.id ? 'Abrindo revisão...' : 'Revisar e aprovar agora'}
+                  </button>
                 ) : (
                   <div className="col-span-2 inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-paper border border-line text-xs font-semibold text-muted">
                     <CircleAlert className="w-4 h-4" />
-                    {isPendingApproval ? 'Aguardando sua aprovação' : isAwaiting ? 'Aguardando liberação/publicação' : 'Em processamento'}
+                    {isAwaiting ? 'Aguardando liberação/publicação' : 'Em processamento'}
                   </div>
                 )}
 
@@ -205,6 +235,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
               const statusInfo = statusMeta(imovel.status as string);
               const isAtivo = ['DELIVERED', 'PUBLISHED', 'ATIVO'].includes(String(imovel.status || '').toUpperCase());
               const isAwaiting = ['AWAITING_CREDITS', 'SEM_SALDO'].includes(String(imovel.status || '').toUpperCase());
+              const isPendingApproval = ['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW'].includes(String(imovel.status || '').toUpperCase());
               const referencia = imovel.referencia || imovel.id;
               return (
                 <tr key={imovel.id} className="hover:bg-brand-50/50 transition-colors">
@@ -228,6 +259,7 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                         {'Use o botão "Liberar" para revalidar o saldo e retomar o processamento.'}
                       </div>
                     )}
+                    {erroRevisao && <div className="mt-1 text-[11px] text-danger">{erroRevisao}</div>}
                   </td>
                   <td className="p-4 align-top">
                     <div className="space-y-1 text-xs">
@@ -242,6 +274,16 @@ export default function TabelaImoveis({ imoveis }: TabelaImoveisProps) {
                         <Link href={`/imovel/${referencia}`} target="_blank" className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-brand-900 text-white text-xs font-bold">
                           <ExternalLink className="w-4 h-4" /> Ver
                         </Link>
+                      ) : isPendingApproval ? (
+                        <button
+                          onClick={() => handleAbrirRevisao(imovel)}
+                          disabled={abrindoRevisaoId === imovel.id}
+                          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gold text-brand-900 text-xs font-bold disabled:opacity-50"
+                          title="Abre a tela de revisão com as fotos deste imóvel"
+                        >
+                          {abrindoRevisaoId === imovel.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <ExternalLink className="w-4 h-4" />}
+                          {abrindoRevisaoId === imovel.id ? 'Abrindo' : 'Revisar'}
+                        </button>
                       ) : (
                         <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-paper border border-line text-xs font-semibold text-muted">
                           <Clock className="w-4 h-4" /> Pendente

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Imovel } from '@/types/imovel';
 import { mapearAnuncioParaImovel } from '@/lib/imovelMapper';
-import { fetchBrokerApi, logoutBrokerSession } from '@/lib/api';
+import { fetchBrokerApi, logoutBrokerSession, requestReviewLink } from '@/lib/api';
 import HeaderSaldoCreditos from './components/HeaderSaldoCreditos';
 import BannerBackupGamificacao from './components/BannerBackupGamificacao';
 import ModalRecargaCreditos from './components/ModalRecargaCreditos';
@@ -15,7 +15,7 @@ import PainelConhecimentoRegional from './components/PainelConhecimentoRegional'
 import DashboardShell from './components/DashboardShell';
 import { AppShellDesktop } from '@/components/app/AppShell';
 import { TabId } from './components/BottomNavMobile';
-import { ShieldCheck, LogOut, RefreshCw, Building2, CheckCircle2, Clock3, CircleAlert, MessageCircle, Coins, ChevronRight, Sparkles, MapPin, Mail } from 'lucide-react';
+import { ShieldCheck, LogOut, RefreshCw, Building2, CheckCircle2, Clock3, CircleAlert, MessageCircle, Coins, ChevronRight, Sparkles, MapPin, Mail, ExternalLink } from 'lucide-react';
 
 interface DashboardCorretorClientProps {
   initialImoveis?: Imovel[];
@@ -58,7 +58,7 @@ function workflowMeta(status?: string): WorkflowMeta {
     return { label: 'Publicado', tone: 'bg-success/10 text-success border-success/30', nextAction: 'Monitorar leads e renovar quando necessário.' };
   }
   if (['PENDING_APPROVAL', 'QUEUED_FOR_REVIEW'].includes(normalized)) {
-    return { label: 'Aguardando aprovação', tone: 'bg-gold/10 text-gold border-gold/30', nextAction: 'Revisar e aprovar o link enviado no WhatsApp.' };
+    return { label: 'Aguardando aprovação', tone: 'bg-gold/10 text-gold border-gold/30', nextAction: 'Abra a revisão no painel para conferir as fotos e aprovar.' };
   }
   if (['AWAITING_CREDITS', 'SEM_SALDO'].includes(normalized)) {
     return { label: 'Aguardando liberação', tone: 'bg-danger/10 text-danger border-danger/30', nextAction: 'Verificar saldo disponível e concluir a publicação/liberação.' };
@@ -83,6 +83,23 @@ export default function DashboardCorretorClient({
   const [recarregaAberta, setRecarregaAberta] = useState(false);
   const [perfilVitrineAberto, setPerfilVitrineAberto] = useState(false);
   const [ultimoSync, setUltimoSync] = useState<Date | null>(null);
+  const [abrindoRevisaoId, setAbrindoRevisaoId] = useState<string | null>(null);
+  const [erroRevisao, setErroRevisao] = useState<string | null>(null);
+
+  const handleAbrirRevisao = async (ad: Imovel) => {
+    setErroRevisao(null);
+    setAbrindoRevisaoId(ad.id);
+    try {
+      const resultado = await requestReviewLink(ad.id);
+      if (!resultado.success || !resultado.url) {
+        setErroRevisao(resultado.error || 'Não foi possível abrir a revisão.');
+        return;
+      }
+      window.open(resultado.url, '_blank', 'noopener,noreferrer');
+    } finally {
+      setAbrindoRevisaoId(null);
+    }
+  };
 
   const anunciosCountRef = useRef(imoveis.length);
   const saldoRef = useRef(asNumber(initialUsuario?.saldo_creditos, 0));
@@ -371,9 +388,18 @@ export default function DashboardCorretorClient({
                       )}
                       <div className="min-w-0">
                         <div className="text-sm font-semibold text-brand-900 line-clamp-1">{ad.titulo || `Imóvel ${ad.referencia || ad.id}`}</div>
-                        <div className="text-xs text-muted mt-0.5">Aguardando sua aprovação para avançar na publicação.</div>
+                        <div className="text-xs text-muted mt-0.5">Confira as fotos e aprove para avançar na publicação.</div>
                       </div>
                     </div>
+                    <button
+                      onClick={() => handleAbrirRevisao(ad)}
+                      disabled={abrindoRevisaoId === ad.id}
+                      className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold text-brand-900 hover:text-gold disabled:opacity-50"
+                    >
+                      {abrindoRevisaoId === ad.id ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <ExternalLink className="w-3.5 h-3.5" />}
+                      {abrindoRevisaoId === ad.id ? 'Abrindo revisão...' : 'Revisar e aprovar agora'}
+                    </button>
+                    {erroRevisao && <div className="mt-1 text-[11px] text-danger">{erroRevisao}</div>}
                   </div>
                 ))}
                 {aguardandoCredito.slice(0, 2).map((ad) => (
