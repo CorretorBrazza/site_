@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { notFound, redirect } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { API_BASE_URL } from '@/lib/api';
 import { safeJsonLd } from '@/lib/jsonld';
 import VitrineCorretorClient from './VitrineCorretorClient';
@@ -110,7 +110,9 @@ export default async function VitrineCorretorPage({ params }: Props) {
   const data = resultado.data;
   const slugCanonico = slugCanonicoDe(data, slug);
   if (slugCanonico !== String(slug).trim().toLowerCase()) {
-    redirect(`/corretor/${encodeURIComponent(slugCanonico)}/`, 'replace');
+    // 308 de verdade: meta refresh (comportamento do `redirect` comum em
+    // streaming) é sinal fraco para o Google e deixa o alias indexável.
+    permanentRedirect(`/corretor/${encodeURIComponent(slugCanonico)}/`);
   }
 
   const { corretor, totais } = data;

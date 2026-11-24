@@ -125,8 +125,8 @@ test('7. PWA abre na vitrine publica, nao no painel autenticado', () => {
 test('8. vitrine usa o slug canonico e redireciona alias', () => {
   const pagina = ler('src/app/corretor/[slug]/page.tsx');
   assert.match(pagina, /slugCanonicoDe\(resultado\.data, slug\)/, 'canonical vem da API');
-  assert.match(pagina, /redirect\(/, 'alias redireciona');
-  assert.match(pagina, /'replace'/, 'redirect e permanente para o mesmo destino');
+  assert.match(pagina, /permanentRedirect\(/, 'alias redireciona com 308');
+  assert.doesNotMatch(pagina, /http-equiv/, 'sem meta refresh no canonical');
   assert.match(pagina, /nao_encontrado/, '404 distinto de indisponivel');
   assert.match(pagina, /indisponivel/, 'erro temporario nao apaga a vitrine');
 });
@@ -166,10 +166,14 @@ test('11. sitemap inclui as vitrines publicas dos corretores', () => {
   assert.doesNotMatch(api, /buscarVitrinePublicaCorretor/, 'helper morto removido');
 });
 
-test('12. vitrine tem loading e error boundary', () => {
-  const loading = ler('src/app/corretor/[slug]/loading.tsx');
+test('12. vitrine tem error boundary e redirect HTTP (sem streaming precoce)', () => {
   const error = ler('src/app/corretor/[slug]/error.tsx');
-  assert.match(loading, /animate-pulse/, 'feedback de carregamento');
   assert.match(error, /'use client'/, 'error boundary e cliente');
   assert.match(error, /onClick=\{reset\}/, 'nova tentativa');
+  // Um `loading.tsx` na rota transmitiria o HTML antes de a API responder e
+  // transformaria o permanentRedirect do alias em meta refresh (HTTP 200).
+  assert.ok(
+    !existsSync(fileURLToPath(new URL('../src/app/corretor/[slug]/loading.tsx', import.meta.url))),
+    'sem loading.tsx na rota da vitrine',
+  );
 });

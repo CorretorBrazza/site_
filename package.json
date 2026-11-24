@@ -14,7 +14,8 @@
     "test:review": "node --import tsx --test scripts/test-review-link-dinamico.test.ts",
     "test:pwa": "node --import tsx --test scripts/test-pwa.test.ts",
     "test:go-live-contract": "node --import tsx --test scripts/test-go-live-contract.test.ts",
-    "test:seo": "node --import tsx --test scripts/test-seo.test.ts"
+    "test:seo": "node --import tsx --test scripts/test-seo.test.ts",
+    "test:telefone": "node --import tsx --test scripts/test-telefone.test.ts"
   },
   "dependencies": {
     "framer-motion": "^12.35.2",
