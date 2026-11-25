@@ -1,10 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Building2,
+  Check,
+  Copy,
   Home,
   KeyRound,
+  Link2,
   MessageCircle,
   Phone,
   ShieldCheck,
@@ -12,6 +15,7 @@ import {
 } from 'lucide-react';
 import CardImovel from '@/components/CardImovel';
 import { Imovel } from '@/types/imovel';
+import { copiarTexto } from '@/lib/clipboard';
 import { formatarTelefoneBrasil, urlWhatsappCorretor } from '@/lib/telefone';
 
 interface VitrineData {
@@ -42,10 +46,28 @@ interface VitrineData {
 export default function VitrineCorretorClient({ initialData }: { initialData: VitrineData }) {
   const { corretor, imoveis, totais } = initialData;
   const [tabAtiva, setTabAtiva] = useState<'todos' | 'venda' | 'locacao'>('todos');
+  const [copiado, setCopiado] = useState(false);
+  const [origem, setOrigem] = useState('');
 
+  // Só no cliente: o HTML servidor mostra o caminho, o navegador completa com
+  // a origem real (produção, preview ou localhost) sem quebrar hidratação.
+  useEffect(() => {
+    setOrigem(window.location.origin);
+  }, []);
+
+  const slugCanonico = corretor.slug;
+  const linkVitrine = `${origem}/corretor/${slugCanonico}/`;
   const whatsAppUrl = urlWhatsappCorretor(corretor.telefone, corretor.nome);
   const telefoneVisivel = corretor.exibir_telefone !== false && Boolean(corretor.telefone);
   const telefoneExibicao = corretor.telefone_exibicao || formatarTelefoneBrasil(corretor.telefone);
+
+  const handleCopiarLink = async () => {
+    const ok = await copiarTexto(linkVitrine);
+    if (ok) {
+      setCopiado(true);
+      setTimeout(() => setCopiado(false), 2500);
+    }
+  };
 
   // Normalização para o formato do CardImovel. A API já entrega o payload
   // compacto; este mapper só traduz para o tipo do componente.
@@ -161,6 +183,38 @@ export default function VitrineCorretorClient({ initialData }: { initialData: Vi
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Link canônico da vitrine, sempre visível e copiável. */}
+          <div className="mt-6 rounded-xl border border-gold/30 bg-brand-900/70 p-3 sm:p-4">
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+              <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-gold">
+                <Link2 className="h-3.5 w-3.5" /> Link oficial da vitrine
+              </span>
+              <button
+                type="button"
+                onClick={handleCopiarLink}
+                className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-bold transition-all ${
+                  copiado
+                    ? 'border-success/40 bg-success/20 text-success'
+                    : 'border-brand-700 bg-brand-950 text-white-80 hover:text-white'
+                }`}
+              >
+                {copiado ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                {copiado ? 'Link copiado!' : 'Copiar link'}
+              </button>
+            </div>
+            <input
+              type="text"
+              readOnly
+              value={linkVitrine}
+              aria-label="Link da vitrine do corretor"
+              onFocus={(event) => event.currentTarget.select()}
+              className="w-full min-w-0 truncate rounded-lg border border-brand-700 bg-brand-950/80 px-3 py-2 font-mono text-xs text-white-90"
+            />
+            <p className="mt-2 text-[11px] text-white-50">
+              Compartilhe este endereço no Instagram, WhatsApp ou na bio. Ele sempre abre a vitrine oficial.
+            </p>
           </div>
 
           {/* Cards de Métricas Resumo */}

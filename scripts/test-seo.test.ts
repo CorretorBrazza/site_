@@ -142,16 +142,17 @@ test('9. vitrine tem ProfilePage/Person sem repetir o agente global', () => {
   assert.match(telefone, /digitos\.startsWith\('55'\)/, 'DDI nao duplicado');
 });
 
-test('10. vitrine publica nao expoe bloco interno de copia de link', () => {
+test('10. link canonico da vitrine fica visivel e copiavel', () => {
   const cliente = ler('src/app/corretor/[slug]/VitrineCorretorClient.tsx');
-  assert.doesNotMatch(cliente, /Link oficial da vitrine/, 'link interno nao deve aparecer na vitrine publica');
-  assert.doesNotMatch(cliente, /aria-label="Link da vitrine do corretor"/, 'acao de copiar link interno removida da vitrine publica');
-  assert.doesNotMatch(cliente, /copiarTexto\(linkVitrine\)/, 'vitrine publica nao copia link interno');
+  assert.match(cliente, /Link oficial da vitrine/);
+  assert.match(cliente, /aria-label="Link da vitrine do corretor"/);
+  assert.match(cliente, /copiarTexto\(linkVitrine\)/, 'botao copia o link canonico');
+  assert.match(cliente, /window\.location\.origin/, 'URL absoluta no navegador');
   assert.match(cliente, /urlWhatsappCorretor\(/, 'WhatsApp passa pela normalizacao');
   assert.doesNotMatch(cliente, /wa\.me\/55\$\{/, 'sem DDI duplicado');
   assert.doesNotMatch(cliente, /Verificado/, 'selo fixo removido');
   const modal = ler('src/app/dashboard/components/ModalPerfilVitrine.tsx');
-  assert.match(modal, /copiarTexto\(vitrineUrl\)/, 'painel interno continua copiando o link');
+  assert.match(modal, /copiarTexto\(vitrineUrl\)/, 'painel tambem copia o link');
   assert.match(modal, /exibir_telefone: exibirTelefone/, 'opt-out de telefone salvo');
   assert.match(modal, /slug: slugCorretor/, 'slug editavel salvo');
 });
