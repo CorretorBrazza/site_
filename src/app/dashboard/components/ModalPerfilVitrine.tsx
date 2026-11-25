@@ -171,22 +171,22 @@ export default function ModalPerfilVitrine({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full sm:max-w-2xl bg-brand-900 border border-brand-700/80 rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden max-h-[96vh] sm:max-h-[92vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="relative w-full sm:max-w-2xl bg-white border border-line rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden max-h-[96vh] sm:max-h-[92vh] flex flex-col">
         {/* Header do Modal */}
-        <div className="px-4 sm:px-6 py-4 border-b border-brand-700/60 bg-brand-850 flex items-center justify-between gap-3">
+        <div className="px-4 sm:px-6 py-4 border-b border-line bg-slate-50 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-9 h-9 rounded-xl bg-gold/15 border border-gold/30 flex items-center justify-center text-gold shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-gold/15 border border-gold/30 flex items-center justify-center text-gold-700 shrink-0">
               <UserCheck className="w-5 h-5" />
             </div>
             <div className="min-w-0">
-              <h3 className="text-base sm:text-lg font-bold text-white leading-tight">Minha Vitrine Pública</h3>
-              <p className="text-xs text-white-60">Personalize sua página exclusiva de anúncios</p>
+              <h3 className="text-base sm:text-lg font-bold text-brand-900 leading-tight">Minha Vitrine Pública</h3>
+              <p className="text-xs text-gray-500">Personalize sua página exclusiva de anúncios</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-white-60 hover:text-white p-2 rounded-lg hover:bg-brand-700/50 transition-colors shrink-0"
+            className="text-gray-400 hover:text-brand-900 p-2 rounded-lg hover:bg-slate-100 transition-colors shrink-0"
             aria-label="Fechar"
           >
             ✕
@@ -194,18 +194,18 @@ export default function ModalPerfilVitrine({
         </div>
 
         {/* Corpo com scroll */}
-        <div className="p-4 sm:p-6 overflow-y-auto space-y-5 sm:space-y-6">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-5 sm:space-y-6 bg-white">
           {/* Card do Link da Vitrine */}
-          <div className="p-4 rounded-xl bg-gradient-to-r from-brand-800 to-brand-750 border border-gold/30 shadow-inner">
+          <div className="p-4 rounded-xl bg-gold/5 border border-gold/30">
             <div className="flex items-center justify-between gap-2 mb-2">
-              <span className="text-xs font-semibold uppercase tracking-wider text-gold flex items-center gap-1.5">
+              <span className="text-xs font-semibold uppercase tracking-wider text-gold-700 flex items-center gap-1.5">
                 <Link2 className="w-3.5 h-3.5" /> Link Oficial da Sua Vitrine
               </span>
               <a
                 href={`/corretor/${slugCorretor}/`}
                 target="_blank"
                 rel="noreferrer"
-                className="text-xs text-white-80 hover:text-white flex items-center gap-1 underline underline-offset-2 shrink-0"
+                className="text-xs text-brand-900/70 hover:text-brand-900 flex items-center gap-1 underline underline-offset-2 shrink-0"
               >
                 Abrir vitrine <ExternalLink className="w-3 h-3" />
               </a>
@@ -215,7 +215,7 @@ export default function ModalPerfilVitrine({
                 type="text"
                 readOnly
                 value={vitrineUrl}
-                className="flex-1 bg-brand-950/80 border border-brand-700 rounded-lg px-3 py-2 text-xs text-white-90 font-mono truncate min-w-0"
+                className="flex-1 bg-white border border-line rounded-lg px-3 py-2 text-xs text-brand-900 font-mono truncate min-w-0"
               />
               <button
                 type="button"
@@ -230,7 +230,7 @@ export default function ModalPerfilVitrine({
                 {copiado ? 'Link Copiado!' : 'Copiar Link'}
               </button>
             </div>
-            <p className="text-[11px] text-white-60 mt-2">
+            <p className="text-[11px] text-gray-500 mt-2">
               Compartilhe no Instagram, WhatsApp ou bio. Este é o endereço canônico: links antigos
               com seu código ou slug anterior redirecionam para ele.
             </p>
@@ -254,11 +254,11 @@ export default function ModalPerfilVitrine({
           <form onSubmit={handleSalvar} className="space-y-4">
             {/* Foto de Perfil */}
             <div>
-              <label className="block text-xs font-semibold text-white-80 mb-2">
+              <label className="block text-xs font-semibold text-gray-700 mb-2">
                 Foto de Perfil
               </label>
               <div className="flex items-center gap-3 sm:gap-4">
-                <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-gold/40 bg-brand-800 overflow-hidden shrink-0 flex items-center justify-center">
+                <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-gold/40 bg-slate-100 overflow-hidden shrink-0 flex items-center justify-center">
                   {fotoUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -268,7 +268,7 @@ export default function ModalPerfilVitrine({
                       onError={() => setFotoUrl('')}
                     />
                   ) : (
-                    <Camera className="w-6 h-6 text-white-40" />
+                    <Camera className="w-6 h-6 text-gray-400" />
                   )}
                 </div>
                 <div className="flex-1 min-w-0 space-y-2">
@@ -293,7 +293,7 @@ export default function ModalPerfilVitrine({
                       <button
                         type="button"
                         onClick={() => setFotoUrl('')}
-                        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-brand-700 text-white-60 text-xs font-medium hover:text-white transition-colors"
+                        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-line text-gray-500 text-xs font-medium hover:text-brand-900 hover:bg-slate-50 transition-colors"
                       >
                         Remover
                       </button>
@@ -304,9 +304,9 @@ export default function ModalPerfilVitrine({
                     value={fotoUrl}
                     onChange={(e) => setFotoUrl(e.target.value)}
                     placeholder="Ou cole uma URL da imagem (opcional)"
-                    className="w-full bg-brand-800 border border-brand-700 rounded-lg px-3 py-2 text-sm text-white placeholder-white-40 focus:outline-none focus:border-gold"
+                    className="w-full bg-white border border-line rounded-lg px-3 py-2 text-sm text-brand-900 placeholder-gray-400 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30"
                   />
-                  <p className="text-[11px] text-white-50">
+                  <p className="text-[11px] text-gray-500">
                     Envie JPG, PNG ou WebP (até 6MB), ou cole um link direto da imagem.
                   </p>
                 </div>
@@ -315,7 +315,7 @@ export default function ModalPerfilVitrine({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-white-80 mb-1.5">
+                <label className="block text-xs font-semibold text-gray-700 mb-1.5">
                   Nome Profissional
                 </label>
                 <input
@@ -324,12 +324,12 @@ export default function ModalPerfilVitrine({
                   onChange={(e) => setNome(e.target.value)}
                   required
                   placeholder="Ex: Carlos Silva"
-                  className="w-full bg-brand-800 border border-brand-700 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white-40 focus:outline-none focus:border-gold"
+                  className="w-full bg-white border border-line rounded-lg px-3 py-2.5 text-sm text-brand-900 placeholder-gray-400 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-white-80 mb-1.5">
+                <label className="block text-xs font-semibold text-gray-700 mb-1.5">
                   Número de CRECI
                 </label>
                 <input
@@ -337,13 +337,13 @@ export default function ModalPerfilVitrine({
                   value={creci}
                   onChange={(e) => setCreci(e.target.value)}
                   placeholder="Ex: 184.290-F"
-                  className="w-full bg-brand-800 border border-brand-700 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white-40 focus:outline-none focus:border-gold"
+                  className="w-full bg-white border border-line rounded-lg px-3 py-2.5 text-sm text-brand-900 placeholder-gray-400 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-white-80 mb-1.5">
+              <label className="block text-xs font-semibold text-gray-700 mb-1.5">
                 WhatsApp de Contato (receber leads)
               </label>
               <input
@@ -351,9 +351,9 @@ export default function ModalPerfilVitrine({
                 value={telefone}
                 onChange={(e) => setTelefone(e.target.value)}
                 placeholder="(11) 98765-4321"
-                className="w-full bg-brand-800 border border-brand-700 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white-40 focus:outline-none focus:border-gold"
+                className="w-full bg-white border border-line rounded-lg px-3 py-2.5 text-sm text-brand-900 placeholder-gray-400 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30"
               />
-              <p className="text-[11px] text-white-50 mt-1">
+              <p className="text-[11px] text-gray-500 mt-1">
                 Os botões da sua vitrine enviarão os clientes diretamente para este número.
               </p>
               <label className="mt-3 flex items-start gap-2.5 cursor-pointer">
@@ -363,9 +363,9 @@ export default function ModalPerfilVitrine({
                   onChange={(e) => setExibirTelefone(e.target.checked)}
                   className="mt-0.5 h-4 w-4 shrink-0 accent-[#d4af37]"
                 />
-                <span className="text-xs text-white-70">
+                <span className="text-xs text-gray-600">
                   Exibir telefone na vitrine pública
-                  <span className="block text-[11px] text-white-50 mt-0.5">
+                  <span className="block text-[11px] text-gray-500 mt-0.5">
                     Desmarque para esconder o número e o botão de WhatsApp na vitrine pública.
                   </span>
                 </span>
@@ -373,7 +373,7 @@ export default function ModalPerfilVitrine({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-white-80 mb-1.5">
+              <label className="block text-xs font-semibold text-gray-700 mb-1.5">
                 Endereço da Vitrine (slug)
               </label>
               <input
@@ -381,16 +381,16 @@ export default function ModalPerfilVitrine({
                 value={slug}
                 onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))}
                 placeholder="seu-nome-BRA"
-                className="w-full bg-brand-800 border border-brand-700 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white-40 focus:outline-none focus:border-gold font-mono"
+                className="w-full bg-white border border-line rounded-lg px-3 py-2.5 text-sm text-brand-900 placeholder-gray-400 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 font-mono"
               />
-              <p className="text-[11px] text-white-50 mt-1">
+              <p className="text-[11px] text-gray-500 mt-1">
                 Use letras sem acento, números e hífens. Se o endereço já estiver em uso, escolheremos
                 uma variação automaticamente e o link antigo continuará redirecionando.
               </p>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-white-80 mb-1.5">
+              <label className="block text-xs font-semibold text-gray-700 mb-1.5">
                 Texto de Apresentação / Sobre Você
               </label>
               <textarea
@@ -398,9 +398,9 @@ export default function ModalPerfilVitrine({
                 value={apresentacao}
                 onChange={(e) => setApresentacao(e.target.value)}
                 placeholder="Ex: Especialista no mercado imobiliário de Taboão da Serra e região há mais de 8 anos. Atendimento personalizado para compra, venda e locação segura do seu imóvel."
-                className="w-full bg-brand-800 border border-brand-700 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white-40 focus:outline-none focus:border-gold"
+                className="w-full bg-white border border-line rounded-lg px-3 py-2.5 text-sm text-brand-900 placeholder-gray-400 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30"
               />
-              <p className="text-[11px] text-white-50 mt-1">
+              <p className="text-[11px] text-gray-500 mt-1">
                 Aparecerá com destaque no topo da sua vitrine pública.
               </p>
             </div>
@@ -410,7 +410,7 @@ export default function ModalPerfilVitrine({
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full sm:w-auto px-4 py-2.5 rounded-lg border border-brand-700 text-white-70 hover:text-white text-sm font-medium transition-colors"
+                className="w-full sm:w-auto px-4 py-2.5 rounded-lg border border-line text-gray-600 hover:text-brand-900 hover:bg-slate-50 text-sm font-medium transition-colors"
               >
                 Cancelar
               </button>
