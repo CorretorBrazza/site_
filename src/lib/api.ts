@@ -233,17 +233,16 @@ export async function fetchApi<T = any>(
     }
 
     if (!res.ok) {
-      // Quem valida a sessão é a API, não o cliente. Um 401 aqui é o sinal de
-      // sessão expirada, que antes vinha da ausência do token no localStorage.
       if (res.status === 401) {
         return { success: false, error: 'Sessão expirada. Faça login novamente.' };
       }
-      if (res.status === 403 && /csrf/i.test(String(json.message || json.error || ''))) {
-        return { success: false, error: 'Sessão expirada. Faça login novamente.' };
+      const msg = String(json.message || json.error || '').trim();
+      if (res.status === 403 && /csrf/i.test(msg)) {
+        return { success: false, error: msg || 'Falha de segurança na sessão. Recarregue a página e tente novamente.' };
       }
       return {
         success: false,
-        error: json.message || json.error || `Erro HTTP ${res.status}`,
+        error: msg || `Erro HTTP ${res.status}`,
       };
     }
 
@@ -992,11 +991,35 @@ export async function atualizarPerfilCorretor(dados: {
   creci?: string;
   slug?: string;
   exibir_telefone?: boolean;
-}): Promise<{ success: boolean; data?: any; error?: string }> {
+}): Promise<{ success: boolean; data?: any; error?: string; message?: string }> {
   return fetchBrokerApi<any>('/corretor/me/perfil', {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dados),
+  });
+}
+
+export async function uploadFotoPerfilCorretor(file: File): Promise<{ success: boolean; data?: any; error?: string; message?: string }> {
+  const maxBytes = 6 * 1024 * 1024;
+  if (!file) return { success: false, error: 'Selecione uma imagem.' };
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+    return { success: false, error: 'Formato inválido. Use JPG, PNG ou WebP.' };
+  }
+  if (file.size > maxBytes) {
+    return { success: false, error: 'A foto deve ter no máximo 6MB.' };
+  }
+
+  const foto = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ''));
+    reader.onerror = () => reject(new Error('Não foi possível ler a imagem selecionada.'));
+    reader.readAsDataURL(file);
+  });
+
+  return fetchBrokerApi<any>('/corretor/me/foto', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ foto }),
   });
 }
 

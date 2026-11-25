@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Camera, Check, Copy, ExternalLink, Link2, Save, UserCheck } from 'lucide-react';
-import { atualizarPerfilCorretor } from '@/lib/api';
+import { useEffect, useRef, useState } from 'react';
+import { Camera, Check, Copy, ExternalLink, Link2, Loader2, Save, Upload, UserCheck } from 'lucide-react';
+import { atualizarPerfilCorretor, uploadFotoPerfilCorretor } from '@/lib/api';
 import { copiarTexto } from '@/lib/clipboard';
 
 interface ModalPerfilVitrineProps {
@@ -49,9 +49,12 @@ export default function ModalPerfilVitrine({
   const [exibirTelefone, setExibirTelefone] = useState(usuario?.exibir_telefone !== false);
   const [origem, setOrigem] = useState('');
   const [salvando, setSalvando] = useState(false);
+  const [enviandoFoto, setEnviandoFoto] = useState(false);
   const [mensagemSucesso, setMensagemSucesso] = useState(false);
   const [copiado, setCopiado] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const fotoInputRef = useRef<HTMLInputElement | null>(null);
+  const feedbackRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setOrigem(window.location.origin);
@@ -70,6 +73,12 @@ export default function ModalPerfilVitrine({
     setMensagemSucesso(false);
   }, [aberto, usuario]);
 
+  useEffect(() => {
+    if (erro || mensagemSucesso) {
+      feedbackRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [erro, mensagemSucesso]);
+
   if (!aberto) return null;
 
   const slugCorretor = slug.trim().toLowerCase() || gerarSlugLocal(nome || usuario?.nome, usuario?.codigo_corretor || 'BRA');
@@ -80,6 +89,41 @@ export default function ModalPerfilVitrine({
     if (ok) {
       setCopiado(true);
       setTimeout(() => setCopiado(false), 2500);
+    }
+  };
+
+  const handleFotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+
+    setEnviandoFoto(true);
+    setErro(null);
+    setMensagemSucesso(false);
+    try {
+      const res = await uploadFotoPerfilCorretor(file);
+      if (res.success && res.data) {
+        const novaUrl = String(res.data.foto_perfil_url || '').trim();
+        if (novaUrl) setFotoUrl(novaUrl);
+        onPerfilAtualizado(res.data);
+        try {
+          const cached = localStorage.getItem('user_info');
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            localStorage.setItem('user_info', JSON.stringify({ ...parsed, ...res.data }));
+          }
+        } catch {
+          // noop
+        }
+        setMensagemSucesso(true);
+        setTimeout(() => setMensagemSucesso(false), 3000);
+      } else {
+        setErro(res.error || res.message || 'Falha ao enviar a foto.');
+      }
+    } catch (err: any) {
+      setErro(err?.message || 'Erro inesperado ao enviar a foto.');
+    } finally {
+      setEnviandoFoto(false);
     }
   };
 
@@ -95,30 +139,32 @@ export default function ModalPerfilVitrine({
         telefone: telefone.trim() || undefined,
         creci: creci.trim() || undefined,
         apresentacao: apresentacao.trim() || undefined,
-        foto_perfil_url: fotoUrl.trim() || undefined,
+        foto_perfil_url: fotoUrl.trim(),
         slug: slugCorretor || undefined,
         exibir_telefone: exibirTelefone,
       });
 
-      if (res.success && res.data) {
+      if (res.success) {
+        const data = res.data || {};
         setMensagemSucesso(true);
-        if (res.data.slug) setSlug(res.data.slug);
-        onPerfilAtualizado(res.data);
+        if (data.slug) setSlug(data.slug);
+        if (data.foto_perfil_url !== undefined) setFotoUrl(String(data.foto_perfil_url || ''));
+        onPerfilAtualizado(data);
         try {
           const cached = localStorage.getItem('user_info');
           if (cached) {
             const parsed = JSON.parse(cached);
-            localStorage.setItem('user_info', JSON.stringify({ ...parsed, ...res.data }));
+            localStorage.setItem('user_info', JSON.stringify({ ...parsed, ...data }));
           }
         } catch {
           // noop
         }
         setTimeout(() => setMensagemSucesso(false), 3000);
       } else {
-        setErro(res.error || 'Falha ao salvar perfil.');
+        setErro(res.error || res.message || 'Falha ao salvar perfil.');
       }
     } catch (err: any) {
-      setErro(err?.message || 'Erro inesperado.');
+      setErro(err?.message || 'Erro inesperado ao salvar.');
     } finally {
       setSalvando(false);
     }
@@ -190,6 +236,7 @@ export default function ModalPerfilVitrine({
             </p>
           </div>
 
+          <div ref={feedbackRef} />
           {mensagemSucesso && (
             <div className="p-3 bg-success/20 border border-success/40 rounded-xl text-success text-sm flex items-center gap-2">
               <Check className="w-4 h-4 shrink-0" />
@@ -198,7 +245,7 @@ export default function ModalPerfilVitrine({
           )}
 
           {erro && (
-            <div className="p-3 bg-danger/20 border border-danger/40 rounded-xl text-danger text-sm">
+            <div className="p-3 bg-danger/20 border border-danger/40 rounded-xl text-danger text-sm whitespace-pre-wrap">
               {erro}
             </div>
           )}
@@ -208,7 +255,7 @@ export default function ModalPerfilVitrine({
             {/* Foto de Perfil */}
             <div>
               <label className="block text-xs font-semibold text-white-80 mb-2">
-                Foto de Perfil (URL da Imagem)
+                Foto de Perfil
               </label>
               <div className="flex items-center gap-3 sm:gap-4">
                 <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-gold/40 bg-brand-800 overflow-hidden shrink-0 flex items-center justify-center">
@@ -224,16 +271,43 @@ export default function ModalPerfilVitrine({
                     <Camera className="w-6 h-6 text-white-40" />
                   )}
                 </div>
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 space-y-2">
+                  <div className="flex flex-wrap gap-2">
+                    <input
+                      ref={fotoInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      className="hidden"
+                      onChange={handleFotoUpload}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fotoInputRef.current?.click()}
+                      disabled={enviandoFoto}
+                      className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-gold/15 border border-gold/30 text-gold text-xs font-bold hover:bg-gold/25 transition-colors disabled:opacity-50"
+                    >
+                      {enviandoFoto ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                      {enviandoFoto ? 'Enviando...' : 'Enviar foto'}
+                    </button>
+                    {fotoUrl && (
+                      <button
+                        type="button"
+                        onClick={() => setFotoUrl('')}
+                        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-brand-700 text-white-60 text-xs font-medium hover:text-white transition-colors"
+                      >
+                        Remover
+                      </button>
+                    )}
+                  </div>
                   <input
                     type="url"
                     value={fotoUrl}
                     onChange={(e) => setFotoUrl(e.target.value)}
-                    placeholder="https://exemplo.com/sua-foto.jpg"
-                    className="w-full bg-brand-800 border border-brand-700 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white-40 focus:outline-none focus:border-gold"
+                    placeholder="Ou cole uma URL da imagem (opcional)"
+                    className="w-full bg-brand-800 border border-brand-700 rounded-lg px-3 py-2 text-sm text-white placeholder-white-40 focus:outline-none focus:border-gold"
                   />
-                  <p className="text-[11px] text-white-50 mt-1">
-                    Cole o link direto da sua foto profissional (Cloudinary, Drive público, site etc.).
+                  <p className="text-[11px] text-white-50">
+                    Envie JPG, PNG ou WebP (até 6MB), ou cole um link direto da imagem.
                   </p>
                 </div>
               </div>

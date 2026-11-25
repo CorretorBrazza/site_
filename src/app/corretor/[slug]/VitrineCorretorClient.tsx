@@ -122,15 +122,15 @@ export default function VitrineCorretorClient({ initialData }: { initialData: Vi
   ).map(normalizarImovel);
 
   return (
-    <div className="bg-[#070e1c] text-white">
+    <div className="bg-slate-50 text-brand-900">
       {/* Hero / Perfil do Corretor — o header do site já vem do root layout. */}
-      <section className="relative overflow-hidden border-b border-brand-800/60 bg-gradient-to-b from-brand-950 via-brand-900 to-[#070e1c] pt-8 pb-10">
-        <div className="absolute left-1/2 top-0 h-64 w-full max-w-4xl -translate-x-1/2 rounded-full bg-gold/5 blur-3xl pointer-events-none" />
+      <section className="relative overflow-hidden border-b border-line bg-gradient-to-b from-white via-slate-50 to-slate-100 pt-8 pb-10">
+        <div className="absolute left-1/2 top-0 h-64 w-full max-w-4xl -translate-x-1/2 rounded-full bg-gold/10 blur-3xl pointer-events-none" />
 
         <div className="relative z-10 mx-auto max-w-4xl px-4">
           <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:items-start sm:gap-6 sm:text-left">
             <div className="relative shrink-0">
-              <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-gold/50 bg-brand-850 shadow-2xl sm:h-32 sm:w-32">
+              <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-gold/60 bg-white shadow-xl sm:h-32 sm:w-32">
                 {corretor.foto_perfil_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -139,27 +139,27 @@ export default function VitrineCorretorClient({ initialData }: { initialData: Vi
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <User className="h-12 w-12 text-white-40" />
+                  <User className="h-12 w-12 text-brand-900/30" />
                 )}
               </div>
             </div>
 
             <div className="min-w-0 flex-1 space-y-2">
               <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-                <h1 className="text-2xl font-black tracking-tight text-white sm:text-3xl">
+                <h1 className="text-2xl font-black tracking-tight text-brand-900 sm:text-3xl">
                   {corretor.nome}
                 </h1>
                 {corretor.creci && (
-                  <span className="flex items-center gap-1 rounded-full border border-gold/40 bg-gold/15 px-2.5 py-0.5 text-xs font-bold text-gold">
+                  <span className="flex items-center gap-1 rounded-full border border-gold/50 bg-gold/10 px-2.5 py-0.5 text-xs font-bold text-gold-700">
                     <ShieldCheck className="h-3.5 w-3.5" /> CRECI {corretor.creci}
                   </span>
                 )}
               </div>
 
               {corretor.apresentacao ? (
-                <p className="max-w-2xl text-sm leading-relaxed text-white-70">{corretor.apresentacao}</p>
+                <p className="max-w-2xl text-sm leading-relaxed text-gray-600">{corretor.apresentacao}</p>
               ) : (
-                <p className="text-sm italic text-white-50">
+                <p className="text-sm italic text-gray-500">
                   Corretor especialista em imóveis residenciais e comerciais em Taboão da Serra e região.
                 </p>
               )}
@@ -176,8 +176,8 @@ export default function VitrineCorretorClient({ initialData }: { initialData: Vi
                     Falar no WhatsApp
                   </a>
                   {telefoneVisivel && (
-                    <span className="flex items-center gap-1.5 font-mono text-xs text-white-60">
-                      <Phone className="h-3.5 w-3.5 text-white-40" /> {telefoneExibicao}
+                    <span className="flex items-center gap-1.5 font-mono text-xs text-gray-600">
+                      <Phone className="h-3.5 w-3.5 text-gray-400" /> {telefoneExibicao}
                     </span>
                   )}
                 </div>
@@ -186,9 +186,9 @@ export default function VitrineCorretorClient({ initialData }: { initialData: Vi
           </div>
 
           {/* Link canônico da vitrine, sempre visível e copiável. */}
-          <div className="mt-6 rounded-xl border border-gold/30 bg-brand-900/70 p-3 sm:p-4">
+          <div className="mt-6 rounded-xl border border-gold/30 bg-white/90 p-3 sm:p-4 shadow-sm">
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-              <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-gold">
+              <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-gold-700">
                 <Link2 className="h-3.5 w-3.5" /> Link oficial da vitrine
               </span>
               <button
@@ -196,8 +196,8 @@ export default function VitrineCorretorClient({ initialData }: { initialData: Vi
                 onClick={handleCopiarLink}
                 className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-bold transition-all ${
                   copiado
-                    ? 'border-success/40 bg-success/20 text-success'
-                    : 'border-brand-700 bg-brand-950 text-white-80 hover:text-white'
+                    ? 'border-success/40 bg-success/10 text-success'
+                    : 'border-line bg-white text-brand-900 hover:bg-slate-50'
                 }`}
               >
                 {copiado ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
@@ -210,26 +210,26 @@ export default function VitrineCorretorClient({ initialData }: { initialData: Vi
               value={linkVitrine}
               aria-label="Link da vitrine do corretor"
               onFocus={(event) => event.currentTarget.select()}
-              className="w-full min-w-0 truncate rounded-lg border border-brand-700 bg-brand-950/80 px-3 py-2 font-mono text-xs text-white-90"
+              className="w-full min-w-0 truncate rounded-lg border border-line bg-slate-50 px-3 py-2 font-mono text-xs text-brand-900"
             />
-            <p className="mt-2 text-[11px] text-white-50">
+            <p className="mt-2 text-[11px] text-gray-500">
               Compartilhe este endereço no Instagram, WhatsApp ou na bio. Ele sempre abre a vitrine oficial.
             </p>
           </div>
 
           {/* Cards de Métricas Resumo */}
-          <div className="mt-6 grid grid-cols-3 gap-2.5 border-t border-brand-800/60 pt-6 sm:gap-4">
-            <div className="rounded-xl border border-brand-800 bg-brand-900/60 p-3 text-center">
-              <div className="text-[11px] font-medium uppercase tracking-wider text-white-60 sm:text-xs">Imóveis Ativos</div>
-              <div className="mt-0.5 text-lg font-black text-white sm:text-2xl">{totais.total}</div>
+          <div className="mt-6 grid grid-cols-3 gap-2.5 border-t border-line pt-6 sm:gap-4">
+            <div className="rounded-xl border border-line bg-white p-3 text-center shadow-sm">
+              <div className="text-[11px] font-medium uppercase tracking-wider text-gray-500 sm:text-xs">Imóveis Ativos</div>
+              <div className="mt-0.5 text-lg font-black text-brand-900 sm:text-2xl">{totais.total}</div>
             </div>
-            <div className="rounded-xl border border-brand-800 bg-brand-900/60 p-3 text-center">
-              <div className="text-[11px] font-medium uppercase tracking-wider text-gold sm:text-xs">Para Venda</div>
-              <div className="mt-0.5 text-lg font-black text-gold sm:text-2xl">{totais.venda}</div>
+            <div className="rounded-xl border border-line bg-white p-3 text-center shadow-sm">
+              <div className="text-[11px] font-medium uppercase tracking-wider text-gold-700 sm:text-xs">Para Venda</div>
+              <div className="mt-0.5 text-lg font-black text-gold-700 sm:text-2xl">{totais.venda}</div>
             </div>
-            <div className="rounded-xl border border-brand-800 bg-brand-900/60 p-3 text-center">
-              <div className="text-[11px] font-medium uppercase tracking-wider text-[#00b4d8] sm:text-xs">Para Locação</div>
-              <div className="mt-0.5 text-lg font-black text-[#00b4d8] sm:text-2xl">{totais.locacao}</div>
+            <div className="rounded-xl border border-line bg-white p-3 text-center shadow-sm">
+              <div className="text-[11px] font-medium uppercase tracking-wider text-sky-700 sm:text-xs">Para Locação</div>
+              <div className="mt-0.5 text-lg font-black text-sky-700 sm:text-2xl">{totais.locacao}</div>
             </div>
           </div>
         </div>
@@ -238,12 +238,12 @@ export default function VitrineCorretorClient({ initialData }: { initialData: Vi
       {/* Conteúdo: Blocos de Imóveis. O <main> é o do root layout. */}
       <div className="mx-auto max-w-6xl px-4 py-8 sm:py-10">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex max-w-full items-center gap-1.5 overflow-x-auto rounded-xl border border-brand-800 bg-brand-900/80 p-1">
+          <div className="flex max-w-full items-center gap-1.5 overflow-x-auto rounded-xl border border-line bg-white p-1 shadow-sm">
             <button
               type="button"
               onClick={() => setTabAtiva('todos')}
               className={`flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all ${
-                tabAtiva === 'todos' ? 'bg-gold text-brand-950 shadow-sm' : 'text-white-70 hover:text-white'
+                tabAtiva === 'todos' ? 'bg-gold text-brand-950 shadow-sm' : 'text-gray-600 hover:text-brand-900 hover:bg-slate-50'
               }`}
             >
               <Building2 className="h-3.5 w-3.5" />
@@ -253,7 +253,7 @@ export default function VitrineCorretorClient({ initialData }: { initialData: Vi
               type="button"
               onClick={() => setTabAtiva('venda')}
               className={`flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all ${
-                tabAtiva === 'venda' ? 'bg-gold text-brand-950 shadow-sm' : 'text-white-70 hover:text-white'
+                tabAtiva === 'venda' ? 'bg-gold text-brand-950 shadow-sm' : 'text-gray-600 hover:text-brand-900 hover:bg-slate-50'
               }`}
             >
               <Home className="h-3.5 w-3.5" />
@@ -263,7 +263,7 @@ export default function VitrineCorretorClient({ initialData }: { initialData: Vi
               type="button"
               onClick={() => setTabAtiva('locacao')}
               className={`flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all ${
-                tabAtiva === 'locacao' ? 'bg-gold text-brand-950 shadow-sm' : 'text-white-70 hover:text-white'
+                tabAtiva === 'locacao' ? 'bg-gold text-brand-950 shadow-sm' : 'text-gray-600 hover:text-brand-900 hover:bg-slate-50'
               }`}
             >
               <KeyRound className="h-3.5 w-3.5" />
@@ -271,7 +271,7 @@ export default function VitrineCorretorClient({ initialData }: { initialData: Vi
             </button>
           </div>
 
-          <span className="hidden text-xs text-white-50 sm:inline">
+          <span className="hidden text-xs text-gray-500 sm:inline">
             Exibindo {listaExibicao.length} {listaExibicao.length === 1 ? 'imóvel' : 'imóveis'}
           </span>
         </div>
@@ -285,16 +285,16 @@ export default function VitrineCorretorClient({ initialData }: { initialData: Vi
             ))}
           </div>
         ) : (
-          <div className="mx-auto max-w-lg rounded-2xl border border-brand-800/80 bg-brand-900/30 px-4 py-16 text-center">
-            <Building2 className="mx-auto mb-3 h-12 w-12 text-white-30" />
-            <h3 className="mb-1 text-base font-bold text-white">Nenhum imóvel nesta categoria</h3>
-            <p className="mb-4 text-xs text-white-60">
+          <div className="mx-auto max-w-lg rounded-2xl border border-line bg-white px-4 py-16 text-center shadow-sm">
+            <Building2 className="mx-auto mb-3 h-12 w-12 text-gray-300" />
+            <h3 className="mb-1 text-base font-bold text-brand-900">Nenhum imóvel nesta categoria</h3>
+            <p className="mb-4 text-xs text-gray-500">
               O corretor {corretor.nome} ainda não possui imóveis com este filtro de transação.
             </p>
             <button
               type="button"
               onClick={() => setTabAtiva('todos')}
-              className="rounded-lg bg-brand-800 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-brand-700"
+              className="rounded-lg bg-gold px-4 py-2 text-xs font-bold text-brand-950 transition-colors hover:bg-gold-400"
             >
               Ver todos os imóveis ({totais.total})
             </button>
